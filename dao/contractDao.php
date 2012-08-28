@@ -12,7 +12,7 @@ class ContractDao {
     $query = "select C.contract_id, C.num_years, C.price, C.sign_date, C.player_id, C.start_year,
                      C.end_year, C.team_id
     	      from contract C
-              where C.team_id = $teamId";
+              where C.team_id = " . $teamId;
     return ContractDao::createContracts($query);
   }
 
@@ -30,7 +30,7 @@ class ContractDao {
   }
 
   private static function createContracts($query) {
-    $res = mysql_query($query);
+  	$res = mysql_query($query);
     $contracts = array();
     while ($contractDb = mysql_fetch_assoc($res)) {
       $contracts[] = new Contract($contractDb["contract_id"], $contractDb["player_id"],

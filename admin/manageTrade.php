@@ -16,11 +16,28 @@ function toggle(teamId) {
   }
 }
 
-function showTeam(pos, teamid) {
+function selectTeam(position, teamid) {
+  // TODO when team is selected, remove it from the other dropdown.
+  var otherPosition = "1";
+  if (position == "1") {
+    otherPosition = "2";
+  }
+  var selectedTeam = document.getElementsByName("team"+position);
+  var otherTeam = document.getElementsByName("team"+otherPosition);
+  
+  // If teamid is blank, then clear out that position.
   if (teamid=="" || teamid=="0") {
-    document.getElementById("teamDisplay"+pos).innerHTML="";
+    document.getElementById("teamDisplay"+position).innerHTML="";
+    // TODO hide trade button if it's visible
+    // TODO put previously selected team back in other drop-down
 	return;
   }
+
+  // Only show trade button if two teams are selected
+  var tradeButton = document.getElementById("tradeButton");
+  // TODO if otherTeam.hasName then set display=block
+  tradeButton.style.display = "block";
+  
   if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
     xmlhttp=new XMLHttpRequest();
   } else {// code for IE6, IE5
@@ -28,10 +45,10 @@ function showTeam(pos, teamid) {
   }
   xmlhttp.onreadystatechange=function() {
     if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-	  document.getElementById("teamDisplay"+pos).innerHTML=xmlhttp.responseText;
+	  document.getElementById("teamDisplay"+position).innerHTML=xmlhttp.responseText;
 	}
   }
-  xmlhttp.open("GET","displayTeamForTrade.php?team_id="+teamid,true);
+  xmlhttp.open("GET","displayTeamForTrade.php?team_id="+teamid+"&position="+position,true);
   xmlhttp.send();
 }
 </script>
@@ -42,7 +59,8 @@ function showTeam(pos, teamid) {
   require_once '../dao/teamDao.php';
   require_once '../util/time.php';
   require_once '../entity/trade.php';
-
+  
+  echo "<center><h1>Let's Make a Deal!</h1>";
   echo "<FORM ACTION='manageTrade.php' METHOD=POST>";
 
   // If trade button was pressed, execute validated trade.
@@ -86,14 +104,11 @@ function showTeam(pos, teamid) {
       echo "<h3>Cannot execute trade! Please try again.</h3>";
     }
   } else {
-    echo "<center><h1>Let's Make a Deal!</h1>";
-
     // allow user to select two teams.
-    // TODO when team is selected, remove it from the other dropdown.
     $teams = TeamDao::getAllTeams();
     echo "<table><tr>";
     echo "<td width='50%' valign='top'>";
-    echo "<center>Select Team:<br><select name='team1' onchange='showTeam(1, this.value)'>
+    echo "<center>Select Team:<br><select name='team1' onchange='selectTeam(1, this.value)'>
                          <option value='0'></option>";
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName() . "</option>";
@@ -101,7 +116,7 @@ function showTeam(pos, teamid) {
     echo "</select></center><br>";
     echo "<div id='teamDisplay1'></div></td>";
     echo "<td width='100%' valign='top'>";
-    echo "<center>Select Team:<br><select name='team2' onchange='showTeam(2, this.value)'>
+    echo "<center>Select Team:<br><select name='team2' onchange='selectTeam(2, this.value)'>
                          <option value='0'></option>";
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName() . "</option>";
@@ -110,9 +125,10 @@ function showTeam(pos, teamid) {
     echo "<div id='teamDisplay2'></div></td>";
     echo "</tr></table>";
 
-    // TODO only show trade button if two teams are selected
-    echo "<input class='button' type=submit name='trade' value='Initiate Trade'>";
-    echo "<input class='button' type=submit name='cancel' value='Cancel'>";
+    echo "<div id='tradeButton' style='display:none'>
+            <input class='button' type=submit name='trade' value='Initiate Trade'>
+            <input class='button' type=submit name='cancel' value='Cancel'>
+          </div>";
   }
   echo "</form>";
 ?>

@@ -6,13 +6,11 @@
    * Returns a Team based on the ID specified in the GET/POST.
    */
   function getTeamByParam($param) {
-    if (isset($_GET[$param])) {
-      $teamId = $_GET[$param];
-    } else if (isset($_POST[$param])) {
-      $teamId = $_POST[$param];
-    } else {
-      $teamId = 0;
-    }
+  	if (isset($_REQUEST[$param])) {
+      $teamId = $_REQUEST[$param];
+  	} else {
+  	  $teamId = 0;
+  	}
     $team = TeamDao::getTeamById($teamId);
     if ($team == null) {
       die("<h1>team id " . $teamId . " does not exist for param " . $param . "!</h1>");
@@ -25,7 +23,7 @@
    * be traded.
    */
   function displayTeam($team, $position) {
-    // Team info
+  	// Team info
     echo "<center><img src='" . $team->getSportslineImageUrl() . "'><br/>";
     echo "<strong>" . $team->getName() . "</strong><br/>";
     echo $team->getOwnersString() . "<br/></center>";
@@ -46,5 +44,8 @@
   }
 
   $team = getTeamByParam("team_id");
-  displayTeam($team);
+  if (isset($_REQUEST["position"])) {
+  	$position = $_REQUEST["position"];
+  }
+  displayTeam($team, $position);
 ?>

@@ -9,6 +9,7 @@ class TimeUtil {
    */
   static function getCurrentSeasonYear() {
     // Currently returns the current year
+  	date_default_timezone_set('America/New_York');
     return date("Y");
   }
 }
