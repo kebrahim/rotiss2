@@ -236,13 +236,13 @@ class Team {
 
   function displayAllBrognas() {
     $currentYear = TimeUtil::getCurrentSeasonYear();
-    $this->displayBrognas($currentYear, 3000, false);
+    $this->displayBrognas($currentYear, 3000, false, 0);
   }
 
   /**
   *
   */
-  function displayBrognas($minYear, $maxYear, $isSelectable) {
+  function displayBrognas($minYear, $maxYear, $isSelectable, $position) {
     if (count($this->getBrognas()) == 0) {
       return;
     }
@@ -255,7 +255,7 @@ class Team {
     echo "<th>Year</th><th>Total</th><th>Banked</th><th>Traded In</th>
             <th>Traded Out</th><th>Tradeable</th>";
     if ($isSelectable) {
-      echo "<th id='headerbox" . $this->getId() . "' style='display:none'>To Trade</th>";
+      echo "<th id='headerbox" . $position . "' style='display:none'>To Trade</th>";
     }
     echo "</tr>";
     foreach ($this->getBrognas() as $brogna) {
@@ -266,8 +266,8 @@ class Team {
       echo "<tr>";
       if ($isSelectable) {
         if ($brogna->getTradeablePoints() > 0) {
-          echo "<td><input type=checkbox name='t" . $this->getId() . "b'
-                                         onclick='toggle(" . $this->getId() . ")'
+          echo "<td><input type=checkbox name='t" . $position . "b'
+                                         onclick='toggle(" . $position . ")'
                                          value='" . $brogna->getYear() . "'>
                 </td>";
         } else {
@@ -281,7 +281,7 @@ class Team {
                   <td>" . $brogna->getTradedOutPoints() . "</td>
                   <td>" . $brogna->getTradeablePoints() . "</td>";
       if ($isSelectable) {
-        echo "<td id='tradebox" . $this->getId() . "' style='display:none'>
+        echo "<td id='tradebox" . $position . "' style='display:none'>
                   <input type='text' name='t" . $this->getId() . "bv'
                          placeholder='Enter value 1 to " . $brogna->getTradeablePoints() . "'/>
               </td>";

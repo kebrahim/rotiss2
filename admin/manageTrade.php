@@ -4,9 +4,9 @@
 </head>
 
 <script language="javascript">
-function toggle(teamId) {
-  var head = document.getElementById("headerbox" + teamId);
-  var ele = document.getElementById("tradebox" + teamId);
+function toggle(position) {
+  var head = document.getElementById("headerbox" + position);
+  var ele = document.getElementById("tradebox" + position);
   if (ele.style.display == "block") {
     ele.style.display = "none";
     head.style.display = "none";
@@ -22,9 +22,9 @@ function selectTeam(position, teamid) {
   if (position == "1") {
     otherPosition = "2";
   }
-  var selectedTeam = document.getElementsByName("team"+position);
-  var otherTeam = document.getElementsByName("team"+otherPosition);
-  
+  //var selectedTeam = document.getElementsByName("team"+position);
+  //var otherTeam = document.getElementsByName("team"+otherPosition);
+
   // If teamid is blank, then clear out that position.
   if (teamid=="" || teamid=="0") {
     document.getElementById("teamDisplay"+position).innerHTML="";
@@ -37,7 +37,7 @@ function selectTeam(position, teamid) {
   var tradeButton = document.getElementById("tradeButton");
   // TODO if otherTeam.hasName then set display=block
   tradeButton.style.display = "block";
-  
+
   if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
     xmlhttp=new XMLHttpRequest();
   } else {// code for IE6, IE5
@@ -59,7 +59,7 @@ function selectTeam(position, teamid) {
   require_once '../dao/teamDao.php';
   require_once '../util/time.php';
   require_once '../entity/trade.php';
-  
+
   echo "<center><h1>Let's Make a Deal!</h1>";
   echo "<FORM ACTION='manageTrade.php' METHOD=POST>";
 

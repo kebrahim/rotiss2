@@ -34,7 +34,7 @@
     $team->displayContracts($currentYear, 3000, true);
 
     // Points
-    $team->displayBrognas($currentYear + 1, $currentYear + 1, true);
+    $team->displayBrognas($currentYear + 1, $currentYear + 1, true, $position);
 
     // Picks
     $team->displayDraftPicks($currentYear + 1, 3000, true);
