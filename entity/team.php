@@ -266,7 +266,7 @@ class Team {
       echo "<tr>";
       if ($isSelectable) {
         if ($brogna->getTradeablePoints() > 0) {
-          echo "<td><input type=checkbox name='t" . $position . "b'
+          echo "<td><input type=checkbox name='t" . $this->getId() . "b'
                                          onclick='toggle(" . $position . ")'
                                          value='" . $brogna->getYear() . "'>
                 </td>";

@@ -4,6 +4,7 @@
 </head>
 
 <script language="javascript">
+// toggles the headerbox and tradebox divs of the specified position [1/2]
 function toggle(position) {
   var head = document.getElementById("headerbox" + position);
   var ele = document.getElementById("tradebox" + position);
@@ -16,28 +17,105 @@ function toggle(position) {
   }
 }
 
+// sets the display of the div with the specified id
+function setDisplay(id, display) {
+  var divid = document.getElementById(id);
+  divid.style.display = display;
+}
+
+// returns the index of the teamName in the selection dropdown
+function getIndex(selection, teamName) {
+  for (var i=0; i<selection.length; i++) {
+    if (selection.options[i].text.toUpperCase() == teamName.toUpperCase()) {
+       return i;
+    }
+  }
+  return -1;
+}
+
+// adds the specified option to the specified selection at the specified position or at the end
+// if position is -1.
+function addOption(option, selection, position) {
+  try {
+	if (position == -1) {
+	  selection.add(new Option(option.text, option.value), null);
+	} else {
+	  selection.add(new Option(option.text, option.value), selection.options[position]);
+	}
+  } catch(err) {
+	// IE only
+	if (position == -1) {
+	  selection.add(new Option(option.text, option.value));
+	} else {
+      selection.add(new Option(option.text, option.value), position);
+	}
+  }
+}
+
+// adds the specified selectionOption to the specified selection, ensuring the list remains in
+// alphabetical order.
+function addOptionToDropDown(selection, selectedOption) {
+  for (var i=0; i<selection.length; i++) {
+	// if selection.options[i] comes after teamName, add it before this position
+    if (selection.options[i].text.toUpperCase().localeCompare(selectedOption.text.toUpperCase()) > 0) {
+      addOption(selectedOption, selection, i);
+      return;
+    }
+  }
+  // new option should come after everything in selection; add at end.
+  addOption(selectedOption, selection, -1);
+}
+
+// synchronizes the two drop-downs, ensuring any options missing in otherTeam [except for the
+// option currently selected in selectedTeam] are added back in.
+function synchronizeDropDowns(selectedTeam, otherTeam) {
+  // if otherteam doesn't have a value in selected, add it, unless it's the value
+  // currently selected in selectedTeam
+  for (var i=0; i<selectedTeam.length; i++) {
+    if ((i !== selectedTeam.selectedIndex)
+        && (getIndex(otherTeam, selectedTeam.options[i].text) == -1)) {
+      // other team doesn't have the unselected value, so add it.
+      addOptionToDropDown(otherTeam, selectedTeam.options[i]);
+    }
+  }
+}
+
 function selectTeam(position, teamid) {
-  // TODO when team is selected, remove it from the other dropdown.
   var otherPosition = "1";
   if (position == "1") {
     otherPosition = "2";
   }
-  //var selectedTeam = document.getElementsByName("team"+position);
-  //var otherTeam = document.getElementsByName("team"+otherPosition);
-
+  var selectedTeam = document.getElementsByName("team"+position).item(0);
+  var otherTeam = document.getElementsByName("team"+otherPosition).item(0);
+  
   // If teamid is blank, then clear out that position.
   if (teamid=="" || teamid=="0") {
     document.getElementById("teamDisplay"+position).innerHTML="";
-    // TODO hide trade button if it's visible
-    // TODO put previously selected team back in other drop-down
+
+    // hide trade button
+    setDisplay("tradeButton", "none");
+
+    // Put previously selected team back in other drop-down
+    synchronizeDropDowns(selectedTeam, otherTeam);
 	return;
+  } else {
+    // when team is selected, remove it from the other dropdown.
+    selectedTeamIndexInOtherTeam =
+        getIndex(otherTeam, selectedTeam.options[selectedTeam.selectedIndex].text);
+    if (selectedTeamIndexInOtherTeam > -1) {
+      otherTeam.remove(selectedTeamIndexInOtherTeam);
+    }
+
+    // put previously selected team back in other drop down.
+    synchronizeDropDowns(selectedTeam, otherTeam);
   }
 
   // Only show trade button if two teams are selected
-  var tradeButton = document.getElementById("tradeButton");
-  // TODO if otherTeam.hasName then set display=block
-  tradeButton.style.display = "block";
+  if (otherTeam.selectedIndex > 0) {
+    setDisplay("tradeButton", "block");
+  }
 
+  // Display team information.
   if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
     xmlhttp=new XMLHttpRequest();
   } else {// code for IE6, IE5
@@ -73,7 +151,6 @@ function selectTeam(position, teamid) {
     $trade->showTradeSummary();
 
     // request final confirmation of trade before execution
-    echo "Confirm trade: <br>";
     echo "<input class='button' type=submit name='confirmTrade' value='Confirm'>";
     echo "<input class='button' type=submit name='cancelTrade' value='Cancel'><br>";
 
@@ -100,8 +177,9 @@ function selectTeam(position, teamid) {
     if ($trade->validateTrade()) {
       // Initiate trade & report results.
       $trade->initiateTrade();
+      echo "<br><a href='manageTrade.php'>Let's do it again!</a><br>";
     } else {
-      echo "<h3>Cannot execute trade! Please try again.</h3>";
+      echo "<h3>Cannot execute trade! Please <a href='manageTrade.php'>try again</a>.</h3>";
     }
   } else {
     // allow user to select two teams.
