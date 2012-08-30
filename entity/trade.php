@@ -309,6 +309,8 @@ class TradePartner {
             . $pingPongBall->getTeam()->getName() . "<br>";
       }
     }
+
+    // TODO update changelog
   }
 }
 ?>

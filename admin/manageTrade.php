@@ -3,7 +3,7 @@
 <title>Trading</title>
 </head>
 
-<script language="javascript">
+<script>
 // toggles the headerbox and tradebox divs of the specified position [1/2]
 function toggle(position) {
   var head = document.getElementById("headerbox" + position);
@@ -87,7 +87,7 @@ function selectTeam(position, teamid) {
   }
   var selectedTeam = document.getElementsByName("team"+position).item(0);
   var otherTeam = document.getElementsByName("team"+otherPosition).item(0);
-  
+
   // If teamid is blank, then clear out that position.
   if (teamid=="" || teamid=="0") {
     document.getElementById("teamDisplay"+position).innerHTML="";
@@ -125,7 +125,7 @@ function selectTeam(position, teamid) {
     if (xmlhttp.readyState==4 && xmlhttp.status==200) {
 	  document.getElementById("teamDisplay"+position).innerHTML=xmlhttp.responseText;
 	}
-  }
+  };
   xmlhttp.open("GET","displayTeamForTrade.php?team_id="+teamid+"&position="+position,true);
   xmlhttp.send();
 }
@@ -184,6 +184,7 @@ function selectTeam(position, teamid) {
   } else {
     // allow user to select two teams.
     $teams = TeamDao::getAllTeams();
+    // TODO clean up style
     echo "<table><tr>";
     echo "<td width='50%' valign='top'>";
     echo "<center>Select Team:<br><select name='team1' onchange='selectTeam(1, this.value)'>
