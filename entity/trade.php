@@ -5,7 +5,6 @@ CommonEntity::requireFileIn('/../dao/', 'ballDao.php');
 CommonEntity::requireFileIn('/../dao/', 'brognaDao.php');
 CommonEntity::requireFileIn('/../dao/', 'contractDao.php');
 CommonEntity::requireFileIn('/../dao/', 'draftPickDao.php');
-CommonEntity::requireFileIn('/../dao/', 'userDao.php');
 CommonEntity::requireFileIn('/../util/', 'time.php');
 
 /**
@@ -55,7 +54,7 @@ class Trade {
     if (isset($_POST[$brognaStr])) {
       $brognaYear = $_POST[$brognaStr];
       // Ensure year is next year
-      $currentYear = TimeUtil::getCurrentSeasonYear();
+      $currentYear = TimeUtil::getYearBasedOnKeeperNight();
       if ($brognaYear != ($currentYear + 1)) {
         die("Invalid brogna year to trade " . $brognaYear);
       }
@@ -146,40 +145,39 @@ class TradePartner {
   }
 
   public function showSummary() {
-    echo "<h3>" . $this->team->getName() . " trades:</h3><ul>";
+    echo "<h3>" . $this->team->getName() . " trades:</h3>";
 
     // display contracts
     if ($this->contracts) {
-      echo "<li>Contracts<ul>";
+      echo "<h4>Contracts</h4>";
       foreach ($this->contracts as $contract) {
-        echo "<li>" . $contract->getPlayer()->getFullName() . "</li>";
+        echo $contract->getPlayer()->getFullName() . "<br/>";
       }
-      echo "</ul></li>";
+      echo "<br/>";
     }
 
     // display brognas
     if ($this->brognas != null) {
-      echo "<li>Brognas - " . $this->brognas . "</li>";
+      echo "<h4>Brognas - " . $this->brognas . "</h4>";
     }
 
     // display picks
     if ($this->draftPicks) {
-      echo "<li>Draft Picks<ul>";
+      echo "<h4>Draft Picks</h4>";
       foreach ($this->draftPicks as $draftPick) {
-        echo "<li>" . $draftPick->toString() . "</li>";
+        echo $draftPick->toString() . "<br/>";
       }
-      echo "</ul></li>";
+      echo "<br/>";
     }
 
     // display ping pong balls
     if ($this->pingPongBalls) {
-      echo "<li>Ping Pong Balls<ul>";
+      echo "<h4>Ping Pong Balls</h4>";
       foreach ($this->pingPongBalls as $pingPongBall) {
-        echo "<li>" . $pingPongBall->toString() . "</li>";
+        echo $pingPongBall->toString() . "<br/>";
       }
-      echo "</ul></li>";
+      echo "<br/>";
     }
-    echo "</ul>";
   }
 
   public function validate(Team $otherTeam) {
@@ -206,7 +204,7 @@ class TradePartner {
         return false;
       }
 
-      $nextYear = TimeUtil::getCurrentSeasonYear() + 1;
+      $nextYear = TimeUtil::getYearBasedOnKeeperNight() + 1;
       $myBrognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $nextYear);
 
       // do i have enough total points?
@@ -267,7 +265,7 @@ class TradePartner {
 
     // Trade brognas
     if ($this->brognas != null) {
-      $nextYear = TimeUtil::getCurrentSeasonYear() + 1;
+      $nextYear = TimeUtil::getYearBasedOnKeeperNight() + 1;
       $myBrognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $nextYear);
       // subtract brognas from total points, tradeable_points
       $myBrognas->setTotalPoints($myBrognas->getTotalPoints() - $this->brognas);

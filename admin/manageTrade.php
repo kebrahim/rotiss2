@@ -3,6 +3,18 @@
 <title>Trading</title>
 </head>
 
+<style type="text/css">
+html {height:100%;}
+body {text-align:center;}
+table {text-align:center;}
+table.center {margin-left:auto; margin-right:auto;}
+#column_container {padding:0; margin:0 0 0 50%; width:50%; float:right;}
+#left_col {float:left; width:100%; margin-left:-100%; text-align:center;}
+#left_col_inner {padding:10px;}
+#right_col {float:right; width:100%; text-align:center;}
+#right_col_inner {padding:10px;}
+</style>
+
 <script>
 // toggles the headerbox and tradebox divs of the specified position [1/2]
 function toggle(position) {
@@ -126,7 +138,7 @@ function selectTeam(position, teamid) {
 	  document.getElementById("teamDisplay"+position).innerHTML=xmlhttp.responseText;
 	}
   };
-  xmlhttp.open("GET","displayTeamForTrade.php?team_id="+teamid+"&position="+position,true);
+  xmlhttp.open("GET","displayTeamForTrade.php?type=trade&team_id="+teamid+"&position="+position,true);
   xmlhttp.send();
 }
 </script>
@@ -184,25 +196,27 @@ function selectTeam(position, teamid) {
   } else {
     // allow user to select two teams.
     $teams = TeamDao::getAllTeams();
-    // TODO clean up style
-    echo "<table><tr>";
-    echo "<td width='50%' valign='top'>";
-    echo "<center>Select Team:<br><select name='team1' onchange='selectTeam(1, this.value)'>
+    echo "<div id='column_container'>";
+
+    // team 1
+    echo "<div id='left_col'><div id='left_col_inner'>";
+    echo "Select Team:<br><select name='team1' onchange='selectTeam(1, this.value)'>
                          <option value='0'></option>";
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName() . "</option>";
     }
-    echo "</select></center><br>";
-    echo "<div id='teamDisplay1'></div></td>";
-    echo "<td width='100%' valign='top'>";
-    echo "<center>Select Team:<br><select name='team2' onchange='selectTeam(2, this.value)'>
+    echo "</select><br><br>";
+    echo "<div id='teamDisplay1'></div><br/></div></div>";
+    
+    // team 2
+    echo "<div id='right_col'><div id='right_col_inner'>";
+    echo "Select Team:<br><select name='team2' onchange='selectTeam(2, this.value)'>
                          <option value='0'></option>";
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName() . "</option>";
     }
-    echo "</select></center><br>";
-    echo "<div id='teamDisplay2'></div></td>";
-    echo "</tr></table>";
+    echo "</select><br><br>";
+    echo "<div id='teamDisplay2'></div><br/></div></div></div>";
 
     echo "<div id='tradeButton' style='display:none'>
             <input class='button' type=submit name='trade' value='Initiate Trade'>

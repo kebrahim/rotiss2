@@ -13,6 +13,7 @@ class Contract {
   private $signDate;
   private $startYear;
   private $endYear;
+  private $isAuction;
 
   private $playerId;
   private $playerLoaded;
@@ -23,7 +24,7 @@ class Contract {
   private $team;
 
   public function __construct($contractId, $playerId, $teamId, $totalYears, $price, $signDate,
-      $startYear, $endYear) {
+      $startYear, $endYear, $isAuction) {
     $this->contractId = $contractId;
     $this->playerId = $playerId;
     $this->playerLoaded = false;
@@ -34,12 +35,17 @@ class Contract {
     $this->signDate = $signDate;
     $this->startYear = $startYear;
     $this->endYear = $endYear;
+    $this->isAuction = $isAuction;
   }
 
   public function getId() {
     return $this->contractId;
   }
 
+  public function setId($contractId) {
+  	$this->contractId = $contractId;
+  }
+  
   public function getTotalYears() {
     return $this->totalYears;
   }
@@ -68,6 +74,10 @@ class Contract {
     return $this->endYear;
   }
 
+  public function isAuction() {
+  	return $this->isAuction;
+  }
+  
   public function getTeam() {
     if ($this->teamLoaded != true) {
       $this->team = TeamDao::getTeamById($this->teamId);
@@ -79,6 +89,11 @@ class Contract {
   public function setTeam(Team $team) {
     $this->team = $team;
     $this->teamLoaded = true;
+  }
+  
+  public function toString() {
+  	return $this->player->getFullName() . ": " . $this->team->getName() . " [" . $this->startYear .
+  	    ":" . $this->endYear . "] - $" . $this->price . " (" . $this->signDate . ")";
   }
 }
 ?>

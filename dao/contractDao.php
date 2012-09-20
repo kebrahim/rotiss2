@@ -9,11 +9,10 @@ class ContractDao {
    */
   static function getContractsByTeamId($teamId) {
     CommonDao::connectToDb();
-    $query = "select C.contract_id, C.num_years, C.price, C.sign_date, C.player_id, C.start_year,
-                     C.end_year, C.team_id
-    	      from contract C
-              where C.team_id = " . $teamId;
-    return ContractDao::createContracts($query);
+    $query = "select * from contract
+              where team_id = " . $teamId .
+              " order by sign_date, end_year, price DESC";
+    return ContractDao::createContractsFromQuery($query);
   }
 
   /**
@@ -21,21 +20,20 @@ class ContractDao {
    */
   public static function getContractById($contractId) {
     CommonDao::connectToDb();
-    $query = "select contract_id, player_id, team_id, num_years, price, sign_date, start_year,
-                     end_year
-              from contract
+    $query = "select * from contract
               where contract_id = " . $contractId;
-    $contracts = ContractDao::createContracts($query);
+    $contracts = ContractDao::createContractsFromQuery($query);
     return $contracts[0];
   }
 
-  private static function createContracts($query) {
+  private static function createContractsFromQuery($query) {
   	$res = mysql_query($query);
     $contracts = array();
     while ($contractDb = mysql_fetch_assoc($res)) {
       $contracts[] = new Contract($contractDb["contract_id"], $contractDb["player_id"],
           $contractDb["team_id"], $contractDb["num_years"], $contractDb["price"],
-          $contractDb["sign_date"], $contractDb["start_year"], $contractDb["end_year"]);
+          $contractDb["sign_date"], $contractDb["start_year"], $contractDb["end_year"],
+          $contractDb["is_auction"]);
     }
     return $contracts;
   }
@@ -44,7 +42,26 @@ class ContractDao {
    * Creates a new contract.
    */
   public static function createContract(Contract $contract) {
-    // TODO
+    CommonDao::connectToDb();
+    $query = "insert into contract(player_id, team_id, num_years, price, sign_date, start_year,
+              end_year, is_auction) values (" .
+              $contract->getPlayer()->getId() . ", " . $contract->getTeam()->getId() . ", " .
+              $contract->getTotalYears() . ", " . $contract->getPrice() . ", '" .
+              $contract->getSignDate() . "', " . $contract->getStartYear() . ", " .
+              $contract->getEndYear() . ", " . ($contract->isAuction() ? "1" : "0") . ")";
+    $result = mysql_query($query);
+    if (!$result) {
+      echo "Contract " . $contract->toString() . " already exists in DB. Try again.";
+      return null;
+    }
+
+    $idQuery = "select contract_id from contract where player_id = " .
+        $contract->getPlayer()->getId() . " and team_id = " . $contract->getTeam()->getId() . 
+        " and start_year = " . $contract->getStartYear();
+    $result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
+    $row = mysql_fetch_assoc($result);
+    $contract->setId($row["contract_id"]);
+    return $contract;
   }
 
   /**

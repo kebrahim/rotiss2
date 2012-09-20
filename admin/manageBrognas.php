@@ -16,16 +16,18 @@
 // allow user to edit individual row[?] or just team
   function displayBrognas($startYear, $endYear) {
     echo "<h1>Manage Brognas</h1>";
-    echo "<table border><tr><th>Year</th><th>Total</th><th>Banked</th><th>Traded In</th>
+    echo "<table border><tr><th>Year</th><th>Team</th><th>Total</th><th>Banked</th><th>Traded In</th>
   		        <th>Traded Out</th><th>Tradeable</th></tr>";
 
     $brognas = BrognaDao::getBrognasByYear($startYear, $endYear);
+    $currentYear = TimeUtil::getCurrentYear();
     foreach ($brognas as $brogna) {
       // Only show brogna info for this year & the future.
       if ($brogna->getYear() < $currentYear) {
         continue;
       }
       echo "<tr><td>" . $brogna->getYear() . "</td>
+                <td>" . $brogna->getTeam()->getName() . "</td>
                 <td><strong>" . $brogna->getTotalPoints() . "</strong></td>
        	        <td>" . $brogna->getBankedPoints() . "</td>
            	    <td>" . $brogna->getTradedInPoints() . "</td>
@@ -38,7 +40,7 @@
 
   // TODO switch to POST
   if (!isset($_GET["startYear"]) || !isset($_GET["endYear"])) {
-    $startYear = TimeUtil::getCurrentSeasonYear();
+    $startYear = TimeUtil::getCurrentYear();
     $endYear = $startYear;
   } else {
     $startYear = $_GET["startYear"];

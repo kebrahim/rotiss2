@@ -129,7 +129,7 @@ class Team {
   }
 
   public function displayAllContracts() {
-    $currentYear = TimeUtil::getCurrentSeasonYear();
+    $currentYear = TimeUtil::getYearBasedOnEndOfSeason();
     $this->displayContracts($currentYear, 3000, false);
   }
 
@@ -142,7 +142,7 @@ class Team {
       return;
     }
     echo "<h3>Contracts</h3>";
-    echo "<table border><tr>";
+    echo "<table class='center' border><tr>";
     if ($isSelectable) {
       echo "<th></th>";
     }
@@ -154,7 +154,8 @@ class Team {
             <th>Price</th>
             <th>Sign Date</th>
             <th>Start Year</th>
-            <th>End Year</th></tr>";
+            <th>End Year</th>
+            <th>Type</th></tr>";
     foreach ($contracts as $contract) {
       if (($contract->getEndYear() < $minYear) || ($contract->getStartYear() > $maxYear)) {
         continue;
@@ -174,14 +175,15 @@ class Team {
                   <td>" . $contract->getPrice() . "</td>
                   <td>" . $contract->getSignDate() . "</td>
                   <td>" . $contract->getStartYear() . "</td>
-                  <td>" . $contract->getEndYear() . "</td></tr>";
+                  <td>" . $contract->getEndYear() . "</td>
+                  <td>" . ($contract->isAuction() ? "Auction" : "Regular") . "</td></tr>";
     }
     echo "</table>";
   }
 
   function displayAllDraftPicks() {
-    $currentYear = TimeUtil::getCurrentSeasonYear();
-    $this->displayDraftPicks($currentYear, 3000, false);
+    $currentYear = TimeUtil::getYearBasedOnStartOfSeason();
+    $this->displayDraftPicks($currentYear + 1, 3000, false);
   }
 
   /**
@@ -193,7 +195,7 @@ class Team {
     }
 
     echo "<h3>Draft Picks</h3>";
-    echo "<table border><tr>";
+    echo "<table class='center' border><tr>";
     if ($isSelectable) {
       echo "<th></th>";
     }
@@ -235,27 +237,29 @@ class Team {
 
 
   function displayAllBrognas() {
-    $currentYear = TimeUtil::getCurrentSeasonYear();
+    $currentYear = TimeUtil::getYearBasedOnKeeperNight();
     $this->displayBrognas($currentYear, 3000, false, 0);
   }
 
   /**
-  *
-  */
-  function displayBrognas($minYear, $maxYear, $isSelectable, $position) {
+   * Display all brogna information for this team, between the specified years. $isSelectable
+   * controls whether the rows can be selected & a value can be entered [for trading].
+   * $tradePosition indicates which of the two teams is trading brognas.
+   */
+  function displayBrognas($minYear, $maxYear, $isSelectable, $tradePosition) {
     if (count($this->getBrognas()) == 0) {
       return;
     }
 
     echo "<h3>Brognas</h3>";
-    echo "<table border><tr>";
+    echo "<table class='center' border><tr>";
     if ($isSelectable) {
       echo "<th></th>";
     }
     echo "<th>Year</th><th>Total</th><th>Banked</th><th>Traded In</th>
             <th>Traded Out</th><th>Tradeable</th>";
     if ($isSelectable) {
-      echo "<th id='headerbox" . $position . "' style='display:none'>To Trade</th>";
+      echo "<th id='headerbox" . $tradePosition . "' style='display:none'>To Trade</th>";
     }
     echo "</tr>";
     foreach ($this->getBrognas() as $brogna) {
@@ -267,7 +271,7 @@ class Team {
       if ($isSelectable) {
         if ($brogna->getTradeablePoints() > 0) {
           echo "<td><input type=checkbox name='t" . $this->getId() . "b'
-                                         onclick='toggle(" . $position . ")'
+                                         onclick='toggle(" . $tradePosition . ")'
                                          value='" . $brogna->getYear() . "'>
                 </td>";
         } else {
@@ -281,7 +285,7 @@ class Team {
                   <td>" . $brogna->getTradedOutPoints() . "</td>
                   <td>" . $brogna->getTradeablePoints() . "</td>";
       if ($isSelectable) {
-        echo "<td id='tradebox" . $position . "' style='display:none'>
+        echo "<td id='tradebox" . $tradePosition . "' style='display:none'>
                   <input type='text' name='t" . $this->getId() . "bv'
                          placeholder='Enter value 1 to " . $brogna->getTradeablePoints() . "'/>
               </td>";

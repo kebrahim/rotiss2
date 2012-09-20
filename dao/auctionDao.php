@@ -4,39 +4,64 @@ require_once 'commonDao.php';
 CommonDao::requireFileIn('/../entity/', 'auctionResult.php');
 
 /**
- *
+ * DAO for handling auction data, specifically in the 'auction' table.
  */
 class AuctionResultDao {
   /**
-   * Returns all of the draft picks belonging to the specified team.
+   * Returns all of the auction results belonging to the specified team.
    */
   public static function getAuctionResultsByTeamId($team_id) {
     CommonDao::connectToDb();
-    $query = "select A.auction_id, A.year, A.team_id, A.player_id, A.cost, A.is_match
-                  from auction A
-              where A.team_id = $team_id
-              order by A.year, A.cost DESC";
-    return AuctionResultDao::createAuctionResults($query);
+    $query = "select * from auction
+              where team_id = $team_id
+              order by year, cost DESC";
+    return AuctionResultDao::createAuctionResultsFromQuery($query);
   }
 
+  /**
+   * Returns all of the auction results in the specified year.
+   */
   public static function getAuctionResultsByYear($year) {
     CommonDao::connectToDb();
-    $query = "select A.auction_id, A.year, A.team_id, A.player_id, A.cost, A.is_match
-              from auction A
-              where A.year = $year
-              order by A.cost DESC";
-    return AuctionResultDao::createAuctionResults($query);
+    $query = "select * from auction
+              where year = $year
+              order by auction_id";
+    return AuctionResultDao::createAuctionResultsFromQuery($query);
   }
 
-  private static function createAuctionResults($query) {
-    $auction_results_db = mysql_query($query);
+  private static function createAuctionResultsFromQuery($query) {
+    $res = mysql_query($query);
 
-    $auction_results = array();
-    while ($auction_result_db = mysql_fetch_row($auction_results_db)) {
-      $auction_results[] = new AuctionResult($auction_result_db[0], $auction_result_db[1],
-      $auction_result_db[2], $auction_result_db[3], $auction_result_db[4], $auction_result_db[5]);
+    $auctionResults = array();
+    while ($auctionDb = mysql_fetch_assoc($res)) {
+      $auctionResults[] = new AuctionResult($auctionDb["auction_id"], $auctionDb["year"],
+          $auctionDb["team_id"], $auctionDb["player_id"], $auctionDb["cost"]);
     }
-    return $auction_results;
+    return $auctionResults;
+  }
+  
+  /**
+   * Inserts the specified AuctionResult in the 'auction' table and returns the same AuctionResult
+   * with its id set.
+   */
+  public static function createAuctionResult(AuctionResult $auctionResult) {
+  	CommonDao::connectToDb();
+  	$query = "insert into auction(year, team_id, player_id, cost)
+  	    values (" . $auctionResult->getYear() . ", " . $auctionResult->getTeam()->getId() .
+  	    ", " . $auctionResult->getPlayer()->getId() . ", " . $auctionResult->getCost() . ")";
+  	$result = mysql_query($query);
+  	if (!$result) {
+  	  echo "Auction result " . $auctionResult->toString() . " already exists in DB. Try again.";
+  	  return null;
+  	}
+  	
+  	$idQuery = "select auction_id from auction where year = " . $auctionResult->getYear() .
+  	    " and team_id = " . $auctionResult->getTeam()->getId() . " and player_id = " .
+  	    $auctionResult->getPlayer()->getId();
+  	$result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
+  	$row = mysql_fetch_assoc($result);
+  	$auctionResult->setId($row["auction_id"]);
+  	return $auctionResult;
   }
 }
 ?>

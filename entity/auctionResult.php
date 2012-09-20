@@ -17,17 +17,23 @@ class AuctionResult {
   private $playerLoaded;
   private $player;
   private $cost;
-  private $isMatch;
 
-  public function __construct($auctionResultId, $year, $teamId, $playerId, $cost, $isMatch) {
+  public function __construct($auctionResultId, $year, $teamId, $playerId, $cost) {
     $this->auctionResultId = $auctionResultId;
     $this->year = $year;
     $this->teamId = $teamId;
     $this->playerId = $playerId;
     $this->cost = $cost;
-    $this->isMatch = $isMatch;
   }
 
+  public function getId() {
+  	return $this->auctionResultId;
+  }
+  
+  public function setId($auctionResultId) {
+  	$this->auctionResultId = $auctionResultId;
+  }
+  
   public function getYear() {
     return $this->year;
   }
@@ -51,9 +57,9 @@ class AuctionResult {
   public function getCost() {
     return $this->cost;
   }
-
-  public function isMatch() {
-    return $this->isMatch;
+  
+  public function toString() {
+  	return $this->player->getFullName() . " " . $this->team->getName() . " " . $this->cost;
   }
 }
 ?>

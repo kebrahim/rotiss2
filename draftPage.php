@@ -39,7 +39,7 @@
   }
   $teamId = $_GET["team_id"];
   if (!isset($_GET["year"])) {
-    $year = TimeUtil::getCurrentSeasonYear();
+    $year = TimeUtil::getYearBasedOnStartOfSeason();
   } else {
     $year = $_GET["year"];
   }

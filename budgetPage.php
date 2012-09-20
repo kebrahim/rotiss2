@@ -19,7 +19,7 @@
     $contracts = ContractDao::getContractsByTeamId($teamId);
 
     // for ever brogna record,
-    $currentYear = TimeUtil::getCurrentSeasonYear();
+    $currentYear = TimeUtil::getYearBasedOnKeeperNight();
     // TODO budget: allow user to adjust start year
     foreach ($brognas as $brogna) {
       if ($brogna->getYear() < $currentYear) {
@@ -54,7 +54,7 @@
         }
         $player = $contract->getPlayer();
         echo "<tr><td>" . $player->getFullName() . "</td>
-                  <td>" . $player->getPositions() . "</td>
+                  <td>" . $player->getPositionString() . "</td>
                   <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
                   <td>" . $player->getAge() . "</td>
                   <td>" . ($contract->getEndYear() - $brogna->getYear() + 1) . "</td>
