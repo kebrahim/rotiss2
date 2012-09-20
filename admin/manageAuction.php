@@ -26,7 +26,7 @@ function setDisplay(id, display) {
 function showPlayer(playerId) {
 	var selectedTeam = document.getElementsByName("team").item(0);
 	var selectedPlayer = document.getElementsByName("player").item(0);
-	
+
     // If playerId is blank, then clear the player div.
 	if (playerId == "" || playerId == "0") {
 		document.getElementById("playerDisplay").innerHTML="";
@@ -59,7 +59,7 @@ function showPlayer(playerId) {
 function showTeam(teamId) {
 	var selectedTeam = document.getElementsByName("team").item(0);
 	var selectedPlayer = document.getElementsByName("player").item(0);
-	
+
     // If teamid is blank, then clear the team div.
 	if (teamId=="" || teamId=="0") {
 		document.getElementById("teamDisplay").innerHTML="";
@@ -85,7 +85,7 @@ function showTeam(teamId) {
 			document.getElementById("teamDisplay").innerHTML=xmlhttp.responseText;
 		}
 	};
-	xmlhttp.open("GET","displayTeamForTrade.php?type=auction&team_id="+teamId,true);
+	xmlhttp.open("GET","displayTeamForTransaction.php?type=auction&team_id="+teamId,true);
 	xmlhttp.send();
 }
 </script>
@@ -98,7 +98,7 @@ function showTeam(teamId) {
   require_once '../dao/teamDao.php';
   require_once '../entity/auction.php';
   require_once '../util/time.php';
-  
+
   echo "<h1>Going once, Going twice, Sold!</h1>";
   echo "<FORM ACTION='manageAuction.php' METHOD=POST>";
 
@@ -107,16 +107,16 @@ function showTeam(teamId) {
   	// Create auction scenario.
   	$auction = new Auction();
   	$auction->parseAuctionFromPost();
-  	
+
   	// Validate auction.
   	if ($auction->validateAuction()) {
   	  // display who will be auctioning & amount
   	  $auction->showAuctionSummary();
-  		
+
   	  // request final confirmation of auction before execution
   	  echo "<br/><input class='button' type=submit name='confirmAuction' value='Confirm'>";
   	  echo "<input class='button' type=submit name='cancelAuction' value='Cancel'><br>";
-  	  
+
   	  // repost everything in POST, except for 'auction'
   	  // TODO change this to use SESSION
   	  foreach($_POST as $key=>$value) {
@@ -138,7 +138,7 @@ function showTeam(teamId) {
   	$auction = new Auction();
     // TODO pull data from session
   	$auction->parseAuctionFromPost();
-  	
+
   	// Validate auction.
   	if ($auction->validateAuction()) {
   	  // Initiate auction & report results.
@@ -164,9 +164,9 @@ function showTeam(teamId) {
   	if (count($auctionResults) > 0) {
   	  echo "</table>";
   	}
-  	
+
     // allow user to select one player from list of players eligible to be auctioned.
-    $players = PlayerDao::getPlayersForAuction($currentYear); 
+    $players = PlayerDao::getPlayersForAuction($currentYear);
     echo "<div id='column_container'>";
     echo "<div id='left_col'><div id='left_col_inner'>";
     echo "Select Player:<br><select name='player' onchange='showPlayer(this.value)'>

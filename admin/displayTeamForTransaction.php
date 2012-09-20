@@ -1,7 +1,7 @@
 <?php
   require_once '../dao/teamDao.php';
   require_once '../util/time.php';
-  // TODO rename to displayTeamForTransaction.php
+
   /**
    * Returns a Team based on the ID specified in the GET/POST.
    */
@@ -43,7 +43,7 @@
     echo "<input type='hidden' name='team". $position . "id' value='" . $team->getId() . "'>";
     echo "<br/><br/>";
   }
-  
+
   /**
    * Display team information for auction.
    */
@@ -67,7 +67,7 @@
   	die("<h1>Invalid display type for team</h1>");
   }
   $team = getTeamByParam("team_id");
-  
+
   if ($displayType == "trade") {
     if (isset($_REQUEST["position"])) {
       $position = $_REQUEST["position"];

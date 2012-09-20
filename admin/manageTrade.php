@@ -138,7 +138,8 @@ function selectTeam(position, teamid) {
 	  document.getElementById("teamDisplay"+position).innerHTML=xmlhttp.responseText;
 	}
   };
-  xmlhttp.open("GET","displayTeamForTrade.php?type=trade&team_id="+teamid+"&position="+position,true);
+  xmlhttp.open("GET",
+      "displayTeamForTransaction.php?type=trade&team_id="+teamid+"&position="+position,true);
   xmlhttp.send();
 }
 </script>
@@ -207,7 +208,7 @@ function selectTeam(position, teamid) {
     }
     echo "</select><br><br>";
     echo "<div id='teamDisplay1'></div><br/></div></div>";
-    
+
     // team 2
     echo "<div id='right_col'><div id='right_col_inner'>";
     echo "Select Team:<br><select name='team2' onchange='selectTeam(2, this.value)'>
