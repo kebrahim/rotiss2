@@ -17,12 +17,33 @@ class Trade {
   public function parseTradeFromPost() {
     $this->tradePartner1 = $this->parseTradePartnerFromPost($_POST['team1id']);
     $this->tradePartner2 = $this->parseTradePartnerFromPost($_POST['team2id']);
+
+    $_SESSION['team1id'] = $_POST['team1id'];
+    $_SESSION['team2id'] = $_POST['team2id'];
+  }
+
+  public function parseTradeFromSession() {
+    $this->tradePartner1 = $this->parseTradePartnerFromSession($_SESSION['team1id']);
+    $this->tradePartner2 = $this->parseTradePartnerFromSession($_SESSION['team2id']);
+
+    unset($_SESSION['team1id']);
+    unset($_SESSION['team2id']);
   }
 
   public function showTradeSummary() {
     echo "<h2>Trade Summary:</h2>";
+    echo "<div id='column_container'>
+            <div id='left_col'>
+              <div id='left_col_inner'>";
     $this->tradePartner1->showSummary();
+    echo "    </div>
+            </div>
+            <div id='right_col'>
+              <div id='right_col_inner'>";
     $this->tradePartner2->showSummary();
+    echo "    </div>
+            </div>
+          </div>";
   }
 
   public function validateTrade() {
@@ -36,23 +57,62 @@ class Trade {
     $this->tradePartner2->trade($this->tradePartner1->getTeam());
   }
 
+  /**
+   * Parses a TradePartner with the specified team ID from the $_POST array.
+   */
   private function parseTradePartnerFromPost($teamId) {
     $tradePartner = new TradePartner($teamId);
 
-    // process contracts
+    $this->parseContracts($teamId, $_POST, $tradePartner, true);
+    $this->parseBrognas($teamId, $_POST, $tradePartner, true);
+    $this->parseDraftPicks($teamId, $_POST, $tradePartner, true);
+    $this->parsePingPongBalls($teamId, $_POST, $tradePartner, true);
+
+    return $tradePartner;
+  }
+
+  /**
+   * Parses a TradePartner with the specified team ID from the $_SESSION array.
+   */
+  private function parseTradePartnerFromSession($teamId) {
+    $tradePartner = new TradePartner($teamId);
+
+    $this->parseContracts($teamId, $_SESSION, $tradePartner, false);
+    $this->parseBrognas($teamId, $_SESSION, $tradePartner, false);
+    $this->parseDraftPicks($teamId, $_SESSION, $tradePartner, false);
+    $this->parsePingPongBalls($teamId, $_SESSION, $tradePartner, false);
+
+    return $tradePartner;
+  }
+
+  /**
+   * Parses contract information for the specified team ID, out of the specified associative array
+   * & populates it in the specified trade partner.
+   */
+  private function parseContracts($teamId, $assocArray, TradePartner $tradePartner, $isPost) {
     $contractStr = 't' . $teamId . 'c';
-    if (isset($_POST[$contractStr]) && is_array($_POST[$contractStr])) {
+    if (isset($assocArray[$contractStr]) && is_array($assocArray[$contractStr])) {
       $contracts = array();
-      foreach ($_POST[$contractStr] as $contractId) {
+      foreach ($assocArray[$contractStr] as $contractId) {
         $contracts[] = ContractDao::getContractById($contractId);
       }
       $tradePartner->setContracts($contracts);
+      if ($isPost) {
+        $_SESSION[$contractStr] = $assocArray[$contractStr];
+      } else {
+        unset($_SESSION[$contractStr]);
+      }
     }
+  }
 
-    // brognas
+  /**
+   * Parses brogna information for the specified team ID, out of the specified associative array
+   * & populates it in the specified trade partner.
+   */
+  private function parseBrognas($teamId, $assocArray, TradePartner $tradePartner, $isPost) {
     $brognaStr = 't' . $teamId . 'b';
-    if (isset($_POST[$brognaStr])) {
-      $brognaYear = $_POST[$brognaStr];
+    if (isset($assocArray[$brognaStr])) {
+      $brognaYear = $assocArray[$brognaStr];
       // Ensure year is next year
       $currentYear = TimeUtil::getYearBasedOnKeeperNight();
       if ($brognaYear != ($currentYear + 1)) {
@@ -61,36 +121,62 @@ class Trade {
 
       // Get # of brognas traded.
       $numBrognasStr = 't' . $teamId . 'bv';
-      if (($_POST[$numBrognasStr] != null) && ($_POST[$numBrognasStr] != "")) {
-        $numBrognas = $_POST[$numBrognasStr];
+      if (($assocArray[$numBrognasStr] != null) && ($assocArray[$numBrognasStr] != "")) {
+        $numBrognas = $assocArray[$numBrognasStr];
       } else {
         $numBrognas = "0";
       }
       $tradePartner->setBrognas($numBrognas);
+      if ($isPost) {
+        $_SESSION[$brognaStr] = $assocArray[$brognaStr];
+        $_SESSION[$numBrognasStr] = $numBrognas;
+      } else {
+        unset($_SESSION[$brognaStr]);
+        unset($_SESSION[$numBrognasStr]);
+      }
     }
+  }
 
-    // draft picks
+  /**
+   * Parses draft pick information for the specified team ID, out of the specified associative
+   * array & populates it in the specified trade partner.
+   */
+  private function parseDraftPicks($teamId, $assocArray, TradePartner $tradePartner, $isPost) {
     $draftPickStr = 't' . $teamId . 'dpp';
-    if (isset($_POST[$draftPickStr]) && is_array($_POST[$draftPickStr])) {
+    if (isset($assocArray[$draftPickStr]) && is_array($assocArray[$draftPickStr])) {
       $draftPicks = array();
-      foreach ($_POST[$draftPickStr] as $draftPickId) {
+      foreach ($assocArray[$draftPickStr] as $draftPickId) {
         // Retrieve draft pick from DB.
         $draftPicks[] = DraftPickDao::getDraftPickById($draftPickId);
       }
       $tradePartner->setDraftPicks($draftPicks);
+      if ($isPost) {
+        $_SESSION[$draftPickStr] = $assocArray[$draftPickStr];
+      } else {
+        unset($_SESSION[$draftPickStr]);
+      }
     }
+  }
 
-    // pingpong balls
+  /**
+   * Parses ping pong ball information for the specified team ID, out of the specified associative
+   * array & populates it in the specified trade partner.
+   */
+  private function parsePingPongBalls($teamId, $assocArray, TradePartner $tradePartner, $isPost) {
     $pingPongStr = 't' . $teamId . 'dpb';
-    if (isset($_POST[$pingPongStr]) && is_array($_POST[$pingPongStr])) {
+    if (isset($assocArray[$pingPongStr]) && is_array($assocArray[$pingPongStr])) {
       $pingPongBalls = array();
-      foreach ($_POST[$pingPongStr] as $pingPongBallId) {
+      foreach ($assocArray[$pingPongStr] as $pingPongBallId) {
         // Retrieve pingpong ball from DB.
         $pingPongBalls[] = BallDao::getPingPongBallById($pingPongBallId);
       }
       $tradePartner->setPingPongBalls($pingPongBalls);
+      if ($isPost) {
+        $_SESSION[$pingPongStr] = $assocArray[$pingPongStr];
+      } else {
+        unset($_SESSION[$pingPongStr]);
+      }
     }
-    return $tradePartner;
   }
 }
 
@@ -149,37 +235,58 @@ class TradePartner {
 
     // display contracts
     if ($this->contracts) {
-      echo "<h4>Contracts</h4>";
+      echo "<strong>Contracts: </strong>";
+      $isFirst = true;
       foreach ($this->contracts as $contract) {
-        echo $contract->getPlayer()->getFullName() . "<br/>";
+        if ($isFirst) {
+          $isFirst = false;
+        } else {
+          echo ", ";
+        }
+        echo $contract->getPlayer()->getFullName();
       }
-      echo "<br/>";
+      echo "<br/><br/>";
     }
 
     // display brognas
     if ($this->brognas != null) {
-      echo "<h4>Brognas - " . $this->brognas . "</h4>";
+      echo "<strong>Brognas: </strong>" . $this->brognas . "<br/><br/>";
     }
 
     // display picks
     if ($this->draftPicks) {
-      echo "<h4>Draft Picks</h4>";
+      echo "<strong>Draft Picks: </strong>";
+      $isFirst = true;
       foreach ($this->draftPicks as $draftPick) {
-        echo $draftPick->toString() . "<br/>";
+        if ($isFirst) {
+          $isFirst = false;
+        } else {
+          echo ", ";
+        }
+        echo $draftPick->toString();
       }
-      echo "<br/>";
+      echo "<br/><br/>";
     }
 
     // display ping pong balls
     if ($this->pingPongBalls) {
-      echo "<h4>Ping Pong Balls</h4>";
+      echo "<strong>Ping Pong Balls: </strong>";
+      $isFirst = true;
       foreach ($this->pingPongBalls as $pingPongBall) {
-        echo $pingPongBall->toString() . "<br/>";
+        if ($isFirst) {
+          $isFirst = false;
+        } else {
+          echo ", ";
+        }
+        echo $pingPongBall->toString();
       }
-      echo "<br/>";
+      echo "<br/><br/>";
     }
   }
 
+  /**
+   * Returns whether a trade with the specified team is valid.
+   */
   public function validate(Team $otherTeam) {
     // validate contracts
     if ($this->contracts) {
@@ -252,6 +359,9 @@ class TradePartner {
     return true;
   }
 
+  /**
+   * Executes trade with specified team.
+   */
   public function trade(Team $otherTeam) {
     // Trade contracts
     if ($this->contracts) {

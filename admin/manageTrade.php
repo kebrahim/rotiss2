@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <html>
 <head>
 <title>Trading</title>
@@ -160,31 +161,21 @@ function selectTeam(position, teamid) {
     $trade = new Trade();
     $trade->parseTradeFromPost();
 
-    // display what will be traded
-    $trade->showTradeSummary();
+    // Validate trade.
+    if ($trade->validateTrade()) {
+      // display what will be traded
+      $trade->showTradeSummary();
 
-    // request final confirmation of trade before execution
-    echo "<input class='button' type=submit name='confirmTrade' value='Confirm'>";
-    echo "<input class='button' type=submit name='cancelTrade' value='Cancel'><br>";
-
-    // repost everything in POST, except for 'trade'
-    // TODO should probably change this to use SESSION
-    foreach($_POST as $key=>$value) {
-      if ($key != "trade") {
-        if (is_array($value)) {
-          foreach ($value as $val) {
-            echo "<input type='hidden' name='" . $key . "[]' value='" . $val . "'>";
-          }
-        } else {
-          echo "<input type='hidden' name='" . $key . "' value='" . $value . "'>";
-        }
-      }
+      // request final confirmation of trade before execution
+      echo "<input class='button' type=submit name='confirmTrade' value='Confirm'>";
+      echo "<input class='button' type=submit name='cancelTrade' value='Cancel'><br>";
+    } else {
+      echo "<h3>Cannot execute trade! Please <a href='manageTrade.php'>try again</a>.</h3>";
     }
   } elseif (isset($_POST['confirmTrade'])) {
-    // Re-create trade scenario from POST
-    // TODO pull data from session
+    // Re-create trade scenario from SESSION
     $trade = new Trade();
-    $trade->parseTradeFromPost();
+    $trade->parseTradeFromSession();
 
     // Validate trade.
     if ($trade->validateTrade()) {
