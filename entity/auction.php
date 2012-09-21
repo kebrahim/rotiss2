@@ -15,18 +15,32 @@ class Auction {
   private $team;
   private $player;
   private $amount;
-  
+
   public function parseAuctionFromPost() {
   	$this->team = TeamDao::getTeamById($_REQUEST['teamid']);
   	$this->player = PlayerDao::getPlayerById($_REQUEST['playerid']);
   	$this->amount = $_REQUEST['amount'];
+
+  	$_SESSION['teamid'] = $_REQUEST['teamid'];
+  	$_SESSION['playerid'] = $_REQUEST['playerid'];
+  	$_SESSION['amount'] = $_REQUEST['amount'];
+  }
+
+  public function parseAuctionFromSession() {
+    $this->team = TeamDao::getTeamById($_SESSION['teamid']);
+    $this->player = PlayerDao::getPlayerById($_SESSION['playerid']);
+    $this->amount = $_SESSION['amount'];
+
+    unset($_SESSION['teamid']);
+    unset($_SESSION['playerid']);
+    unset($_SESSION['amount']);
   }
 
   public function showAuctionSummary() {
     echo "<h2>Auction Summary</h2>";
     echo "<h3>" . $this->team->getName() . " (" . $this->team->getOwnersString() . ")</h3>";
     echo "<strong>Player: </strong>" . $this->player->getFullName() . ", " .
-          $this->player->getPositionString() . " (" . 
+          $this->player->getPositionString() . " (" .
           $this->player->getMlbTeam()->getAbbreviation() . ")<br/>";
     echo "<strong>Amount: </strong>" . $this->amount . "</br>";
   }
@@ -41,7 +55,7 @@ class Auction {
 
   	// confirm team has enough brognas to cover auction.
   	$currentYear = TimeUtil::getCurrentYear();
-  	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
+  	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear + 1);
   	if ($brognas->getTotalPoints() < $this->amount) {
   	  echo "Error: " . $this->team->getName() . " cannot spend " . $this->amount .
   	  	  " brognas; only has " . $brognas->getTotalPoints() . " total points.<br>";
@@ -56,7 +70,7 @@ class Auction {
     $this->saveAuctionResult();
     $this->saveAuctionContract();
   	$this->updateBrognas();
-  	
+
   	// TODO update changelog
   }
 
@@ -68,10 +82,10 @@ class Auction {
     $auctionResult = new AuctionResult(-1, $currentYear, $this->team->getId(),
         $this->player->getId(), $this->amount);
     AuctionResultDao::createAuctionResult($auctionResult);
-    echo "<strong>Auctioned:</strong> " . $this->player->getFullName() . " for " . 
+    echo "<strong>Auctioned:</strong> " . $this->player->getFullName() . " for " .
         $this->amount . " brognas<br>";
   }
-  
+
   /**
    * Creates and inserts a 1-year auction contract for team/player/amount.
    */
@@ -81,8 +95,8 @@ class Auction {
   	$contract = new Contract(-1, $this->player->getId(), $this->team->getId(), 1, $this->amount,
   	    $todayString, $currentYear, $currentYear, true);
 	ContractDao::createContract($contract);
-	echo "<strong>Signed:</strong> a 1-year auction " . 
-		 "contract [" . $contract->getStartYear() . ":" . $contract->getEndYear() . "] for " . 
+	echo "<strong>Signed:</strong> a 1-year auction " .
+		 "contract [" . $contract->getStartYear() . ":" . $contract->getEndYear() . "] for " .
 		 $this->amount . " brognas<br>";
   }
 
@@ -91,8 +105,8 @@ class Auction {
    */
   private function updateBrognas() {
   	$currentYear = TimeUtil::getCurrentYear();
-  	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
-  	 
+  	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear + 1);
+
 	// subtract amount from total points and save brognas
 	$originalTotalPoints = $brognas->getTotalPoints();
   	$brognas->setTotalPoints($originalTotalPoints - intval($this->amount));

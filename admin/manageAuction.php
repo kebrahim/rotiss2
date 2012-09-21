@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <html>
 <head>
 <title>Auction</title>
@@ -116,28 +117,13 @@ function showTeam(teamId) {
   	  // request final confirmation of auction before execution
   	  echo "<br/><input class='button' type=submit name='confirmAuction' value='Confirm'>";
   	  echo "<input class='button' type=submit name='cancelAuction' value='Cancel'><br>";
-
-  	  // repost everything in POST, except for 'auction'
-  	  // TODO change this to use SESSION
-  	  foreach($_POST as $key=>$value) {
-  	  	if ($key != "auction") {
-  	  	  if (is_array($value)) {
-  	  		foreach ($value as $val) {
-  	  		  echo "<input type='hidden' name='" . $key . "[]' value='" . $val . "'>";
-  	        }
-  	      } else {
-  	        echo "<input type='hidden' name='" . $key . "' value='" . $value . "'>";
-  	      }
-        }
-  	  }
   	} else {
   	  echo "<h3>Cannot execute auction! Please <a href='manageAuction.php'>try again</a>.</h3>";
   	}
   } elseif (isset($_POST['confirmAuction'])) {
-    // Re-create auction scenario
+    // Re-create auction scenario from session.
   	$auction = new Auction();
-    // TODO pull data from session
-  	$auction->parseAuctionFromPost();
+  	$auction->parseAuctionFromSession();
 
   	// Validate auction.
   	if ($auction->validateAuction()) {
