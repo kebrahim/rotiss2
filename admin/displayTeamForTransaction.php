@@ -22,10 +22,10 @@
    * Display team information [points, picks, players], allowing user to select those which should
    * be traded.
    */
-  function displayTeamForTrade($team, $position) {
+  function displayTeamForTrade(Team $team, $position) {
   	// Team info
+    echo "<h2>" . $team->getName() . "</h2>";
     echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
-    echo "<strong>" . $team->getName() . "</strong><br/>";
     echo $team->getOwnersString() . "<br/>";
 
     // Contracts
@@ -41,24 +41,48 @@
     $team->displayDraftPicks($draftSeason + 1, 3000, true);
 
     echo "<input type='hidden' name='team". $position . "id' value='" . $team->getId() . "'>";
-    echo "<br/><br/>";
+    echo "<br/>";
   }
 
   /**
    * Display team information for auction.
    */
-  function displayTeamForAuction($team) {
+  function displayTeamForAuction(Team $team) {
   	// Team info
   	echo "<h2>" . $team->getName() . "</h2>";
   	echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
   	echo $team->getOwnersString() . "<br/>";
 
-  	// Brognas
-  	$keeperSeason = TimeUtil::getYearBasedOnKeeperNight();
-  	$team->displayBrognas($keeperSeason + 1, $keeperSeason + 1, false, 0);
+  	// Brognas - auctions always happen in january, so current year is sufficient.
+  	$currentYear = TimeUtil::getCurrentYear();
+  	$team->displayBrognas($currentYear, $currentYear, false, 0);
 
   	echo "<input type='hidden' name='teamid' value='" . $team->getId() . "'>";
-    echo "<br/><br/>";
+    echo "<br/>";
+  }
+
+  /**
+   * Display team information for selecting keepers.
+   */
+  function displayTeamForKeepers(Team $team) {
+    // Team info
+    echo "<h2>" . $team->getName() . "</h2>";
+    echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
+    echo $team->getOwnersString() . "<br/>";
+
+    // Brognas - keepers always happen in march, so current year is sufficient.
+    $currentYear = TimeUtil::getCurrentYear() + 1; //TODO currentyear
+    $team->displayBrognas($currentYear, $currentYear, false, 0);
+
+    // TODO Contracts (with ability to add a keeper & buy out a contract)
+
+    // Ping pong balls (with ability to add more)
+    $team->displayPingPongBalls($currentYear, $currentYear);
+    echo "<input class='button' type='button' name='addpp' value='Add ball' onclick='addBall()'>
+          <br/>";
+
+    echo "<input type='hidden' name='teamid' value='" . $team->getId() . "'>";
+    echo "<br/>";
   }
 
   if (isset($_REQUEST["type"])) {
@@ -75,5 +99,7 @@
     displayTeamForTrade($team, $position);
   } else if ($displayType == "auction") {
   	displayTeamForAuction($team);
+  } else if ($displayType == "keepers") {
+    displayTeamForKeepers($team);
   }
 ?>

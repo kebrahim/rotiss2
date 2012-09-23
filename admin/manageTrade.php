@@ -172,7 +172,7 @@ function selectTeam(position, teamid) {
     } else {
       echo "<h3>Cannot execute trade! Please <a href='manageTrade.php'>try again</a>.</h3>";
     }
-  } elseif (isset($_POST['confirmTrade'])) {
+  } elseif(isset($_POST['confirmTrade'])) {
     // Re-create trade scenario from SESSION
     $trade = new Trade();
     $trade->parseTradeFromSession();
@@ -197,7 +197,7 @@ function selectTeam(position, teamid) {
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName() . "</option>";
     }
-    echo "</select><br><br>";
+    echo "</select><br>";
     echo "<div id='teamDisplay1'></div><br/></div></div>";
 
     // team 2
@@ -207,7 +207,7 @@ function selectTeam(position, teamid) {
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName() . "</option>";
     }
-    echo "</select><br><br>";
+    echo "</select><br>";
     echo "<div id='teamDisplay2'></div><br/></div></div></div>";
 
     echo "<div id='tradeButton' style='display:none'>

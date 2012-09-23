@@ -96,7 +96,7 @@ class Team {
   }
 
   /**
-   *
+   * Returns the brogna info associated with this team.
    */
   public function getBrognas() {
     if ($this->brognasLoaded != true) {
@@ -107,7 +107,7 @@ class Team {
   }
 
   /**
-   *
+   * Returns the draft picks associated with this team.
    */
   public function getDraftPicks() {
     if ($this->draftPicksLoaded != true) {
@@ -118,7 +118,7 @@ class Team {
   }
 
   /**
-   *
+   * Returns the ping pong balls associated with this team.
    */
   public function getPingPongBalls() {
     if ($this->ballsLoaded != true) {
@@ -235,6 +235,46 @@ class Team {
     echo "</table>";
   }
 
+  /**
+   * Displays the ping pong ball information only, between the specified years.
+   */
+  function displayPingPongBalls($minYear, $maxYear) {
+    echo "<h3>Ping Pong Balls</h3>";
+
+    $pingPongBalls = $this->filterBallsByYear($this->getPingPongBalls(), $minYear, $maxYear);
+
+    echo "<div id='ppballdiv'";
+    if (count($pingPongBalls) == 0) {
+      echo " style='display:none'>";
+    } else {
+      echo ">";
+    }
+
+    echo "<table id='ppballtable' class='center' border>
+            <tr><th>Number</th><th>Price</th><th>Remove</th></tr>";
+    $ballCount = 0;
+    foreach ($pingPongBalls as $pingPongBall) {
+      $ballCount++;
+      echo "<tr><td>" . $ballCount . "</td>
+                <td>" . $pingPongBall->getCost() . "</td></tr>";
+    }
+    echo "</table><br/></div>";
+    echo "<input type='hidden' name='savedppballcount' value='" . $ballCount . "'>";
+    echo "<input type='hidden' name='newppballcount' value='0'>";
+  }
+
+  /**
+   * Filters the specified array of ping pong balls by the min & max years.
+   */
+  function filterBallsByYear($balls, $minYear, $maxYear) {
+    $filteredBalls = array();
+    foreach ($balls as $ball) {
+      if (($ball->getYear() >= $minYear) && ($ball->getYear() <= $maxYear)) {
+        $filteredBalls[] = $ball;
+      }
+    }
+    return $filteredBalls;
+  }
 
   function displayAllBrognas() {
     $currentYear = TimeUtil::getYearBasedOnKeeperNight();

@@ -57,6 +57,7 @@ function showPlayer(playerId) {
 	xmlhttp.send();
 }
 
+// shows the team with the specified id
 function showTeam(teamId) {
 	var selectedTeam = document.getElementsByName("team").item(0);
 	var selectedPlayer = document.getElementsByName("player").item(0);
