@@ -32,6 +32,10 @@ class PingPongBall {
   public function getId() {
     return $this->ballId;
   }
+  
+  public function setId($id) {
+  	$this->ballId = $id;
+  }
 
   public function getYear() {
     return $this->year;

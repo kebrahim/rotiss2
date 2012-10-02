@@ -251,7 +251,8 @@ class Team {
     }
 
     echo "<table id='ppballtable' class='center' border>
-            <tr><th>Number</th><th>Price</th><th>Remove</th></tr>";
+            <tr><th>Number</th><th>Price</th>
+                <th id='ppRemoveColumn' style='display:none'>Remove</th></tr>";
     $ballCount = 0;
     foreach ($pingPongBalls as $pingPongBall) {
       $ballCount++;

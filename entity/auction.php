@@ -55,7 +55,7 @@ class Auction {
 
   	// confirm team has enough brognas to cover auction.
   	$currentYear = TimeUtil::getCurrentYear();
-  	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear + 1);
+  	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
   	if ($brognas->getTotalPoints() < $this->amount) {
   	  echo "Error: " . $this->team->getName() . " cannot spend " . $this->amount .
   	  	  " brognas; only has " . $brognas->getTotalPoints() . " total points.<br>";
@@ -105,7 +105,7 @@ class Auction {
    */
   private function updateBrognas() {
   	$currentYear = TimeUtil::getCurrentYear();
-  	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear + 1);
+  	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
 
 	// subtract amount from total points and save brognas
 	$originalTotalPoints = $brognas->getTotalPoints();

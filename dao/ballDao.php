@@ -54,8 +54,28 @@ class BallDao {
     return $balls;
   }
 
+  /**
+   * Inserts the specified PingPongBall in the 'ping_pong' table and returns the same PingPongBall
+   * with its id set.
+   */
   public static function createPingPongBall(PingPongBall $pingPongBall) {
-    // TODO
+    CommonDao::connectToDb();
+  	$query = "insert into ping_pong(year, cost, team_id)
+  	    values (" . $pingPongBall->getYear() . ", " . $pingPongBall->getCost() .
+  	    ", " . $pingPongBall->getTeam()->getId() . ")";
+  	$result = mysql_query($query);
+  	if (!$result) {
+  	  echo "Ping pong ball " . $pingPongBall->toString() . " already exists in DB. Try again.";
+  	  return null;
+  	}
+
+  	$idQuery = "select ping_pong_id from ping_pong where year = " . $pingPongBall->getYear() .
+  	    " and team_id = " . $pingPongBall->getTeam()->getId() . " and cost = " .
+  	    $pingPongBall->getCost();
+  	$result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
+  	$row = mysql_fetch_assoc($result);
+  	$pingPongBall->setId($row["ping_pong_id"]);
+  	return $pingPongBall;
   }
 
   public static function updatePingPongBall(PingPongBall $pingPongBall) {

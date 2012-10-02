@@ -114,8 +114,8 @@ class Trade {
     if (isset($assocArray[$brognaStr])) {
       $brognaYear = $assocArray[$brognaStr];
       // Ensure year is next year
-      $currentYear = TimeUtil::getYearBasedOnKeeperNight();
-      if ($brognaYear != ($currentYear + 1)) {
+      $nextYear = TimeUtil::getYearBasedOnKeeperNight() + 1;
+      if ($brognaYear != $nextYear) {
         die("Invalid brogna year to trade " . $brognaYear);
       }
 

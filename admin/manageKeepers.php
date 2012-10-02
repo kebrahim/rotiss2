@@ -73,6 +73,10 @@ function addBall() {
     // update count of new pp balls
     var oldCount = Number(document.getElementsByName("newppballcount").item(0).value);
     document.getElementsByName("newppballcount").item(0).value = oldCount + 1;
+
+    // ensure the 'remove' column is visible
+    var ppRemoveColumn = document.getElementById("ppRemoveColumn");
+    ppRemoveColumn.style.display = "block";
 }
 
 // removes a row from the ping pong ball table & updates any rows below it
@@ -98,14 +102,20 @@ function removeBall(rowNumber) {
                 + " onclick='removeBall(" + r + ")'>";
 		}
 	} else if (totalRows == 2) {
-	    // now, there are zero non-header rows remaining, so hide the table
+	    // there are zero non-header rows remaining, so hide the table
      	var ppBallDiv = document.getElementById("ppballdiv");
 		ppBallDiv.style.display = "none";
 	}
 
     // update count of new pp balls
-    var oldCount = Number(document.getElementsByName("newppballcount").item(0).value);
-    document.getElementsByName("newppballcount").item(0).value = oldCount - 1;
+    var newCount = Number(document.getElementsByName("newppballcount").item(0).value) - 1;
+    document.getElementsByName("newppballcount").item(0).value = newCount;
+
+    // if there are no more editable balls, hide 'remove' column
+    if (newCount == 0) {
+      	var ppRemoveColumn = document.getElementById("ppRemoveColumn");
+      	ppRemoveColumn.style.display = "none";
+    }
 }
 
 </script>
@@ -113,16 +123,40 @@ function removeBall(rowNumber) {
 
 <?php
 require_once '../dao/teamDao.php';
+require_once '../entity/keepers.php';
 
   echo "<h1>Jeepers keepers!</h1>";
   echo "<FORM ACTION='manageKeepers.php' METHOD=POST>";
 
   if(isset($_POST['save'])) {
-    // TODO If save button was pressed, display changes to be saved.
-
+  	// Create keeper scenario.
+  	$keepers = new Keepers();
+  	$keepers->parseKeepersFromPost();
+  	
+  	// Validate keepers.
+  	if ($keepers->validateKeepers()) {
+  		// display changes to the keepers
+  		$keepers->showKeepersSummary();
+  	
+  		// request final confirmation of keepers before execution
+  		echo "<br/><input class='button' type=submit name='confirmSave' value='Confirm'>";
+  		echo "<input class='button' type=submit name='cancelSave' value='Cancel'><br>";
+  	} else {
+  		echo "<h3>Cannot save keepers! Please <a href='manageKeepers.php'>try again</a>.</h3>";
+  	}  	 
   } elseif(isset($_POST['confirmSave'])) {
-    // TODO If confirmSave button was pressed, save changes.
-
+  	// Re-create keeper scenario from session.
+  	$keepers = new Keepers();
+  	$keepers->parseKeepersFromSession();
+  	
+  	// Validate keepers.
+  	if ($keepers->validateKeepers()) {
+  	  	// Save keepers & report results.
+  		$keepers->saveKeepers();
+  		echo "<br><a href='manageKeepers.php'>Let's do it again!</a><br>";
+  	} else {
+  		echo "<h3>Cannot save keepers! Please <a href='manageKeepers.php'>try again</a>.</h3>";
+  	}
   } elseif(isset($_POST['bank'])) {
     // TODO If bank button was pressed, display brogna information that will be updated.
 
