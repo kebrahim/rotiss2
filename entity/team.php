@@ -137,7 +137,8 @@ class Team {
   * Display all contract information for this team.
   */
   public function displayContracts($minYear, $maxYear, $isSelectable) {
-    $contracts = ContractDao::getContractsByTeamId($this->teamId);
+    $contracts = $this->filterContractsByYear(
+        ContractDao::getContractsByTeamId($this->teamId), $minYear, $maxYear, true);
     if (count($contracts) == 0) {
       return;
     }
@@ -157,9 +158,6 @@ class Team {
             <th>End Year</th>
             <th>Type</th></tr>";
     foreach ($contracts as $contract) {
-      if (($contract->getEndYear() < $minYear) || ($contract->getStartYear() > $maxYear)) {
-        continue;
-      }
       $player = $contract->getPlayer();
       echo "<tr>";
       if ($isSelectable) {
@@ -179,6 +177,59 @@ class Team {
                   <td>" . ($contract->isAuction() ? "Auction" : "Regular") . "</td></tr>";
     }
     echo "</table>";
+  }
+  
+  /**
+   * Display non-auction contracts for the keeper page, filtered by year.
+   */
+  function displayContractsForKeepers($minYear, $maxYear) {
+  	echo "<h3>Contracts</h3>";
+  	
+  	$contracts = $this->filterContractsByYear(
+  	    ContractDao::getContractsByTeamId($this->teamId), $minYear, $maxYear, false);
+    if (count($contracts) == 0) {
+ 	  return;
+  	}
+  	
+  	echo "<table class='center' border><tr>";
+  	echo "  <th>Name</th>
+  	        <th>Position</th>
+        	<th>Team</th>
+        	<th>Years</th>
+  	        <th>Price</th>
+  	        <th>Start Year</th>
+  	        <th>End Year</th>
+  	        <th>Buy Out</th></tr>";
+  	foreach ($contracts as $contract) {
+  	  $player = $contract->getPlayer();
+  	  echo "<tr>";
+	  echo "<td><a href='../displayPlayer.php?player_id=" . $player->getId() . "'>" .
+  	            $player->getFullName() . "</a></td>
+  			<td>" . $player->getPositionString() . "</td>
+  			<td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
+  			<td>" . $contract->getTotalYears() . "</td>
+  			<td>" . $contract->getPrice() . "</td>
+  			<td>" . $contract->getStartYear() . "</td>
+  			<td>" . $contract->getEndYear() . "</td>
+	        <td><input type=checkbox name='buyout[]'
+	             value='" . $contract->getId() . "'></td></tr>";
+  	}
+  	echo "</table>";
+  }
+  
+  /**
+   * Filters the specified array of contracts by min/max years; if includeAuction is false, then
+   * auction contracts are also filtered out.
+   */
+  function filterContractsByYear($contracts, $minYear, $maxYear, $includeAuction) {
+  	$filteredContracts = array();
+  	foreach ($contracts as $contract) {
+  	  if (($contract->getEndYear() >= $minYear) && ($contract->getStartYear() <= $maxYear)
+  	      && ($includeAuction || !$contract->isAuction())) {
+	    $filteredContracts[] = $contract;
+  	  }
+  	}
+  	return $filteredContracts;
   }
 
   function displayAllDraftPicks() {

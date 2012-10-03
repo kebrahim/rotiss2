@@ -12,21 +12,24 @@ CommonEntity::requireFileIn('/../util/', 'time.php');
  */
 class Keepers {
   private $team;
-  private $contracts;
+  private $buyoutContracts;
+  private $newContracts;
   private $pingPongBalls;
 
   public function parseKeepersFromPost() {
   	$this->team = TeamDao::getTeamById($_POST['teamid']);
-  	// TODO $this->contracts = $this->parseContracts($_POST, true);
-    $this->pingPongBalls = $this->parsePingPongBalls($_POST, true);
+  	$this->buyoutContracts = $this->parseBuyoutContracts($_POST, true);
+  	$this->newContracts = $this->parseNewContracts($_POST, true);
+  	$this->pingPongBalls = $this->parsePingPongBalls($_POST, true);
   	
     SessionUtil::updateSession('teamid', $_POST, true);
   }
 
   public function parseKeepersFromSession() {
     $this->team = TeamDao::getTeamById($_SESSION['teamid']);
-  	// TODO $this->contracts = $this->parseContracts($_SESSION, false);
-    $this->pingPongBalls = $this->parsePingPongBalls($_SESSION, false);
+  	$this->buyoutContracts = $this->parseBuyoutContracts($_SESSION, false);
+  	$this->newContracts = $this->parseNewContracts($_SESSION, false);
+  	$this->pingPongBalls = $this->parsePingPongBalls($_SESSION, false);
     
     SessionUtil::updateSession('teamid', $_SESSION, false);
   }
@@ -51,11 +54,26 @@ class Keepers {
   	return $pingPongBalls;
   }
   
+  private function parseBuyoutContracts($assocArray, $isPost) {
+  	$buyoutString = 'buyout';
+  	if (isset($assocArray[$buyoutString]) && is_array($assocArray[$buyoutString])) {
+       // TODO start here
+  	}
+
+  	SessionUtil::updateSession($buyoutString, $assocArray, $isPost);
+  }
+  
+  private function parseNewContracts($assocArray, $isPost) {
+  	
+  }
+  
   public function showKeepersSummary() {
     echo "<h2>Keepers Summary</h2>";
     echo "<h3>" . $this->team->getName() . " (" . $this->team->getOwnersString() . ")</h3>";
 
-    // TODO display contracts
+    // TODO display buyout contracts
+
+    // TODO display new contracts
     
     // display ping pong balls
     if ($this->pingPongBalls && (count($this->pingPongBalls) > 0)) {
@@ -76,8 +94,10 @@ class Keepers {
   public function validateKeepers() {
   	$totalBrognasSpent = 0;
   	
-	// TODO validate contracts
-
+	// TODO validate buyout contracts
+  	
+	// TODO validate new contracts
+  	  
   	// validate ping pong ball values
   	if ($this->pingPongBalls && (count($this->pingPongBalls) > 0)) {
   	  foreach ($this->pingPongBalls as $pingPongBall) {
@@ -108,8 +128,9 @@ class Keepers {
 
   	$totalBrognasSpent = 0;
   	
-  	// TODO save contracts
-    
+  	// TODO buyout contracts
+  	// TODO create new contracts
+  	  
     // save ping pong balls
     if ($this->pingPongBalls && (count($this->pingPongBalls) > 0)) {
       foreach ($this->pingPongBalls as $pingPongBall) {
