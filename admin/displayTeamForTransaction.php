@@ -76,7 +76,7 @@
 
     // Contracts (with ability to add a keeper & buy out a contract)
     $team->displayContractsForKeepers($currentYear, $currentYear);
-    echo "<br><input class='button' type='button' name='addcontract' value='Add contract'
+    echo "<input class='button' type='button' name='addcontract' value='Add contract'
            onclick='addContract()'><br/>";
     
     // Ping pong balls (with ability to add more)

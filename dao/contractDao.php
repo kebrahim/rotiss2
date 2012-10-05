@@ -5,12 +5,12 @@ CommonDao::requireFileIn('/../entity/', 'contract.php');
 
 class ContractDao {
   /**
-   * Returns all of the contracts for the specified team ID.
+   * Returns all of the non-bought-out contracts for the specified team ID.
    */
   static function getContractsByTeamId($teamId) {
     CommonDao::connectToDb();
     $query = "select * from contract
-              where team_id = " . $teamId .
+              where team_id = " . $teamId . " and is_bought_out = 0" .
               " order by sign_date, end_year, price DESC";
     return ContractDao::createContractsFromQuery($query);
   }
@@ -33,7 +33,7 @@ class ContractDao {
       $contracts[] = new Contract($contractDb["contract_id"], $contractDb["player_id"],
           $contractDb["team_id"], $contractDb["num_years"], $contractDb["price"],
           $contractDb["sign_date"], $contractDb["start_year"], $contractDb["end_year"],
-          $contractDb["is_auction"]);
+          $contractDb["is_auction"], $contractDb["is_bought_out"]);
     }
     return $contracts;
   }
@@ -44,11 +44,12 @@ class ContractDao {
   public static function createContract(Contract $contract) {
     CommonDao::connectToDb();
     $query = "insert into contract(player_id, team_id, num_years, price, sign_date, start_year,
-              end_year, is_auction) values (" .
+              end_year, is_auction, is_bought_out) values (" .
               $contract->getPlayer()->getId() . ", " . $contract->getTeam()->getId() . ", " .
               $contract->getTotalYears() . ", " . $contract->getPrice() . ", '" .
               $contract->getSignDate() . "', " . $contract->getStartYear() . ", " .
-              $contract->getEndYear() . ", " . ($contract->isAuction() ? "1" : "0") . ")";
+              $contract->getEndYear() . ", " . ($contract->isAuction() ? "1" : "0") .
+              ($contract->isBoughtOut() ? "1" : "0") . ")";
     $result = mysql_query($query);
     if (!$result) {
       echo "Contract " . $contract->toString() . " already exists in DB. Try again.";
@@ -75,7 +76,9 @@ class ContractDao {
                                   price = " . $contract->getPrice() . ",
                                   sign_date = '" . $contract->getSignDate() . "',
                                   start_year = " . $contract->getStartYear() . ",
-                                  end_year = " . $contract->getEndYear() .
+                                  end_year = " . $contract->getEndYear() . ",
+                                  is_auction = " . ($contract->isAuction() ? "1" : "0") . ", 
+                                  is_bought_out = " . ($contract->isBoughtOut() ? "1" : "0") .
              " where contract_id = " . $contract->getId();
     $result = mysql_query($query) or die('Invalid query: ' . mysql_error());
   }

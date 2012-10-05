@@ -2,6 +2,7 @@
 
 require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'playerDao.php');
+CommonEntity::requireFileIn('/../util/', 'time.php');
 
 /**
  * Represents a contract.
@@ -14,6 +15,7 @@ class Contract {
   private $startYear;
   private $endYear;
   private $isAuction;
+  private $isBoughtOut;
 
   private $playerId;
   private $playerLoaded;
@@ -24,7 +26,7 @@ class Contract {
   private $team;
 
   public function __construct($contractId, $playerId, $teamId, $totalYears, $price, $signDate,
-      $startYear, $endYear, $isAuction) {
+      $startYear, $endYear, $isAuction, $isBoughtOut) {
     $this->contractId = $contractId;
     $this->playerId = $playerId;
     $this->playerLoaded = false;
@@ -36,6 +38,7 @@ class Contract {
     $this->startYear = $startYear;
     $this->endYear = $endYear;
     $this->isAuction = $isAuction;
+    $this->isBoughtOut = $isBoughtOut;
   }
 
   public function getId() {
@@ -48,6 +51,12 @@ class Contract {
   
   public function getTotalYears() {
     return $this->totalYears;
+  }
+  
+  public function getYearsLeft() {
+  	$currentYear = TimeUtil::getCurrentYear() + 1; // TODOcurrentyear
+  	$yearsLeft = ($this->getEndYear() - $currentYear) + 1;
+  	return ($yearsLeft > 0) ? $yearsLeft : 0;
   }
 
   public function getPrice() {
@@ -78,6 +87,30 @@ class Contract {
   	return $this->isAuction;
   }
   
+  public function isBoughtOut() {
+  	return $this->isBoughtOut;
+  }
+
+  public function buyOut() {
+  	$this->isBoughtOut = true;
+  }
+  
+  /**
+   * Returns the cost for buying out this contract.
+   */
+  public function getBuyoutPrice() {
+  	return intval(($this->getPrice() * $this->getYearsLeft()) / 2);
+  }
+  
+  /**
+   * Return a string representation of a bought out contract.
+   */
+  public function getBuyoutContractString() {
+  	return $this->getPlayer()->getFullName() . ": " . $this->getYearsLeft() .
+  	    " year(s) remaining at $" . $this->getPrice() . " - Buyout price: $" .
+  	    $this->getBuyoutPrice();
+  }
+
   public function getTeam() {
     if ($this->teamLoaded != true) {
       $this->team = TeamDao::getTeamById($this->teamId);
@@ -92,7 +125,7 @@ class Contract {
   }
   
   public function toString() {
-  	return $this->player->getFullName() . ": " . $this->team->getName() . " [" . $this->startYear .
+  	return $this->getPlayer()->getFullName() . ": " . $this->getTeam()->getName() . " [" . $this->startYear .
   	    ":" . $this->endYear . "] - $" . $this->price . " (" . $this->signDate . ")";
   }
 }

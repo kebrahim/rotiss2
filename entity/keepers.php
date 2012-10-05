@@ -56,11 +56,14 @@ class Keepers {
   
   private function parseBuyoutContracts($assocArray, $isPost) {
   	$buyoutString = 'buyout';
+    $buyoutContracts = array();
   	if (isset($assocArray[$buyoutString]) && is_array($assocArray[$buyoutString])) {
-       // TODO start here
-  	}
-
-  	SessionUtil::updateSession($buyoutString, $assocArray, $isPost);
+      foreach ($assocArray[$buyoutString] as $contractId) {
+      	$buyoutContracts[] = ContractDao::getContractById($contractId);
+      }
+  	  SessionUtil::updateSession($buyoutString, $assocArray, $isPost);
+    }
+  	return $buyoutContracts;
   }
   
   private function parseNewContracts($assocArray, $isPost) {
@@ -70,32 +73,61 @@ class Keepers {
   public function showKeepersSummary() {
     echo "<h2>Keepers Summary</h2>";
     echo "<h3>" . $this->team->getName() . " (" . $this->team->getOwnersString() . ")</h3>";
-
-    // TODO display buyout contracts
+    
+    // display buyout contracts
+    $buyoutBrognas = 0;
+    if ($this->buyoutContracts) {
+      echo "<h4>Buyout Contract(s):</h4>";
+      foreach ($this->buyoutContracts as $contract) {
+      	echo $contract->getBuyoutContractString() . "<br/>";
+      	$buyoutBrognas += $contract->getBuyoutPrice();
+      }
+    }
 
     // TODO display new contracts
+    $newContractBrognas = 0;
     
     // display ping pong balls
+    $pingPongBrognas = 0;
     if ($this->pingPongBalls && (count($this->pingPongBalls) > 0)) {
-      echo "<strong>Ping Pong Balls: </strong>";
-      $isFirst = true;
+      echo "<h4>Ping Pong Ball(s):</h4>";
       foreach ($this->pingPongBalls as $pingPongBall) {
-    	if ($isFirst) {
-    	  $isFirst = false;
-    	} else {
-    	  echo ", ";
-    	}
-    	echo $pingPongBall->toString();
+    	echo "$" . $pingPongBall->getCost() . "<br/>";
+    	$pingPongBrognas += $pingPongBall->getCost();
       }
-      echo "<br/><br/>";
     }
+    
+    // display summary
+    $currentYear = TimeUtil::getCurrentYear() + 1; // TODO currentYear
+    $brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
+    echo "<h4>Brognas</h4>";
+    echo "<table class='center' border><tr><th></th><th>Price</th></tr>";
+    echo "<tr><td><strong>" . $currentYear . " Brognas</strong></td>
+              <td><strong>" . $brognas->getTotalPoints() . "</strong></td></tr>";
+    echo "<tr><td>Buyout Contracts</td><td>" . $buyoutBrognas . "</td></tr>";
+    echo "<tr><td>New Contracts</td><td>" . $newContractBrognas . "</td></tr>";
+    echo "<tr><td>Ping Pong Balls</td><td>" . $pingPongBrognas . "</td></tr>";
+    
+    $totalBrognas = $brognas->getTotalPoints() -
+        ($buyoutBrognas + $newContractBrognas + $pingPongBrognas);
+    echo "<tr><td><strong>Leftover Brognas</strong></td><td><strong>" . $totalBrognas .
+        "</strong></td></tr></table><br/>";
   }
 
   public function validateKeepers() {
   	$totalBrognasSpent = 0;
   	
-	// TODO validate buyout contracts
-  	
+	// validate buyout contracts
+  	if ($this->buyoutContracts) {
+	  foreach ($this->buyoutContracts as $contract) {
+	  	if ($contract->isAuction() || $contract->isBoughtOut()) {
+		  echo "Error: cannot buy out contract: " . $contract->getBuyoutContractString() . "<br>";
+	  	  return false;
+	  	}	  	
+	  	$totalBrognasSpent += $contract->getBuyoutPrice();
+	  }
+  	}
+  	 
 	// TODO validate new contracts
   	  
   	// validate ping pong ball values
@@ -128,7 +160,16 @@ class Keepers {
 
   	$totalBrognasSpent = 0;
   	
-  	// TODO buyout contracts
+  	// buyout contracts
+  	if ($this->buyoutContracts) {
+  	  foreach ($this->buyoutContracts as $contract) {
+  	    $contract->buyOut();
+  	    ContractDao::updateContract($contract);
+  	    echo "<strong>Bought out:</strong> " . $contract->getBuyoutContractString() . "<br/>";
+  	  	$totalBrognasSpent += $contract->getBuyoutPrice();  	  	
+  	  }
+  	}
+  	
   	// TODO create new contracts
   	  
     // save ping pong balls

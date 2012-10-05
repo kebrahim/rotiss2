@@ -195,7 +195,7 @@ class Team {
   	echo "  <th>Name</th>
   	        <th>Position</th>
         	<th>Team</th>
-        	<th>Years</th>
+        	<th>Years Left</th>
   	        <th>Price</th>
   	        <th>Start Year</th>
   	        <th>End Year</th>
@@ -207,14 +207,14 @@ class Team {
   	            $player->getFullName() . "</a></td>
   			<td>" . $player->getPositionString() . "</td>
   			<td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
-  			<td>" . $contract->getTotalYears() . "</td>
+  			<td>" . $contract->getYearsLeft() . "</td>
   			<td>" . $contract->getPrice() . "</td>
   			<td>" . $contract->getStartYear() . "</td>
   			<td>" . $contract->getEndYear() . "</td>
 	        <td><input type=checkbox name='buyout[]'
 	             value='" . $contract->getId() . "'></td></tr>";
   	}
-  	echo "</table>";
+  	echo "</table><br/>";
   }
   
   /**
