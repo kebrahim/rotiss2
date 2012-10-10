@@ -54,7 +54,7 @@ class Contract {
   }
   
   public function getYearsLeft() {
-  	$currentYear = TimeUtil::getCurrentYear() + 1; // TODOcurrentyear
+  	$currentYear = TimeUtil::getCurrentYear();
   	$yearsLeft = ($this->getEndYear() - $currentYear) + 1;
   	return ($yearsLeft > 0) ? $yearsLeft : 0;
   }

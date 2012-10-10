@@ -344,7 +344,7 @@ class Team {
     }
 
     echo "<h3>Brognas</h3>";
-    echo "<table class='center' border><tr>";
+    echo "<table class='center' id='brognaTable' border><tr>";
     if ($isSelectable) {
       echo "<th></th>";
     }

@@ -98,7 +98,7 @@ class Keepers {
     }
     
     // display summary
-    $currentYear = TimeUtil::getCurrentYear() + 1; // TODO currentYear
+    $currentYear = TimeUtil::getCurrentYear();
     $brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
     echo "<h4>Brognas</h4>";
     echo "<table class='center' border><tr><th></th><th>Price</th></tr>";
@@ -143,7 +143,7 @@ class Keepers {
   	}
   	
   	// confirm team has enough money to spend on contracts & balls.
-  	$currentYear = TimeUtil::getCurrentYear() + 1; // TODO currentYear
+  	$currentYear = TimeUtil::getCurrentYear();
   	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
   	if ($brognas->getTotalPoints() < $totalBrognasSpent) {
   	  echo "Error: " . $this->team->getName() . " cannot spend " . $totalBrognasSpent .
@@ -182,7 +182,7 @@ class Keepers {
     }
 
     // update brognas
-  	$currentYear = TimeUtil::getCurrentYear() + 1; // TODO currentYear
+  	$currentYear = TimeUtil::getCurrentYear();
   	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
 	$originalTotalPoints = $brognas->getTotalPoints();
   	$brognas->setTotalPoints($originalTotalPoints - $totalBrognasSpent);

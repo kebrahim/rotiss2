@@ -62,7 +62,8 @@
   }
 
   /**
-   * Display team information for selecting keepers.
+   * Display team information for selecting keepers, including buttons to add more keepers if not
+   * in read-only mode.
    */
   function displayTeamForKeepers(Team $team) {
     // Team info
@@ -71,21 +72,45 @@
     echo $team->getOwnersString() . "<br/>";
 
     // Brognas - keepers always happen in march, so current year is sufficient.
-    $currentYear = TimeUtil::getCurrentYear() + 1; //TODO currentyear
-    $team->displayBrognas($currentYear, $currentYear, false, 0);
+    $currentYear = TimeUtil::getCurrentYear();
+    $team->displayBrognas($currentYear, $currentYear + 1, false, 0);
 
+    // Provide ability to add contracts and balls if brognas exist and have not been banked for the
+    // current year.
+    $readOnly = count(BrognaDao::getBrognasByTeamFilteredByYears(
+        $team->getId(), $currentYear, $currentYear + 1)) != 1;
+    
+    if ($readOnly) {
+      echo "<br/>
+            <div id='bankMessageDiv' style='color:red; font-weight:bold'>
+              Cannot add keepers as this team has already banked!
+    	    </div>";
+    } else {
+      echo "<br/>
+            <input class='button' type=submit name='save' value='Save changes'>
+    	    <input class='button' type=submit name='bank' value='Bank money'>
+    	    <input class='button' type=submit name='cancel' value='Cancel'>";
+    }
+    
     // Contracts (with ability to add a keeper & buy out a contract)
+    echo "<div id='column_container'>";
+    echo "<div id='left_col'><div id='left_col_inner'>";
     $team->displayContractsForKeepers($currentYear, $currentYear);
-    echo "<input class='button' type='button' name='addcontract' value='Add contract'
-           onclick='addContract()'><br/>";
+    if (!$readOnly) {
+      echo "<input id='addContractButton' class='button' type='button' name='addcontract'
+             value='Add contract' onclick='addContract()'><br/>";
+    }
+    echo "</div></div>";
     
     // Ping pong balls (with ability to add more)
+    echo "<div id='right_col'><div id='right_col_inner'>";
     $team->displayPingPongBalls($currentYear, $currentYear);
-    echo "<input class='button' type='button' name='addpp' value='Add ball' onclick='addBall()'>
-          <br/>";
-
-    echo "<input type='hidden' name='teamid' value='" . $team->getId() . "'>";
-    echo "<br/>";
+    if (!$readOnly) {
+      echo "<input id='addBallButton' class='button' type='button' name='addpp' value='Add ball'
+           onclick='addBall()'><br/>";
+    }
+    echo "</div></div></div>";    
+    echo "<input type='hidden' name='teamid' value='" . $team->getId() . "'>";  
   }
 
   if (isset($_REQUEST["type"])) {

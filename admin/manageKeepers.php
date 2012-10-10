@@ -17,23 +17,18 @@ table.center {margin-left:auto; margin-right:auto;}
 </style>
 
 <script>
-//sets the display of the div with the specified id
+// sets the display of the div with the specified id
 function setDisplay(id, display) {
   var divid = document.getElementById(id);
   divid.style.display = display;
 }
 
-//shows the team with the specified id
+// shows the team with the specified id
 function showTeam(teamId) {
     // If teamid is blank, then clear the team div.
 	if (teamId=="" || teamId=="0") {
 		document.getElementById("teamDisplay").innerHTML="";
-
-	    // hide save button
-		setDisplay("saveButton", "none");
-	    return;
-	} else {
-		setDisplay("saveButton", "block");
+		return;
 	}
 
 	// Display team information.
@@ -158,11 +153,52 @@ require_once '../entity/keepers.php';
   		echo "<h3>Cannot save keepers! Please <a href='manageKeepers.php'>try again</a>.</h3>";
   	}
   } elseif(isset($_POST['bank'])) {
-    // TODO If bank button was pressed, display brogna information that will be updated.
+    // If bank button was pressed, display brogna information that will be updated.
+    $team = TeamDao::getTeamById($_POST['teamid']);
+    echo "<h2>" . $team->getName() . "</h2>";
+    echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
+    echo $team->getOwnersString() . "<br/>";    
+    
+  	$currentYear = TimeUtil::getCurrentYear();
+  	$nextYear = $currentYear + 1;
+  	$currentYearBrognas = BrognaDao::getBrognasByTeamAndYear($team->getId(), $currentYear);
 
+  	echo "<h3>Bank it up!</h3>";
+  	echo "<strong>" . $currentYear . " Bank:</strong> $" . $currentYearBrognas->getTotalPoints() . 
+    	" for " . $nextYear . " season<br/><br/>";
+  	echo "<strong>Allocate " . $nextYear . " budget:</strong> $450 + $" .
+    	$currentYearBrognas->getTotalPoints() . " = $" .
+  	    (450 + $currentYearBrognas->getTotalPoints());
+  
+  	// request final confirmation of keepers before execution
+  	echo "<br/><br/><div style='color:red; font-weight:bold'>Note that once you confirm, this team
+  	    will not be able to make any more selections for " . $currentYear . "!</div><br/>";
+  	echo "<input class='button' type=submit name='confirmBank' value='Confirm'>";
+  	echo "<input class='button' type=submit name='cancelBank' value='Cancel'><br>";	
+    echo "<input type='hidden' name='teamid' value='" . $team->getId() . "'>";
   } elseif(isset($_POST['confirmBank'])) {
-    // TODO If confirmBank button was pressed, save brogna info.
+    // If confirmBank button was pressed, save brogna info.
+  	$team = TeamDao::getTeamById($_POST['teamid']);
+  	echo "<h2>" . $team->getName() . "</h2>";
+  	echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
+  	echo $team->getOwnersString() . "<br/>";
 
+  	echo "<h3>Banking confirmed!</h3>";
+  	$currentYear = TimeUtil::getCurrentYear();
+  	$nextYear = $currentYear + 1;
+  	$currentYearBrognas = BrognaDao::getBrognasByTeamAndYear($team->getId(), $currentYear);
+  	$bankedPoints = $currentYearBrognas->getTotalPoints();
+  	echo "<strong>" . $currentYear . " Bank:</strong> $" . $bankedPoints .
+  	    " for " . $nextYear . " season";
+  	
+  	// Save & display brogna info for next year
+  	$nextYearTotalPoints = $bankedPoints + 450;
+  	$nextYearBrognas = new Brogna($team->getId(), $nextYear, $nextYearTotalPoints, $bankedPoints,
+  	    0, 0, 50 + $bankedPoints);
+  	BrognaDao::createBrognas($nextYearBrognas);
+  	$team->displayBrognas($nextYear, $nextYear, false, 0);
+  	
+  	echo "<br><a href='manageKeepers.php'>Let's do it again!</a><br>";
   } else {
     $teams = TeamDao::getAllTeams();
     echo "Select Team:<br><select name='team' onchange='showTeam(this.value)'>
@@ -172,11 +208,6 @@ require_once '../entity/keepers.php';
     }
     echo "</select><br>";
     echo "<div id='teamDisplay'></div><br/>";
-    echo "<div id='saveButton' style='display:none'>
-            <input class='button' type=submit name='save' value='Save changes'>
-            <input class='button' type=submit name='bank' value='Bank money'>
-            <input class='button' type=submit name='cancel' value='Cancel'>
-          </div>";
   }
   echo "</form>";
 ?>
