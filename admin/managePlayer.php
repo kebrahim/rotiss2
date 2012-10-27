@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Rotiss 2012</title>
+<title>Manage Player</title>
 </head>
 
 <body>
@@ -26,8 +26,14 @@
     $playerToUpdate = new Player($_POST['player_id'], $_POST['firstName'], $_POST['lastName'],
         $_POST['birthDate'], $_POST['mlbTeamId'], $_POST['sportslineId']);
     PlayerDao::updatePlayer($playerToUpdate);
+    
+    // Update positions.
     $positions = PositionDao::getPositionsByPositionIds($_POST['positions']);
     PositionDao::assignPositionsToPlayer($positions, $playerToUpdate);
+
+    // Update fantasy team.
+    TeamDao::assignPlayerToTeam($playerToUpdate, $_POST['teamId']);    
+    
     $playerId = $playerToUpdate->getId();
   } else if (isset($_GET["player_id"])) {
     $playerId = $_GET["player_id"];
@@ -104,6 +110,19 @@
          $position->getAbbreviation() . "</option>";
   }
   echo "</select></td></tr>";
+  
+  // Fantasy team
+  echo "<tr><td><strong>Fantasy Team:</strong></td>
+            <td><select name='teamId'><option value='0'>None</option>";
+  $teams = TeamDao::getAllTeams();
+  foreach ($teams as $team) {
+  	$isSelected = (!$isNew && ($player->getFantasyTeam() != null) && 
+  	    ($team->getId() == $player->getFantasyTeam()->getId()));
+  	echo "<option value='" . $team->getId() . "'" . ($isSelected ? " selected" : "") .
+  	">" . $team->getName() . " (" . $team->getAbbreviation() . ")</option>";
+  }
+  echo "</select></td></tr>";
+  
   echo "</table><br/>";
 
   // Buttons

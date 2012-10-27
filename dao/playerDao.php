@@ -42,6 +42,24 @@ class PlayerDao {
   }
   
   /**
+   * Return all players eligible to be ranked by the specified team.
+   */
+  public static function getPlayersForRanking($teamId) {
+  	CommonDao::connectToDb();
+  	
+  	// get all players in team_player who aren't assigned to specified team & haven't been ranked
+  	// by specified team
+  	$query = "select p.*
+              from player p, team_player tp
+              where p.player_id = tp.player_id and tp.team_id <> " . $teamId . 
+              " and p.player_id not in (
+                  select player_id 
+                  from rank 
+                  where team_id = " . $teamId . ")";
+  	return PlayerDao::createPlayersFromQuery($query);
+  }
+  
+  /**
    * Returns true if the player with the specified id has an auction contract starting in the
    * specified year.
    */

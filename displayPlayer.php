@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Rotiss 2012</title>
+<title>Display Player</title>
 </head>
 
 <body>
@@ -49,8 +49,19 @@
   // Positions
   echo "<tr><td><strong>Position(s):</strong></td>
         <td>" . $player->getPositionString() . "</td></tr>";
-  echo "</table><br/>";
 
+  // Fantasy team
+  echo "<tr><td><strong>Fantasy Team:</strong></td><td>";
+  $fantasyTeam = $player->getFantasyTeam();
+  if ($fantasyTeam == null) {
+  	echo "--";
+  } else {
+  	echo $fantasyTeam->getName() . " (" . $fantasyTeam->getAbbreviation() . ")";
+  }
+  echo "</td></tr>";
+  
+  echo "</table><br/>";
+  
   // TODO displayPlayer: if admin user, show edit link
   echo "<a href='admin/managePlayer.php?player_id=" . $player->getId() . "'>Edit player</a><br>";
 
