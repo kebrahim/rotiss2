@@ -12,11 +12,11 @@ class RankDao {
    * Returns all of the ranks belonging to the specified team for the specified year.
    */
   public static function getRanksByTeamYear($teamId, $year) {
-	CommonDao::connectToDb();
-	$query = "select * from rank
-		      where team_id = " . $teamId . " and year = " . $year .
-       		" order by rank DESC";
-	return RankDao::createRanksByQuery($query);
+    CommonDao::connectToDb();
+    $query = "select * from rank
+              where team_id = " . $teamId . " and year = " . $year .
+            " order by rank DESC";
+    return RankDao::createRanksByQuery($query);
   }
 		
   /**
@@ -43,6 +43,21 @@ class RankDao {
       }
     }
     return $ranksDb;
+  }
+  
+  /**
+   * Returns true if the player with the specified id has placeholder ranks stored for the 
+   * specified year.
+   */
+  public static function hasAllPlaceholderRanks($playerId, $year) {
+  	CommonDao::connectToDb();
+  	$query = "select *
+  	          from rank r
+  	          where r.year = " . $year . "
+  	          and r.is_placeholder = 1
+  	          and r.player_id = " . $playerId;
+  	$res = mysql_query($query);
+  	return (mysql_num_rows($res) == 15);
   }
 
   /**

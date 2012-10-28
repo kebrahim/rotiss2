@@ -16,10 +16,15 @@
     // Create player.
     $unsavedPlayer = new Player(-1, $_POST['firstName'], $_POST['lastName'], $_POST['birthDate'],
         $_POST['mlbTeamId'], $_POST['sportslineId']);
-
     $createdPlayer = PlayerDao::createPlayer($unsavedPlayer);
+
+    // Save positions.
     $positions = PositionDao::getPositionsByPositionIds($_POST['positions']);
     PositionDao::assignPositionsToPlayer($positions, $createdPlayer);
+    
+    // Save fantasy team.
+    TeamDao::assignPlayerToTeam($createdPlayer, $_POST['teamId']);
+    
     $playerId = $createdPlayer->getId();
   } else if (isset($_POST['update'])) {
     // Update player.

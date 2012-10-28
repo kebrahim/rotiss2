@@ -42,6 +42,35 @@ class PlayerDao {
   }
   
   /**
+   * Returns true if the player with the specified id has an auction contract starting in the
+   * specified year.
+   */
+  private static function hasAuctionContract($playerId, $startYear) {
+  	CommonDao::connectToDb();
+  	$query = "SELECT C.*
+  	          FROM contract C
+  	          WHERE C.player_id = " . $playerId . " AND C.is_auction = 1
+  	          AND C.start_year = " . $startYear;
+  	$res = mysql_query($query);
+  	return (mysql_num_rows($res) > 0);
+  }
+
+  /**
+   * Returns true if the player w/ the specified id has a contract that either ended in the
+   * specified year or is still active after the specified year.
+   */
+  public static function hasContractForPlaceholders($playerId, $year) {
+  	CommonDao::connectToDb();
+  	$query = "SELECT c.*
+  	          FROM contract c
+  	          WHERE c.player_id = " . $playerId . "
+  	          AND c.is_bought_out = 0
+  	          AND c.end_year >= " . $year;
+  	$res = mysql_query($query);
+  	return (mysql_num_rows($res) > 0);
+  }
+  
+  /**
    * Return all players eligible to be ranked by the specified team.
    */
   public static function getPlayersForRanking($teamId) {
@@ -59,19 +88,6 @@ class PlayerDao {
   	return PlayerDao::createPlayersFromQuery($query);
   }
   
-  /**
-   * Returns true if the player with the specified id has an auction contract starting in the
-   * specified year.
-   */
-  private static function hasAuctionContract($playerId, $startYear) {
-  	CommonDao::connectToDb();
-  	$query = "SELECT C.* FROM contract C
-  	          WHERE C.player_id = " . $playerId . " AND C.is_auction = 1
-  	          AND C.start_year = " . $startYear;
-  	$res = mysql_query($query);
-  	return (mysql_num_rows($res) > 0);
-  }
-
   private static function createPlayersFromQuery($query) {
     $res = mysql_query($query);
     $playersDb = array();

@@ -75,7 +75,7 @@ table.center {margin-left:auto; margin-right:auto;}
   	  }
   	  echo "</td></tr>";
   	}
-  	echo "</table>";	
+  	echo "</table><br/>";	
   }
   
   echo "<h1>My Ranks</h1>";
