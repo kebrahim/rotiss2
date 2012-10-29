@@ -3,6 +3,7 @@
 require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'mlbTeamDao.php');
 CommonEntity::requireFileIn('/../dao/', 'positionDao.php');
+CommonEntity::requireFileIn('/../dao/', 'teamDao.php');
 
 /**
  * Represents a player in the MLB.
@@ -128,6 +129,10 @@ class Player {
 
   public function getStPetesUrl() {
     return Player::$STPETES_URL . $this->sportslineId;
+  }
+  
+  public function getFantasyTeam() {
+  	return TeamDao::getTeamByPlayer($this);
   }
 }
 ?>

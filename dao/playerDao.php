@@ -45,11 +45,45 @@ class PlayerDao {
    */
   private static function hasAuctionContract($playerId, $startYear) {
   	CommonDao::connectToDb();
-  	$query = "SELECT C.* FROM contract C
+  	$query = "SELECT C.*
+  	          FROM contract C
   	          WHERE C.player_id = " . $playerId . " AND C.is_auction = 1
   	          AND C.start_year = " . $startYear;
   	$res = mysql_query($query);
   	return (mysql_num_rows($res) > 0);
+  }
+
+  /**
+   * Returns true if the player w/ the specified id has a contract that either ended in the
+   * specified year or is still active after the specified year.
+   */
+  public static function hasContractForPlaceholders($playerId, $year) {
+  	CommonDao::connectToDb();
+  	$query = "SELECT c.*
+  	          FROM contract c
+  	          WHERE c.player_id = " . $playerId . "
+  	          AND c.is_bought_out = 0
+  	          AND c.end_year >= " . $year;
+  	$res = mysql_query($query);
+  	return (mysql_num_rows($res) > 0);
+  }
+
+  /**
+   * Return all players eligible to be ranked by the specified team.
+   */
+  public static function getPlayersForRanking($teamId) {
+  	CommonDao::connectToDb();
+
+  	// get all players in team_player who aren't assigned to specified team & haven't been ranked
+  	// by specified team
+  	$query = "select p.*
+              from player p, team_player tp
+              where p.player_id = tp.player_id and tp.team_id <> " . $teamId .
+              " and p.player_id not in (
+                  select player_id
+                  from rank
+                  where team_id = " . $teamId . ")";
+  	return PlayerDao::createPlayersFromQuery($query);
   }
 
   /**
@@ -58,33 +92,19 @@ class PlayerDao {
   // TODO filter by team
   public static function getEligibleKeepers(Team $team, $year) {
     // first, get all players
-    $query = "SELECT P.*
-      	      FROM player P
-              ORDER BY P.last_name, P.first_name";
+    $query = "select P.*
+        	  from player P
+              order by P.last_name, P.first_name";
     $allPlayers = PlayerDao::createPlayersFromQuery($query);
 
     // filter out players who currently have a contract or a contract ended for them last year.
     $eligibleKeepers = array();
     foreach ($allPlayers as $player) {
-      if (!PlayerDao::hasContract($player->getId(), $year)) {
+      if (!PlayerDao::hasContractForPlaceholders($player->getId(), $year - 1)) {
         $eligibleKeepers[] = $player;
       }
     }
     return $eligibleKeepers;
-  }
-
-  /**
-   * Returns true if the specified player either has a contract during the specified year or is
-   * coming off a contract that ended in the previous year.
-   */
-  private static function hasContract($playerId, $year) {
-    CommonDao::connectToDb();
-    $lastYear = $year - 1;
-    $query = "SELECT C.* FROM contract C
-    	      WHERE C.player_id = " . $playerId .
-    	    " AND C.end_year >= " . $lastYear;
-    $res = mysql_query($query);
-    return (mysql_num_rows($res) > 0);
   }
 
   private static function createPlayerFromQuery($query) {

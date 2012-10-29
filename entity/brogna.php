@@ -84,9 +84,9 @@ class Brogna {
   }
 
   public function toString() {
-    return $this->year . ": tp: " . $this->totalPoints . ", b: " . $this->bankedPoints .
-           ", tip: " . $this->tradedInPoints . ", top: " . $this->tradedOutPoints .
-           ", trp: " . $this->tradeablePoints;
+    return $this->year . ": team: " . $this->getTeam()->getName() . ", tp: " . $this->totalPoints .
+           ", b: " . $this->bankedPoints . ", tip: " . $this->tradedInPoints .
+           ", top: " . $this->tradedOutPoints . ", trp: " . $this->tradeablePoints;
   }
 }
 ?>
