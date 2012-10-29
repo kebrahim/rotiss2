@@ -69,7 +69,7 @@ table.center {margin-left:auto; margin-right:auto;}
   echo "<br/><br/>";
   
   echo "<table class='center' border>
-  	          <tr><th></th><th>Player</th><th>Team</th><th>Fantasy Pts</th><th>Rank</th>
+  	          <tr><th></th><th>Player</th><th>Team</th><th>$lastYear Fantasy Pts</th><th>Rank</th>
                   <th>Is Placeholder</th><th>Saved In DB</th></tr>";
   $ct = 0;
   foreach($stats as $stat) {

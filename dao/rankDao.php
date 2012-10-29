@@ -59,6 +59,25 @@ class RankDao {
   	$res = mysql_query($query);
   	return (mysql_num_rows($res) == 15);
   }
+  
+  /**
+   * Returns an array of rank values to corresponding number of ranks for the specified team during
+   * the specified year.
+   */
+  public static function getRankCount($teamId, $year) {
+  	CommonDao::connectToDb();
+  	$query = "select r.rank, count(r.rank)
+  	          from rank r
+  	          where r.year = " . $year . "
+  	          and r.team_id = " . $teamId . "
+  	          group by r.rank";
+  	$res = mysql_query($query);
+  	$rankCountArray = array();
+  	while ($row = mysql_fetch_row($res)) {
+  	  $rankCountArray[$row[0]] = $row[1];
+  	}
+  	return $rankCountArray;
+  }
 
   /**
    * Inserts the specified Rank in the 'rank' table and returns the same Rank
