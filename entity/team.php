@@ -178,45 +178,50 @@ class Team {
     }
     echo "</table>";
   }
-  
+
   /**
    * Display non-auction contracts for the keeper page, filtered by year.
    */
   function displayContractsForKeepers($minYear, $maxYear) {
   	echo "<h3>Contracts</h3>";
-  	
+
   	$contracts = $this->filterContractsByYear(
   	    ContractDao::getContractsByTeamId($this->teamId), $minYear, $maxYear, false);
-    if (count($contracts) == 0) {
- 	  return;
+
+  	echo "<div id='keeperdiv'";
+  	if (count($contracts) == 0) {
+  	  echo " style='display:none'>";
+  	} else {
+  	  echo ">";
   	}
-  	
-  	echo "<table class='center' border><tr>";
-  	echo "  <th>Name</th>
-  	        <th>Position</th>
-        	<th>Team</th>
+
+  	echo "<table id='keepertable' class='center' border><tr>";
+  	echo "  <th>Player</th>
         	<th>Years Left</th>
   	        <th>Price</th>
   	        <th>Start Year</th>
   	        <th>End Year</th>
-  	        <th>Buy Out</th></tr>";
+  	        <th>Buy Out</th>
+  	        <th id='keeperRemoveColumn' style='display:none'>Remove</th></tr>";
+  	$keeperCount = 0;
   	foreach ($contracts as $contract) {
   	  $player = $contract->getPlayer();
   	  echo "<tr>";
-	  echo "<td><a href='../displayPlayer.php?player_id=" . $player->getId() . "'>" .
-  	            $player->getFullName() . "</a></td>
-  			<td>" . $player->getPositionString() . "</td>
-  			<td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
+	  echo "<td>" . $player->getFullName() . " (" . $player->getPositionString() . ") - " .
+  	            $player->getMlbTeam()->getAbbreviation() . "</td>
   			<td>" . $contract->getYearsLeft() . "</td>
   			<td>" . $contract->getPrice() . "</td>
   			<td>" . $contract->getStartYear() . "</td>
   			<td>" . $contract->getEndYear() . "</td>
 	        <td><input type=checkbox name='buyout[]'
 	             value='" . $contract->getId() . "'></td></tr>";
+	  $keeperCount++;
   	}
-  	echo "</table><br/>";
+  	echo "</table><br/></div>";
+  	echo "<input type='hidden' name='savedkeepercount' value='" . $keeperCount . "'>";
+  	echo "<input type='hidden' name='newkeepercount' value='0'>";
   }
-  
+
   /**
    * Filters the specified array of contracts by min/max years; if includeAuction is false, then
    * auction contracts are also filtered out.

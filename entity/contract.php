@@ -48,13 +48,13 @@ class Contract {
   public function setId($contractId) {
   	$this->contractId = $contractId;
   }
-  
+
   public function getTotalYears() {
     return $this->totalYears;
   }
-  
+
   public function getYearsLeft() {
-  	$currentYear = TimeUtil::getCurrentYear() + 1; // TODOcurrentyear
+  	$currentYear = TimeUtil::getCurrentYear();
   	$yearsLeft = ($this->getEndYear() - $currentYear) + 1;
   	return ($yearsLeft > 0) ? $yearsLeft : 0;
   }
@@ -65,6 +65,10 @@ class Contract {
 
   public function getSignDate() {
     return $this->signDate;
+  }
+
+  public function getPlayerId() {
+    return $this->playerId;
   }
 
   public function getPlayer() {
@@ -86,7 +90,7 @@ class Contract {
   public function isAuction() {
   	return $this->isAuction;
   }
-  
+
   public function isBoughtOut() {
   	return $this->isBoughtOut;
   }
@@ -94,14 +98,14 @@ class Contract {
   public function buyOut() {
   	$this->isBoughtOut = true;
   }
-  
+
   /**
    * Returns the cost for buying out this contract.
    */
   public function getBuyoutPrice() {
   	return intval(($this->getPrice() * $this->getYearsLeft()) / 2);
   }
-  
+
   /**
    * Return a string representation of a bought out contract.
    */
@@ -123,10 +127,18 @@ class Contract {
     $this->team = $team;
     $this->teamLoaded = true;
   }
-  
+
+  public function getKeeperString() {
+    return $this->getPlayer()->getFullName() . " (" . $this->getPlayer()->getPositionString() .
+        ") " . $this->getPlayer()->getMlbTeam()->getAbbreviation() . ": " . $this->getYearsLeft() .
+        " year(s) at $" . $this->getPrice() . " [" . $this->getStartYear() . " - " .
+        $this->getEndYear() . "]";
+  }
+
   public function toString() {
-  	return $this->getPlayer()->getFullName() . ": " . $this->getTeam()->getName() . " [" . $this->startYear .
-  	    ":" . $this->endYear . "] - $" . $this->price . " (" . $this->signDate . ")";
+  	return $this->getPlayer()->getFullName() . ": " . $this->getTeam()->getName() . " [" .
+  	    $this->startYear . ":" . $this->endYear . "] - $" . $this->price . " (" .
+  	    $this->signDate . ")";
   }
 }
 ?>

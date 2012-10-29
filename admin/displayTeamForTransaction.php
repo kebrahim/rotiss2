@@ -71,21 +71,40 @@
     echo $team->getOwnersString() . "<br/>";
 
     // Brognas - keepers always happen in march, so current year is sufficient.
-    $currentYear = TimeUtil::getCurrentYear() + 1; //TODO currentyear
+    $currentYear = TimeUtil::getCurrentYear();
     $team->displayBrognas($currentYear, $currentYear, false, 0);
 
     // Contracts (with ability to add a keeper & buy out a contract)
+    echo "<div id='column_container'>";
+    echo "<div id='left_col'><div id='left_col_inner'>";
     $team->displayContractsForKeepers($currentYear, $currentYear);
-    echo "<input class='button' type='button' name='addcontract' value='Add contract'
+    echo "<input class='button' type='button' name='addcontract' value='Add keeper'
            onclick='addContract()'><br/>";
-    
+    echo "</div></div>";
+
     // Ping pong balls (with ability to add more)
+    echo "<div id='right_col'><div id='right_col_inner'>";
     $team->displayPingPongBalls($currentYear, $currentYear);
     echo "<input class='button' type='button' name='addpp' value='Add ball' onclick='addBall()'>
           <br/>";
-
+    echo "</div></div></div>";
     echo "<input type='hidden' name='teamid' value='" . $team->getId() . "'>";
-    echo "<br/>";
+  }
+
+  /**
+   * Displays a drop-down of players eligible to be kept.
+   */
+  function displayEligibleKeeperPlayers(Team $team, $rowNumber) {
+    $currentYear = TimeUtil::getCurrentYear();
+    $eligiblePlayers = PlayerDao::getEligibleKeepers($team, $currentYear);
+    echo "<select name='keepplayer" . $rowNumber . "' onchange='selectPlayer(this.value)'>
+            <option value='0'></option>";
+    foreach ($eligiblePlayers as $player) {
+      echo "<option value='" . $player->getId() . "'" . ">" . $player->getFullName() .
+          " (" . $player->getPositionString() . ") - " . $player->getMlbTeam()->getAbbreviation() .
+          "</option>";
+    }
+    echo "</select>";
   }
 
   if (isset($_REQUEST["type"])) {
@@ -104,5 +123,10 @@
   	displayTeamForAuction($team);
   } else if ($displayType == "keepers") {
     displayTeamForKeepers($team);
+  } else if ($displayType == "keepercontracts") {
+    if (isset($_REQUEST["row"])) {
+      $rowNumber = $_REQUEST["row"];
+    }
+    displayEligibleKeeperPlayers($team, $rowNumber);
   }
 ?>

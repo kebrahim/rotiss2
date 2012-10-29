@@ -48,16 +48,17 @@ class ContractDao {
               $contract->getPlayer()->getId() . ", " . $contract->getTeam()->getId() . ", " .
               $contract->getTotalYears() . ", " . $contract->getPrice() . ", '" .
               $contract->getSignDate() . "', " . $contract->getStartYear() . ", " .
-              $contract->getEndYear() . ", " . ($contract->isAuction() ? "1" : "0") .
+              $contract->getEndYear() . ", " . ($contract->isAuction() ? "1" : "0") . ", " .
               ($contract->isBoughtOut() ? "1" : "0") . ")";
     $result = mysql_query($query);
     if (!$result) {
-      echo "Contract " . $contract->toString() . " already exists in DB. Try again.";
+      echo "<div class='error_msg'>DB Error: Contract (" . $contract->toString() .
+          ") already exists in DB. Try again.<br/><br/></div>";
       return null;
     }
 
     $idQuery = "select contract_id from contract where player_id = " .
-        $contract->getPlayer()->getId() . " and team_id = " . $contract->getTeam()->getId() . 
+        $contract->getPlayer()->getId() . " and team_id = " . $contract->getTeam()->getId() .
         " and start_year = " . $contract->getStartYear();
     $result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
     $row = mysql_fetch_assoc($result);
@@ -77,7 +78,7 @@ class ContractDao {
                                   sign_date = '" . $contract->getSignDate() . "',
                                   start_year = " . $contract->getStartYear() . ",
                                   end_year = " . $contract->getEndYear() . ",
-                                  is_auction = " . ($contract->isAuction() ? "1" : "0") . ", 
+                                  is_auction = " . ($contract->isAuction() ? "1" : "0") . ",
                                   is_bought_out = " . ($contract->isBoughtOut() ? "1" : "0") .
              " where contract_id = " . $contract->getId();
     $result = mysql_query($query) or die('Invalid query: ' . mysql_error());
