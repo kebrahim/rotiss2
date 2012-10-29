@@ -24,9 +24,7 @@
    */
   function displayTeamForTrade(Team $team, $position) {
   	// Team info
-    echo "<h2>" . $team->getName() . "</h2>";
-    echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
-    echo $team->getOwnersString() . "<br/>";
+  	$team->displayTeamInfo();
 
     // Contracts
     $contractSeason = TimeUtil::getYearBasedOnEndOfSeason();
@@ -49,9 +47,7 @@
    */
   function displayTeamForAuction(Team $team) {
   	// Team info
-  	echo "<h2>" . $team->getName() . "</h2>";
-  	echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
-  	echo $team->getOwnersString() . "<br/>";
+  	$team->displayTeamInfo();
 
   	// Brognas - auctions always happen in january, so current year is sufficient.
   	$currentYear = TimeUtil::getCurrentYear();
@@ -67,9 +63,7 @@
    */
   function displayTeamForKeepers(Team $team) {
     // Team info
-    echo "<h2>" . $team->getName() . "</h2>";
-    echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
-    echo $team->getOwnersString() . "<br/>";
+    $team->displayTeamInfo();
 
     // Brognas - keepers always happen in march, so current year is sufficient.
     $currentYear = TimeUtil::getCurrentYear();
@@ -98,15 +92,17 @@
     $team->displayContractsForKeepers($currentYear, $currentYear);
     if (!$readOnly) {
       echo "<input id='addContractButton' class='button' type='button' name='addcontract'
-             value='Add keeper' onclick='addContract()'><br/>";
+             value='Add keeper' onclick='addContract(". $team->getId() . ")'><br/>";
     }
     echo "</div></div>";
 
     // Ping pong balls (with ability to add more)
     echo "<div id='right_col'><div id='right_col_inner'>";
     $team->displayPingPongBalls($currentYear, $currentYear);
-    echo "<input class='button' type='button' name='addpp' value='Add ball' onclick='addBall()'>
-          <br/>";
+    if (!$readOnly) {
+      echo "<input class='button' type='button' name='addpp' value='Add ball' onclick='addBall()'>
+            <br/>";
+    }
     echo "</div></div></div>";
     echo "<input type='hidden' name='teamid' value='" . $team->getId() . "'>";
   }

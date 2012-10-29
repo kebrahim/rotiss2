@@ -89,12 +89,12 @@ class PlayerDao {
   /**
    * Returns a list of players eligible to be kept in the specified year.
    */
-  // TODO filter by team
   public static function getEligibleKeepers(Team $team, $year) {
-    // first, get all players
-    $query = "select P.*
-        	  from player P
-              order by P.last_name, P.first_name";
+    // first, get all players on specified team
+    $query = "select p.*
+        	  from player p, team_player tp
+        	  where p.player_id = tp.player_id and tp.team_id = " . $team->getId() .
+        	" order by p.last_name, p.first_name";
     $allPlayers = PlayerDao::createPlayersFromQuery($query);
 
     // filter out players who currently have a contract or a contract ended for them last year.

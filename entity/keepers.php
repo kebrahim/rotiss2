@@ -96,7 +96,7 @@ class Keepers {
 
   public function showKeepersSummary() {
     echo "<h2>Keepers Summary</h2>";
-    echo "<h3>" . $this->team->getName() . " (" . $this->team->getOwnersString() . ")</h3>";
+    $this->team->displayTeamInfo();
 
     // display buyout contracts
     $buyoutBrognas = 0;
@@ -206,7 +206,7 @@ class Keepers {
 
   public function saveKeepers() {
   	echo "<h2>Keepers Saved!</h2>";
-  	echo "<h3>" . $this->team->getName() . " (" . $this->team->getOwnersString() . ")</h3>";
+  	$this->team->displayTeamInfo();
 
   	$totalBrognasSpent = 0;
 

@@ -195,7 +195,8 @@ function selectTeam(position, teamid) {
     echo "Select Team:<br><select name='team1' onchange='selectTeam(1, this.value)'>
                          <option value='0'></option>";
     foreach ($teams as $team) {
-      echo "<option value='" . $team->getId() . "'" . ">" . $team->getName() . "</option>";
+      echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
+          . " (" . $team->getAbbreviation() . ")</option>";
     }
     echo "</select><br>";
     echo "<div id='teamDisplay1'></div><br/></div></div>";
@@ -205,7 +206,8 @@ function selectTeam(position, teamid) {
     echo "Select Team:<br><select name='team2' onchange='selectTeam(2, this.value)'>
                          <option value='0'></option>";
     foreach ($teams as $team) {
-      echo "<option value='" . $team->getId() . "'" . ">" . $team->getName() . "</option>";
+      echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
+          . " (" . $team->getAbbreviation() . ")</option>";
     }
     echo "</select><br>";
     echo "<div id='teamDisplay2'></div><br/></div></div></div>";

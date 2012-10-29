@@ -28,7 +28,6 @@ class Team {
   private $ballsLoaded;
 
   private static $STPETES_IMAGE_URL_PREFIX = "http://stpetesorium.baseball.cbssports.com/images/team-logo/";
-  private static $STPETES_IMAGE_URL_SUFFIX = "-72x72.jpg";
 
   public function __construct($teamId, $name, $league, $division, $abbreviation,
       $sportslineImageName) {
@@ -69,8 +68,7 @@ class Team {
   }
 
   public function getSportslineImageUrl() {
-    return Team::$STPETES_IMAGE_URL_PREFIX . $this->sportslineImageName .
-        Team::$STPETES_IMAGE_URL_SUFFIX;
+    return Team::$STPETES_IMAGE_URL_PREFIX . $this->sportslineImageName;
   }
 
   public function getOwners() {
@@ -133,6 +131,12 @@ class Team {
     $this->displayContracts($currentYear, 3000, false);
   }
 
+  public function displayTeamInfo() {
+    echo "<h3>" . $this->getName() . "</h3>";
+    echo "<img src='" . $this->getSportslineImageUrl() . "'><br/><br/>";
+    echo $this->getOwnersString() . "<br/>";
+  }
+
   /**
   * Display all contract information for this team.
   */
@@ -142,7 +146,7 @@ class Team {
     if (count($contracts) == 0) {
       return;
     }
-    echo "<h3>Contracts</h3>";
+    echo "<h4>Contracts</h4>";
     echo "<table class='center' border><tr>";
     if ($isSelectable) {
       echo "<th></th>";
@@ -183,7 +187,7 @@ class Team {
    * Display non-auction contracts for the keeper page, filtered by year.
    */
   function displayContractsForKeepers($minYear, $maxYear) {
-  	echo "<h3>Contracts</h3>";
+  	echo "<h4>Contracts</h4>";
 
   	$contracts = $this->filterContractsByYear(
   	    ContractDao::getContractsByTeamId($this->teamId), $minYear, $maxYear, false);
@@ -250,7 +254,7 @@ class Team {
       return;
     }
 
-    echo "<h3>Draft Picks</h3>";
+    echo "<h4>Draft Picks</h4>";
     echo "<table class='center' border><tr>";
     if ($isSelectable) {
       echo "<th></th>";
@@ -295,7 +299,7 @@ class Team {
    * Displays the ping pong ball information only, between the specified years.
    */
   function displayPingPongBalls($minYear, $maxYear) {
-    echo "<h3>Ping Pong Balls</h3>";
+    echo "<h4>Ping Pong Balls</h4>";
 
     $pingPongBalls = $this->filterBallsByYear($this->getPingPongBalls(), $minYear, $maxYear);
 
@@ -348,7 +352,7 @@ class Team {
       return;
     }
 
-    echo "<h3>Brognas</h3>";
+    echo "<h4>Brognas</h4>";
     echo "<table class='center' id='brognaTable' border><tr>";
     if ($isSelectable) {
       echo "<th></th>";

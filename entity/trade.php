@@ -53,8 +53,19 @@ class Trade {
 
   public function initiateTrade() {
     // Move stuff to other team & display results.
+    echo "<h3>Trade completed!</h3>";
+    echo "<div id='column_container'>
+            <div id='left_col'>
+              <div id='left_col_inner'>";
     $this->tradePartner1->trade($this->tradePartner2->getTeam());
+    echo "    </div>
+            </div>
+            <div id='right_col'>
+              <div id='right_col_inner'>";
     $this->tradePartner2->trade($this->tradePartner1->getTeam());
+    echo "    </div>
+            </div>
+          </div>";
   }
 
   /**
@@ -231,7 +242,8 @@ class TradePartner {
   }
 
   public function showSummary() {
-    echo "<h3>" . $this->team->getName() . " trades:</h3>";
+    $this->team->displayTeamInfo();
+    echo "<h4>trades:</h4>";
 
     // display contracts
     if ($this->contracts) {
@@ -243,7 +255,7 @@ class TradePartner {
         } else {
           echo ", ";
         }
-        echo $contract->getPlayer()->getFullName();
+        echo $contract->getKeeperString();
       }
       echo "<br/><br/>";
     }
@@ -363,13 +375,20 @@ class TradePartner {
    * Executes trade with specified team.
    */
   public function trade(Team $otherTeam) {
+    $this->team->displayTeamInfo();
+    echo "<h4>Trade Summary</h4>";
+
     // Trade contracts
     if ($this->contracts) {
       foreach ($this->contracts as $contract) {
+        // update team in contract
         $contract->setTeam($otherTeam);
         ContractDao::updateContract($contract);
-        echo $this->team->getName() . ": trades " . $contract->getPlayer()->getFullName() . " to "
-             . $contract->getTeam()->getName() . "<br>";
+
+        // move player to new team
+        TeamDao::assignPlayerToTeam($contract->getPlayer(), $otherTeam->getId());
+
+        echo "<strong>Trades: </strong>" . $contract->getKeeperString() . "<br>";
       }
     }
 
@@ -393,8 +412,7 @@ class TradePartner {
       // save otherBrognas
       BrognaDao::updateBrognas($otherBrognas);
 
-      echo $this->team->getName() . ": trades " . $this->brognas . " brognas to " .
-           $otherTeam->getName() . "<br>";
+      echo "<strong>Trades: </strong>$" . $this->brognas . " brognas<br>";
     }
 
     // Trade draft picks
@@ -403,8 +421,7 @@ class TradePartner {
         $draftPick->setTeam($otherTeam);
         $draftPick->setOriginalTeam($this->team);
         DraftPickDao::updateDraftPick($draftPick);
-        echo $this->team->getName() . ": trades draft pick " . $draftPick->toString() . " to "
-             . $draftPick->getTeam()->getName() . "<br>";
+        echo "<strong>Trades: </strong> draft pick " . $draftPick->toString() . "<br>";
       }
     }
 
@@ -413,8 +430,7 @@ class TradePartner {
       foreach ($this->pingPongBalls as $pingPongBall) {
         $pingPongBall->setTeam($otherTeam);
         BallDao::updatePingPongBall($pingPongBall);
-        echo $this->team->getName() . ": trades ball " . $pingPongBall->toString() . " to "
-            . $pingPongBall->getTeam()->getName() . "<br>";
+        echo "<strong>Trades: </strong> ball " . $pingPongBall->toString() . "<br>";
       }
     }
 

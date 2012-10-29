@@ -22,7 +22,7 @@
    */
   function displayPlayerForAuction(Player $player) {
   	// Display player attributes.
-  	echo "<h2>" . $player->getFullName() . "</h2>";
+  	echo "<h3>" . $player->getFullName() . "</h3>";
 
   	// Headshot
   	if ($player->hasSportslineId()) {

@@ -54,8 +54,8 @@ function getRedirectHTML(element, htmlString) {
 	xmlhttp.send();
 }
 
-// adds a row to the contracts table
-function addContract() {
+// adds a row to the contracts table for the specified team
+function addContract(team_id) {
 	// ensure the table is visible
 	var keeperDiv = document.getElementById("keeperdiv");
 	keeperDiv.style.display = "block";
@@ -68,7 +68,7 @@ function addContract() {
     // name column gets drop-down of players
     var nameCell = newRow.insertCell(0);
     getRedirectHTML(nameCell,
-        "displayTeamForTransaction.php?type=keepercontracts&team_id=1&row=" + nextRowNumber);
+        "displayTeamForTransaction.php?type=keepercontracts&team_id=" + team_id + "&row=" + nextRowNumber);
 
     // years column gets dropdown of 1 or 2-year contract
     var yearsCell = newRow.insertCell(1);
@@ -270,24 +270,24 @@ require_once '../entity/keepers.php';
     $team = TeamDao::getTeamById($_POST['teamid']);
     echo "<h2>" . $team->getName() . "</h2>";
     echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
-    echo $team->getOwnersString() . "<br/>";    
-    
+    echo $team->getOwnersString() . "<br/>";
+
   	$currentYear = TimeUtil::getCurrentYear();
   	$nextYear = $currentYear + 1;
   	$currentYearBrognas = BrognaDao::getBrognasByTeamAndYear($team->getId(), $currentYear);
 
   	echo "<h3>Bank it up!</h3>";
-  	echo "<strong>" . $currentYear . " Bank:</strong> $" . $currentYearBrognas->getTotalPoints() . 
+  	echo "<strong>" . $currentYear . " Bank:</strong> $" . $currentYearBrognas->getTotalPoints() .
     	" for " . $nextYear . " season<br/><br/>";
   	echo "<strong>Allocate " . $nextYear . " budget:</strong> $450 + $" .
     	$currentYearBrognas->getTotalPoints() . " = $" .
   	    (450 + $currentYearBrognas->getTotalPoints());
-  
+
   	// request final confirmation of keepers before execution
   	echo "<br/><br/><div style='color:red; font-weight:bold'>Note that once you confirm, this team
   	    will not be able to make any more selections for " . $currentYear . "!</div><br/>";
   	echo "<input class='button' type=submit name='confirmBank' value='Confirm'>";
-  	echo "<input class='button' type=submit name='cancelBank' value='Cancel'><br>";	
+  	echo "<input class='button' type=submit name='cancelBank' value='Cancel'><br>";
     echo "<input type='hidden' name='teamid' value='" . $team->getId() . "'>";
   } elseif(isset($_POST['confirmBank'])) {
     // If confirmBank button was pressed, save brogna info.
@@ -303,21 +303,22 @@ require_once '../entity/keepers.php';
   	$bankedPoints = $currentYearBrognas->getTotalPoints();
   	echo "<strong>" . $currentYear . " Bank:</strong> $" . $bankedPoints .
   	    " for " . $nextYear . " season";
-  	
+
   	// Save & display brogna info for next year
   	$nextYearTotalPoints = $bankedPoints + 450;
   	$nextYearBrognas = new Brogna($team->getId(), $nextYear, $nextYearTotalPoints, $bankedPoints,
   	    0, 0, 50 + $bankedPoints);
   	BrognaDao::createBrognas($nextYearBrognas);
   	$team->displayBrognas($nextYear, $nextYear, false, 0);
-  	
+
   	echo "<br><a href='manageKeepers.php'>Let's do it again!</a><br>";
   } else {
     $teams = TeamDao::getAllTeams();
     echo "Select Team:<br><select name='team' onchange='showTeam(this.value)'>
                              <option value='0'></option>";
     foreach ($teams as $team) {
-      echo "<option value='" . $team->getId() . "'" . ">" . $team->getName() . "</option>";
+      echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
+          . " (" . $team->getAbbreviation() . ")</option>";
     }
     echo "</select><br>";
     echo "<div id='teamDisplay'></div><br/>";
