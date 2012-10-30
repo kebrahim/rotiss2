@@ -9,18 +9,34 @@ CommonDao::requireFileIn('/../entity/', 'rank.php');
  */
 class CumulativeRankDao {
   
-	// TODO getCumulativeRankByPlayerYear()
-/*  private static function createCumulativeRanksByQuery($query) {
+  public static function getCumulativeRankByPlayerYear($playerId, $year) {
+  	CommonDao::connectToDb();
+  	$query = "select cr.*
+  	          from cumulative_rank cr
+  	          where cr.player_id = " . $playerId .
+  	        " and cr.year = " . $year;
+  	return CumulativeRankDao::createCumulativeRankByQuery($query);
+  }
+
+  private static function createCumulativeRankByQuery($query) {
+  	$ranksDb = CumulativeRankDao::createCumulativeRanksByQuery($query);
+  	if (count($ranksDb) == 1) {
+  	  return $ranksDb[0];
+  	}
+  	return null;
+  }
+  
+  private static function createCumulativeRanksByQuery($query) {
     $res = mysql_query($query);
     $ranksDb = array();
     if (mysql_num_rows($res) > 0) {
       while($rankDb = mysql_fetch_assoc($res)) {
-        $ranksDb[] = new Rank($rankDb["rank_id"], $rankDb["year"], $rankDb["team_id"],
+        $ranksDb[] = new CumulativeRank($rankDb["cumulative_rank_id"], $rankDb["year"],
         	$rankDb["player_id"], $rankDb["rank"], $rankDb["is_placeholder"]);
       }
     }
     return $ranksDb;
-  }*/
+  }
   
   /**
    * Returns true if the player with the specified id has a cumulative rank stored for the 

@@ -1,4 +1,5 @@
 <?php
+  require_once '../dao/cumulativeRankDao.php';
   require_once '../dao/playerDao.php';
 
   /**
@@ -50,6 +51,19 @@
   	echo "<input type='hidden' name='playerid' value='" . $player->getId() . "'>";
   }
 
+  /**
+   * Displays the cumulative rank for the specified player for the current ranking year.
+   */
+  function displayCumulativeRankForPlayer(Player $player) {
+  	$rankYear = TimeUtil::getYearBasedOnEndOfSeason();
+  	$rank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
+  	if ($rank != null) {
+  	  echo $rank->getRank();
+  	} else {
+      echo "error";
+  	}
+  }
+  
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
   } else {
@@ -59,5 +73,7 @@
 
   if ($displayType == "auction") {
   	displayPlayerForAuction($player);
+  } else if ($displayType == "cumulativerank") {
+  	displayCumulativeRankForPlayer($player);
   }
 ?>

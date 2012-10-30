@@ -54,6 +54,23 @@ function getRedirectHTML(element, htmlString) {
 	xmlhttp.send();
 }
 
+// populates the value of the specified element with the HTML returned by the specified
+// htmlString
+function getRedirectValue(element, htmlString) {
+	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp = new XMLHttpRequest();
+	} else {// code for IE6, IE5
+	    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+			element.value = xmlhttp.responseText;
+		}
+	};
+	xmlhttp.open("GET", htmlString, true);
+	xmlhttp.send();
+}
+
 // adds a row to the contracts table for the specified team
 function addContract(team_id) {
 	// ensure the table is visible
@@ -76,11 +93,11 @@ function addContract(team_id) {
         "'><option value='0'></option>" +
         "<option value='1'>1-year</option><option value='2'>2-year</option></select>";
 
-    // price column gets a textbox to enter contract cost
-    // TODO auto-populate this field once player is selected, based on rankings
+    // price column gets a read-only textbox, which is updated automatically when a player is
+    // selected
     var priceCell = newRow.insertCell(2);
     priceCell.innerHTML = "<input type='text' name='keepprice" + nextRowNumber +
-      "' style='text-align:center' placeholder='Enter value >= 30'/>";
+        "' style='text-align:center' placeholder='Based on rankings' readonly='true'/>";
 
     // start year, end year, buyout are blank
     var startYearCell = newRow.insertCell(3);
@@ -115,24 +132,28 @@ function removeContract(rowNumber) {
         	var row = keeperTable.rows[r];
 
             // update name dropdown, including selected player
-            var oldPlayerSelect = "keepplayer"+(r+1);
-            var newPlayerSelect = "keepplayer"+r;
+            var oldPlayerSelect = "keepplayer" + (r+1);
+            var newPlayerSelect = "keepplayer" + r;
             var selectedNameIdx = document.getElementsByName(oldPlayerSelect).item(0).selectedIndex;
             row.cells[0].innerHTML =
                 row.cells[0].innerHTML.replace(oldPlayerSelect, newPlayerSelect);
+            var oldOnchange = "selectPlayer(this.value, " + (r+1);
+            var newOnchange = "selectPlayer(this.value, " + r;
+            row.cells[0].innerHTML =
+                row.cells[0].innerHTML.replace(oldOnchange, newOnchange);
             document.getElementsByName(newPlayerSelect).item(0).selectedIndex = selectedNameIdx;
 
             // update years drop-down, including selected year
-            var oldYearsSelect = "keepyear"+(r+1);
-            var newYearsSelect = "keepyear"+r;
+            var oldYearsSelect = "keepyear" + (r+1);
+            var newYearsSelect = "keepyear" + r;
             var selectedYearsIdx = document.getElementsByName(oldYearsSelect).item(0).selectedIndex;
             row.cells[1].innerHTML =
                 row.cells[1].innerHTML.replace(oldYearsSelect, newYearsSelect);
             document.getElementsByName(newYearsSelect).item(0).selectedIndex = selectedYearsIdx;
 
             // update price text input, including selected price
-            var oldPriceText = "keepprice"+(r+1);
-            var newPriceText = "keepprice"+r;
+            var oldPriceText = "keepprice" + (r+1);
+            var newPriceText = "keepprice" + r;
             var selectedPrice = document.getElementsByName(oldPriceText).item(0).value;
             row.cells[2].innerHTML =
                 row.cells[2].innerHTML.replace(oldPriceText, newPriceText);
@@ -157,6 +178,12 @@ function removeContract(rowNumber) {
       	var keeperRemoveColumn = document.getElementById("keeperRemoveColumn");
       	keeperRemoveColumn.style.display = "none";
     }
+}
+
+// player is selected; update price field to show cumulative rank for that player
+function selectPlayer(player_id, rowNumber) {
+	getRedirectValue(document.getElementsByName("keepprice" + rowNumber).item(0),
+	    "displayPlayerForTransaction.php?type=cumulativerank&player_id=" + player_id);
 }
 
 // adds a row to the ping pong ball table
