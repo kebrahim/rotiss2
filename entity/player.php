@@ -19,7 +19,8 @@ class Player {
   private $positions;
   private $positionsLoaded;
   private $sportslineId;
-
+  private $statLines;
+  
   private static $HEADSHOT_URL = "http://sports.cbsimg.net/images/baseball/mlb/players/60x80/";
   private static $STPETES_URL = "http://stpetesorium.baseball.cbssports.com/players/playerpage/";
 
@@ -36,6 +37,7 @@ class Player {
     $this->mlbTeamLoaded = false;
     $this->positionsLoaded = false;
     $this->sportslineId = $sportslineId;
+    $this->statLines = array();
   }
 
   public function getId() {
@@ -133,6 +135,17 @@ class Player {
   
   public function getFantasyTeam() {
   	return TeamDao::getTeamByPlayer($this);
+  }
+  
+  public function getStatLine($year) {
+  	if (isset($this->statLines[$year])) {
+  	  return $this->statLines[$year];
+  	}
+  	return null;
+  }
+  
+  public function setStatLine($year, $statLine) {
+  	$this->statLines[$year] = $statLine;
   }
 }
 ?>

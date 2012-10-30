@@ -22,7 +22,7 @@ class TeamDao {
     CommonDao::connectToDb();
     $query = "select t.*
               from team t
-              order by t.team_name";
+              order by lower(t.team_name)";
     return TeamDao::createTeamsFromQuery($query);
   }
   

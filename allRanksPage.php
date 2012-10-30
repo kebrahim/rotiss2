@@ -40,7 +40,7 @@ table.center {margin-left:auto; margin-right:auto;}
   echo "<th>Total</th></tr>";
   foreach ($teams as $team) {
   	$rankCountArray = RankDao::getRankCount($team->getId(), $rankYear);
-  	echo "<tr><td><img src='" . $team->getSportslineImageUrl() . "'></td>
+  	echo "<tr><td><img height=36 width=36 src='" . $team->getSportslineImageUrl() . "'></td>
   	          <td>" . $team->getName() . "</td>
   	          <td>" . $team->getOwnersString() . "</td>";
   	$rankCount = 0;

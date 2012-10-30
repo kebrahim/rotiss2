@@ -1,6 +1,7 @@
 <?php
 
 require_once 'commonDao.php';
+CommonDao::requireFileIn('/../dao/', 'statDao.php');
 CommonDao::requireFileIn('/../entity/', 'player.php');
 
 class PlayerDao {
@@ -69,23 +70,38 @@ class PlayerDao {
   }
 
   /**
-   * Return all players eligible to be ranked by the specified team.
+   * Return all players eligible to be ranked by the specified team sorted by fantasy points in the
+   * specified year.
    */
-  public static function getPlayersForRanking($teamId) {
+  public static function getPlayersForRanking($teamId, $year) {
   	CommonDao::connectToDb();
 
   	// get all players in team_player who aren't assigned to specified team & haven't been ranked
   	// by specified team
-  	$query = "select p.*
-              from player p, team_player tp
-              where p.player_id = tp.player_id and tp.team_id <> " . $teamId .
+  	$query = "select p.*, s.*
+              from player p, team_player tp, stat s
+              where p.player_id = tp.player_id
+              and p.player_id = s.player_id
+              and s.year = " . $year . 
+            " and tp.team_id <> " . $teamId .
               " and p.player_id not in (
                   select player_id
                   from rank
-                  where team_id = " . $teamId . ")";
-  	return PlayerDao::createPlayersFromQuery($query);
+                  where team_id = " . $teamId . ")
+  	          order by s.fantasy_pts DESC";
+  	$res = mysql_query($query);
+  	$playersDb = array();
+  	while($playerDb = mysql_fetch_assoc($res)) {
+  	  $player = new Player($playerDb["player_id"], $playerDb["first_name"],
+  				$playerDb["last_name"], $playerDb["birth_date"], $playerDb["mlb_team_id"],
+  				$playerDb["sportsline_id"]);
+  	  
+  	  $player->setStatLine($year, StatDao::populateStatLine($playerDb));
+  	  $playersDb[] = $player;
+  	}
+  	return $playersDb;
   }
-
+  
   /**
    * Returns a list of players eligible to be kept in the specified year.
    */
@@ -119,11 +135,18 @@ class PlayerDao {
     $res = mysql_query($query);
     $playersDb = array();
     while($playerDb = mysql_fetch_assoc($res)) {
-      $playersDb[] = new Player($playerDb["player_id"], $playerDb["first_name"],
-          $playerDb["last_name"], $playerDb["birth_date"], $playerDb["mlb_team_id"],
-          $playerDb["sportsline_id"]);
+      $playersDb[] = PlayerDao::populatePlayer($playerDb);
     }
     return $playersDb;
+  }
+  
+  /**
+   * Creates and returns a Player with data from the specified db result, which contains
+   * references to all of the fields in the 'player' table.
+   */
+  public static function populatePlayer($playerDb) {
+  	return new Player($playerDb["player_id"], $playerDb["first_name"], $playerDb["last_name"], 
+  	    $playerDb["birth_date"], $playerDb["mlb_team_id"], $playerDb["sportsline_id"]);
   }
 
   /**

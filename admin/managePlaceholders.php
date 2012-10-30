@@ -93,7 +93,7 @@ table.center {margin-left:auto; margin-right:auto;}
   	echo "    <td>" . $ct . "</td>
   	          <td>" . $stat->getPlayer()->getFullName() . "</td>
   	          <td>" . $stat->getPlayer()->getFantasyTeam()->getAbbreviation() . "</td>
-  	          <td>" . $stat->getFantasyPoints() . "</td>
+  	          <td>" . $stat->getStatLine()->getFantasyPoints() . "</td>
   	          <td>" . $rank . "</td>
   	          <td>" . ($isPlaceholder ? 'Y' : "") . "</td>
   	          <td>" . ($placeholderInDb ? "Y" : "") . "</td>

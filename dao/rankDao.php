@@ -13,24 +13,42 @@ class RankDao {
    */
   public static function getRanksByTeamYear($teamId, $year) {
     CommonDao::connectToDb();
-    $query = "select * from rank
-              where team_id = " . $teamId . " and year = " . $year .
-            " order by rank DESC";
+    $query = "select r.* 
+              from rank r
+              where r.team_id = " . $teamId . " and r.year = " . $year .
+            " order by r.rank DESC";
     return RankDao::createRanksByQuery($query);
   }
 		
   /**
    * Returns all of the ranks belonging to the specified team for the specified year with the
-   * specified rank.
+   * specified rank, sorted by fantasy points from the previous year.
    */
   public static function getRanksByTeamYearRank($teamId, $year, $rank) {
     CommonDao::connectToDb();
-    $query = "select *
-              from rank
-              where team_id = " . $teamId . " and year = " . $year .
-            " and rank = " . $rank .
-            " order by is_placeholder DESC";
-    return RankDao::createRanksByQuery($query);
+    $query = "select r.*, p.*, s.*
+              from rank r, player p, stat s
+              where r.team_id = " . $teamId . 
+            " and r.year = " . $year .
+            " and r.rank = " . $rank .
+            " and r.player_id = p.player_id
+              and p.player_id = s.player_id
+              and s.year = " . ($year - 1) .
+            " order by r.is_placeholder DESC, s.fantasy_pts DESC";
+    
+    $res = mysql_query($query);
+    $ranksDb = array();
+    if (mysql_num_rows($res) > 0) {
+      while($rankDb = mysql_fetch_assoc($res)) {
+    	$rank = new Rank($rankDb["rank_id"], $rankDb["year"], $rankDb["team_id"],
+    	    $rankDb["player_id"], $rankDb["rank"], $rankDb["is_placeholder"]);
+    	$player = PlayerDao::populatePlayer($rankDb);
+    	$player->setStatLine($year - 1, StatDao::populateStatLine($rankDb));
+    	$rank->setPlayer($player);
+    	$ranksDb[] = $rank;
+      }
+    }
+    return $ranksDb;
   }
 
   private static function createRanksByQuery($query) {
@@ -79,6 +97,20 @@ class RankDao {
   	return $rankCountArray;
   }
 
+  /**
+   * Returns the total number of ranks for the specified team during the specified year.
+   */
+  public static function getTotalRankCount($teamId, $year) {
+  	CommonDao::connectToDb();
+  	$query = "select count(r.rank)
+  	          from rank r
+  	          where r.year = " . $year . "
+  	          and r.team_id = " . $teamId;
+  	$res = mysql_query($query);
+  	$row = mysql_fetch_row($res);
+  	return $row[0];
+  }
+  
   /**
    * Inserts the specified Rank in the 'rank' table and returns the same Rank
    * with its id set.

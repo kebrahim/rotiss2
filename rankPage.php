@@ -24,7 +24,8 @@ table.center {margin-left:auto; margin-right:auto;}
 <body>
 <?php 
   require_once 'dao/rankDao.php';
-
+  require_once 'dao/statDao.php';
+  
   /**
    * Creates a select tag for the ranking of the specified player, showing the specified rank as
    * selected.
@@ -45,14 +46,15 @@ table.center {margin-left:auto; margin-right:auto;}
    * Displays a table of ranked players for the specified team, during the specified year, for the
    * specified rank value.
    */
-  function displayPlayersForRank($teamId, $rankYear, $rank) {
+  function displayPlayersByRank($teamId, $rankYear, $rank) {
+  	$lastYear = $rankYear - 1;
   	$ranks = RankDao::getRanksByTeamYearRank($teamId, $rankYear, $rank);
   	echo "<br/><strong>" . $rank . "'s</strong> ";
   	echo "<meter min='0' max='15' low='15' optimum='15' value='" . count($ranks) . "'></meter>
   	      (" . count($ranks) . "/15)
   	      <br/><br/>";
   	echo "<table border class='center'>";
-  	echo "<tr><th>Player</th><th>Pos</th><th>Team</th><th>Age</th><th>Rank</th></tr>";
+  	echo "<tr><th>Player</th><th>Pos</th><th>Team</th><th>FPTS</th><th>Rank</th></tr>";
 
   	foreach ($ranks as $rank) {
       // if rank is a placeholder, update style
@@ -60,11 +62,13 @@ table.center {margin-left:auto; margin-right:auto;}
   	  if ($rank->isPlaceholder()) {
   	  	echo " id='placeholder_row'";
   	  }
+  	  $fantasyPts = ($rank->getPlayer()->getStatLine($lastYear) != null) ?
+          $rank->getPlayer()->getStatLine($lastYear)->getFantasyPoints() : "--";
   	  echo "><td><a href='displayPlayer.php?player_id=" . $rank->getPlayerId() . "'>" . 
   	             $rank->getPlayer()->getFullName() . "</a></td>
   	         <td>" . $rank->getPlayer()->getPositionString() . "</td>
   	         <td>" . $rank->getPlayer()->getMlbTeam()->getAbbreviation() . "</td>
-  	         <td>" . $rank->getPlayer()->getAge() . "</td>";
+  	         <td>" . $fantasyPts . "</td>";
   	  echo "<td>";
   	  if ($rank->isPlaceholder()) {
   	  	// placeholder; show read-only value
@@ -81,11 +85,12 @@ table.center {margin-left:auto; margin-right:auto;}
   echo "<h1>My Ranks</h1>";
   echo "<FORM ACTION='rankPage.php' METHOD=POST>";
   $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
+  $lastYear = $rankYear - 1;
   $teamId = $_REQUEST["team_id"];
   
   if (isset($_POST['save'])) {
     // for every unranked player, check if a player was ranked.
-  	$unrankedPlayers = PlayerDao::getPlayersForRanking($teamId);
+  	$unrankedPlayers = PlayerDao::getPlayersForRanking($teamId, $lastYear);
     foreach ($unrankedPlayers as $unrankedPlayer) {
       $rankSelection = 'pk' . $unrankedPlayer->getId();
       // if non-zero value was provided, create a new ranking
@@ -116,7 +121,7 @@ table.center {margin-left:auto; margin-right:auto;}
   
   // display ranked players
   echo "<h2>Ranked Players</h2>";
-  $numRanks = count(RankDao::getRanksByTeamYear($teamId, $rankYear));
+  $numRanks = RankDao::getTotalRankCount($teamId, $rankYear);
   echo "<meter min='0' max='150' low='150' optimum='150' value='" . $numRanks . "'></meter> 
         (" . $numRanks . "/150)<br/><br/>";
   
@@ -126,7 +131,7 @@ table.center {margin-left:auto; margin-right:auto;}
   	echo "<tr>";
   	for ($j=0; $j<5; $j++) {
       echo "<td id='vert_td'>";
-      displayPlayersForRank($teamId, $rankYear, $count--);
+      displayPlayersByRank($teamId, $rankYear, $count--);
       echo "</td>";
   	}
   	echo "</tr>";
@@ -138,17 +143,18 @@ table.center {margin-left:auto; margin-right:auto;}
   echo "<input type='hidden' name='team_id' value='" . $teamId . "'>";
   
   // display unranked players
-  // TODO show fantasy points for previous year
   echo "<h2>Unranked Players</h2>";
-  $rankablePlayers = PlayerDao::getPlayersForRanking($teamId);
+  $rankablePlayers = PlayerDao::getPlayersForRanking($teamId, $lastYear);
   echo "<table border id='unranked' class='center'>
-          <tr><th>Player</th><th>Pos</th><th>Team</th><th>Age</th><th>Rank</th></tr>";
+          <tr><th>Player</th><th>Pos</th><th>Team</th><th>FPTS</th><th>Rank</th></tr>";
   foreach ($rankablePlayers as $player) {
+  	$fantasyPts = ($player->getStatLine($lastYear) != null) ?
+  	    $player->getStatLine($lastYear)->getFantasyPoints() : "--";
   	echo "<tr><td><a href='displayPlayer.php?player_id=" . $player->getId() . "'>" . 
   	              $player->getFullName() . "</a></td>
   	          <td>" . $player->getPositionString() . "</td>
   	          <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
-  	          <td>" . $player->getAge() . "</td><td>";
+  	          <td>" . $fantasyPts . "</td><td>";
   	displaySelectForPlayer($player, 0);
   	echo "</td></tr>";
   }

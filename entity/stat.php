@@ -1,24 +1,24 @@
 <?php
 require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'playerDao.php');
+CommonEntity::requireFileIn('/../entity/', 'statline.php');
 
 /**
  * Represents a set of fantasy statistics for a single player in a single year.
  */
-// TODO add rest of stats
 class Stat {
   private $statId;
   private $year;
   private $playerId;
   private $player;
   private $playerLoaded = false;
-  private $fantasyPts;
+  private $statLine;
   
-  public function __construct($statId, $year, $playerId, $fantasyPts) {
+  public function __construct($statId, $year, $playerId, StatLine $statLine) {
   	$this->statId = $statId;
   	$this->year = $year;
   	$this->playerId = $playerId;
-  	$this->fantasyPts = $fantasyPts;
+  	$this->statLine = $statLine;
   }
   
   public function getId() {
@@ -41,8 +41,8 @@ class Stat {
   	return $this->playerId;
   }
   
-  public function getFantasyPoints() {
-  	return $this->fantasyPts;
+  public function getStatLine() {
+  	return $this->statLine;
   }
 }
 ?>
