@@ -1,6 +1,7 @@
 <?php
 
 require_once 'commonDao.php';
+CommonDao::requireFileIn('/../entity/', 'cumulativeRank.php');
 CommonDao::requireFileIn('/../entity/', 'rank.php');
 
 /**
@@ -49,6 +50,31 @@ class RankDao {
       }
     }
     return $ranksDb;
+  }
+  
+  /**
+   * Returns a set of CumulativeRanks [sums of ranks per player] for the specified year, ordered by
+   * cumulative rank total.
+   */
+  public static function calculateCumulativeRanksByYear($year) {
+  	CommonDao::connectToDb();
+  	$query = "select r.year, r.player_id, sum(r.rank) as totalRank, r.is_placeholder, p.*
+  	          from rank r, player p
+  	          where r.player_id = p.player_id
+  	          and r.year = " . $year . 
+  	        " group by r.player_id
+  	          order by sum(r.rank) DESC";
+  	$res = mysql_query($query);
+  	$ranksDb = array();
+  	if (mysql_num_rows($res) > 0) {
+  	  while($rankDb = mysql_fetch_assoc($res)) {
+  	    $rank = new CumulativeRank(-1, $rankDb["year"], $rankDb["player_id"], $rankDb["totalRank"],
+  	        $rankDb["is_placeholder"]);
+  		$rank->setPlayer(PlayerDao::populatePlayer($rankDb));
+  		$ranksDb[] = $rank;
+  	  }
+  	}
+  	return $ranksDb;
   }
 
   private static function createRanksByQuery($query) {
