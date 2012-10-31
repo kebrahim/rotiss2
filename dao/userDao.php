@@ -7,19 +7,54 @@ class UserDao {
   /**
    * Returns all of the owners for the specified team ID.
    */
-  static function getUsersByTeamId($teamId) {
+  public static function getUsersByTeamId($teamId) {
     CommonDao::connectToDb();
-    $query = "select user_id, username, password, first_name, last_name, team_id, is_admin
-    	      from user
-              where team_id = $teamId";
-    $db_users = mysql_query($query);
+    $query = "select u.*
+    	      from user u
+              where u.team_id = $teamId";
+    return UserDao::createUsersFromQuery($query);
+  }
 
-    $users = array();
-    while ($db_user = mysql_fetch_row($db_users)) {
-      $users[] = new User(
-          $db_user[0], $db_user[1], $db_user[2], $db_user[3], $db_user[4],
-          $db_user[5], $db_user[6]);
+  /**
+   * Returns the user with the specified username and password.
+   */
+  public static function getUserByUsernamePassword($username, $password) {
+    CommonDao::connectToDb();
+    $query = "select u.*
+    	      from user u
+              where u.username = '" . $username . "'
+              and u.password = '" . $password . "'";
+    return UserDao::createUserFromQuery($query);
+  }
+
+  /**
+   * Returns the user with the specified email address.
+   */
+  public static function getUserByEmailAddress($email) {
+    CommonDao::connectToDb();
+    $query = "select u.*
+    	      from user u
+              where u.email = '" . $email . "'";
+    return UserDao::createUserFromQuery($query);
+  }
+
+  private static function createUserFromQuery($query) {
+    $userArray = UserDao::createUsersFromQuery($query);
+    if (count($userArray) == 1) {
+      return $userArray[0];
     }
-    return $users;
+    return null;
+  }
+
+  private static function createUsersFromQuery($query) {
+    $res = mysql_query($query);
+    $usersDb = array();
+    if (mysql_)
+    while($userDb = mysql_fetch_assoc($res)) {
+      $usersDb[] = new User($userDb["user_id"], $userDb["username"], $userDb["password"],
+          $userDb["first_name"], $userDb["last_name"], $userDb["email"], $userDb["team_id"],
+          $userDb["is_admin"], $userDb["is_super_admin"]);
+    }
+    return $usersDb;
   }
 }
