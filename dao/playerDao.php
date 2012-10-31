@@ -17,6 +17,17 @@ class PlayerDao {
   }
 
   /**
+   * Returns an array of all players.
+   */
+  public static function getAllPlayers() {
+    CommonDao::connectToDb();
+    $query = "select p.*
+              from player p
+              order by p.last_name, p.first_name";
+    return PlayerDao::createPlayersFromQuery($query);
+  }
+
+  /**
    * Returns all of the players eligible for auction in the specified year.
    */
   public static function getPlayersForAuction($year) {
@@ -82,7 +93,7 @@ class PlayerDao {
               from player p, team_player tp, stat s
               where p.player_id = tp.player_id
               and p.player_id = s.player_id
-              and s.year = " . $year . 
+              and s.year = " . $year .
             " and tp.team_id <> " . $teamId .
               " and p.player_id not in (
                   select player_id
@@ -95,23 +106,20 @@ class PlayerDao {
   	  $player = new Player($playerDb["player_id"], $playerDb["first_name"],
   				$playerDb["last_name"], $playerDb["birth_date"], $playerDb["mlb_team_id"],
   				$playerDb["sportsline_id"]);
-  	  
+
   	  $player->setStatLine($year, StatDao::populateStatLine($playerDb));
   	  $playersDb[] = $player;
   	}
   	return $playersDb;
   }
-  
+
   /**
-   * Returns a list of players eligible to be kept in the specified year.
+   * Returns an array of players, belonging to the specified team, eligible to be kept in the
+   * specified year.
    */
   public static function getEligibleKeepers(Team $team, $year) {
     // first, get all players on specified team
-    $query = "select p.*
-        	  from player p, team_player tp
-        	  where p.player_id = tp.player_id and tp.team_id = " . $team->getId() .
-        	" order by p.last_name, p.first_name";
-    $allPlayers = PlayerDao::createPlayersFromQuery($query);
+    $allPlayers = PlayerDao::getPlayersByTeam($team);
 
     // filter out players who currently have a contract or a contract ended for them last year.
     $eligibleKeepers = array();
@@ -121,6 +129,31 @@ class PlayerDao {
       }
     }
     return $eligibleKeepers;
+  }
+
+  /**
+   * Returns an array of players belonging to the specified fantasy team.
+   */
+  public static function getPlayersByTeam(Team $team) {
+    CommonDao::connectToDb();
+    $query = "select p.*
+        	  from player p, team_player tp
+        	  where p.player_id = tp.player_id and tp.team_id = " . $team->getId() .
+        	" order by p.last_name, p.first_name";
+    return PlayerDao::createPlayersFromQuery($query);
+  }
+
+  /**
+   * Returns an array of players who do not belong to any fantasy team.
+   */
+  public static function getUnassignedPlayers() {
+    CommonDao::connectToDb();
+    $query = "select p.*
+              from player p left outer join team_player tp
+              on p.player_id = tp.player_id
+              where tp.team_id is null
+              order by p.last_name, p.first_name";
+    return PlayerDao::createPlayersFromQuery($query);
   }
 
   private static function createPlayerFromQuery($query) {
@@ -139,13 +172,13 @@ class PlayerDao {
     }
     return $playersDb;
   }
-  
+
   /**
    * Creates and returns a Player with data from the specified db result, which contains
    * references to all of the fields in the 'player' table.
    */
   public static function populatePlayer($playerDb) {
-  	return new Player($playerDb["player_id"], $playerDb["first_name"], $playerDb["last_name"], 
+  	return new Player($playerDb["player_id"], $playerDb["first_name"], $playerDb["last_name"],
   	    $playerDb["birth_date"], $playerDb["mlb_team_id"], $playerDb["sportsline_id"]);
   }
 

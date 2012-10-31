@@ -27,7 +27,10 @@ class Team {
   private $pingPongBalls;
   private $ballsLoaded;
 
-  private static $STPETES_IMAGE_URL_PREFIX = "http://stpetesorium.baseball.cbssports.com/images/team-logo/";
+  private static $STPETES_IMAGE_URL_PREFIX =
+      "http://stpetesorium.baseball.cbssports.com/images/team-logo/";
+  private static $STPETES_BKUP_IMAGE_URL_PREFIX =
+      "http://stpetesorium.baseball.cbssports.com/team-logo";
 
   public function __construct($teamId, $name, $league, $division, $abbreviation,
       $sportslineImageName) {
@@ -68,7 +71,11 @@ class Team {
   }
 
   public function getSportslineImageUrl() {
-    return Team::$STPETES_IMAGE_URL_PREFIX . $this->sportslineImageName;
+    if ($this->getId() != 6) {
+      return Team::$STPETES_IMAGE_URL_PREFIX . $this->sportslineImageName;
+    } else {
+      return Team::$STPETES_BKUP_IMAGE_URL_PREFIX . $this->sportslineImageName;
+    }
   }
 
   public function getOwners() {
