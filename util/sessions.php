@@ -1,7 +1,17 @@
 <?php
 
+function requireFileIn($path, $file) {
+  $now_at_dir = getcwd();
+  chdir(realpath(dirname(__FILE__).$path));
+  require_once $file;
+  chdir($now_at_dir);
+}
+
+requireFileIn('/../dao/', 'teamDao.php');
+requireFileIn('/../entity/', 'user.php');
+
 class SessionUtil {
-  
+
   /**
    * Updates the _SESSION array with the value of the specified key within the
    * specified array; if isPost = false, then remove the value from the SESSION.
@@ -13,6 +23,93 @@ class SessionUtil {
   	} else {
   	  unset($_SESSION[$key]);
   	}
+  }
+
+  /**
+   * Login with the specified user, after clearing out the session.
+   */
+  public static function login(User $user) {
+    if (!isset($_SESSION)) {
+      session_start();
+    }
+    session_unset();
+    $_SESSION["loggedinuserid"] = $user->getId();
+    $_SESSION["loggedinteamid"] = $user->getTeam()->getId();
+    $_SESSION["loggedinadmin"] = $user->isAdmin();
+    $_SESSION["loggedinsuperadmin"] = $user->isSuperAdmin();
+  }
+
+  /**
+   * Determine if a user is logged in & if not, redirect the user back to the login page.
+   */
+  // TODO automatically logout after 10 mins of inactivity
+  public static function checkLogin() {
+    if (!SessionUtil::isLoggedIn()) {
+      // TODO: change to http://www.rotiss.com/baseball or http://baseball.rotiss.com
+      SessionUtil::redirectToUrl("http://localhost/rotiss2/");
+    }
+  }
+
+  /**
+   * Returns true if a user is currently logged in.
+   */
+  public static function isLoggedIn() {
+    if (!isset($_SESSION)) {
+      session_start();
+    }
+
+    if (empty($_SESSION["loggedinuserid"])) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Returns the fantasy team of the currently logged-in user.
+   */
+  public static function getLoggedInTeam() {
+    return SessionUtil::isLoggedIn() ? TeamDao::getTeamById($_SESSION["loggedinteamid"]) : null;
+  }
+
+  /**
+   * Returns true if the logged-in user is an admin.
+   */
+  public static function isLoggedInAdmin() {
+    return SessionUtil::isLoggedIn() ? $_SESSION["loggedinadmin"] : false;
+  }
+
+  /**
+   * Returns true if the logged-in user is a super-admin.
+   */
+  public static function isLoggedInSuperAdmin() {
+    return SessionUtil::isLoggedIn() ? $_SESSION["loggedinsuperadmin"] : false;
+  }
+
+  /**
+   * Logs out the currently logged-in user.
+   */
+  public static function logOut() {
+    session_start();
+    SessionUtil::unsetSessionVariable("loggedinuserid");
+    SessionUtil::unsetSessionVariable("loggedinteamid");
+    SessionUtil::unsetSessionVariable("loggedinadmin");
+    SessionUtil::unsetSessionVariable("loggedinsuperadmin");
+
+    // clear out the rest of the session.
+    session_unset();
+  }
+
+  /**
+   * Redirects the user to the specified URL
+   */
+  public static function redirectToUrl($url) {
+    header("Location: $url");
+    exit;
+  }
+
+  private static function unsetSessionVariable($sessionVar) {
+    $_SESSION[$sessionVar] = null;
+    unset($_SESSION[$sessionVar]);
   }
 }
 ?>
