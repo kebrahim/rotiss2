@@ -1,27 +1,33 @@
 <?php
   require_once 'util/sessions.php';
-
-  SessionUtil::checkLogin();
-  // TODO teamId should be pulled from request, not session
-  $teamId = SessionUtil::getLoggedInTeam()->getId();
-  //var_dump($_SESSION);
+  SessionUtil::checkUserIsLoggedIn();
 ?>
 <html>
 <head>
-<title>Rotiss 2012</title>
+<title>Rotiss - My Team</title>
+<link href='css/style.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
 <?php
-  error_reporting(E_ALL);
-
   require_once 'dao/contractDao.php';
   require_once 'dao/teamDao.php';
+  require_once 'util/navigation.php';
   require_once 'util/time.php';
 
+  // Display header.
+  NavigationUtil::printHeader();
+
   // Display general team information.
-  //$teamId = $_GET["team_id"];
+  if (isset($_REQUEST["team_id"])) {
+    $teamId = $_REQUEST["team_id"];
+  } else {
+    // if no team is selected, then show the user's team.
+    $teamId = SessionUtil::getLoggedInTeam()->getId();
+  }
   $team = TeamDao::getTeamById($teamId);
+
+  echo "<div id='bodyleft'>";
   echo "<h1>" . $team->getName() . "</h1>";
   echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
 
@@ -46,6 +52,10 @@
 
   // Display draft pick information
   $team->displayAllDraftPicks();
+  echo "</div>";
+
+  // Display footer
+  NavigationUtil::printFooter();
 ?>
 
 </body>

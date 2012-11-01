@@ -49,7 +49,6 @@ class UserDao {
   private static function createUsersFromQuery($query) {
     $res = mysql_query($query);
     $usersDb = array();
-    if (mysql_)
     while($userDb = mysql_fetch_assoc($res)) {
       $usersDb[] = new User($userDb["user_id"], $userDb["username"], $userDb["password"],
           $userDb["first_name"], $userDb["last_name"], $userDb["email"], $userDb["team_id"],

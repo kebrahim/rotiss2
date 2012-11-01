@@ -1,0 +1,25 @@
+@CHARSET "UTF-8";
+
+html {height:100%;}
+body {margin:0;}
+table {/*text-align:center;*/}
+table.center {margin-left:auto; margin-right:auto;}
+label {font-weight:bold;}
+fieldset {width: 250px;}
+#bodyleft {text-align:left; padding-left:10;}
+#bodycenter {text-align:center;}
+#error_msg {color:#FF0000; font-weight:bold;}
+
+/* Navigation */
+header {background-color:#257DFB; height:122px;}
+#banner {width: 940px; margin:0 auto;}
+#logo {float: left; padding-top:7px;}
+#menu {float:right; margin-top:30;}
+
+nav ul{float:left; width:100%; padding:0; margin:0; list-style-type:none;}
+nav a{float:left; text-decoration:none; color:#257DFB; background-color:white;
+      padding:0.2em 0.6em; border:1px solid black; text-align:center;}
+nav a:hover {background-color:#257DFB; color:white;}
+li {display:inline;}
+
+footer {background-color:#257DFB; height:61px; margin-top:10px;}

@@ -135,7 +135,7 @@ class Team {
 
   public function displayAllContracts() {
     $currentYear = TimeUtil::getYearBasedOnEndOfSeason();
-    $this->displayContracts($currentYear, 3000, false);
+    $this->displayContracts($currentYear, 3000, false, "left");
   }
 
   public function displayTeamInfo() {
@@ -147,14 +147,14 @@ class Team {
   /**
   * Display all contract information for this team.
   */
-  public function displayContracts($minYear, $maxYear, $isSelectable) {
+  public function displayContracts($minYear, $maxYear, $isSelectable, $tableClass) {
     $contracts = $this->filterContractsByYear(
         ContractDao::getContractsByTeamId($this->teamId), $minYear, $maxYear, true);
     if (count($contracts) == 0) {
       return;
     }
     echo "<h4>Contracts</h4>";
-    echo "<table class='center' border><tr>";
+    echo "<table class='$tableClass' border><tr>";
     if ($isSelectable) {
       echo "<th></th>";
     }
@@ -250,19 +250,19 @@ class Team {
 
   function displayAllDraftPicks() {
     $currentYear = TimeUtil::getYearBasedOnStartOfSeason();
-    $this->displayDraftPicks($currentYear + 1, 3000, false);
+    $this->displayDraftPicks($currentYear + 1, 3000, false, "left");
   }
 
   /**
    * Display all draft pick information for this team.
    */
-  function displayDraftPicks($minYear, $maxYear, $isSelectable) {
+  function displayDraftPicks($minYear, $maxYear, $isSelectable, $tableClass) {
     if ((count($this->getPingPongBalls()) + count($this->getDraftPicks())) == 0) {
       return;
     }
 
     echo "<h4>Draft Picks</h4>";
-    echo "<table class='center' border><tr>";
+    echo "<table class='$tableClass' border><tr>";
     if ($isSelectable) {
       echo "<th></th>";
     }
@@ -346,7 +346,7 @@ class Team {
 
   function displayAllBrognas() {
     $currentYear = TimeUtil::getYearBasedOnKeeperNight();
-    $this->displayBrognas($currentYear, 3000, false, 0);
+    $this->displayBrognas($currentYear, 3000, false, 0, "left");
   }
 
   /**
@@ -354,13 +354,13 @@ class Team {
    * controls whether the rows can be selected & a value can be entered [for trading].
    * $tradePosition indicates which of the two teams is trading brognas.
    */
-  function displayBrognas($minYear, $maxYear, $isSelectable, $tradePosition) {
+  function displayBrognas($minYear, $maxYear, $isSelectable, $tradePosition, $tableClass) {
     if (count($this->getBrognas()) == 0) {
       return;
     }
 
     echo "<h4>Brognas</h4>";
-    echo "<table class='center' id='brognaTable' border><tr>";
+    echo "<table class='$tableClass' id='brognaTable' border><tr>";
     if ($isSelectable) {
       echo "<th></th>";
     }

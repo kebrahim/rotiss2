@@ -6,10 +6,11 @@
 
 <style type="text/css">
 html {height:100%;}
+body {margin: 0; text-align:center;}
 table {text-align:center;}
 table.center {margin-left:auto; margin-right:auto;}
 label {font-weight:bold;}
-fieldset {width: 250px;}
+fieldset {width: 153px; margin:20 auto 0 auto; text-align:left;}
 #column_container {padding:0; margin:0 0 0 50%; width:50%; float:right;}
 #left_col {float:left; width:100%; margin-left:-100%; text-align:center;}
 #left_col_inner {padding:10px;}
@@ -17,16 +18,23 @@ fieldset {width: 250px;}
 #right_col_inner {padding:10px;}
 #placeholder_row {background-color:#E3F2F9;}
 #vert_td {vertical-align:top;}
-#error_msg {color:#FF0000; font-weight:bold;}
+#error_msg {color:#FF0000; font-weight:bold; padding-top:20;}
 #logininfo {margin-left:6;}
+#signinbutton {text-align:center;}
+
+header {background-color:#257DFB; height:122px;}
+#logo {padding-top:7px;}
 </style>
 
 <script>
 </script>
 
 <body>
-  <form action='index.php' method=post>
-  <img src='images/rotiss.jpg' width='240' />
+  <header>
+    <div id='logo'>
+      <img src='images/rotiss.jpg' width='240' />
+    </div>
+  </header>
 
 <?php
   require_once 'dao/userDao.php';
@@ -35,29 +43,28 @@ fieldset {width: 250px;}
   if (isset($_POST['login'])) {
     $user = UserDao::getUserByUsernamePassword($_POST["username"], $_POST["password"]);
     if ($user == null) {
-      echo "<div id='error_msg'>Invalid username or password; please try again.<br/><br/></div>";
+      echo "<div id='error_msg'>Invalid username or password; please try again.<br/></div>";
     } else {
       // add user information to session
-      SessionUtil::login($user);
-
-      // TODO redirect to navigation page
-      SessionUtil::redirectToUrl("http://localhost/rotiss2/summaryPage.php");
+      SessionUtil::loginAndRedirect($user);
     }
   }
 
 ?>
   <div id='logininfo'>
-  <fieldset >
-    <legend>Sign in</legend>
-    <input type='hidden' name='submitted' id='submitted' value='1'/>
-    <label for='username' >Username:</label><br/>
-    <input type='text' name='username' id='username'  maxlength="50" required /><br/><br/>
-    <label for='password' >Password:</label><br/>
-    <input type='password' name='password' id='password' maxlength="50" required /><br/><br/>
-    <input type='submit' name='login' value='Sign in' />
-  </fieldset><br/>
-  <a href='loginHelpPage.php'>Can't access your account?</a><br/>
+    <form action='index.php' method=post>
+      <fieldset >
+        <legend>Sign in</legend>
+        <label for='username' >Username:</label><br/>
+        <input type='text' name='username' id='username'  maxlength="20" size="25" required /><br/><br/>
+        <label for='password' >Password:</label><br/>
+        <input type='password' name='password' id='password' maxlength="20" size="25" required /><br/><br/>
+        <div id='signinbutton'>
+          <input type='submit' name='login' value='Sign in' />
+        </div>
+      </fieldset><br/>
+      <a href='loginHelpPage.php'>Can't access your account?</a><br/>
+    </form>
   </div>
-  </form>
 </body>
 </html>

@@ -26,9 +26,10 @@ class SessionUtil {
   }
 
   /**
-   * Login with the specified user, after clearing out the session.
+   * Login with the specified user, after clearing out the session, and redirect to the navigation
+   * page.
    */
-  public static function login(User $user) {
+  public static function loginAndRedirect(User $user) {
     if (!isset($_SESSION)) {
       session_start();
     }
@@ -37,16 +38,19 @@ class SessionUtil {
     $_SESSION["loggedinteamid"] = $user->getTeam()->getId();
     $_SESSION["loggedinadmin"] = $user->isAdmin();
     $_SESSION["loggedinsuperadmin"] = $user->isSuperAdmin();
+
+
+    // redirect to navigation page
+    SessionUtil::redirectToUrl("summaryPage.php");
   }
 
   /**
    * Determine if a user is logged in & if not, redirect the user back to the login page.
    */
-  // TODO automatically logout after 10 mins of inactivity
-  public static function checkLogin() {
+  public static function checkUserIsLoggedIn() {
+    SessionUtil::checkTimeout();
     if (!SessionUtil::isLoggedIn()) {
-      // TODO: change to http://www.rotiss.com/baseball or http://baseball.rotiss.com
-      SessionUtil::redirectToUrl("http://localhost/rotiss2/");
+      SessionUtil::logOut();
     }
   }
 
@@ -97,6 +101,9 @@ class SessionUtil {
 
     // clear out the rest of the session.
     session_unset();
+
+    // redirect to home page.
+    SessionUtil::redirectHome();
   }
 
   /**
@@ -105,6 +112,28 @@ class SessionUtil {
   public static function redirectToUrl($url) {
     header("Location: $url");
     exit;
+  }
+
+  public static function redirectHome() {
+    // TODO Change to http://baseball.rotiss.com
+    SessionUtil::redirectToUrl("http://localhost/rotiss2/");
+  }
+
+  /**
+   * Checks to see if the logged-in user has generated any activity in the past 20 minutes; if not,
+   * the user is logged out.
+   */
+  public static function checkTimeout() {
+    session_cache_expire(20);
+    session_start();
+    $inactive = 1200;
+    if (isset($_SESSION['start']) ) {
+      $session_life = time() - $_SESSION['start'];
+      if ($session_life > $inactive) {
+        SessionUtil::logOut();
+      }
+    }
+    $_SESSION['start'] = time();
   }
 
   private static function unsetSessionVariable($sessionVar) {
