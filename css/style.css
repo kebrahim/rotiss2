@@ -31,5 +31,5 @@ fieldset {width: 153px; margin:20 auto 0 auto; text-align:left;}
 .placeholder_row {background-color:#E3F2F9;}
 .finished_ranking {background-color:#BCECBE;}
 
-/* Draft page */
-.draft_team_row {background-color:#E3F2F9;}
+/* Draft/Auction page */
+.selected_team_row {background-color:#E3F2F9;}

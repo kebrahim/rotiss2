@@ -39,7 +39,29 @@ class AuctionResultDao {
     }
     return $auctionResults;
   }
-  
+
+  /**
+   * Returns the earliest auction year.
+   */
+  public static function getMinimumAuctionYear() {
+    CommonDao::connectToDb();
+    $query = "select min(year) from auction";
+    $res = mysql_query($query);
+    $row = mysql_fetch_row($res);
+    return $row[0];
+  }
+
+  /**
+   * Returns the latest auction year.
+   */
+  public static function getMaximumAuctionYear() {
+    CommonDao::connectToDb();
+    $query = "select max(year) from auction";
+    $res = mysql_query($query);
+    $row = mysql_fetch_row($res);
+    return $row[0];
+  }
+
   /**
    * Inserts the specified AuctionResult in the 'auction' table and returns the same AuctionResult
    * with its id set.
@@ -54,7 +76,7 @@ class AuctionResultDao {
   	  echo "Auction result " . $auctionResult->toString() . " already exists in DB. Try again.";
   	  return null;
   	}
-  	
+
   	$idQuery = "select auction_id from auction where year = " . $auctionResult->getYear() .
   	    " and team_id = " . $auctionResult->getTeam()->getId() . " and player_id = " .
   	    $auctionResult->getPlayer()->getId();

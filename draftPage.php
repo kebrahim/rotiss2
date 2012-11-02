@@ -55,7 +55,7 @@
     foreach ($pingPongBalls as $pingPongBall) {
       echo "<tr";
       if ($pingPongBall->getTeam()->getId() == $teamId) {
-        echo " class='draft_team_row'";
+        echo " class='selected_team_row'";
       }
       echo "><td>Ping Pong</td>
              <td>" . $pingPongBall->getCost() . "</td>
@@ -67,7 +67,7 @@
     foreach ($draftPicks as $draftPick) {
       echo "<tr";
       if ($draftPick->getTeam()->getId() == $teamId) {
-        echo " class='draft_team_row'";
+        echo " class='selected_team_row'";
       }
       echo "><td>" . $draftPick->getRound() . "</td>
              <td>" . $draftPick->getPick() . "</td>
