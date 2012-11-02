@@ -32,7 +32,7 @@ class PingPongBall {
   public function getId() {
     return $this->ballId;
   }
-  
+
   public function setId($id) {
   	$this->ballId = $id;
   }
@@ -60,6 +60,9 @@ class PingPongBall {
   }
 
   public function getPlayer() {
+    if ($this->playerId == null) {
+      return null;
+    }
     if ($this->playerLoaded != true) {
       $this->player = PlayerDao::getPlayerById($this->playerId);
       $this->playerLoaded = true;

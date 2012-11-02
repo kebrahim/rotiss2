@@ -1,4 +1,8 @@
-<?php session_start(); ?>
+<?php
+  require_once 'util/sessions.php';
+  SessionUtil::checkUserIsLoggedIn();
+?>
+
 <html>
 <head>
 <title>Rotiss.com - My Ranks</title>

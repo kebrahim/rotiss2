@@ -1,3 +1,8 @@
+<?php
+  require_once 'util/sessions.php';
+  SessionUtil::checkUserIsLoggedIn();
+?>
+
 <html>
 <head>
 <title>Rotiss.com - Budget</title>
@@ -78,9 +83,9 @@
 
   // Display header.
   NavigationUtil::printHeader(true, true, NavigationUtil::BUDGET_BUTTON);
-  
+
   // TODO choose from list of teams to see corresponding budget page.
-  
+
   // Display general team information.
   if (isset($_REQUEST["team_id"])) {
   	$teamId = $_REQUEST["team_id"];
@@ -89,24 +94,24 @@
   	$teamId = SessionUtil::getLoggedInTeam()->getId();
   }
   $team = TeamDao::getTeamById($teamId);
-  
+
   if ($team == null) {
     die("<h1>Team ID " . $teamId . " not found!</h1>");
   }
   echo "<div class='bodyleft'>";
   echo "<h1>Budget: " . $team->getName() . "</h1>";
   echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
-  
+
   echo "<table>";
   echo "  <tr><td><strong>Owner(s):</strong></td>
   <td>" . $team->getOwnersString() . "</td></tr>";
   echo "</table>";
-  
+
   // Display contracts.
   displayBreakdown($teamId);
-  
+
   echo "</div>";
-  
+
   // Display footer
   NavigationUtil::printFooter();
   ?>

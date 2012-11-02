@@ -2,6 +2,7 @@
   require_once 'util/sessions.php';
   SessionUtil::checkUserIsLoggedIn();
 ?>
+
 <html>
 <head>
 <title>Rotiss.com - Team Summary</title>

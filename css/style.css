@@ -30,3 +30,6 @@ fieldset {width: 153px; margin:20 auto 0 auto; text-align:left;}
 .ranktable {font-size:11;}
 .placeholder_row {background-color:#E3F2F9;}
 .finished_ranking {background-color:#BCECBE;}
+
+/* Draft page */
+.draft_team_row {background-color:#E3F2F9;}

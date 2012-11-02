@@ -69,6 +69,28 @@ class SessionUtil {
   }
 
   /**
+   * Determine if a user is logged in & an admin, & if not, redirect the user back to the login
+   * page.
+   */
+  public static function checkUserIsLoggedInAdmin() {
+    SessionUtil::checkTimeout();
+    if (!SessionUtil::isLoggedInAdmin()) {
+      SessionUtil::logOut();
+    }
+  }
+
+  /**
+   * Determine if a user is logged in & a super-admin, & if not, redirect the user back to the login
+   * page.
+   */
+  public static function checkUserIsLoggedInSuperAdmin() {
+    SessionUtil::checkTimeout();
+    if (!SessionUtil::isLoggedInSuperAdmin()) {
+      SessionUtil::logOut();
+    }
+  }
+
+  /**
    * Returns the fantasy team of the currently logged-in user.
    */
   public static function getLoggedInTeam() {

@@ -93,6 +93,9 @@ class DraftPick {
   }
 
   public function getPlayer() {
+    if ($this->playerId == null) {
+      return null;
+    }
     if ($this->playerLoaded != true) {
       $this->player = PlayerDao::getPlayerById($this->playerId);
       $this->playerLoaded = true;

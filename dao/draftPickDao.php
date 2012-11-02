@@ -4,7 +4,7 @@ require_once 'commonDao.php';
 CommonDao::requireFileIn('/../entity/', 'draftPick.php');
 
 /**
- *
+ * Manages the 'draft_pick' table.
  */
 class DraftPickDao {
   /**
@@ -55,6 +55,28 @@ class DraftPickDao {
       $draft_pick_db[3], $draft_pick_db[4], $draft_pick_db[5], $draft_pick_db[6]);
     }
     return $draft_picks;
+  }
+
+  /**
+   * Returns the earliest draft year.
+   */
+  public static function getMinimumDraftYear() {
+    CommonDao::connectToDb();
+    $query = "select min(year) from draft_pick";
+    $res = mysql_query($query);
+    $row = mysql_fetch_row($res);
+    return $row[0];
+  }
+
+  /**
+   * Returns the latest draft year.
+   */
+  public static function getMaximumDraftYear() {
+    CommonDao::connectToDb();
+    $query = "select max(year) from draft_pick";
+    $res = mysql_query($query);
+    $row = mysql_fetch_row($res);
+    return $row[0];
   }
 
   public static function createDraftPick(DraftPick $draftPick) {

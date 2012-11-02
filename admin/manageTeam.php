@@ -1,3 +1,8 @@
+<?php
+  require_once '../util/sessions.php';
+  SessionUtil::checkUserIsLoggedInAdmin();
+?>
+
 <html>
 <head>
 <title>Rotiss.com - Manage Team</title>
