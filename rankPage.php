@@ -1,31 +1,17 @@
 <?php session_start(); ?>
 <html>
 <head>
-<title>My Ranks</title>
+<title>Rotiss.com - My Ranks</title>
+<link href='css/style.css' rel='stylesheet' type='text/css'>
 </head>
 
-<style type="text/css">
-html {height:100%;}
-body {text-align:center;}
-table {text-align:center;}
-table.center {margin-left:auto; margin-right:auto;}
-#column_container {padding:0; margin:0 0 0 50%; width:50%; float:right;}
-#left_col {float:left; width:100%; margin-left:-100%; text-align:center;}
-#left_col_inner {padding:10px;}
-#right_col {float:right; width:100%; text-align:center;}
-#right_col_inner {padding:10px;}
-#placeholder_row {background-color:#E3F2F9;}
-#vert_td {vertical-align:top;}
-</style>
-
-<script>
-</script>
-
 <body>
-<?php 
+<?php
   require_once 'dao/rankDao.php';
   require_once 'dao/statDao.php';
-  
+  require_once 'util/navigation.php';
+  require_once 'util/time.php';
+
   /**
    * Creates a select tag for the ranking of the specified player, showing the specified rank as
    * selected.
@@ -41,7 +27,7 @@ table.center {margin-left:auto; margin-right:auto;}
   	}
   	echo "</select>";
   }
-  
+
   /**
    * Displays a table of ranked players for the specified team, during the specified year, for the
    * specified rank value.
@@ -53,18 +39,21 @@ table.center {margin-left:auto; margin-right:auto;}
   	echo "<meter min='0' max='15' low='15' optimum='15' value='" . count($ranks) . "'></meter>
   	      (" . count($ranks) . "/15)
   	      <br/><br/>";
-  	echo "<table border class='center'>";
+  	if (count($ranks) > 15) {
+  	  echo "<div class='error_msg'>Too many " . $rank . "s!</div><br/>";
+  	}
+  	echo "<table border class='center ranktable'>";
   	echo "<tr><th>Player</th><th>Pos</th><th>Team</th><th>FPTS</th><th>Rank</th></tr>";
 
   	foreach ($ranks as $rank) {
       // if rank is a placeholder, update style
   	  echo "<tr";
   	  if ($rank->isPlaceholder()) {
-  	  	echo " id='placeholder_row'";
+  	  	echo " class='placeholder_row'";
   	  }
   	  $fantasyPts = ($rank->getPlayer()->getStatLine($lastYear) != null) ?
           $rank->getPlayer()->getStatLine($lastYear)->getFantasyPoints() : "--";
-  	  echo "><td><a href='displayPlayer.php?player_id=" . $rank->getPlayerId() . "'>" . 
+  	  echo "><td><a href='displayPlayer.php?player_id=" . $rank->getPlayerId() . "'>" .
   	             $rank->getPlayer()->getFullName() . "</a></td>
   	         <td>" . $rank->getPlayer()->getPositionString() . "</td>
   	         <td>" . $rank->getPlayer()->getMlbTeam()->getAbbreviation() . "</td>
@@ -79,15 +68,20 @@ table.center {margin-left:auto; margin-right:auto;}
   	  }
   	  echo "</td></tr>";
   	}
-  	echo "</table><br/>";	
+  	echo "</table><br/>";
   }
-  
-  echo "<h1>My Ranks</h1>";
+
+  // Display header.
+  NavigationUtil::printNoWidthHeader(true, true, NavigationUtil::RANKING_BUTTON);
+
+  // Get selected team from logged-in user.
+  $teamId = SessionUtil::getLoggedInTeam()->getId();
+
+  echo "<div class='bodycenter'><h1>My Ranks</h1>";
   echo "<FORM ACTION='rankPage.php' METHOD=POST>";
   $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
   $lastYear = $rankYear - 1;
-  $teamId = $_REQUEST["team_id"];
-  
+
   if (isset($_POST['save'])) {
     // for every unranked player, check if a player was ranked.
   	$unrankedPlayers = PlayerDao::getPlayersForRanking($teamId, $lastYear);
@@ -116,21 +110,26 @@ table.center {margin-left:auto; margin-right:auto;}
       	  RankDao::updateRank($rank);
       	}
       }
-    }    
+    }
   }
-  
+
+  // navigation links
+  echo "<a href='rankPage.php'>My Ranks</a>&nbsp
+        <a href='allRanksPage.php'>All Ranks</a>";
+
   // display ranked players
-  echo "<h2>Ranked Players</h2>";
+  echo "<h3>Ranked Players</h3>";
   $numRanks = RankDao::getTotalRankCount($teamId, $rankYear);
-  echo "<meter min='0' max='150' low='150' optimum='150' value='" . $numRanks . "'></meter> 
+  echo "<strong>Total Ranks:</strong>
+        <meter min='0' max='150' low='150' optimum='150' value='" . $numRanks . "'></meter>
         (" . $numRanks . "/150)<br/><br/>";
-  
+
   echo "<table border id='ranked' class='center'>";
   $count = 10;
   for ($i=0; $i<2; $i++) {
   	echo "<tr>";
   	for ($j=0; $j<5; $j++) {
-      echo "<td id='vert_td'>";
+      echo "<td class='vert_td_top'>";
       displayPlayersByRank($teamId, $rankYear, $count--);
       echo "</td>";
   	}
@@ -138,19 +137,19 @@ table.center {margin-left:auto; margin-right:auto;}
   }
   echo "</table><br/><br/>";
 
-  echo "<input type='submit' name='save' value='Save my changes'>";
-  echo "<input type='submit' name='cancel' value='Cancel'>";
+  echo "<input type='submit' name='save' value='Save my changes'>&nbsp";
+  echo "<input type='submit' name='cancel' value='Reset'>";
   echo "<input type='hidden' name='team_id' value='" . $teamId . "'>";
-  
+
   // display unranked players
-  echo "<h2>Unranked Players</h2>";
+  echo "<h3>Unranked Players</h3>";
   $rankablePlayers = PlayerDao::getPlayersForRanking($teamId, $lastYear);
-  echo "<table border id='unranked' class='center'>
+  echo "<table border id='unranked' class='center ranktable'>
           <tr><th>Player</th><th>Pos</th><th>Team</th><th>FPTS</th><th>Rank</th></tr>";
   foreach ($rankablePlayers as $player) {
   	$fantasyPts = ($player->getStatLine($lastYear) != null) ?
   	    $player->getStatLine($lastYear)->getFantasyPoints() : "--";
-  	echo "<tr><td><a href='displayPlayer.php?player_id=" . $player->getId() . "'>" . 
+  	echo "<tr><td><a href='displayPlayer.php?player_id=" . $player->getId() . "'>" .
   	              $player->getFullName() . "</a></td>
   	          <td>" . $player->getPositionString() . "</td>
   	          <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
@@ -159,8 +158,11 @@ table.center {margin-left:auto; margin-right:auto;}
   	echo "</td></tr>";
   }
   echo "</table>";
-  
-  echo "</FORM>";
+
+  echo "</FORM></div>";
+
+  // Footer
+  NavigationUtil::printFooter();
 ?>
 </body>
 </html>

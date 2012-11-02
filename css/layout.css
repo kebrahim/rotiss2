@@ -3,7 +3,8 @@
 * {margin: 0;}
 html, body {height: 100%;}
 #container {padding:0; min-height:100%; height:auto !important; height:100%; margin:0 auto -61px;}
-#wrapper {padding: 12px 0 40px; width:1000px; margin: 0 auto;}
+#wrapper, #nowidthwrapper {padding: 12px 0 40px; margin: 0 auto;}
+#wrapper {width:1000px;}
 
 /* Header */
 header {background-color:#257DFB; height:122px;}

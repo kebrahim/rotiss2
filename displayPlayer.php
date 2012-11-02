@@ -30,7 +30,7 @@
   }
 
   // Display player attributes.
-  echo "<div id='bodyleft'>";
+  echo "<div class='bodyleft'>";
   echo "<h1>" . $player->getFullName() . "</h1>";
 
   // Headshot

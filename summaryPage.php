@@ -29,14 +29,16 @@
   }
   $team = TeamDao::getTeamById($teamId);
 
-  echo "<div id='bodyleft'>";
+  echo "<div class='bodyleft'>";
   echo "<h1>" . $team->getName() . "</h1>";
   echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
 
-  // Owners, Division
+  // Owners, Abbreviation, Division
   echo "<table>";
   echo "  <tr><td><strong>Owner(s):</strong></td>
               <td>" . $team->getOwnersString() . "</td></tr>";
+  echo "  <tr><td><strong>Abbreviation:</strong></td>
+              <td>" . $team->getAbbreviation() . "</td></tr>";
   echo "  <tr><td><strong>Division:</strong></td>
               <td>" . $team->getLeague() . " " . $team->getDivision() . "</td></tr>";
   echo "</table>";

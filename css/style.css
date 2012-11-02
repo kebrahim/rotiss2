@@ -3,20 +3,30 @@
 @import url("layout.css");
 
 /* Base */
-body {margin:0;}
-#bodyleft {text-align:left; padding-left:10;}
-#bodycenter {text-align:center;}
+body {margin:0; font: 13px arial,helvetica,clean,sans-serif;}
+.bodyleft {text-align:left; padding-left:10;}
+.bodycenter {text-align:center;}
+table {font-size:14;}
 table.left {text-align:center;}
 table.center {margin-left:auto; margin-right:auto; text-align:center;}
+.vert_td_top {vertical-align:top;}
 h1 {margin:0.67em 0 0.67em;}
+h2 {margin:0.83em 0 0.83em;}
+h3 {margin:1em 0 1em;}
 h4 {margin:1.33em 0 1.33em;}
 
 /* Messages */
-#error_msg {color:red; font-weight:bold; padding-top:20;}
-#alert_msg {color:green; font-weight:bold; padding-top:20;}
+.error_msg, .error_msg_pad {color:red; font-weight:bold;}
+.error_msg_pad {padding-top:20;}
+.alert_msg {color:green; font-weight:bold; padding-top:20;}
 
 /* Login page */
 label {font-weight:bold;}
 fieldset {width: 153px; margin:20 auto 0 auto; text-align:left;}
 #logininfo {margin-left:6;}
 #signinbutton {text-align:center;}
+
+/* Rank page */
+.ranktable {font-size:11;}
+.placeholder_row {background-color:#E3F2F9;}
+.finished_ranking {background-color:#BCECBE;}

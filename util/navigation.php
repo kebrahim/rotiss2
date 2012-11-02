@@ -8,10 +8,20 @@ class NavigationUtil {
   const DRAFT_BUTTON = 4;
   const AUCTION_BUTTON = 5;
 
+  public static function printHeader($showNavigationLinks, $isTopLevel, $selectedButton) {
+    NavigationUtil::displayHeader($showNavigationLinks, $isTopLevel, $selectedButton, 'wrapper');
+  }
+
+  public static function printNoWidthHeader($showNavigationLinks, $isTopLevel, $selectedButton) {
+    NavigationUtil::displayHeader(
+        $showNavigationLinks, $isTopLevel, $selectedButton, 'nowidthwrapper');
+  }
+
   /**
    * Displays the header banner with navigation links.
    */
-  public static function printHeader($showNavigationLinks, $isTopLevel, $selectedButton) {
+  private static function displayHeader($showNavigationLinks, $isTopLevel, $selectedButton,
+      $wrapperId) {
     echo "<div id='container'>";
     echo "<header>";
     if ($showNavigationLinks) {
@@ -35,10 +45,11 @@ class NavigationUtil {
       }
 
       // Summary page
-      NavigationUtil::printListItem("summaryPage.php", "My Team", $isTopLevel, $selectedButton,
+      NavigationUtil::printListItem("summaryPage.php", "Team Summary", $isTopLevel, $selectedButton,
           self::MY_TEAM_BUTTON);
 
       // Ranking page
+      // TODO only show ranking page after placeholders have been set
       NavigationUtil::printListItem("rankPage.php", "Ranking", $isTopLevel, $selectedButton,
           self::RANKING_BUTTON);
 
@@ -63,7 +74,7 @@ class NavigationUtil {
       echo "</div>";
     }
     echo "</header>";
-    echo "<div id='wrapper'>";
+    echo "<div id='$wrapperId'>";
   }
 
   private static function printListItem($url, $caption, $isTopLevel, $selectedButton, $listButton) {

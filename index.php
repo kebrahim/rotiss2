@@ -16,12 +16,12 @@
   require_once 'util/sessions.php';
 
   NavigationUtil::printHeader(false, true, 0);
-  echo "<div id='bodycenter'>";
+  echo "<div class='bodycenter'>";
 
   if (isset($_POST['login'])) {
     $user = UserDao::getUserByUsernamePassword($_POST["username"], $_POST["password"]);
     if ($user == null) {
-      echo "<div id='error_msg'>Invalid username or password; please try again.<br/></div>";
+      echo "<div class='error_msg_pad'>Invalid username or password; please try again.<br/></div>";
     } else {
       // add user information to session
       SessionUtil::loginAndRedirect($user);

@@ -15,7 +15,7 @@
 
   // Display header.
   NavigationUtil::printHeader(true, false);
-  echo "<div id='bodyleft'>";
+  echo "<div class='bodyleft'>";
 
   $isNew = false;
   if(isset($_POST['create'])) {
@@ -33,7 +33,7 @@
 
     $playerId = $createdPlayer->getId();
 
-    echo "<div id='alert_msg'>Player successfully created!</div>";
+    echo "<div class='alert_msg'>Player successfully created!</div>";
   } else if (isset($_POST['update'])) {
     // Update player.
     $playerToUpdate = new Player($_POST['player_id'], $_POST['firstName'], $_POST['lastName'],
@@ -48,7 +48,7 @@
     TeamDao::assignPlayerToTeam($playerToUpdate, $_POST['teamId']);
     $playerId = $playerToUpdate->getId();
 
-    echo "<div id='alert_msg'>Player successfully updated!</div>";
+    echo "<div class='alert_msg'>Player successfully updated!</div>";
   } else if (isset($_REQUEST["player_id"])) {
     $playerId = $_REQUEST["player_id"];
   } else {

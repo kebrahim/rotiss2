@@ -13,14 +13,14 @@
 
   // Display header.
   NavigationUtil::printHeader(true, false);
-  echo "<div id='bodyleft'>";
+  echo "<div class='bodyleft'>";
   if (isset($_POST['update'])) {
     // Update team.
     $teamToUpdate = new Team($_POST['teamId'], $_POST['teamName'], $_POST['league'],
         $_POST['division'], $_POST['abbreviation'], $_POST['sportslineImage']);
     TeamDao::updateTeam($teamToUpdate);
     $teamId = $_POST['teamId'];
-    echo "<div id='alert_msg'>Team successfully updated!</div>";
+    echo "<div class='alert_msg'>Team successfully updated!</div>";
   } else if (isset($_REQUEST["team_id"])) {
     $teamId = $_REQUEST["team_id"];
   } else {
