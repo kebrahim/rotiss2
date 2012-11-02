@@ -15,7 +15,7 @@
   require_once 'util/navigation.php';
 
   // Display header.
-  NavigationUtil::printHeader(true, true);
+  NavigationUtil::printHeader(true, true, NavigationUtil::MY_TEAM_BUTTON);
 
   if (isset($_REQUEST["player_id"])) {
     $playerId = $_REQUEST["player_id"];

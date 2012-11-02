@@ -12,7 +12,7 @@
   require_once '../util/navigation.php';
 
   // Display header.
-  NavigationUtil::printHeader(true, false);
+  NavigationUtil::printHeader(true, false, NavigationUtil::ADMIN_BUTTON);
   echo "<div class='bodyleft'>";
   if (isset($_POST['update'])) {
     // Update team.

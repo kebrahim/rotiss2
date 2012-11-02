@@ -7,7 +7,8 @@ class NavigationUtil {
   const BUDGET_BUTTON = 3;
   const DRAFT_BUTTON = 4;
   const AUCTION_BUTTON = 5;
-
+  const ADMIN_BUTTON = 6;
+  
   public static function printHeader($showNavigationLinks, $isTopLevel, $selectedButton) {
     NavigationUtil::displayHeader($showNavigationLinks, $isTopLevel, $selectedButton, 'wrapper');
   }
@@ -41,21 +42,22 @@ class NavigationUtil {
       // if admin user, show admin button
       if (SessionUtil::isLoggedInAdmin()) {
         // TODO add sub-menu for admin options
-        echo "<li><a href='" . ($isTopLevel ? "" : "../") . "summaryPage.php'>Admin</a></li>";
+      	NavigationUtil::printListItem("summaryPage.php", "Admin", $isTopLevel, 
+            $selectedButton, self::ADMIN_BUTTON);
       }
 
       // Summary page
       NavigationUtil::printListItem("summaryPage.php", "Team Summary", $isTopLevel, $selectedButton,
           self::MY_TEAM_BUTTON);
 
+      // Budget page
+      NavigationUtil::printListItem("budgetPage.php", "Budget", $isTopLevel, $selectedButton,
+          self::BUDGET_BUTTON);
+
       // Ranking page
       // TODO only show ranking page after placeholders have been set
       NavigationUtil::printListItem("rankPage.php", "Ranking", $isTopLevel, $selectedButton,
           self::RANKING_BUTTON);
-
-      // Budget page
-      NavigationUtil::printListItem("budgetPage.php", "Budget", $isTopLevel, $selectedButton,
-          self::BUDGET_BUTTON);
 
       // Draft page
       NavigationUtil::printListItem("draftPage.php", "Draft", $isTopLevel, $selectedButton,

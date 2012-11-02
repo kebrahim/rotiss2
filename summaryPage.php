@@ -30,7 +30,7 @@
   $team = TeamDao::getTeamById($teamId);
 
   echo "<div class='bodyleft'>";
-  echo "<h1>" . $team->getName() . "</h1>";
+  echo "<h1>Team Summary: " . $team->getName() . "</h1>";
   echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
 
   // Owners, Abbreviation, Division

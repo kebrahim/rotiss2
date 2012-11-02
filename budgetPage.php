@@ -1,6 +1,7 @@
 <html>
 <head>
-<title>Rotiss 2012</title>
+<title>Rotiss.com - Budget</title>
+<link href='css/style.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
@@ -8,6 +9,7 @@
   require_once 'dao/brognaDao.php';
   require_once 'dao/contractDao.php';
   require_once 'dao/teamDao.php';
+  require_once 'util/navigation.php';
   require_once 'util/time.php';
 
   // Show breakdown of brognas per year w/ contract info
@@ -74,20 +76,39 @@
     }
   }
 
+  // Display header.
+  NavigationUtil::printHeader(true, true, NavigationUtil::BUDGET_BUTTON);
+  
+  // TODO choose from list of teams to see corresponding budget page.
+  
   // Display general team information.
-  if (!isset($_GET["team_id"])) {
-    die("<h1>Invalid team ID for budget page!</h1>");
+  if (isset($_REQUEST["team_id"])) {
+  	$teamId = $_REQUEST["team_id"];
+  } else {
+  	// if no team is selected, then show the logged-in user's team.
+  	$teamId = SessionUtil::getLoggedInTeam()->getId();
   }
-  $teamId = $_GET["team_id"];
   $team = TeamDao::getTeamById($teamId);
+  
   if ($team == null) {
     die("<h1>Team ID " . $teamId . " not found!</h1>");
   }
-  echo "<h2>" . $team->getName() . "</h2>";
-  echo "<b>Division:</b> " . $team->getLeague() . " " . $team->getDivision() . "<br>";
-
+  echo "<div class='bodyleft'>";
+  echo "<h1>Budget: " . $team->getName() . "</h1>";
+  echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
+  
+  echo "<table>";
+  echo "  <tr><td><strong>Owner(s):</strong></td>
+  <td>" . $team->getOwnersString() . "</td></tr>";
+  echo "</table>";
+  
   // Display contracts.
   displayBreakdown($teamId);
+  
+  echo "</div>";
+  
+  // Display footer
+  NavigationUtil::printFooter();
   ?>
 </body>
 </html>
