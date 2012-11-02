@@ -6,7 +6,7 @@
 </head>
 
 <style>
-#logo {float:none;}
+#logo {float:none; text-align:center;}
 </style>
 <body>
 
@@ -15,8 +15,8 @@
   require_once 'util/navigation.php';
   require_once 'util/sessions.php';
 
+  NavigationUtil::printHeader(false, true, 0);
   echo "<div id='bodycenter'>";
-  NavigationUtil::printHeader(false, true);
 
   if (isset($_POST['login'])) {
     $user = UserDao::getUserByUsernamePassword($_POST["username"], $_POST["password"]);

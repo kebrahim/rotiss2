@@ -1,0 +1,31 @@
+@CHARSET "UTF-8";
+
+* {margin: 0;}
+html, body {height: 100%;}
+#container {padding:0; min-height:100%; height:auto !important; height:100%; margin:0 auto -61px;}
+#wrapper {padding: 12px 0 40px; width:1000px; margin: 0 auto;}
+
+/* Header */
+header {background-color:#257DFB; height:122px;}
+#banner {width:1000px; margin:0 auto;}
+#logo {float:left; padding-top:7px;}
+#menu {float:right; margin-top:45;}
+
+/* Navigation */
+nav ul{float:left; width:100%; padding:0; margin:0; list-style-type:none;}
+nav a{float:left; text-decoration:none; color:#257DFB; background-color:white;
+      padding:0.2em 0.6em; border:1px solid black; text-align:center;}
+nav a:hover, #navselected {background-color:#257DFB; color:white;}
+nav li {display:inline;}
+
+/* Two-column pages */
+#column_container {padding:0; margin:0 0 0 50%; width:50%; float:right;}
+#left_col {float:left; width:100%; margin-left:-100%; text-align:center;}
+#left_col_inner {padding:10px;}
+#right_col {float:right; width:100%; text-align:center;}
+#right_col_inner {padding:10px;}
+
+/* Footer */
+footer, .push {height:61px; clear:both;}
+footer {width: 100%; background-color:#257DFB;}
+footer p {text-align:center; color:white; font-size:14; padding:20;}

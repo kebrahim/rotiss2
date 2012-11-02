@@ -16,7 +16,9 @@
   require_once 'util/time.php';
 
   // Display header.
-  NavigationUtil::printHeader(true, true);
+  NavigationUtil::printHeader(true, true, NavigationUtil::MY_TEAM_BUTTON);
+
+  // TODO choose from list of teams to see corresponding summary page.
 
   // Display general team information.
   if (isset($_REQUEST["team_id"])) {

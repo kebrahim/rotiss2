@@ -1,40 +1,22 @@
 @CHARSET "UTF-8";
 
-html {height:100%;}
+@import url("layout.css");
 
 /* Base */
 body {margin:0;}
 #bodyleft {text-align:left; padding-left:10;}
 #bodycenter {text-align:center;}
-#error_msg {color:red; font-weight:bold; padding-top:20;}
-#alert_msg {color:green; font-weight:bold; padding-top:20;}
 table.left {text-align:center;}
 table.center {margin-left:auto; margin-right:auto; text-align:center;}
+h1 {margin:0.67em 0 0.67em;}
+h4 {margin:1.33em 0 1.33em;}
 
-/* Two-column pages */
-#column_container {padding:0; margin:0 0 0 50%; width:50%; float:right;}
-#left_col {float:left; width:100%; margin-left:-100%; text-align:center;}
-#left_col_inner {padding:10px;}
-#right_col {float:right; width:100%; text-align:center;}
-#right_col_inner {padding:10px;}
-
-/* Navigation */
-header {background-color:#257DFB; height:122px;}
-#banner {width:940px; margin:0 auto;}
-#logo {float:left; padding-top:7px;}
-#menu {float:right; margin-top:30;}
-
-nav ul{float:left; width:100%; padding:0; margin:0; list-style-type:none;}
-nav a{float:left; text-decoration:none; color:#257DFB; background-color:white;
-      padding:0.2em 0.6em; border:1px solid black; text-align:center;}
-nav a:hover {background-color:#257DFB; color:white;}
-nav li {display:inline;}
-
-footer {background-color:#257DFB; height:61px; margin-top:10px;}
+/* Messages */
+#error_msg {color:red; font-weight:bold; padding-top:20;}
+#alert_msg {color:green; font-weight:bold; padding-top:20;}
 
 /* Login page */
 label {font-weight:bold;}
 fieldset {width: 153px; margin:20 auto 0 auto; text-align:left;}
 #logininfo {margin-left:6;}
 #signinbutton {text-align:center;}
-
