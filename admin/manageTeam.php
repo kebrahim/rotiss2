@@ -1,6 +1,7 @@
 <html>
 <head>
-<title>Rotiss 2012</title>
+<title>Rotiss.com - Manage Team</title>
+<link href='../css/style.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
@@ -8,17 +9,20 @@
 <?php
   require_once '../dao/teamDao.php';
   require_once '../entity/team.php';
+  require_once '../util/navigation.php';
 
+  // Display header.
+  NavigationUtil::printHeader(true, false);
+  echo "<div id='bodyleft'>";
   if (isset($_POST['update'])) {
     // Update team.
     $teamToUpdate = new Team($_POST['teamId'], $_POST['teamName'], $_POST['league'],
         $_POST['division'], $_POST['abbreviation'], $_POST['sportslineImage']);
     TeamDao::updateTeam($teamToUpdate);
-    $teamId = $teamToUpdate->getId();
-  } else if (isset($_GET["team_id"])) {
-    $teamId = $_GET["team_id"];
-  } else if (isset($_POST["team_id"])) {
-    $teamId = $_POST["team_id"];
+    $teamId = $_POST['teamId'];
+    echo "<div id='alert_msg'>Team successfully updated!</div>";
+  } else if (isset($_REQUEST["team_id"])) {
+    $teamId = $_REQUEST["team_id"];
   } else {
     die("<h1>Missing team id!</h1>");
   }
@@ -30,7 +34,7 @@
     die("<h1>team id " . $teamId . " does not exist!</h1>");
   }
 
-  echo "<h1>Edit " . $team->getName() . "</h1>";
+  echo "<h1>Manage: " . $team->getName() . "</h1>";
 
   // Sportsline Image
   echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
@@ -71,7 +75,7 @@
   // Sportsline Image Name
   echo "<tr><td><strong>Sportsline Image Name:</strong></td><td>
          <input type=text name='sportslineImage'" .
-       " maxLength=45 size=45 value='" . $team->getSportslineImageName() . "'></td></tr>";
+       " maxLength=65 size=65 value='" . $team->getSportslineImageName() . "' required></td></tr>";
 
   // Owners
   echo "<tr><td><strong>Owner(s):</strong></td><td>" . $team->getOwnersString() . "</td></tr>";
@@ -80,7 +84,14 @@
 
   // Buttons
   echo "<input class='button' type=submit name='update' value='Update Team'>
-        <a href='../summaryPage.php?team_id=" . $team->getId() . "'>Back to Summary</a>";
+        &nbsp&nbsp<a href='../summaryPage.php?team_id=" . $team->getId() . "'>Back to Summary</a>";
+  echo "</div>";
+
+  // TODO add/delete contracts from this page
+  // TODO seltzer player?
+
+  // Footer
+  NavigationUtil::printFooter();
 ?>
 
 </body>

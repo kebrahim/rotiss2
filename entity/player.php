@@ -20,7 +20,7 @@ class Player {
   private $positionsLoaded;
   private $sportslineId;
   private $statLines;
-  
+
   private static $HEADSHOT_URL = "http://sports.cbsimg.net/images/baseball/mlb/players/60x80/";
   private static $STPETES_URL = "http://stpetesorium.baseball.cbssports.com/players/playerpage/";
 
@@ -73,8 +73,9 @@ class Player {
     $year_diff  = date("Y") - $year;
     $month_diff = date("m") - $month;
     $day_diff   = date("d") - $day;
-    if ($day_diff < 0 || $month_diff < 0)
+    if ($month_diff < 0 || ($month_diff == 0 && $day_diff < 0)) {
       $year_diff--;
+    }
     return $year_diff;
   }
 
@@ -132,18 +133,18 @@ class Player {
   public function getStPetesUrl() {
     return Player::$STPETES_URL . $this->sportslineId;
   }
-  
+
   public function getFantasyTeam() {
   	return TeamDao::getTeamByPlayer($this);
   }
-  
+
   public function getStatLine($year) {
   	if (isset($this->statLines[$year])) {
   	  return $this->statLines[$year];
   	}
   	return null;
   }
-  
+
   public function setStatLine($year, $statLine) {
   	$this->statLines[$year] = $statLine;
   }

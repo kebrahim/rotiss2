@@ -1,17 +1,24 @@
+<?php
+  require_once 'util/sessions.php';
+  SessionUtil::checkUserIsLoggedIn();
+?>
 <html>
 <head>
-<title>Display Player</title>
+<title>Rotiss.com - Display Player</title>
+<link href='css/style.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
 
 <?php
   require_once 'dao/playerDao.php';
+  require_once 'util/navigation.php';
 
-  if (isset($_GET["player_id"])) {
-    $playerId = $_GET["player_id"];
-  } else if (isset($_POST["player_id"])) {
-    $playerId = $_POST["player_id"];
+  // Display header.
+  NavigationUtil::printHeader(true, true);
+
+  if (isset($_REQUEST["player_id"])) {
+    $playerId = $_REQUEST["player_id"];
   } else {
     die("<h1>Missing playerId for player page</h1>");
   }
@@ -23,6 +30,7 @@
   }
 
   // Display player attributes.
+  echo "<div id='bodyleft'>";
   echo "<h1>" . $player->getFullName() . "</h1>";
 
   // Headshot
@@ -56,18 +64,26 @@
   if ($fantasyTeam == null) {
   	echo "--";
   } else {
-  	echo $fantasyTeam->getName() . " (" . $fantasyTeam->getAbbreviation() . ")";
+  	echo "<a href='summaryPage.php?team_id=" . $fantasyTeam->getId() . "'>" .
+  	    $fantasyTeam->getName() . " (" . $fantasyTeam->getAbbreviation() . ")" . "</a>";
   }
   echo "</td></tr>";
-  
+
   echo "</table><br/>";
-  
-  // TODO displayPlayer: if admin user, show edit link
-  echo "<a href='admin/managePlayer.php?player_id=" . $player->getId() . "'>Edit player</a><br>";
+
+  // if admin user, show edit link
+  if (SessionUtil::isLoggedInAdmin()) {
+    echo "<a href='admin/managePlayer.php?player_id=" . $player->getId() .
+        "'>Manage player</a><br>";
+  }
 
   // TODO displayPlayer: show contract history
   // TODO displayPlayer: show draft/pingpong history
   // TODO displayPlayer: show auction history
+  echo "</div>";
+
+  // Display footer
+  NavigationUtil::printFooter();
 ?>
 
 </body>

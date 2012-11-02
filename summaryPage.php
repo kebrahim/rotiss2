@@ -4,7 +4,7 @@
 ?>
 <html>
 <head>
-<title>Rotiss - My Team</title>
+<title>Rotiss.com - Team Summary</title>
 <link href='css/style.css' rel='stylesheet' type='text/css'>
 </head>
 
@@ -16,13 +16,13 @@
   require_once 'util/time.php';
 
   // Display header.
-  NavigationUtil::printHeader();
+  NavigationUtil::printHeader(true, true);
 
   // Display general team information.
   if (isset($_REQUEST["team_id"])) {
     $teamId = $_REQUEST["team_id"];
   } else {
-    // if no team is selected, then show the user's team.
+    // if no team is selected, then show the logged-in user's team.
     $teamId = SessionUtil::getLoggedInTeam()->getId();
   }
   $team = TeamDao::getTeamById($teamId);
@@ -37,11 +37,11 @@
               <td>" . $team->getOwnersString() . "</td></tr>";
   echo "  <tr><td><strong>Division:</strong></td>
               <td>" . $team->getLeague() . " " . $team->getDivision() . "</td></tr>";
-  echo "</table><br/>";
+  echo "</table>";
 
   // if admin user, show edit link
   if (SessionUtil::isLoggedInAdmin()) {
-    echo "<a href='admin/manageTeam.php?team_id=" . $team->getId() . "'>Edit team</a><br/>";
+    echo "<br/><a href='admin/manageTeam.php?team_id=" . $team->getId() . "'>Manage team</a><br/>";
   }
 
   // Display contracts.
@@ -52,6 +52,8 @@
 
   // Display draft pick information
   $team->displayAllDraftPicks();
+
+  // TODO display current team
   echo "</div>";
 
   // Display footer

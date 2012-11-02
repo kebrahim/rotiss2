@@ -2,43 +2,21 @@
 <html>
 <head>
 <title>Rotiss.com</title>
+<link href='css/style.css' rel='stylesheet' type='text/css'>
 </head>
 
-<style type="text/css">
-html {height:100%;}
-body {margin: 0; text-align:center;}
-table {text-align:center;}
-table.center {margin-left:auto; margin-right:auto;}
-label {font-weight:bold;}
-fieldset {width: 153px; margin:20 auto 0 auto; text-align:left;}
-#column_container {padding:0; margin:0 0 0 50%; width:50%; float:right;}
-#left_col {float:left; width:100%; margin-left:-100%; text-align:center;}
-#left_col_inner {padding:10px;}
-#right_col {float:right; width:100%; text-align:center;}
-#right_col_inner {padding:10px;}
-#placeholder_row {background-color:#E3F2F9;}
-#vert_td {vertical-align:top;}
-#error_msg {color:#FF0000; font-weight:bold; padding-top:20;}
-#logininfo {margin-left:6;}
-#signinbutton {text-align:center;}
-
-header {background-color:#257DFB; height:122px;}
-#logo {padding-top:7px;}
+<style>
+#logo {float:none;}
 </style>
-
-<script>
-</script>
-
 <body>
-  <header>
-    <div id='logo'>
-      <img src='images/rotiss.jpg' width='240' />
-    </div>
-  </header>
 
 <?php
   require_once 'dao/userDao.php';
+  require_once 'util/navigation.php';
   require_once 'util/sessions.php';
+
+  echo "<div id='bodycenter'>";
+  NavigationUtil::printHeader(false, true);
 
   if (isset($_POST['login'])) {
     $user = UserDao::getUserByUsernamePassword($_POST["username"], $_POST["password"]);
@@ -65,6 +43,12 @@ header {background-color:#257DFB; height:122px;}
       </fieldset><br/>
       <a href='loginHelpPage.php'>Can't access your account?</a><br/>
     </form>
-  </div>
+  </div></div>
+
+<?php
+  // footer
+  NavigationUtil::printFooter();
+?>
+
 </body>
 </html>

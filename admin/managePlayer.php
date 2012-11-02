@@ -1,6 +1,7 @@
 <html>
 <head>
-<title>Manage Player</title>
+<title>Rotiss.com - Manage Player</title>
+<link href='../css/style.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
@@ -10,6 +11,11 @@
   require_once '../dao/playerDao.php';
   require_once '../dao/positionDao.php';
   require_once '../entity/player.php';
+  require_once '../util/navigation.php';
+
+  // Display header.
+  NavigationUtil::printHeader(true, false);
+  echo "<div id='bodyleft'>";
 
   $isNew = false;
   if(isset($_POST['create'])) {
@@ -21,29 +27,30 @@
     // Save positions.
     $positions = PositionDao::getPositionsByPositionIds($_POST['positions']);
     PositionDao::assignPositionsToPlayer($positions, $createdPlayer);
-    
+
     // Save fantasy team.
     TeamDao::assignPlayerToTeam($createdPlayer, $_POST['teamId']);
-    
+
     $playerId = $createdPlayer->getId();
+
+    echo "<div id='alert_msg'>Player successfully created!</div>";
   } else if (isset($_POST['update'])) {
     // Update player.
     $playerToUpdate = new Player($_POST['player_id'], $_POST['firstName'], $_POST['lastName'],
         $_POST['birthDate'], $_POST['mlbTeamId'], $_POST['sportslineId']);
     PlayerDao::updatePlayer($playerToUpdate);
-    
+
     // Update positions.
     $positions = PositionDao::getPositionsByPositionIds($_POST['positions']);
     PositionDao::assignPositionsToPlayer($positions, $playerToUpdate);
 
     // Update fantasy team.
-    TeamDao::assignPlayerToTeam($playerToUpdate, $_POST['teamId']);    
-    
+    TeamDao::assignPlayerToTeam($playerToUpdate, $_POST['teamId']);
     $playerId = $playerToUpdate->getId();
-  } else if (isset($_GET["player_id"])) {
-    $playerId = $_GET["player_id"];
-  } else if (isset($_POST["player_id"])) {
-    $playerId = $_POST["player_id"];
+
+    echo "<div id='alert_msg'>Player successfully updated!</div>";
+  } else if (isset($_REQUEST["player_id"])) {
+    $playerId = $_REQUEST["player_id"];
   } else {
     $isNew = true;
   }
@@ -58,7 +65,7 @@
     if ($player == null) {
       die("<h1>player id " . $playerId . " does not exist!</h1>");
     }
-    echo "<h1>Edit " . $player->getFullName() . "</h1>";
+    echo "<h1>Manage: " . $player->getFullName() . "</h1>";
 
     // Headshot
     if ($player->hasSportslineId()) {
@@ -102,7 +109,7 @@
   // Sportsline ID
   echo "<tr><td><strong>Sportsline ID:</strong></td>
             <td><input type=text name='sportslineId' required " .
-                "value='" . ($isNew ? "0" : $player->getSportslineId()) . "'></td></tr>";
+                "value='" . ($isNew ? "" : $player->getSportslineId()) . "'></td></tr>";
 
   // Positions
   echo "<tr><td><strong>Position(s):</strong></td>
@@ -115,19 +122,19 @@
          $position->getAbbreviation() . "</option>";
   }
   echo "</select></td></tr>";
-  
+
   // Fantasy team
   echo "<tr><td><strong>Fantasy Team:</strong></td>
             <td><select name='teamId'><option value='0'>None</option>";
   $teams = TeamDao::getAllTeams();
   foreach ($teams as $team) {
-  	$isSelected = (!$isNew && ($player->getFantasyTeam() != null) && 
+  	$isSelected = (!$isNew && ($player->getFantasyTeam() != null) &&
   	    ($team->getId() == $player->getFantasyTeam()->getId()));
   	echo "<option value='" . $team->getId() . "'" . ($isSelected ? " selected" : "") .
   	">" . $team->getName() . " (" . $team->getAbbreviation() . ")</option>";
   }
   echo "</select></td></tr>";
-  
+
   echo "</table><br/>";
 
   // Buttons
@@ -138,6 +145,10 @@
     echo "&nbsp&nbsp<a href='../displayPlayer.php?player_id=" . $player->getId() .
          "'>View player</a>";
   }
+  echo "</div>";
+
+  // footer
+  NavigationUtil::printFooter();
 ?>
 
 </body>
