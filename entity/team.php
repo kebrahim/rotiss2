@@ -158,7 +158,7 @@ class Team {
     if ($isSelectable) {
       echo "<th></th>";
     }
-    echo "  <th>Name</th>
+    echo "  <th></th><th>Name</th>
           	<th>Position</th>
 	        <th>Team</th>
             <th>Age</th>
@@ -175,8 +175,9 @@ class Team {
         echo "<td><input type=checkbox name='t" . $this->getId() . "c[]'
                          value='" . $contract->getId() . "'></td>";
       }
-      echo "<td><a href='displayPlayer.php?player_id=" . $player->getId() . "'>" .
-      $player->getFullName() . "</a></td>
+      echo "<td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>
+                  <td><a href='displayPlayer.php?player_id=" . $player->getId() . "'>" .
+                      $player->getFullName() . "</a></td>
                   <td>" . $player->getPositionString() . "</td>
                   <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
                   <td>" . $player->getAge() . "</td>
@@ -399,6 +400,32 @@ class Team {
               </td>";
       }
       echo "</tr>";
+    }
+    echo "</table>";
+  }
+
+  /**
+   * Displays all of the players currently belonging to this team.
+   */
+  function displayPlayers() {
+    $players = PlayerDao::getPlayersByTeam($this);
+    if (count($players) == 0) {
+      return;
+    }
+
+    echo "<h4>Players</h4>";
+    echo "<table class='left' border><tr>";
+    echo "<th></th><th>Name</th>
+          <th>Position</th>
+    	  <th>Team</th>
+          <th>Age</th></tr>";
+    foreach ($players as $player) {
+      echo "<tr><td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>
+                <td><a href='displayPlayer.php?player_id=" . $player->getId() . "'>" .
+                    $player->getFullName() . "</a></td>
+                <td>" . $player->getPositionString() . "</td>
+                <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
+                <td>" . $player->getAge() . "</td></tr>";
     }
     echo "</table>";
   }

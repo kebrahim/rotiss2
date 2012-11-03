@@ -25,7 +25,7 @@
         $_POST['division'], $_POST['abbreviation'], $_POST['sportslineImage']);
     TeamDao::updateTeam($teamToUpdate);
     $teamId = $_POST['teamId'];
-    echo "<div class='alert_msg'>Team successfully updated!</div>";
+    echo "<div class='alert_msg_pad_top'>Team successfully updated!</div>";
   } else if (isset($_REQUEST["team_id"])) {
     $teamId = $_REQUEST["team_id"];
   } else {

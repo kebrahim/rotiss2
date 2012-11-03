@@ -53,7 +53,7 @@
     TeamDao::assignPlayerToTeam($playerToUpdate, $_POST['teamId']);
     $playerId = $playerToUpdate->getId();
 
-    echo "<div class='alert_msg'>Player successfully updated!</div>";
+    echo "<div class='alert_msg_pad_top'>Player successfully updated!</div>";
   } else if (isset($_REQUEST["player_id"])) {
     $playerId = $_REQUEST["player_id"];
   } else {

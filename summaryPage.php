@@ -19,18 +19,32 @@
   // Display header.
   NavigationUtil::printHeader(true, true, NavigationUtil::MY_TEAM_BUTTON);
 
-  // TODO choose from list of teams to see corresponding summary page.
+  echo "<div class='bodyleft'>";
 
-  // Display general team information.
+  // Get team from REQUEST; otherwise, use logged-in user's team.
   if (isset($_REQUEST["team_id"])) {
     $teamId = $_REQUEST["team_id"];
   } else {
-    // if no team is selected, then show the logged-in user's team.
     $teamId = SessionUtil::getLoggedInTeam()->getId();
   }
   $team = TeamDao::getTeamById($teamId);
 
-  echo "<div class='bodyleft'>";
+  // Allow user to choose from list of teams to see corresponding summary page.
+  $allTeams = TeamDao::getAllTeams();
+  echo "<form action='summaryPage.php' method=post>";
+  echo "<br/><label for='team_id'>Change team: </label>";
+  echo "<select id='team_id' name='team_id'>";
+  foreach ($allTeams as $selectTeam) {
+    echo "<option value='" . $selectTeam->getId() . "'";
+    if ($selectTeam->getId() == $teamId) {
+      echo " selected";
+    }
+    echo ">" . $selectTeam->getName() . " (" . $selectTeam->getAbbreviation() . ")</option>";
+  }
+  echo "</select>&nbsp&nbsp<input type='submit' name='submit' value='Choose team'><br/></form>";
+
+  // TODO add bookmarks to various sections of page
+
   echo "<h1>Team Summary: " . $team->getName() . "</h1>";
   echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
 
@@ -58,7 +72,9 @@
   // Display draft pick information
   $team->displayAllDraftPicks();
 
-  // TODO display current team
+  // Display current team
+  $team->displayPlayers();
+
   echo "</div>";
 
   // Display footer
