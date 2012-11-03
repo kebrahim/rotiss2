@@ -4,6 +4,18 @@ require_once 'commonDao.php';
 CommonDao::requireFileIn('/../entity/', 'user.php');
 
 class UserDao {
+
+  /**
+   * Returns the user with the specified id
+   */
+  public static function getUserById($userId) {
+    CommonDao::connectToDb();
+    $query = "select u.*
+              from user u
+              where u.user_id = " . $userId;
+    return UserDao::createUserFromQuery($query);
+  }
+
   /**
    * Returns all of the owners for the specified team ID.
    */
@@ -55,5 +67,19 @@ class UserDao {
           $userDb["is_admin"], $userDb["is_super_admin"]);
     }
     return $usersDb;
+  }
+
+  /**
+   * Updates the specified user in the 'user' table.
+   */
+  public static function updateUser(User $user) {
+    CommonDao::connectToDb();
+    $query = "update user set username = '" . $user->getUsername() . "',
+                              password = '" . $user->getPassword() . "',
+                              first_name = '" . $user->getFirstName() . "',
+                              last_name = '" . $user->getLastName() . "',
+                              email = '" . $user->getEmail() . "'
+                          where user_id = " . $user->getId();
+    $result = mysql_query($query) or die('Invalid query: ' . mysql_error());
   }
 }

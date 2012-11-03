@@ -8,7 +8,7 @@ class NavigationUtil {
   const DRAFT_BUTTON = 4;
   const AUCTION_BUTTON = 5;
   const ADMIN_BUTTON = 6;
-  
+
   public static function printHeader($showNavigationLinks, $isTopLevel, $selectedButton) {
     NavigationUtil::displayHeader($showNavigationLinks, $isTopLevel, $selectedButton, 'wrapper');
   }
@@ -42,7 +42,7 @@ class NavigationUtil {
       // if admin user, show admin button
       if (SessionUtil::isLoggedInAdmin()) {
         // TODO add sub-menu for admin options
-      	NavigationUtil::printListItem("summaryPage.php", "Admin", $isTopLevel, 
+      	NavigationUtil::printListItem("summaryPage.php", "Admin", $isTopLevel,
             $selectedButton, self::ADMIN_BUTTON);
       }
 
@@ -67,13 +67,17 @@ class NavigationUtil {
       NavigationUtil::printListItem("auctionPage.php", "Auction", $isTopLevel, $selectedButton,
           self::AUCTION_BUTTON);
 
-      // Sign out link
-      echo "<li><a href='". ($isTopLevel ? "" : "../") . "logoutPage.php'>Sign out</a></li>
+      echo "</ul></nav>";
 
-          </ul>
-        </nav>";
-      // TODO show logged-in user information w/ links for editing profile & signing out
-      echo "</div>";
+      // show logged-in user name with links for editing profile & signing out
+      $user = SessionUtil::getLoggedInUser();
+      echo "<div id='profileinfo'>";
+      echo "Hi " . $user->getFirstName() . "!";
+      echo " <a href='editProfilePage.php'>Edit profile</a>
+            <a href='logoutPage.php'>Sign out</a>";
+      echo "</div>"; // profileinfo
+
+      echo "</div>"; // banner
     }
     echo "</header>";
     echo "<div id='$wrapperId'>";

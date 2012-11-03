@@ -19,6 +19,10 @@ nav a{float:left; text-decoration:none; color:#257DFB; background-color:white;
 nav a:hover, #navselected {background-color:#257DFB; color:white;}
 nav li {display:inline;}
 
+/* Profile */
+#profileinfo {color:white; float:right; margin-top:-30; clear:both;}
+#profileinfo a {color:white; }
+
 /* Two-column pages */
 #column_container {padding:0; margin:0 0 0 50%; width:50%; float:right;}
 #left_col {float:left; width:100%; margin-left:-100%; text-align:center;}

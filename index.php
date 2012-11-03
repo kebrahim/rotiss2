@@ -31,7 +31,7 @@
 ?>
   <div id='logininfo'>
     <form action='index.php' method=post>
-      <fieldset >
+      <fieldset class="signinfieldset">
         <legend>Sign in</legend>
         <label for='username' >Username:</label><br/>
         <input type='text' name='username' id='username'  maxlength="20" size="25" required /><br/><br/>

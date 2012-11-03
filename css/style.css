@@ -14,16 +14,19 @@ h1 {margin:0.67em 0 0.67em;}
 h2 {margin:0.83em 0 0.83em;}
 h3 {margin:1em 0 1em;}
 h4 {margin:1.33em 0 1.33em;}
+label {font-weight:bold;}
+fieldset {width: 153px; text-align:left;}
 
 /* Messages */
 .error_msg, .error_msg_pad {color:red; font-weight:bold;}
 .error_msg_pad {padding-top:20;}
-.alert_msg {color:green; font-weight:bold; padding-top:20;}
+.alert_msg, .alert_msg_pad, .alert_msg_pad_top {color:green; font-weight:bold;}
+.alert_msg_pad_top {padding-top:20;}
+.alert_msg_pad {padding-bottom:20;}
 
 /* Login page */
-label {font-weight:bold;}
-fieldset {width: 153px; margin:20 auto 0 auto; text-align:left;}
 #logininfo {margin-left:6;}
+#logininfo fieldset {margin:20 auto 0 auto;}
 #signinbutton {text-align:center;}
 
 /* Rank page */

@@ -91,6 +91,13 @@ class SessionUtil {
   }
 
   /**
+   * Returns the logged-in user.
+   */
+  public static function getLoggedInUser() {
+    return SessionUtil::isLoggedIn() ? UserDao::getUserById($_SESSION["loggedinuserid"]) : null;
+  }
+
+  /**
    * Returns the fantasy team of the currently logged-in user.
    */
   public static function getLoggedInTeam() {
@@ -115,7 +122,9 @@ class SessionUtil {
    * Logs out the currently logged-in user.
    */
   public static function logOut() {
-    session_start();
+    if (!isset($_SESSION)) {
+      session_start();
+    }
     SessionUtil::unsetSessionVariable("loggedinuserid");
     SessionUtil::unsetSessionVariable("loggedinteamid");
     SessionUtil::unsetSessionVariable("loggedinadmin");
