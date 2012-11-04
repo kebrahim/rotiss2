@@ -28,17 +28,18 @@
 
     // Contracts
     $contractSeason = TimeUtil::getYearBasedOnEndOfSeason();
-    $team->displayContracts($contractSeason, 3000, true);
+    $team->displayContracts($contractSeason, 3000, true, 'center smallfonttable');
 
     // Brognas
     $keeperSeason = TimeUtil::getYearBasedOnKeeperNight();
-    $team->displayBrognas($keeperSeason + 1, $keeperSeason + 1, true, $position);
+    $team->displayBrognas($keeperSeason + 1, $keeperSeason + 1, true, $position, 
+        'center smallfonttable');
 
     // Picks
     $draftSeason = TimeUtil::getYearBasedOnStartOfSeason();
-    $team->displayDraftPicks($draftSeason + 1, 3000, true);
+    $team->displayDraftPicks($draftSeason + 1, 3000, true, 'center smallfonttable');
 
-    echo "<input type='hidden' name='team". $position . "id' value='" . $team->getId() . "'>";
+    echo "<input type='hidden' name='trade_team". $position . "id' value='" . $team->getId() . "'>";
     echo "<br/>";
   }
 

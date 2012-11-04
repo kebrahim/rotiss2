@@ -24,6 +24,21 @@ class SessionUtil {
   	  unset($_SESSION[$key]);
   	}
   }
+  
+  /**
+   * Clears out all session variables that start with the specified prefix.
+   */
+  public static function clearSessionVarsWithPrefix($prefix) {
+  	if (!isset($_SESSION)) {
+  	  session_start();
+  	}
+  	foreach ($_SESSION as $key=>$val) {
+  	  $pos = strpos($key, $prefix);
+      if (($pos !== false) && ($pos == 0)) {
+  	  	unset($_SESSION[$key]);
+  	  }
+  	}
+  }
 
   /**
    * Login with the specified user, after clearing out the session, and redirect to the navigation

@@ -15,19 +15,19 @@ class Trade {
   private $tradePartner2;
 
   public function parseTradeFromPost() {
-    $this->tradePartner1 = $this->parseTradePartnerFromPost($_POST['team1id']);
-    $this->tradePartner2 = $this->parseTradePartnerFromPost($_POST['team2id']);
+    $this->tradePartner1 = $this->parseTradePartnerFromPost($_POST['trade_team1id']);
+    $this->tradePartner2 = $this->parseTradePartnerFromPost($_POST['trade_team2id']);
 
-    $_SESSION['team1id'] = $_POST['team1id'];
-    $_SESSION['team2id'] = $_POST['team2id'];
+    $_SESSION['trade_team1id'] = $_POST['trade_team1id'];
+    $_SESSION['trade_team2id'] = $_POST['trade_team2id'];
   }
 
   public function parseTradeFromSession() {
-    $this->tradePartner1 = $this->parseTradePartnerFromSession($_SESSION['team1id']);
-    $this->tradePartner2 = $this->parseTradePartnerFromSession($_SESSION['team2id']);
+    $this->tradePartner1 = $this->parseTradePartnerFromSession($_SESSION['trade_team1id']);
+    $this->tradePartner2 = $this->parseTradePartnerFromSession($_SESSION['trade_team2id']);
 
-    unset($_SESSION['team1id']);
-    unset($_SESSION['team2id']);
+    unset($_SESSION['trade_team1id']);
+    unset($_SESSION['trade_team2id']);
   }
 
   public function showTradeSummary() {
@@ -53,7 +53,7 @@ class Trade {
 
   public function initiateTrade() {
     // Move stuff to other team & display results.
-    echo "<h3>Trade completed!</h3>";
+    echo "<h3 class='alert_msg'>Trade completed!</h3>";
     echo "<div id='column_container'>
             <div id='left_col'>
               <div id='left_col_inner'>";
@@ -101,7 +101,7 @@ class Trade {
    * & populates it in the specified trade partner.
    */
   private function parseContracts($teamId, $assocArray, TradePartner $tradePartner, $isPost) {
-    $contractStr = 't' . $teamId . 'c';
+    $contractStr = 'trade_t' . $teamId . 'c';
     if (isset($assocArray[$contractStr]) && is_array($assocArray[$contractStr])) {
       $contracts = array();
       foreach ($assocArray[$contractStr] as $contractId) {
@@ -121,7 +121,7 @@ class Trade {
    * & populates it in the specified trade partner.
    */
   private function parseBrognas($teamId, $assocArray, TradePartner $tradePartner, $isPost) {
-    $brognaStr = 't' . $teamId . 'b';
+    $brognaStr = 'trade_t' . $teamId . 'b';
     if (isset($assocArray[$brognaStr])) {
       $brognaYear = $assocArray[$brognaStr];
       // Ensure year is next year
@@ -131,7 +131,7 @@ class Trade {
       }
 
       // Get # of brognas traded.
-      $numBrognasStr = 't' . $teamId . 'bv';
+      $numBrognasStr = 'trade_t' . $teamId . 'bv';
       if (($assocArray[$numBrognasStr] != null) && ($assocArray[$numBrognasStr] != "")) {
         $numBrognas = $assocArray[$numBrognasStr];
       } else {
@@ -153,7 +153,7 @@ class Trade {
    * array & populates it in the specified trade partner.
    */
   private function parseDraftPicks($teamId, $assocArray, TradePartner $tradePartner, $isPost) {
-    $draftPickStr = 't' . $teamId . 'dpp';
+    $draftPickStr = 'trade_t' . $teamId . 'dpp';
     if (isset($assocArray[$draftPickStr]) && is_array($assocArray[$draftPickStr])) {
       $draftPicks = array();
       foreach ($assocArray[$draftPickStr] as $draftPickId) {
@@ -174,7 +174,7 @@ class Trade {
    * array & populates it in the specified trade partner.
    */
   private function parsePingPongBalls($teamId, $assocArray, TradePartner $tradePartner, $isPost) {
-    $pingPongStr = 't' . $teamId . 'dpb';
+    $pingPongStr = 'trade_t' . $teamId . 'dpb';
     if (isset($assocArray[$pingPongStr]) && is_array($assocArray[$pingPongStr])) {
       $pingPongBalls = array();
       foreach ($assocArray[$pingPongStr] as $pingPongBallId) {
@@ -306,9 +306,10 @@ class TradePartner {
       foreach ($this->contracts as $contract) {
         $contractFromDb = ContractDao::getContractById($contract->getId());
         if ($contractFromDb->getTeam()->getId() != $this->team->getId()) {
-          echo "Error: " . $this->team->getName() . " cannot trade contract for " .
+          $this->printError("Error: " . $this->team->getName() . 
+               " cannot trade contract for " .
                $contract->getPlayer()->getFullName() . "; contract now belongs to " .
-               $contractFromDb->getTeam()->getName() . "<br>";
+               $contractFromDb->getTeam()->getName());
           return false;
         }
       }
@@ -318,8 +319,9 @@ class TradePartner {
     if ($this->brognas != null) {
       // is brognas value numeric and > 0?
       if (!is_numeric($this->brognas) || $this->brognas <= 0) {
-        echo "Error: " . $this->team->getName() . " cannot trade an invalid number of brognas: "
-             . $this->brognas . "<br>";
+        $this->printError("Error: " . $this->team->getName() . 
+             " cannot trade an invalid number of brognas: "
+             . $this->brognas);
         return false;
       }
 
@@ -328,14 +330,15 @@ class TradePartner {
 
       // do i have enough total points?
       if ($myBrognas->getTotalPoints() < $this->brognas) {
-        echo "Error: " . $this->team->getName() . " cannot trade " . $this->brognas .
-             " brognas; only has " . $myBrognas->getTotalPoints() . " total points.<br>";
+        $this->printError("Error: " . $this->team->getName() . " cannot trade " . 
+            $this->brognas . " brognas; only has " . $myBrognas->getTotalPoints() . 
+        	" total brognas.");
         return false;
       }
       // do i have enough tradeable points?
       if ($myBrognas->getTradeablePoints() < $this->brognas) {
-        echo "Error: " . $this->team->getName() . " cannot trade " . $this->brognas .
-             " brognas; only has " . $myBrognas->getTradeablePoints() . " tradeable points.<br>";
+        $this->printError("Error: " . $this->team->getName() . " cannot trade " . $this->brognas .
+             " brognas; only has " . $myBrognas->getTradeablePoints() . " tradeable brognas.");
         return false;
       }
     }
@@ -346,9 +349,9 @@ class TradePartner {
       foreach ($this->draftPicks as $draftPick) {
         $draftPickFromDb = DraftPickDao::getDraftPickById($draftPick->getId());
         if ($draftPickFromDb->getTeam()->getId() != $this->team->getId()) {
-          echo "Error: " . $this->team->getName() . " cannot trade draft pick " .
+          $this->printError("Error: " . $this->team->getName() . " cannot trade draft pick " .
               $draftPick->toString() . "; pick now belongs to " .
-              $draftPickFromDb->getTeam()->getName() . "<br>";
+              $draftPickFromDb->getTeam()->getName());
           return false;
         }
       }
@@ -360,9 +363,9 @@ class TradePartner {
       foreach ($this->pingPongBalls as $pingPongBall) {
         $pingPongBallFromDb = BallDao::getPingPongBallById($pingPongBall->getId());
         if ($pingPongBallFromDb->getTeam()->getId() != $this->team->getId()) {
-          echo "Error: " . $this->team->getName() . " cannot trade pingpong ball " .
+          $this->printError("Error: " . $this->team->getName() . " cannot trade pingpong ball " .
               $pingPongBall->toString() . "; ball now belongs to " .
-              $pingPongBallFromDb->getTeam()->getName() . "<br>";
+              $pingPongBallFromDb->getTeam()->getName());
           return false;
         }
       }
@@ -435,6 +438,10 @@ class TradePartner {
     }
 
     // TODO update changelog
+  }
+  
+  private function printError($errorMsg) {
+    echo "<div class='error_msg'>" . $errorMsg . "</div>";
   }
 }
 ?>

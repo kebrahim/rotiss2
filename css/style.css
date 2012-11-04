@@ -19,8 +19,9 @@ label {font-weight:bold;}
 fieldset {width: 153px; text-align:left;}
 
 /* Messages */
-.error_msg, .error_msg_pad {color:red; font-weight:bold;}
+.error_msg, .error_msg_pad, .error_msg_pad_bottom {color:red; font-weight:bold;}
 .error_msg_pad {padding-top:20;}
+.error_msg_pad_bottom {padding-bottom:20;}
 .alert_msg, .alert_msg_pad, .alert_msg_pad_top {color:green; font-weight:bold;}
 .alert_msg_pad_top {padding-top:20;}
 .alert_msg_pad {padding-bottom:20;}

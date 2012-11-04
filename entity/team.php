@@ -172,7 +172,7 @@ class Team {
       $player = $contract->getPlayer();
       echo "<tr>";
       if ($isSelectable) {
-        echo "<td><input type=checkbox name='t" . $this->getId() . "c[]'
+        echo "<td><input type=checkbox name='trade_t" . $this->getId() . "c[]'
                          value='" . $contract->getId() . "'></td>";
       }
       echo "<td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>
@@ -274,7 +274,7 @@ class Team {
       }
       echo "<tr>";
       if ($isSelectable) {
-        echo "<td><input type=checkbox name='t" . $this->getId() . "dpb[]'
+        echo "<td><input type=checkbox name='trade_t" . $this->getId() . "dpb[]'
                          value='" . $pingPongBall->getId() . "'>
               </td>";
       }
@@ -289,7 +289,7 @@ class Team {
       }
       echo "<tr>";
       if ($isSelectable) {
-        echo "<td><input type=checkbox name='t" . $this->getId() . "dpp[]'
+        echo "<td><input type=checkbox name='trade_t" . $this->getId() . "dpp[]'
                          value='" . $draftPick->getId() . "'>
               </td>";
       }
@@ -378,7 +378,7 @@ class Team {
       echo "<tr>";
       if ($isSelectable) {
         if ($brogna->getTradeablePoints() > 0) {
-          echo "<td><input type=checkbox name='t" . $this->getId() . "b'
+          echo "<td><input type=checkbox name='trade_t" . $this->getId() . "b'
                                          onclick='toggle(" . $tradePosition . ")'
                                          value='" . $brogna->getYear() . "'>
                 </td>";
@@ -394,7 +394,7 @@ class Team {
                   <td>" . $brogna->getTradeablePoints() . "</td>";
       if ($isSelectable) {
         echo "<td id='tradebox" . $tradePosition . "' style='display:none'>
-                  <input type='text' name='t" . $this->getId() . "bv'
+                  <input type='text' name='trade_t" . $this->getId() . "bv'
                          placeholder='Enter value 1 to " . $brogna->getTradeablePoints() . "'/>
               </td>";
       }
@@ -406,6 +406,7 @@ class Team {
   /**
    * Displays all of the players currently belonging to this team.
    */
+  // TODO show cumulative rank, if exists
   function displayPlayers() {
     $players = PlayerDao::getPlayersByTeam($this);
     if (count($players) == 0) {

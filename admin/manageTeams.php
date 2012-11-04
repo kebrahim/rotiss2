@@ -16,7 +16,7 @@
   require_once '../util/navigation.php';
   
   // Display header.
-  NavigationUtil::printNoWidthHeader(true, false, NavigationUtil::MANAGE_TEAMS_BUTTON);
+  NavigationUtil::printNoWidthHeader(true, false, NavigationUtil::MANAGE_ROSTERS_BUTTON);
   echo "<div class='bodycenter'>";
   
   /**
@@ -71,7 +71,7 @@
     displayArrayOfPlayers(PlayerDao::getPlayersByTeam($team));
   }
 
-  echo "<h1>Roster Grid</h1>";
+  echo "<h1>Manage Rosters</h1>";
   echo "<FORM ACTION='manageTeams.php' METHOD=POST>";
 
   if (isset($_POST['save'])) {

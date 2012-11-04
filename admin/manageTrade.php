@@ -1,20 +1,13 @@
-<?php session_start(); ?>
+<?php
+  require_once '../util/sessions.php';
+  SessionUtil::checkUserIsLoggedInAdmin();
+?>
+
 <html>
 <head>
-<title>Trading</title>
+<title>Rotiss.com - Manage Trades</title>
+<link href='../css/style.css' rel='stylesheet' type='text/css'>
 </head>
-
-<style type="text/css">
-html {height:100%;}
-body {text-align:center;}
-table {text-align:center;}
-table.center {margin-left:auto; margin-right:auto;}
-#column_container {padding:0; margin:0 0 0 50%; width:50%; float:right;}
-#left_col {float:left; width:100%; margin-left:-100%; text-align:center;}
-#left_col_inner {padding:10px;}
-#right_col {float:right; width:100%; text-align:center;}
-#right_col_inner {padding:10px;}
-</style>
 
 <script>
 // toggles the headerbox and tradebox divs of the specified position [1/2]
@@ -149,10 +142,15 @@ function selectTeam(position, teamid) {
 
 <?php
   require_once '../dao/teamDao.php';
-  require_once '../util/time.php';
   require_once '../entity/trade.php';
-
-  echo "<center><h1>Let's Make a Deal!</h1>";
+  require_once '../util/time.php';
+  require_once '../util/navigation.php';
+  
+  // Display header.
+  NavigationUtil::printNoWidthHeader(true, false, NavigationUtil::MANAGE_TRADE_BUTTON);
+  echo "<div class='bodycenter'>";
+  
+  echo "<h1>Let's Make a Deal!</h1>";
   echo "<FORM ACTION='manageTrade.php' METHOD=POST>";
 
   // If trade button was pressed, execute validated trade.
@@ -167,7 +165,7 @@ function selectTeam(position, teamid) {
       $trade->showTradeSummary();
 
       // request final confirmation of trade before execution
-      echo "<input class='button' type=submit name='confirmTrade' value='Confirm'>";
+      echo "<input class='button' type=submit name='confirmTrade' value='Confirm'>&nbsp";
       echo "<input class='button' type=submit name='cancelTrade' value='Cancel'><br>";
     } else {
       echo "<h3>Cannot execute trade! Please <a href='manageTrade.php'>try again</a>.</h3>";
@@ -186,6 +184,14 @@ function selectTeam(position, teamid) {
       echo "<h3>Cannot execute trade! Please <a href='manageTrade.php'>try again</a>.</h3>";
     }
   } else {
+  	// clear out trade session variables from previous trade scenarios.
+  	SessionUtil::clearSessionVarsWithPrefix("trade_");
+  	 
+  	echo "<div id='tradeButton' style='display:none'>
+       	    <input class='button' type=submit name='trade' value='Initiate Trade'>
+  	        <input class='button' type=submit name='cancel' value='Cancel'>
+  	      </div>";
+  	
     // allow user to select two teams.
     $teams = TeamDao::getAllTeams();
     echo "<div id='column_container'>";
@@ -211,13 +217,11 @@ function selectTeam(position, teamid) {
     }
     echo "</select><br>";
     echo "<div id='teamDisplay2'></div><br/></div></div></div>";
-
-    echo "<div id='tradeButton' style='display:none'>
-            <input class='button' type=submit name='trade' value='Initiate Trade'>
-            <input class='button' type=submit name='cancel' value='Cancel'>
-          </div>";
   }
-  echo "</form>";
+  echo "</form></div>";
+  
+  // Footer
+  NavigationUtil::printFooter();
 ?>
 
 </body>

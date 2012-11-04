@@ -17,7 +17,7 @@
   require_once '../util/navigation.php';
 
   // Display header.
-  NavigationUtil::printHeader(true, false, NavigationUtil::ADMIN_BUTTON);
+  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_TEAM_BUTTON);
   echo "<div class='bodyleft'>";
   if (isset($_POST['update'])) {
     // Update team.
@@ -28,6 +28,7 @@
     echo "<div class='alert_msg_pad_top'>Team successfully updated!</div>";
   } else if (isset($_REQUEST["team_id"])) {
     $teamId = $_REQUEST["team_id"];
+    // TODO if team_id is not set, show drop-down of teams to select from
   } else {
     die("<h1>Missing team id!</h1>");
   }
