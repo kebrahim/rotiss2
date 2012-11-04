@@ -29,7 +29,7 @@
 
   $teams = TeamDao::getAllTeams();
 
-  echo "<table border id='ranks' class='center ranktable'>
+  echo "<table border id='ranks' class='center smallfonttable'>
           <tr><th></th><th>Team</th><th>Owner(s)</th>";
   for ($i = 1; $i <= 10; $i++) {
   	echo "<th>" . $i . "'s</th>";

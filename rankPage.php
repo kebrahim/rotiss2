@@ -46,7 +46,7 @@
   	if (count($ranks) > 15) {
   	  echo "<div class='error_msg'>Too many " . $rank . "s!</div><br/>";
   	}
-  	echo "<table border class='center ranktable'>";
+  	echo "<table border class='center smallfonttable'>";
   	echo "<tr><th>Player</th><th>Pos</th><th>Team</th><th>FPTS</th><th>Rank</th></tr>";
 
   	foreach ($ranks as $rank) {
@@ -148,7 +148,7 @@
   // display unranked players
   echo "<h3>Unranked Players</h3>";
   $rankablePlayers = PlayerDao::getPlayersForRanking($teamId, $lastYear);
-  echo "<table border id='unranked' class='center ranktable'>
+  echo "<table border id='unranked' class='center smallfonttable'>
           <tr><th>Player</th><th>Pos</th><th>Team</th><th>FPTS</th><th>Rank</th></tr>";
   foreach ($rankablePlayers as $player) {
   	$fantasyPts = ($player->getStatLine($lastYear) != null) ?

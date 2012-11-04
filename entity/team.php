@@ -176,8 +176,7 @@ class Team {
                          value='" . $contract->getId() . "'></td>";
       }
       echo "<td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>
-                  <td><a href='displayPlayer.php?player_id=" . $player->getId() . "'>" .
-                      $player->getFullName() . "</a></td>
+                  <td>" . $player->getNameLink() . "</td>
                   <td>" . $player->getPositionString() . "</td>
                   <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
                   <td>" . $player->getAge() . "</td>
@@ -421,8 +420,7 @@ class Team {
           <th>Age</th></tr>";
     foreach ($players as $player) {
       echo "<tr><td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>
-                <td><a href='displayPlayer.php?player_id=" . $player->getId() . "'>" .
-                    $player->getFullName() . "</a></td>
+                <td>" . $player->getNameLink() . "</td>
                 <td>" . $player->getPositionString() . "</td>
                 <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
                 <td>" . $player->getAge() . "</td></tr>";

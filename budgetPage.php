@@ -34,16 +34,17 @@
       }
       // show brogna info
       echo "<h3>" . $brogna->getYear() . "</h3>";
-      echo "<strong>Brognas</strong><br>";
-      echo "<table border><tr><th>Alotted</th>
-                       <th>" . ($brogna->getYear() - 1) . " Bank</th>
-                       <th>Received in Trade</th>
-                       <th>Given in Trade</th><th>Total</th></tr>";
+      echo "<h4>Brognas</h4>";
+      echo "<table border class='left'>
+              <tr><th>Alotted</th>
+                  <th>" . ($brogna->getYear() - 1) . " Bank</th>
+                  <th>Received in Trade</th>
+                  <th>Given in Trade</th><th>Total</th></tr>";
       echo "<tr><td>450</td>
                 <td>" . $brogna->getBankedPoints() . "</td>
                 <td>" . $brogna->getTradedInPoints() . "</td>
                 <td>" . $brogna->getTradedOutPoints() . "</td>
-                <td><strong>" . $brogna->getTotalPoints() . "</td></tr></table><br>";
+                <td><strong>" . $brogna->getTotalPoints() . "</td></tr></table>";
 
       // show contracts for that year
       $contractTotal = 0;
@@ -54,13 +55,15 @@
           continue;
         }
         if ($hasContracts == false) {
-          echo "<strong>Contracts</strong><br>";
-          echo "<table border><tr><th>Name</th><th>Position</th><th>Team</th><th>Age</th>
-                           <th>Years Remaining</th><th>Price</th></tr>";
+          echo "<h4>Contracts</h4>";
+          echo "<table border class='left'>
+                  <tr><th></th><th>Name</th><th>Position</th><th>Team</th><th>Age</th>
+                      <th>Years Remaining</th><th>Price</th></tr>";
           $hasContracts = true;
         }
         $player = $contract->getPlayer();
-        echo "<tr><td>" . $player->getFullName() . "</td>
+        echo "<tr><td>" . $player->getMiniHeadshotImg() . "</td>
+                  <td>" . $player->getNameLink() . "</td>
                   <td>" . $player->getPositionString() . "</td>
                   <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
                   <td>" . $player->getAge() . "</td>
@@ -69,13 +72,13 @@
         $contractTotal += $contract->getPrice();
       }
       if ($hasContracts == true) {
-        echo "<tr><td></td><td></td><td></td><td></td><td></td>
+        echo "<tr><td></td><td></td><td></td><td></td><td></td><td></td>
                   <td><strong>" . $contractTotal . "</strong></td></tr>";
-        echo "</table><br>";
+        echo "</table>";
       }
 
       // show leftover brognas
-      echo "<strong>Bank for " . ($brogna->getYear() + 1) . ": </strong>" .
+      echo "<br/><strong>Bank for " . ($brogna->getYear() + 1) . ": </strong>" .
            ($brogna->getTotalPoints() - $contractTotal);
       // TODO budget: should bank from previous year be calculated?
     }
@@ -83,10 +86,9 @@
 
   // Display header.
   NavigationUtil::printHeader(true, true, NavigationUtil::BUDGET_BUTTON);
-
-  // TODO choose from list of teams to see corresponding budget page.
-
-  // Display general team information.
+  echo "<div class='bodyleft'>";
+  
+  // Get team from REQUEST; otherwise, use logged-in user's team.
   if (isset($_REQUEST["team_id"])) {
   	$teamId = $_REQUEST["team_id"];
   } else {
@@ -94,11 +96,25 @@
   	$teamId = SessionUtil::getLoggedInTeam()->getId();
   }
   $team = TeamDao::getTeamById($teamId);
-
   if ($team == null) {
-    die("<h1>Team ID " . $teamId . " not found!</h1>");
+  	die("<h1>Team ID " . $teamId . " not found!</h1>");
   }
-  echo "<div class='bodyleft'>";
+  
+  // Allow user to choose from list of teams to see corresponding summary page.
+  $allTeams = TeamDao::getAllTeams();
+  echo "<form action='budgetPage.php' method=post>";
+  echo "<br/><label for='team_id'>Change team: </label>";
+  echo "<select id='team_id' name='team_id'>";
+  foreach ($allTeams as $selectTeam) {
+    echo "<option value='" . $selectTeam->getId() . "'";
+    if ($selectTeam->getId() == $teamId) {
+      echo " selected";
+    }
+    echo ">" . $selectTeam->getName() . " (" . $selectTeam->getAbbreviation() . ")</option>";
+  }
+  echo "</select>&nbsp&nbsp<input type='submit' name='submit' value='Choose team'><br/></form>";
+
+  // Show budget information for selected team
   echo "<h1>Budget: " . $team->getName() . "</h1>";
   echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
 

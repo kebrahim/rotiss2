@@ -7,8 +7,10 @@ class NavigationUtil {
   const BUDGET_BUTTON = 3;
   const DRAFT_BUTTON = 4;
   const AUCTION_BUTTON = 5;
-  const ADMIN_BUTTON = 6;
-
+  const MANAGE_TEAMS_BUTTON = 6;
+  const MANAGE_TRADE_BUTTON = 7;
+  const MANAGE_AUCTION_BUTTON = 8;
+  
   public static function printHeader($showNavigationLinks, $isTopLevel, $selectedButton) {
     NavigationUtil::displayHeader($showNavigationLinks, $isTopLevel, $selectedButton, 'wrapper');
   }
@@ -39,11 +41,9 @@ class NavigationUtil {
       echo "  <nav id='menu'>
                 <ul>";
 
-      // if admin user, show admin button
+      // if admin user, show admin button/menu
       if (SessionUtil::isLoggedInAdmin()) {
-        // TODO add sub-menu for admin options
-      	NavigationUtil::printListItem("summaryPage.php", "Admin", $isTopLevel,
-            $selectedButton, self::ADMIN_BUTTON);
+      	NavigationUtil::printAdminMenu($isTopLevel, $selectedButton);
       }
 
       // Summary page
@@ -84,13 +84,51 @@ class NavigationUtil {
   }
 
   private static function printListItem($url, $caption, $isTopLevel, $selectedButton, $listButton) {
-    echo "<li><a";
-    if ($selectedButton == $listButton) {
-      echo " id='navselected'";
-    }
-    echo " href='" . ($isTopLevel ? "" : "../") . $url . "'>" . $caption . "</a></li>";
+    echo "<li>";
+    NavigationUtil::printLink($url, $caption, $isTopLevel, ($selectedButton == $listButton));
+    echo "</li>";
   }
 
+  private static function printLink($url, $caption, $isTopLevel, $isSelected) {
+  	echo "<a";
+  	if ($isSelected) {
+  	  echo " id='navselected'";
+  	}
+  	echo " href='" . ($isTopLevel ? "" : "../") . $url . "'>" . $caption . "</a>";
+  }
+  
+  private static function printAdminMenu($isTopLevel, $selectedButton) {
+  	// top-level button directs to manage teams page
+  	echo "<li class='dropdown'>";
+  	$adminSelected = ($selectedButton >= self::MANAGE_TEAMS_BUTTON);
+  	NavigationUtil::printLink(
+  			"admin/manageTeams.php", "Admin", $isTopLevel, $adminSelected);
+  	
+  	// sub-menu includes all admin options
+  	echo "<ul class='dropdown'>";
+  	
+    // Manage teams
+  	NavigationUtil::printListItem("admin/manageTeams.php", "Manage Teams", $isTopLevel,
+  	    $selectedButton, self::MANAGE_TEAMS_BUTTON);
+  	
+  	// Trade
+  	NavigationUtil::printListItem("admin/manageTrade.php", "Trades", $isTopLevel, $selectedButton,
+  		self::MANAGE_TRADE_BUTTON);
+  	 
+  	// Auction
+  	NavigationUtil::printListItem("admin/manageAuction.php", "Auction", $isTopLevel,
+  		$selectedButton, self::MANAGE_AUCTION_BUTTON);
+  	 
+  	// TODO Brognas?
+  	// TODO Keepers
+  	// TODO Placeholders
+  	// TODO manage individual team
+  	// TODO manage individual player?
+  	// TODO if super-admin, show ranks page
+  	  	  
+  	echo "</ul></li>";
+  }
+  
   /**
    * Displays the footer, attached to the bottom of the page.
    */

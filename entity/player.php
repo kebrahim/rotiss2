@@ -59,6 +59,11 @@ class Player {
   public function getFullName() {
     return $this->firstName . " " . $this->lastName;
   }
+  
+  public function getNameLink() {
+  	return "<a href='displayPlayer.php?player_id=" . $this->getId() . "'>" . 
+  	    $this->getFullName() . "</a>";
+  }
 
   public function getBirthDate() {
     return $this->birthDate;
@@ -130,6 +135,10 @@ class Player {
     return Player::$HEADSHOT_URL . $this->sportslineId . ".jpg";
   }
 
+  public function getMiniHeadshotImg() {
+  	return "<img src='" . $this->getHeadshotUrl() . "' width=24 height=32 />";
+  }
+  
   public function getStPetesUrl() {
     return Player::$STPETES_URL . $this->sportslineId;
   }

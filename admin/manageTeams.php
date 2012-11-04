@@ -1,31 +1,24 @@
-<?php session_start(); ?>
+<?php
+  require_once '../util/sessions.php';
+  SessionUtil::checkUserIsLoggedInAdmin();
+?>
+
 <html>
 <head>
-<title>Manage Teams</title>
+<title>Rotiss.com - Manage Teams</title>
+<link href='../css/style.css' rel='stylesheet' type='text/css'>
 </head>
-
-<style type="text/css">
-html {height:100%;}
-body {text-align:center;}
-table {text-align:center;}
-table.center {margin-left:auto; margin-right:auto;}
-#column_container {padding:0; margin:0 0 0 50%; width:50%; float:right;}
-#left_col {float:left; width:100%; margin-left:-100%; text-align:center;}
-#left_col_inner {padding:10px;}
-#right_col {float:right; width:100%; text-align:center;}
-#right_col_inner {padding:10px;}
-#placeholder_row {background-color:#E3F2F9;}
-#vert_td {vertical-align:top;}
-</style>
-
-<script>
-</script>
 
 <body>
 <?php
   require_once '../dao/playerDao.php';
   require_once '../dao/teamDao.php';
-
+  require_once '../util/navigation.php';
+  
+  // Display header.
+  NavigationUtil::printNoWidthHeader(true, false, NavigationUtil::MANAGE_TEAMS_BUTTON);
+  echo "<div class='bodycenter'>";
+  
   /**
    * Creates a select tag for the assignment of the specified player to any of the fantasy teams.
    */
@@ -38,7 +31,7 @@ table.center {margin-left:auto; margin-right:auto;}
     if ($playerTeam == null) {
       echo " selected";
     }
-    echo "> -- None -- </option>";
+    echo ">- None -</option>";
 
     // option to assign to each team
     $teams = TeamDao::getAllTeams();
@@ -56,13 +49,13 @@ table.center {margin-left:auto; margin-right:auto;}
    * Displays the array of players in a table.
    */
   function displayArrayOfPlayers($players) {
-    echo "<table border class='center'>";
+    echo "<table border class='center smallfonttable'>";
     echo "<tr><th>Player</th><th>Pos</th><th>Team</th><th>Fantasy team</th></tr>";
     foreach ($players as $player) {
       echo "<tr><td><a href='../displayPlayer.php?player_id=" . $player->getId() . "'>" .
       $player->getFullName() . "</a></td>
-      	         <td>" . $player->getPositionString() . "</td>
-      	         <td>" . $player->getMlbTeam()->getAbbreviation() . "</td><td>";
+      	        <td>" . $player->getPositionString() . "</td>
+      	        <td>" . $player->getMlbTeam()->getAbbreviation() . "</td><td>";
       displayTeamSelectForPlayer($player);
       echo "</td></tr>";
     }
@@ -99,7 +92,7 @@ table.center {margin-left:auto; margin-right:auto;}
   for ($i=0; $i<4; $i++) {
   	echo "<tr>";
   	for ($j=0; $j<4; $j++) {
-      echo "<td id='vert_td'>";
+      echo "<td class='vert_td_top'>";
       displayPlayersByTeam($teams[($i * 4) + $j]);
       echo "</td>";
   	}
@@ -113,7 +106,10 @@ table.center {margin-left:auto; margin-right:auto;}
   // display unassigned players
   echo "<h2>Unassigned players</h2>";
   displayArrayOfPlayers(PlayerDao::getUnassignedPlayers());
-  echo "</FORM>";
+  echo "</form></div>";
+  
+  // Footer
+  NavigationUtil::printFooter();
 ?>
 </body>
 </html>

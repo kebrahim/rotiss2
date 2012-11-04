@@ -10,6 +10,7 @@ table {font-size:14;}
 table.left {text-align:center;}
 table.center {margin-left:auto; margin-right:auto; text-align:center;}
 .vert_td_top {vertical-align:top;}
+.smallfonttable {font-size:11;}
 h1 {margin:0.67em 0 0.67em;}
 h2 {margin:0.83em 0 0.83em;}
 h3 {margin:1em 0 1em;}
@@ -30,7 +31,6 @@ fieldset {width: 153px; text-align:left;}
 #signinbutton {text-align:center;}
 
 /* Rank page */
-.ranktable {font-size:11;}
 .placeholder_row {background-color:#E3F2F9;}
 .finished_ranking {background-color:#BCECBE;}
 
