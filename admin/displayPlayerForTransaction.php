@@ -48,7 +48,7 @@
   	<td>" . $player->getPositionString() . "</td></tr>";
   	echo "</table><br/>";
 
-  	echo "<input type='hidden' name='playerid' value='" . $player->getId() . "'>";
+  	echo "<input type='hidden' name='auction_playerid' value='" . $player->getId() . "'>";
   }
 
   /**

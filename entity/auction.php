@@ -17,39 +17,42 @@ class Auction {
   private $amount;
 
   public function parseAuctionFromPost() {
-  	$this->team = TeamDao::getTeamById($_REQUEST['teamid']);
-  	$this->player = PlayerDao::getPlayerById($_REQUEST['playerid']);
-  	$this->amount = $_REQUEST['amount'];
+  	$this->team = TeamDao::getTeamById($_REQUEST['auction_teamid']);
+  	$this->player = PlayerDao::getPlayerById($_REQUEST['auction_playerid']);
+  	$this->amount = $_REQUEST['auction_amount'];
 
-  	$_SESSION['teamid'] = $_REQUEST['teamid'];
-  	$_SESSION['playerid'] = $_REQUEST['playerid'];
-  	$_SESSION['amount'] = $_REQUEST['amount'];
+  	$_SESSION['auction_teamid'] = $_REQUEST['auction_teamid'];
+  	$_SESSION['auction_playerid'] = $_REQUEST['auction_playerid'];
+  	$_SESSION['auction_amount'] = $_REQUEST['auction_amount'];
   }
 
   public function parseAuctionFromSession() {
-    $this->team = TeamDao::getTeamById($_SESSION['teamid']);
-    $this->player = PlayerDao::getPlayerById($_SESSION['playerid']);
-    $this->amount = $_SESSION['amount'];
+    $this->team = TeamDao::getTeamById($_SESSION['auction_teamid']);
+    $this->player = PlayerDao::getPlayerById($_SESSION['auction_playerid']);
+    $this->amount = $_SESSION['auction_amount'];
 
-    unset($_SESSION['teamid']);
-    unset($_SESSION['playerid']);
-    unset($_SESSION['amount']);
+    unset($_SESSION['auction_teamid']);
+    unset($_SESSION['auction_playerid']);
+    unset($_SESSION['auction_amount']);
   }
 
   public function showAuctionSummary() {
     echo "<h2>Auction Summary</h2>";
-    echo "<h3>" . $this->team->getName() . " (" . $this->team->getOwnersString() . ")</h3>";
-    echo "<strong>Player: </strong>" . $this->player->getFullName() . ", " .
-          $this->player->getPositionString() . " (" .
-          $this->player->getMlbTeam()->getAbbreviation() . ")<br/>";
-    echo "<strong>Amount: </strong>" . $this->amount . "</br>";
+    $this->team->displayTeamInfo();
+    echo "<br/><table class='center'>
+            <tr><td><strong>Player:</strong></td>
+                <td>" . $this->player->getFullName() . ", " . $this->player->getPositionString() . 
+                    " (" . $this->player->getMlbTeam()->getAbbreviation() . ")</td></tr>
+            <tr><td><strong>Amount:</strong></td>
+                <td>" . $this->amount . "</td></tr>
+          </table>";
   }
 
   public function validateAuction() {
   	// confirm amount is a valid numeric value > 0.
   	if (!is_numeric($this->amount) || $this->amount <= 0) {
-  	  echo "Error: " . $this->team->getName() . " cannot spend an invalid number of brognas: "
-     	  . $this->amount . "<br>";
+  	  $this->printError("Error: " . $this->team->getName() . 
+  	      " cannot spend an invalid number of brognas: " . $this->amount);
   	  return false;
   	}
 
@@ -57,17 +60,18 @@ class Auction {
   	$currentYear = TimeUtil::getCurrentYear();
   	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
   	if ($brognas->getTotalPoints() < $this->amount) {
-  	  echo "Error: " . $this->team->getName() . " cannot spend " . $this->amount .
-  	  	  " brognas; only has " . $brognas->getTotalPoints() . " total points.<br>";
+  	  $this->printError("Error: " . $this->team->getName() . " cannot spend " . $this->amount .
+  	  	  " brognas; only has " . $brognas->getTotalPoints() . " total brognas.");
   	  return false;
   	}
   	return true;
   }
 
   public function initiateAuction() {
-  	echo "<h2>Auction Confirmed!</h2>";
-  	echo "<h3>" . $this->team->getName() . " (" . $this->team->getOwnersString() . ")</h3>";
-    $this->saveAuctionResult();
+  	echo "<h2 class='alert_msg'>Auction Completed!</h2>";
+  	$this->team->displayTeamInfo();
+
+  	$this->saveAuctionResult();
     $this->saveAuctionContract();
   	$this->updateBrognas();
 
@@ -82,7 +86,7 @@ class Auction {
     $auctionResult = new AuctionResult(-1, $currentYear, $this->team->getId(),
         $this->player->getId(), $this->amount);
     AuctionResultDao::createAuctionResult($auctionResult);
-    echo "<strong>Auctioned:</strong> " . $this->player->getFullName() . " for " .
+    echo "<br/><strong>Auctioned:</strong> " . $this->player->getFullName() . " for " .
         $this->amount . " brognas<br>";
   }
 
@@ -93,7 +97,7 @@ class Auction {
   	$currentYear = TimeUtil::getCurrentYear();
   	$todayString = TimeUtil::getTodayString();
   	$contract = new Contract(-1, $this->player->getId(), $this->team->getId(), 1, $this->amount,
-  	    $todayString, $currentYear, $currentYear, true);
+  	    $todayString, $currentYear, $currentYear, true, false);
 	ContractDao::createContract($contract);
 	echo "<strong>Signed:</strong> a 1-year auction " .
 		 "contract [" . $contract->getStartYear() . ":" . $contract->getEndYear() . "] for " .
@@ -113,6 +117,10 @@ class Auction {
   	BrognaDao::updateBrognas($brognas);
 	echo "<strong>" . $currentYear . " Brognas:</strong> reduced by " . $this->amount . ", from " .
 		$originalTotalPoints . " to " . $brognas->getTotalPoints() . "<br>";
+  }
+  
+  private function printError($errorMsg) {
+  	echo "<div class='error_msg'>" . $errorMsg . "</div>";
   }
 }
 ?>

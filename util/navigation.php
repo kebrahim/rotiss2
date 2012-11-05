@@ -125,15 +125,14 @@ class NavigationUtil {
   	NavigationUtil::printListItem("admin/manageAuction.php", "Auction", $isTopLevel,
   		$selectedButton, self::MANAGE_AUCTION_BUTTON);
   	 
-  	// TODO Brognas?
   	// TODO Keepers
   	// TODO Placeholders
-  	
+  	// TODO Brognas?
+  	  
   	// Manage individual team
   	NavigationUtil::printListItem("admin/manageTeam.php", "Manage Team", $isTopLevel,
   	    $selectedButton, self::MANAGE_TEAM_BUTTON);
   	
-  	// TODO manage individual player?
   	// TODO if super-admin, show ranks page
   	  	  
   	echo "</ul></li>";

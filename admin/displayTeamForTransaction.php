@@ -52,9 +52,9 @@
 
   	// Brognas - auctions always happen in january, so current year is sufficient.
   	$currentYear = TimeUtil::getCurrentYear();
-  	$team->displayBrognas($currentYear, $currentYear, false, 0);
+  	$team->displayBrognas($currentYear, $currentYear, false, 0, 'center smallfonttable');
 
-  	echo "<input type='hidden' name='teamid' value='" . $team->getId() . "'>";
+  	echo "<input type='hidden' name='auction_teamid' value='" . $team->getId() . "'>";
     echo "<br/>";
   }
 

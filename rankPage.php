@@ -57,8 +57,7 @@
   	  }
   	  $fantasyPts = ($rank->getPlayer()->getStatLine($lastYear) != null) ?
           $rank->getPlayer()->getStatLine($lastYear)->getFantasyPoints() : "--";
-  	  echo "><td><a href='displayPlayer.php?player_id=" . $rank->getPlayerId() . "'>" .
-  	             $rank->getPlayer()->getFullName() . "</a></td>
+  	  echo "><td>" . $rank->getPlayer()->getNameLink(true) . "</td>
   	         <td>" . $rank->getPlayer()->getPositionString() . "</td>
   	         <td>" . $rank->getPlayer()->getMlbTeam()->getAbbreviation() . "</td>
   	         <td>" . $fantasyPts . "</td>";
@@ -153,8 +152,7 @@
   foreach ($rankablePlayers as $player) {
   	$fantasyPts = ($player->getStatLine($lastYear) != null) ?
   	    $player->getStatLine($lastYear)->getFantasyPoints() : "--";
-  	echo "<tr><td><a href='displayPlayer.php?player_id=" . $player->getId() . "'>" .
-  	              $player->getFullName() . "</a></td>
+  	echo "<tr><td>" . $player->getNameLink(true) . "</td>
   	          <td>" . $player->getPositionString() . "</td>
   	          <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
   	          <td>" . $fantasyPts . "</td><td>";

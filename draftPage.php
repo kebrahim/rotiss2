@@ -16,14 +16,9 @@
   require_once 'util/navigation.php';
   require_once 'util/time.php';
 
-  function displayTeamLink(Team $team) {
-    return "<a href='summaryPage.php?team_id=" . $team->getId() . "'>" . $team->getName() . "</a>";
-  }
-
   function displayPlayerLink($player) {
     if ($player != null) {
-      return "<a href='displayPlayer.php?player_id=" . $player->getId() . "'>" .
-          $player->getFullName() . "</a>";
+      return $player->getNameLink(true);
     } else {
       return "--";
     }
@@ -59,7 +54,7 @@
       }
       echo "><td>Ping Pong</td>
              <td>" . $pingPongBall->getCost() . "</td>
-             <td>" . displayTeamLink($pingPongBall->getTeam()) . "</td>
+             <td>" . $pingPongBall->getTeam()->getNameLink(true) . "</td>
              <td>" . displayPlayerLink($pingPongBall->getPlayer()) . "</td></tr>";
     }
 
@@ -71,7 +66,7 @@
       }
       echo "><td>" . $draftPick->getRound() . "</td>
              <td>" . $draftPick->getPick() . "</td>
-             <td>" . displayTeamLink($draftPick->getTeam()) . "</td>
+             <td>" . $draftPick->getTeam()->getNameLink(true) . "</td>
              <td>" . displayPlayerLink($draftPick->getPlayer()) . "</td></tr>";
     }
     echo "</table><br>";

@@ -60,9 +60,9 @@ class Player {
     return $this->firstName . " " . $this->lastName;
   }
   
-  public function getNameLink() {
-  	return "<a href='displayPlayer.php?player_id=" . $this->getId() . "'>" . 
-  	    $this->getFullName() . "</a>";
+  public function getNameLink($isTopLevel) {
+  	return "<a href='" . ($isTopLevel ? "" : "../") . "displayPlayer.php?player_id=" . 
+    	$this->getId() . "'>" . $this->getFullName() . "</a>";
   }
 
   public function getBirthDate() {

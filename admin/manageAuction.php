@@ -1,20 +1,13 @@
-<?php session_start(); ?>
+<?php
+  require_once '../util/sessions.php';
+  SessionUtil::checkUserIsLoggedInAdmin();
+?>
+
 <html>
 <head>
-<title>Auction</title>
+<title>Rotiss.com - Manage Auction</title>
+<link href='../css/style.css' rel='stylesheet' type='text/css'>
 </head>
-
-<style type="text/css">
-html {height:100%;}
-body {text-align:center;}
-table {text-align:center;}
-table.center {margin-left:auto; margin-right:auto;}
-#column_container {padding:0; margin:0 0 0 50%; width:50%; float:right;}
-#left_col {float:left; width:100%; margin-left:-100%; text-align:center;}
-#left_col_inner {padding:10px;}
-#right_col {float:right; width:100%; text-align:center;}
-#right_col_inner {padding:10px;}
-</style>
 
 <script>
 // sets the display of the div with the specified id
@@ -99,8 +92,13 @@ function showTeam(teamId) {
   require_once '../dao/playerDao.php';
   require_once '../dao/teamDao.php';
   require_once '../entity/auction.php';
+  require_once '../util/navigation.php';
   require_once '../util/time.php';
-
+  
+  // Display header.
+  NavigationUtil::printNoWidthHeader(true, false, NavigationUtil::MANAGE_AUCTION_BUTTON);
+  echo "<div class='bodycenter'>";
+  
   echo "<h1>Going once, Going twice, Sold!</h1>";
   echo "<FORM ACTION='manageAuction.php' METHOD=POST>";
 
@@ -116,7 +114,7 @@ function showTeam(teamId) {
   	  $auction->showAuctionSummary();
 
   	  // request final confirmation of auction before execution
-  	  echo "<br/><input class='button' type=submit name='confirmAuction' value='Confirm'>";
+  	  echo "<br/><input class='button' type=submit name='confirmAuction' value='Confirm'>&nbsp";
   	  echo "<input class='button' type=submit name='cancelAuction' value='Cancel'><br>";
   	} else {
   	  echo "<h3>Cannot execute auction! Please <a href='manageAuction.php'>try again</a>.</h3>";
@@ -135,6 +133,9 @@ function showTeam(teamId) {
   	  echo "<h3>Cannot execute auction! Please <a href='manageAuction.php'>try again</a>.</h3>";
   	}
   } else {
+  	// clear out trade session variables from previous auction scenarios.
+  	SessionUtil::clearSessionVarsWithPrefix("auction_");
+  	
   	// show auction results for current year
   	$currentYear = TimeUtil::getCurrentYear();
   	echo "<h2>Auction results " . $currentYear . "</h2>";
@@ -144,8 +145,8 @@ function showTeam(teamId) {
   	          <tr><th>Player</th><th>Team</th><th>Amount</th></tr>";
   	}
   	foreach($auctionResults as $auctionResult) {
-  	  echo "<tr><td>" . $auctionResult->getPlayer()->getFullName() . "</td>
-  	            <td>" . $auctionResult->getTeam()->getName() . "</td>
+  	  echo "<tr><td>" . $auctionResult->getPlayer()->getNameLink(false) . "</td>
+  	            <td>" . $auctionResult->getTeam()->getNameLink(false) . "</td>
   	            <td>" . $auctionResult->getCost() . "</td></tr>";
   	}
   	if (count($auctionResults) > 0) {
@@ -156,7 +157,8 @@ function showTeam(teamId) {
     $players = PlayerDao::getPlayersForAuction($currentYear);
     echo "<div id='column_container'>";
     echo "<div id='left_col'><div id='left_col_inner'>";
-    echo "Select Player:<br><select name='player' onchange='showPlayer(this.value)'>
+    echo "<h4>Select Player:</h4>
+          <select name='player' onchange='showPlayer(this.value)'>
           <option value='0'></option>";
     foreach ($players as $player) {
       echo "<option value='" . $player->getId() . "'" . ">" . $player->getFullName()
@@ -169,7 +171,8 @@ function showTeam(teamId) {
     // allow user to select which team bid on player & how much they bid
     echo "<div id='right_col'><div id='right_col_inner'>";
     $teams = TeamDao::getAllTeams();
-    echo "Select Team:<br><select name='team' onchange='showTeam(this.value)'>
+    echo "<h4>Select Team:</h4>
+          <select name='team' onchange='showTeam(this.value)'>
                            <option value='0'></option>";
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
@@ -179,12 +182,15 @@ function showTeam(teamId) {
     echo "<div id='teamDisplay'></div><br/></div></div></div>";
 
     echo "<div id='auctionButton' style='display:none'>
-            <strong>Auction amount: </strong><input type=text name='amount'>
+            <strong>Auction amount: </strong><input type=number name='auction_amount'>
             <input class='button' type=submit name='auction' value='Auction player'>
             <input class='button' type=submit name='cancel' value='Cancel'>
           </div>";
   }
-  echo "</form>";
+  echo "</form></div>";
+  
+  // Footer
+  NavigationUtil::printFooter();
 ?>
 
 </body>

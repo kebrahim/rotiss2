@@ -64,8 +64,7 @@
   if ($fantasyTeam == null) {
   	echo "--";
   } else {
-  	echo "<a href='summaryPage.php?team_id=" . $fantasyTeam->getId() . "'>" .
-  	    $fantasyTeam->getName() . " (" . $fantasyTeam->getAbbreviation() . ")" . "</a>";
+  	echo $fantasyTeam->getNameLink(true);
   }
   echo "</td></tr>";
 

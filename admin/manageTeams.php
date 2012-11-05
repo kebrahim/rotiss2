@@ -52,8 +52,7 @@
     echo "<table border class='center smallfonttable'>";
     echo "<tr><th>Player</th><th>Pos</th><th>Team</th><th>Fantasy team</th></tr>";
     foreach ($players as $player) {
-      echo "<tr><td><a href='../displayPlayer.php?player_id=" . $player->getId() . "'>" .
-      $player->getFullName() . "</a></td>
+      echo "<tr><td>" . $player->getNameLink(false) . "</td>
       	        <td>" . $player->getPositionString() . "</td>
       	        <td>" . $player->getMlbTeam()->getAbbreviation() . "</td><td>";
       displayTeamSelectForPlayer($player);

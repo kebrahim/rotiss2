@@ -54,6 +54,11 @@ class Team {
     return $this->name;
   }
 
+  public function getNameLink($isTopLevel) {
+  	return "<a href='" . ($isTopLevel ? "" : "../") . "summaryPage.php?team_id=" .
+  			$this->teamId . "'>" . $this->name . " (" . $this->abbreviation . ")</a>";
+  }
+  
   public function getLeague() {
     return $this->league;
   }
@@ -176,7 +181,7 @@ class Team {
                          value='" . $contract->getId() . "'></td>";
       }
       echo "<td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>
-                  <td>" . $player->getNameLink() . "</td>
+                  <td>" . $player->getNameLink(true) . "</td>
                   <td>" . $player->getPositionString() . "</td>
                   <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
                   <td>" . $player->getAge() . "</td>
@@ -421,7 +426,7 @@ class Team {
           <th>Age</th></tr>";
     foreach ($players as $player) {
       echo "<tr><td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>
-                <td>" . $player->getNameLink() . "</td>
+                <td>" . $player->getNameLink(true) . "</td>
                 <td>" . $player->getPositionString() . "</td>
                 <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
                 <td>" . $player->getAge() . "</td></tr>";

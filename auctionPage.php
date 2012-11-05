@@ -48,10 +48,8 @@
       if ($team->getId() == $teamId) {
         echo " class='selected_team_row'";
       }
-      echo "><td><a href='summaryPage.php?team_id=" . $team->getId() . "'>" .
-                  $team->getName() . "</a></td>
-             <td><a href='displayPlayer.php?player_id=" . $player->getId() . "'>" .
-                 $player->getFullName() . "</a></td>
+      echo "><td>" . $team->getNameLink(true) . "</td>
+             <td>" . $player->getNameLink(true) . "</td>
              <td>" . $auctionResult->getCost() . "</td></tr>";
     }
     echo "</table><br>";

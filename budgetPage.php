@@ -63,7 +63,7 @@
         }
         $player = $contract->getPlayer();
         echo "<tr><td>" . $player->getMiniHeadshotImg() . "</td>
-                  <td>" . $player->getNameLink() . "</td>
+                  <td>" . $player->getNameLink(true) . "</td>
                   <td>" . $player->getPositionString() . "</td>
                   <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
                   <td>" . $player->getAge() . "</td>

@@ -187,18 +187,13 @@ function selectTeam(position, teamid) {
   	// clear out trade session variables from previous trade scenarios.
   	SessionUtil::clearSessionVarsWithPrefix("trade_");
   	 
-  	echo "<div id='tradeButton' style='display:none'>
-       	    <input class='button' type=submit name='trade' value='Initiate Trade'>
-  	        <input class='button' type=submit name='cancel' value='Cancel'>
-  	      </div>";
-  	
     // allow user to select two teams.
     $teams = TeamDao::getAllTeams();
     echo "<div id='column_container'>";
 
     // team 1
     echo "<div id='left_col'><div id='left_col_inner'>";
-    echo "Select Team:<br><select name='team1' onchange='selectTeam(1, this.value)'>
+    echo "<h4>Select Team:</h4><select name='team1' onchange='selectTeam(1, this.value)'>
                          <option value='0'></option>";
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
@@ -209,7 +204,7 @@ function selectTeam(position, teamid) {
 
     // team 2
     echo "<div id='right_col'><div id='right_col_inner'>";
-    echo "Select Team:<br><select name='team2' onchange='selectTeam(2, this.value)'>
+    echo "<h4>Select Team:</h4><select name='team2' onchange='selectTeam(2, this.value)'>
                          <option value='0'></option>";
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
@@ -217,6 +212,11 @@ function selectTeam(position, teamid) {
     }
     echo "</select><br>";
     echo "<div id='teamDisplay2'></div><br/></div></div></div>";
+    
+    echo "<div id='tradeButton' style='display:none'>
+            <input class='button' type=submit name='trade' value='Initiate Trade'>
+            <input class='button' type=submit name='cancel' value='Cancel'>
+          </div>";
   }
   echo "</form></div>";
   
