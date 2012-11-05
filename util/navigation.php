@@ -11,7 +11,8 @@ class NavigationUtil {
   const MANAGE_ROSTERS_BUTTON = 7;
   const MANAGE_TRADE_BUTTON = 8;
   const MANAGE_AUCTION_BUTTON = 9;
-  const MANAGE_TEAM_BUTTON = 10;
+  const MANAGE_KEEPERS_BUTTON = 10;
+  const MANAGE_TEAM_BUTTON = 11;
   
   public static function printHeader($showNavigationLinks, $isTopLevel, $selectedButton) {
     NavigationUtil::displayHeader($showNavigationLinks, $isTopLevel, $selectedButton, 'wrapper');
@@ -125,7 +126,10 @@ class NavigationUtil {
   	NavigationUtil::printListItem("admin/manageAuction.php", "Auction", $isTopLevel,
   		$selectedButton, self::MANAGE_AUCTION_BUTTON);
   	 
-  	// TODO Keepers
+  	// Keepers
+  	NavigationUtil::printListItem("admin/manageKeepers.php", "Keepers", $isTopLevel,
+  		$selectedButton, self::MANAGE_KEEPERS_BUTTON);
+  	
   	// TODO Placeholders
   	// TODO Brognas?
   	  

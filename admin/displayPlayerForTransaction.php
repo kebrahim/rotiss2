@@ -64,6 +64,13 @@
   	}
   }
   
+  /**
+   * Displays an IMG link with the headshot of the specified player.
+   */
+  function displayHeadShotForPlayer(Player $player) {
+  	echo $player->getMiniHeadshotImg();
+  }
+  
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
   } else {
@@ -75,5 +82,7 @@
   	displayPlayerForAuction($player);
   } else if ($displayType == "cumulativerank") {
   	displayCumulativeRankForPlayer($player);
+  } else if ($displayType == "headshot") {
+  	displayHeadShotForPlayer($player);
   }
 ?>

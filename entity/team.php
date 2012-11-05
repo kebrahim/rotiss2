@@ -211,8 +211,9 @@ class Team {
   	  echo ">";
   	}
 
-  	echo "<table id='keepertable' class='center' border><tr>";
-  	echo "  <th>Player</th>
+  	echo "<table id='keepertable' class='center smallfonttable' border><tr>";
+  	echo "  <th></th>
+  	        <th>Player</th>
         	<th>Years Left</th>
   	        <th>Price</th>
   	        <th>Start Year</th>
@@ -223,19 +224,20 @@ class Team {
   	foreach ($contracts as $contract) {
   	  $player = $contract->getPlayer();
   	  echo "<tr>";
-	  echo "<td>" . $player->getFullName() . " (" . $player->getPositionString() . ") - " .
+	  echo "<td>" . $player->getMiniHeadshotImg() . "</td>
+	 	    <td>" . $player->getFullName() . " (" . $player->getPositionString() . ") - " .
   	            $player->getMlbTeam()->getAbbreviation() . "</td>
   			<td>" . $contract->getYearsLeft() . "</td>
   			<td>" . $contract->getPrice() . "</td>
   			<td>" . $contract->getStartYear() . "</td>
   			<td>" . $contract->getEndYear() . "</td>
-	        <td><input type=checkbox name='buyout[]'
+	        <td><input type=checkbox name='keeper_buyout[]'
 	             value='" . $contract->getId() . "'></td></tr>";
 	  $keeperCount++;
   	}
   	echo "</table><br/></div>";
-  	echo "<input type='hidden' name='savedkeepercount' value='" . $keeperCount . "'>";
-  	echo "<input type='hidden' name='newkeepercount' value='0'>";
+  	echo "<input type='hidden' name='keeper_savedkeepercount' value='" . $keeperCount . "'>";
+  	echo "<input type='hidden' name='keeper_newkeepercount' value='0'>";
   }
 
   /**
@@ -322,7 +324,7 @@ class Team {
       echo ">";
     }
 
-    echo "<table id='ppballtable' class='center' border>
+    echo "<table id='ppballtable' class='center smallfonttable' border>
             <tr><th>Number</th><th>Price</th>
                 <th id='ppRemoveColumn' style='display:none'>Remove</th></tr>";
     $ballCount = 0;
@@ -332,8 +334,8 @@ class Team {
                 <td>" . $pingPongBall->getCost() . "</td></tr>";
     }
     echo "</table><br/></div>";
-    echo "<input type='hidden' name='savedppballcount' value='" . $ballCount . "'>";
-    echo "<input type='hidden' name='newppballcount' value='0'>";
+    echo "<input type='hidden' name='keeper_savedppballcount' value='" . $ballCount . "'>";
+    echo "<input type='hidden' name='keeper_newppballcount' value='0'>";
   }
 
   /**

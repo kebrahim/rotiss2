@@ -140,6 +140,8 @@
   }
   echo "</table><br/><br/>";
 
+  // TODO do not show 'save' button after rankings period ends
+  
   echo "<input type='submit' name='save' value='Save my changes'>&nbsp";
   echo "<input type='submit' name='cancel' value='Reset'>";
   echo "<input type='hidden' name='team_id' value='" . $teamId . "'>";

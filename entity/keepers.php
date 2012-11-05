@@ -17,33 +17,33 @@ class Keepers {
   private $pingPongBalls;
 
   public function parseKeepersFromPost() {
-  	$this->team = TeamDao::getTeamById($_POST['teamid']);
+  	$this->team = TeamDao::getTeamById($_POST['keeper_teamid']);
   	$this->buyoutContracts = $this->parseBuyoutContracts($_POST, true);
   	$this->newContracts = $this->parseNewContracts($_POST, true);
   	$this->pingPongBalls = $this->parsePingPongBalls($_POST, true);
 
-    SessionUtil::updateSession('teamid', $_POST, true);
+    SessionUtil::updateSession('keeper_teamid', $_POST, true);
   }
 
   public function parseKeepersFromSession() {
-    $this->team = TeamDao::getTeamById($_SESSION['teamid']);
+    $this->team = TeamDao::getTeamById($_SESSION['keeper_teamid']);
   	$this->buyoutContracts = $this->parseBuyoutContracts($_SESSION, false);
   	$this->newContracts = $this->parseNewContracts($_SESSION, false);
   	$this->pingPongBalls = $this->parsePingPongBalls($_SESSION, false);
 
-    SessionUtil::updateSession('teamid', $_SESSION, false);
+    SessionUtil::updateSession('keeper_teamid', $_SESSION, false);
   }
 
   private function parsePingPongBalls($assocArray, $isPost) {
-  	$savedppString = 'savedppballcount';
-  	$newppString = 'newppballcount';
+  	$savedppString = 'keeper_savedppballcount';
+  	$newppString = 'keeper_newppballcount';
   	$ppSavedCount = $assocArray[$savedppString];
   	$ppNewCount = $assocArray[$newppString];
 
   	$pingPongBalls = array();
   	$currentYear = TimeUtil::getCurrentYear();
   	for ($i = ($ppSavedCount + 1); $i <= ($ppSavedCount + $ppNewCount); $i++) {
-  	  $ppKey = 'pp' . $i;
+  	  $ppKey = 'keeper_pp' . $i;
   	  $pingPongBalls[] = new PingPongBall(
   	      -1, $currentYear, $assocArray[$ppKey], $this->team->getId(), null);
       SessionUtil::updateSession($ppKey, $assocArray, $isPost);
@@ -55,7 +55,7 @@ class Keepers {
   }
 
   private function parseBuyoutContracts($assocArray, $isPost) {
-  	$buyoutString = 'buyout';
+  	$buyoutString = 'keeper_buyout';
     $buyoutContracts = array();
   	if (isset($assocArray[$buyoutString]) && is_array($assocArray[$buyoutString])) {
       foreach ($assocArray[$buyoutString] as $contractId) {
@@ -67,17 +67,17 @@ class Keepers {
   }
 
   private function parseNewContracts($assocArray, $isPost) {
-    $savedKeeperString = 'savedkeepercount';
-    $newKeeperString = 'newkeepercount';
+    $savedKeeperString = 'keeper_savedkeepercount';
+    $newKeeperString = 'keeper_newkeepercount';
     $keeperSavedCount = $assocArray[$savedKeeperString];
     $keeperNewCount = $assocArray[$newKeeperString];
 
     $newContracts = array();
     $currentYear = TimeUtil::getCurrentYear();
     for ($i = ($keeperSavedCount + 1); $i <= ($keeperSavedCount + $keeperNewCount); $i++) {
-      $playerKey = 'keepplayer' . $i;
-      $yearKey = 'keepyear' . $i;
-      $priceKey = 'keepprice' . $i;
+      $playerKey = 'keeper_player' . $i;
+      $yearKey = 'keeper_year' . $i;
+      $priceKey = 'keeper_price' . $i;
 
       $numYears = intval($assocArray[$yearKey]);
       $newContracts[] = new Contract(-1, $assocArray[$playerKey], $this->team->getId(), $numYears,
@@ -152,7 +152,8 @@ class Keepers {
   	if ($this->buyoutContracts) {
 	  foreach ($this->buyoutContracts as $contract) {
 	  	if ($contract->isAuction() || $contract->isBoughtOut()) {
-		  echo "Error: cannot buy out contract: " . $contract->getBuyoutContractString() . "<br>";
+		  $this->printError("Error: cannot buy out contract: " . 
+		      $contract->getBuyoutContractString());
 	  	  return false;
 	  	}
 	  	$totalBrognasSpent += $contract->getBuyoutPrice();
@@ -163,17 +164,15 @@ class Keepers {
   	if ($this->newContracts) {
 	  foreach ($this->newContracts as $contract) {
 	  	if ($contract->getPlayer() == null) {
-		  $this->printError(
-		      "Error: Invalid player id for contract: " . $contract->getPlayerId() . "<br>");
+		  $this->printError("Error: Invalid player id for contract: " . $contract->getPlayerId());
 	  	  return false;
 	  	} else if (!is_numeric($contract->getTotalYears()) || $contract->getTotalYears() < 1
 	  	    || $contract->getTotalYears() > 2) {
 		  $this->printError(
-		      "Error: Invalid length of contract: " . $contract->getTotalYears() . " years<br>");
+		      "Error: Invalid length of contract: " . $contract->getTotalYears() . " years");
 	  	  return false;
 	  	} else if (!is_numeric($contract->getPrice()) || $contract->getPrice() < 30) {
-	  	  $this->printError(
-	  	      "Error: Invalid price for contract: $" . $contract->getPrice() . "<br>");
+	  	  $this->printError("Error: Invalid price for contract: $" . $contract->getPrice());
 	  	  return false;
 	  	}
 	  	$totalBrognasSpent += $contract->getPrice();
@@ -185,7 +184,8 @@ class Keepers {
   	  foreach ($this->pingPongBalls as $pingPongBall) {
   	  	$cost = $pingPongBall->getCost();
   	  	if (!is_numeric($cost) || $cost < 100) {
-    	  echo "Error: cannot spend an invalid number of brognas on a ball: " . $cost . "<br>";
+    	  $this->printError("Error: cannot spend an invalid number of brognas on a ball: " . 
+    	      $cost);
   	  	  return false;
   	  	}
   	  	$totalBrognasSpent += $cost;
@@ -196,18 +196,18 @@ class Keepers {
   	$currentYear = TimeUtil::getCurrentYear();
   	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
   	if ($brognas->getTotalPoints() < $totalBrognasSpent) {
-  	  echo "Error: " . $this->team->getName() . " cannot spend " . $totalBrognasSpent .
+  	  $this->printError("Error: " . $this->team->getName() . " cannot spend " . $totalBrognasSpent .
   	      " brognas on contracts & balls; only has " . $brognas->getTotalPoints() .
-  		  " total points.<br>";
+  		  " total brognas");
   	  return false;
   	}
   	return true;
   }
 
   public function saveKeepers() {
-  	echo "<h2>Keepers Saved!</h2>";
+  	echo "<h2 class='alert_msg'>Keepers Saved!</h2>";
   	$this->team->displayTeamInfo();
-
+    echo "<br/>";
   	$totalBrognasSpent = 0;
 
   	// buyout contracts

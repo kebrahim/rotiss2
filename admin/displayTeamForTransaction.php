@@ -68,7 +68,7 @@
 
     // Brognas - keepers always happen in march, so current year is sufficient.
     $currentYear = TimeUtil::getCurrentYear();
-    $team->displayBrognas($currentYear, $currentYear + 1, false, 0);
+    $team->displayBrognas($currentYear, $currentYear + 1, false, 0, 'center smallfonttable');
 
     // Provide ability to add contracts and balls if brognas exist and have not been banked for the
     // current year.
@@ -105,7 +105,7 @@
             <br/>";
     }
     echo "</div></div></div>";
-    echo "<input type='hidden' name='teamid' value='" . $team->getId() . "'>";
+    echo "<input type='hidden' name='keeper_teamid' value='" . $team->getId() . "'>";
   }
 
   /**
@@ -114,7 +114,7 @@
   function displayEligibleKeeperPlayers(Team $team, $rowNumber) {
     $currentYear = TimeUtil::getCurrentYear();
     $eligiblePlayers = PlayerDao::getEligibleKeepers($team, $currentYear);
-    echo "<select name='keepplayer" . $rowNumber . "' onchange='selectPlayer(this.value, "
+    echo "<select name='keeper_player" . $rowNumber . "' onchange='selectPlayer(this.value, "
         . $rowNumber . ")'><option value='0'></option>";
     foreach ($eligiblePlayers as $player) {
       echo "<option value='" . $player->getId() . "'" . ">" . $player->getFullName() .
