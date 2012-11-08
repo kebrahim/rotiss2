@@ -1,23 +1,13 @@
-<?php session_start(); ?>
+<?php
+  require_once '../util/sessions.php';
+  SessionUtil::checkUserIsLoggedInSuperAdmin();
+?>
+
 <html>
 <head>
-<title>Manage Ranks</title>
+<title>Rotiss.com - Manage Ranks</title>
+<link href='../css/style.css' rel='stylesheet' type='text/css'>
 </head>
-
-<style type="text/css">
-html {height:100%;}
-body {text-align:center;}
-table {text-align:center;}
-table.center {margin-left:auto; margin-right:auto;}
-#column_container {padding:0; margin:0 0 0 50%; width:50%; float:right;}
-#left_col {float:left; width:100%; margin-left:-100%; text-align:center;}
-#left_col_inner {padding:10px;}
-#right_col {float:right; width:100%; text-align:center;}
-#right_col_inner {padding:10px;}
-#placeholder {background-color:#E3F2F9;}
-#row_indb {background-color:#BCECBE;}
-#row_missing {background-color:#F09E9E;}
-</style>
 
 <body>
 
@@ -28,21 +18,25 @@ table.center {margin-left:auto; margin-right:auto;}
   require_once '../dao/statDao.php';
   require_once '../entity/rank.php';
   require_once '../entity/stat.php';
+  require_once '../util/navigation.php';
   require_once '../util/time.php';
+
+  // Display header.
+  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_RANKS_BUTTON);
+  echo "<div class='bodycenter'>";
 
   echo "<FORM ACTION='manageRanks.php' METHOD=POST>";
   $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
   $lastYear = $rankYear - 1;
-  
+
   // Save ranks
   if(isset($_POST['save'])) {
   	$ranks = RankDao::calculateCumulativeRanksByYear($rankYear);
   	foreach ($ranks as $rank) {
   	  if (!CumulativeRankDao::hasCumulativeRank($rank->getPlayerId(), $rankYear)) {
   	  	CumulativeRankDao::createCumulativeRank($rank);
-  	  	echo "saved cumulative rank " . $rank->toString() . "</br>";
   	  }
-  	} 
+  	}
   }
 
   // show cumulative ranks for all players, including placeholders & whether the ranks have
@@ -60,8 +54,8 @@ table.center {margin-left:auto; margin-right:auto;}
   	$filter = false;
   }
   echo "<br/><br/>";
-  
-  echo "<table class='center' border>
+
+  echo "<table class='center smallfonttable' border>
   	          <th>Player</th><th>Team</th><th>Rank</th><th>Is Placeholder</th>
               <th>Saved In DB</th></tr>";
   foreach($ranks as $rank) {
@@ -71,9 +65,9 @@ table.center {margin-left:auto; margin-right:auto;}
 
   	// determine if cumulative rank is already in db
   	$hasCumulativeRank = CumulativeRankDao::hasCumulativeRank($rank->getPlayerId(), $rankYear);
-  	 
+
   	// highlight rows based on placeholders/rank-in-db
-  	echo "<tr id='";
+  	echo "<tr class='";
   	if ($rank->isPlaceholder()) {
       echo "placeholder";
   	} else if ($hasCumulativeRank) {
@@ -82,15 +76,20 @@ table.center {margin-left:auto; margin-right:auto;}
   	  echo "row_missing";
   	}
   	echo "'>";
-  	echo "    <td>" . $rank->getPlayer()->getFullName() . "</td>
-  	          <td>" . $rank->getPlayer()->getFantasyTeam()->getAbbreviation() . "</td>
+  	$fantasyTeam = $rank->getPlayer()->getFantasyTeam();
+  	echo "    <td>" . $rank->getPlayer()->getNameLink(false) . "</td>
+  	          <td><a href='../summaryPage.php?team_id=" . $fantasyTeam->getId() . "'>" .
+  	                 $fantasyTeam->getAbbreviation() . "</a></td>
   	          <td>" . $rank->getRank() . "</td>
   	          <td>" . ($rank->isPlaceholder() ? "Y" : "") . "</td>
   	          <td>" . ($hasCumulativeRank ? "Y" : "") . "</td>
   	      </tr>";
   }
   echo "</table><br/>";
-  echo "</form>";
+  echo "</form></div>";
+
+  // Footer
+  NavigationUtil::printFooter();
 ?>
 
 </body>

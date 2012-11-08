@@ -13,7 +13,9 @@ class NavigationUtil {
   const MANAGE_AUCTION_BUTTON = 9;
   const MANAGE_KEEPERS_BUTTON = 10;
   const MANAGE_TEAM_BUTTON = 11;
-  
+  const MANAGE_PLACEHOLDERS_BUTTON = 12;
+  const MANAGE_RANKS_BUTTON = 13;
+
   public static function printHeader($showNavigationLinks, $isTopLevel, $selectedButton) {
     NavigationUtil::displayHeader($showNavigationLinks, $isTopLevel, $selectedButton, 'wrapper');
   }
@@ -74,7 +76,7 @@ class NavigationUtil {
 
       // show logged-in user name with links for editing profile & signing out
       NavigationUtil::printProfileInfo($isTopLevel);
-      
+
       echo "</div>"; // banner
     }
     echo "</header>";
@@ -84,12 +86,12 @@ class NavigationUtil {
   private static function printProfileInfo($isTopLevel) {
   	$user = SessionUtil::getLoggedInUser();
   	echo "<div id='profileinfo'>";
-  	echo "Hi " . $user->getFirstName() . "! 
+  	echo "Hi " . $user->getFirstName() . "!
   	      <a href='" . ($isTopLevel ? "" : "../") . "editProfilePage.php'>Edit profile</a>
   	      <a href='" . ($isTopLevel ? "" : "../") . "logoutPage.php'>Sign out</a>";
   	echo "</div>";
   }
-  
+
   private static function printListItem($url, $caption, $isTopLevel, $selectedButton, $listButton) {
     echo "<li>";
     NavigationUtil::printLink($url, $caption, $isTopLevel, ($selectedButton == $listButton));
@@ -103,45 +105,52 @@ class NavigationUtil {
   	}
   	echo " href='" . ($isTopLevel ? "" : "../") . $url . "'>" . $caption . "</a>";
   }
-  
+
   private static function printAdminMenu($isTopLevel, $selectedButton) {
   	// top-level button directs to manage teams page
   	echo "<li class='dropdown'>";
   	$adminSelected = ($selectedButton >= self::ADMIN_BUTTON);
   	NavigationUtil::printLink(
   			"admin/manageTeams.php", "Admin", $isTopLevel, $adminSelected);
-  	
+
   	// sub-menu includes all admin options
   	echo "<ul class='dropdown'>";
-  	
+
     // Manage teams
   	NavigationUtil::printListItem("admin/manageTeams.php", "Manage Rosters", $isTopLevel,
   	    $selectedButton, self::MANAGE_ROSTERS_BUTTON);
-  	
+
   	// Trade
   	NavigationUtil::printListItem("admin/manageTrade.php", "Trades", $isTopLevel, $selectedButton,
   		self::MANAGE_TRADE_BUTTON);
-  	 
+
   	// Auction
   	NavigationUtil::printListItem("admin/manageAuction.php", "Auction", $isTopLevel,
   		$selectedButton, self::MANAGE_AUCTION_BUTTON);
-  	 
+
   	// Keepers
   	NavigationUtil::printListItem("admin/manageKeepers.php", "Keepers", $isTopLevel,
   		$selectedButton, self::MANAGE_KEEPERS_BUTTON);
-  	
-  	// TODO Placeholders
+
   	// TODO Brognas?
-  	  
+
   	// Manage individual team
   	NavigationUtil::printListItem("admin/manageTeam.php", "Manage Team", $isTopLevel,
   	    $selectedButton, self::MANAGE_TEAM_BUTTON);
-  	
-  	// TODO if super-admin, show ranks page
-  	  	  
+
+  	// If super-admin, show ranks & placeholders pages
+  	if (SessionUtil::isLoggedInSuperAdmin()) {
+  	  // Placeholders
+  	  NavigationUtil::printListItem("admin/managePlaceholders.php", "Placeholders", $isTopLevel,
+          $selectedButton, self::MANAGE_PLACEHOLDERS_BUTTON);
+
+  	  // Ranks
+  	  NavigationUtil::printListItem("admin/manageRanks.php", "Manage Ranks", $isTopLevel,
+  	      $selectedButton, self::MANAGE_RANKS_BUTTON);
+  	}
   	echo "</ul></li>";
   }
-  
+
   /**
    * Displays the footer, attached to the bottom of the page.
    */

@@ -37,3 +37,11 @@ fieldset {width: 153px; text-align:left;}
 
 /* Draft/Auction page */
 .selected_team_row {background-color:#E3F2F9;}
+
+/* Placeholder page */
+.placeholder {background-color:#BCECBE;}
+.placeholder_missing {background-color:#F09E9E;}
+
+/* Manage ranks page *
+.row_indb {background-color:#BCECBE;}
+.row_missing {background-color:#F09E9E;}

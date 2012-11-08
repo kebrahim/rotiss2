@@ -1,22 +1,13 @@
-<?php session_start(); ?>
+<?php
+  require_once '../util/sessions.php';
+  SessionUtil::checkUserIsLoggedInSuperAdmin();
+?>
+
 <html>
 <head>
-<title>Placeholders</title>
+<title>Rotiss.com - Manage Placeholders</title>
+<link href='../css/style.css' rel='stylesheet' type='text/css'>
 </head>
-
-<style type="text/css">
-html {height:100%;}
-body {text-align:center;}
-table {text-align:center;}
-table.center {margin-left:auto; margin-right:auto;}
-#column_container {padding:0; margin:0 0 0 50%; width:50%; float:right;}
-#left_col {float:left; width:100%; margin-left:-100%; text-align:center;}
-#left_col_inner {padding:10px;}
-#right_col {float:right; width:100%; text-align:center;}
-#right_col_inner {padding:10px;}
-#placeholder {background-color:#BCECBE;}
-#placeholder_missing {background-color:#F09E9E;}
-</style>
 
 <body>
 
@@ -26,12 +17,17 @@ table.center {margin-left:auto; margin-right:auto;}
   require_once '../dao/statDao.php';
   require_once '../entity/rank.php';
   require_once '../entity/stat.php';
+  require_once '../util/navigation.php';
   require_once '../util/time.php';
+
+  // Display header.
+  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_PLACEHOLDERS_BUTTON);
+  echo "<div class='bodycenter'>";
 
   echo "<FORM ACTION='managePlaceholders.php' METHOD=POST>";
   $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
   $lastYear = $rankYear - 1;
-  
+
   // Save placeholders
   if(isset($_POST['save'])) {
   	$stats = StatDao::getStatsForRankingByYear($lastYear);
@@ -40,7 +36,7 @@ table.center {margin-left:auto; margin-right:auto;}
   	foreach($stats as $stat) {
       $ranking = floor(11.0 - ($ct++ / 15.0));
   	  $isPlaceholder = PlayerDao::hasContractForPlaceholders($stat->getPlayerId(), $lastYear);
-  	  if ($isPlaceholder && 
+  	  if ($isPlaceholder &&
   	      !RankDao::hasAllPlaceholderRanks($stat->getPlayerId(), $rankYear)) {
   	  	// insert placeholder ranks into db if they haven't already been inserted
   	  	foreach ($teams as $team) {
@@ -67,8 +63,8 @@ table.center {margin-left:auto; margin-right:auto;}
   	$filter = false;
   }
   echo "<br/><br/>";
-  
-  echo "<table class='center' border>
+
+  echo "<table class='center smallfonttable' border>
   	          <tr><th></th><th>Player</th><th>Team</th><th>$lastYear Fantasy Pts</th><th>Rank</th>
                   <th>Is Placeholder</th><th>Saved In DB</th></tr>";
   $ct = 0;
@@ -76,23 +72,25 @@ table.center {margin-left:auto; margin-right:auto;}
   	$ct++;
   	$rank = floor(11.0 - ($ct / 15.0));
   	$isPlaceholder = PlayerDao::hasContractForPlaceholders($stat->getPlayerId(), $lastYear);
-  	$placeholderInDb = ($isPlaceholder && 
+  	$placeholderInDb = ($isPlaceholder &&
   	    RankDao::hasAllPlaceholderRanks($stat->getPlayerId(), $rankYear));
   	if ($filter && !$isPlaceholder) {
   	  continue;
   	}
   	echo "<tr";
   	if ($isPlaceholder) {
-      echo " id='placeholder";
+      echo " class='placeholder";
       if (!$placeholderInDb) {
       	echo "_missing";
       }
       echo "'";
   	}
   	echo ">";
+  	$fantasyTeam = $stat->getPlayer()->getFantasyTeam();
   	echo "    <td>" . $ct . "</td>
-  	          <td>" . $stat->getPlayer()->getFullName() . "</td>
-  	          <td>" . $stat->getPlayer()->getFantasyTeam()->getAbbreviation() . "</td>
+  	          <td>" . $stat->getPlayer()->getNameLink(false) . "</td>
+  	          <td><a href='../summaryPage.php?team_id=" . $fantasyTeam->getId() . "'>" .
+  	                 $fantasyTeam->getAbbreviation() . "</a></td>
   	          <td>" . $stat->getStatLine()->getFantasyPoints() . "</td>
   	          <td>" . $rank . "</td>
   	          <td>" . ($isPlaceholder ? 'Y' : "") . "</td>
@@ -100,7 +98,10 @@ table.center {margin-left:auto; margin-right:auto;}
   	      </tr>";
   }
   echo "</table><br/>";
-  echo "</form>";
+  echo "</form></div>";
+
+  // Footer
+  NavigationUtil::printFooter();
 ?>
 
 </body>
