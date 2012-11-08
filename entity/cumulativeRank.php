@@ -8,6 +8,8 @@ CommonEntity::requireFileIn('/../dao/', 'playerDao.php');
  * corresponds to the 'cumulative_rank' table.
  */
 class CumulativeRank {
+  const MINIMUM_RANK = 30;
+
   private $rankId;
   private $year;
   private $playerId;
@@ -15,7 +17,7 @@ class CumulativeRank {
   private $player;
   private $rank;
   private $isPlaceholder;
-  
+
   public function __construct($rankId, $year, $playerId, $rank, $isPlaceholder) {
     $this->rankId = $rankId;
   	$this->year = $year;
@@ -28,11 +30,11 @@ class CumulativeRank {
   public function getId() {
   	return $this->rankId;
   }
-  
+
   public function setId($rankId) {
   	$this->rankId = $rankId;
   }
-  
+
   public function getYear() {
     return $this->year;
   }
@@ -44,29 +46,29 @@ class CumulativeRank {
     }
     return $this->player;
   }
-  
+
   public function getPlayerId() {
     return $this->playerId;
   }
-  
+
   public function setPlayer(Player $player) {
     $this->player = $player;
     $this->playerId = $player->getId();
     $this->playerLoaded = true;
   }
-  
+
   public function getRank() {
   	return $this->rank;
   }
-  
+
   public function setRank($rank) {
   	$this->rank = $rank;
   }
-  
+
   public function isPlaceholder() {
   	return $this->isPlaceholder;
   }
-  
+
   public function toString() {
     return $this->year . "/" . $this->getPlayer()->getFullName() . "/" . $this->rank;
   }

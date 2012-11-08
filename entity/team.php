@@ -4,6 +4,7 @@ require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'ballDao.php');
 CommonEntity::requireFileIn('/../dao/', 'brognaDao.php');
 CommonEntity::requireFileIn('/../dao/', 'contractDao.php');
+CommonEntity::requireFileIn('/../dao/', 'cumulativeRankDao.php');
 CommonEntity::requireFileIn('/../dao/', 'draftPickDao.php');
 CommonEntity::requireFileIn('/../dao/', 'userDao.php');
 CommonEntity::requireFileIn('/../util/', 'time.php');
@@ -58,7 +59,7 @@ class Team {
   	return "<a href='" . ($isTopLevel ? "" : "../") . "summaryPage.php?team_id=" .
   			$this->teamId . "'>" . $this->name . " (" . $this->abbreviation . ")</a>";
   }
-  
+
   public function getLeague() {
     return $this->league;
   }
@@ -420,18 +421,22 @@ class Team {
       return;
     }
 
+    $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
     echo "<h4>Players</h4>";
     echo "<table class='left' border><tr>";
     echo "<th></th><th>Name</th>
           <th>Position</th>
     	  <th>Team</th>
-          <th>Age</th></tr>";
+          <th>Age</th>
+          <th>$rankYear Rank</th></tr>";
     foreach ($players as $player) {
+      $rank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
       echo "<tr><td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>
                 <td>" . $player->getNameLink(true) . "</td>
                 <td>" . $player->getPositionString() . "</td>
                 <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
-                <td>" . $player->getAge() . "</td></tr>";
+                <td>" . $player->getAge() . "</td>
+                <td>" . (($rank != null) ? $rank->getRank() : "-") . "</td></tr>";
     }
     echo "</table>";
   }

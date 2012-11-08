@@ -114,6 +114,21 @@ class PlayerDao {
   }
 
   /**
+   * Returns an array of players unranked by anyone in the specified year.
+   */
+  public static function getUnrankedPlayers($year) {
+    CommonDao::connectToDb();
+    $query = "select p.*
+              from player p, team_player tp
+              where p.player_id = tp.player_id
+              and p.player_id not in (
+                select distinct r.player_id
+                from rank r
+                where r.year = $year)";
+    return PlayerDao::createPlayersFromQuery($query);
+  }
+
+  /**
    * Returns an array of players, belonging to the specified team, eligible to be kept in the
    * specified year.
    */

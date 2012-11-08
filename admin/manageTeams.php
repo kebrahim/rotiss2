@@ -14,11 +14,11 @@
   require_once '../dao/playerDao.php';
   require_once '../dao/teamDao.php';
   require_once '../util/navigation.php';
-  
+
   // Display header.
   NavigationUtil::printNoWidthHeader(true, false, NavigationUtil::MANAGE_ROSTERS_BUTTON);
   echo "<div class='bodycenter'>";
-  
+
   /**
    * Creates a select tag for the assignment of the specified player to any of the fantasy teams.
    */
@@ -65,7 +65,8 @@
    * Displays all players assigned to the specified team in a table.
    */
   function displayPlayersByTeam(Team $team) {
-    echo "<h4>" . $team->getAbbreviation() . "</h4>";
+    echo "<h4><a href='../summaryPage.php?team_id=" . $team->getId() . "'>" .
+          $team->getAbbreviation() . "</a></h4>";
     echo "<img src='" . $team->getSportslineImageUrl() . "' height=36 width=36><br/><br/>";
     displayArrayOfPlayers(PlayerDao::getPlayersByTeam($team));
   }
@@ -106,7 +107,7 @@
   echo "<h2>Unassigned players</h2>";
   displayArrayOfPlayers(PlayerDao::getUnassignedPlayers());
   echo "</form></div>";
-  
+
   // Footer
   NavigationUtil::printFooter();
 ?>

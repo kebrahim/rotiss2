@@ -8,7 +8,7 @@ CommonDao::requireFileIn('/../entity/', 'rank.php');
  * DAO class for storing/retrieving offseason player cumulative ranks.
  */
 class CumulativeRankDao {
-  
+
   public static function getCumulativeRankByPlayerYear($playerId, $year) {
   	CommonDao::connectToDb();
   	$query = "select cr.*
@@ -25,7 +25,7 @@ class CumulativeRankDao {
   	}
   	return null;
   }
-  
+
   private static function createCumulativeRanksByQuery($query) {
     $res = mysql_query($query);
     $ranksDb = array();
@@ -37,9 +37,9 @@ class CumulativeRankDao {
     }
     return $ranksDb;
   }
-  
+
   /**
-   * Returns true if the player with the specified id has a cumulative rank stored for the 
+   * Returns true if the player with the specified id has a cumulative rank stored for the
    * specified year.
    */
   public static function hasCumulativeRank($playerId, $year) {
@@ -58,11 +58,12 @@ class CumulativeRankDao {
    */
   public static function createCumulativeRank(CumulativeRank $cumulativeRank) {
     CommonDao::connectToDb();
-    // cumulative rank cannot be less than 30.
-    $rank = ($cumulativeRank->getRank() >= 30) ? $cumulativeRank->getRank() : 30;
+    // cumulative rank cannot be less than CumulativeRank::MINIMUM_RANK.
+    $rank = ($cumulativeRank->getRank() >= CumulativeRank::MINIMUM_RANK) ?
+        $cumulativeRank->getRank() : CumulativeRank::MINIMUM_RANK;
   	$query = "insert into cumulative_rank(year, player_id, rank, is_placeholder)
   	    values (" . $cumulativeRank->getYear() .
-  	    ", " . $cumulativeRank->getPlayerId() . ", " . $rank . 
+  	    ", " . $cumulativeRank->getPlayerId() . ", " . $rank .
   	    ", " . ($cumulativeRank->isPlaceholder() ? "1" : "0") . ")";
   	$result = mysql_query($query);
   	if (!$result) {
@@ -70,7 +71,7 @@ class CumulativeRankDao {
   	  return null;
   	}
 
-  	$idQuery = "select cumulative_rank_id from cumulative_rank where year = " . 
+  	$idQuery = "select cumulative_rank_id from cumulative_rank where year = " .
   	    $cumulativeRank->getYear() . " and player_id = " . $cumulativeRank->getPlayerId();
   	$result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
   	$row = mysql_fetch_assoc($result);
