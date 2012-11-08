@@ -1,5 +1,6 @@
 <?php
   require_once '../dao/teamDao.php';
+  require_once '../util/sessions.php';
   require_once '../util/time.php';
 
   /**
@@ -32,7 +33,7 @@
 
     // Brognas
     $keeperSeason = TimeUtil::getYearBasedOnKeeperNight();
-    $team->displayBrognas($keeperSeason + 1, $keeperSeason + 1, true, $position, 
+    $team->displayBrognas($keeperSeason + 1, $keeperSeason + 1, true, $position,
         'center smallfonttable');
 
     // Picks
@@ -124,6 +125,100 @@
     echo "</select>";
   }
 
+  /**
+   * Display specified team on team summary page.
+   */
+  function displayTeam(Team $team) {
+    echo "<h1>Team Summary: " . $team->getName() . "</h1>";
+    echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
+
+    // Owners, Abbreviation, Division
+    echo "<table>";
+    echo "  <tr><td><strong>Owner(s):</strong></td>
+                  <td>" . $team->getOwnersString() . "</td></tr>";
+    echo "  <tr><td><strong>Abbreviation:</strong></td>
+                  <td>" . $team->getAbbreviation() . "</td></tr>";
+    echo "  <tr><td><strong>Division:</strong></td>
+                  <td>" . $team->getLeague() . " " . $team->getDivision() . "</td></tr>";
+    echo "</table>";
+
+    // if admin user, show edit link
+    if (SessionUtil::isLoggedInAdmin()) {
+      echo "<br/><a href='admin/manageTeam.php?team_id=" . $team->getId() . "'>Manage team</a><br/>";
+    }
+
+    // Display contracts.
+    $team->displayAllContracts();
+
+    // Display points information
+    $team->displayAllBrognas();
+
+    // Display draft pick information
+    $team->displayAllDraftPicks();
+
+    // Display current team
+    $team->displayPlayers();
+  }
+
+  /**
+   * Display team on manage team page.
+   */
+  function displayTeamForManagement(Team $team) {
+    echo "<h1>Manage: " . $team->getName() . "</h1>";
+
+    // Sportsline Image
+    echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
+
+    // ID
+    echo "<table>";
+    echo "<tr><td><strong>Team Id:</strong></td><td>" . $team->getId() . "</td></tr>";
+    echo "<input type=hidden name='teamId' value='" . $team->getId() . "'>";
+
+    // Name
+    // TODO parse quotes of team name field
+    echo "<tr><td><strong>Name:</strong></td><td>
+             <input type=text name='teamName' maxLength=50 size=50 required " .
+           "placeholder='Team Name' value='" . $team->getName() . "'></td></tr>";
+
+    // League/Division
+    echo "<tr><td><strong>Division:</strong></td><td><select name='league' required>";
+    $leagues = array("AL", "NL");
+    foreach ($leagues as $league) {
+      $isSelected = ($league == $team->getLeague());
+      echo "<option value='" . $league . "'" . ($isSelected ? " selected" : "") .
+             ">" . $league . "</option>";
+    }
+    echo "</select> <select name='division' required>";
+    $divisions = array("East", "West");
+    foreach ($divisions as $division) {
+      $isSelected = ($division == $team->getDivision());
+      echo "<option value='" . $division . "'" . ($isSelected ? " selected" : "") .
+               ">" . $division . "</option>";
+    }
+    echo "</select></td></tr>";
+
+    // Abbreviation
+    echo "<tr><td><strong>Abbreviation:</strong></td><td>
+             <input type=text name='abbreviation' maxLength=10 size=10 required " .
+           "placeholder='Team Abbreviation' value='" . $team->getAbbreviation() . "'></td></tr>";
+
+    // Sportsline Image Name
+    echo "<tr><td><strong>Sportsline Image Name:</strong></td><td>
+             <input type=text name='sportslineImage'" .
+           " maxLength=65 size=65 value='" . $team->getSportslineImageName() . "' required>
+              </td></tr>";
+
+    // Owners
+    echo "<tr><td><strong>Owner(s):</strong></td><td>" . $team->getOwnersString() . "</td></tr>";
+
+    echo "</table><br/>";
+
+    // Buttons
+    echo "<input class='button' type=submit name='update' value='Update Team'>&nbsp&nbsp
+          <a href='../summaryPage.php?team_id=" . $team->getId() . "'>Back to Summary</a>";
+  }
+
+  // direct to corresponding function, depending on type of display
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
   } else {
@@ -145,5 +240,9 @@
       $rowNumber = $_REQUEST["row"];
     }
     displayEligibleKeeperPlayers($team, $rowNumber);
+  } else if ($displayType == "display") {
+    displayTeam($team);
+  } else if ($displayType == "manage") {
+    displayTeamForManagement($team);
   }
 ?>

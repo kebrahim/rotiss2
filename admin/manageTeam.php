@@ -9,6 +9,39 @@
 <link href='../css/style.css' rel='stylesheet' type='text/css'>
 </head>
 
+<script>
+//shows the team with the specified id
+function showTeam(teamId) {
+    // If teamid is blank, then clear the team div.
+	if (teamId=="" || teamId=="0") {
+		document.getElementById("teamDisplay").innerHTML="";
+		return;
+	}
+
+	// Display team information.
+	getRedirectHTML(document.getElementById("teamDisplay"),
+	    "displayTeamForTransaction.php?type=manage&team_id="+teamId);
+}
+
+//populates the innerHTML of the specified elementId with the HTML returned by the specified
+//htmlString
+function getRedirectHTML(element, htmlString) {
+	var xmlhttp;
+	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	} else {// code for IE6, IE5
+	    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange=function() {
+		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+			element.innerHTML=xmlhttp.responseText;
+		}
+	};
+	xmlhttp.open("GET", htmlString, true);
+	xmlhttp.send();
+}
+</script>
+
 <body>
 
 <?php
@@ -19,82 +52,45 @@
   // Display header.
   NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_TEAM_BUTTON);
   echo "<div class='bodyleft'>";
+
   if (isset($_POST['update'])) {
     // Update team.
     $teamToUpdate = new Team($_POST['teamId'], $_POST['teamName'], $_POST['league'],
         $_POST['division'], $_POST['abbreviation'], $_POST['sportslineImage']);
     TeamDao::updateTeam($teamToUpdate);
     $teamId = $_POST['teamId'];
-    echo "<div class='alert_msg_pad_top'>Team successfully updated!</div>";
+    echo "<div class='alert_msg'>Team successfully updated!</div>";
   } else if (isset($_REQUEST["team_id"])) {
     $teamId = $_REQUEST["team_id"];
-    // TODO if team_id is not set, show drop-down of teams to select from
-  } else {
-    die("<h1>Missing team id!</h1>");
   }
 
+  // Allow user to choose from list of teams to see corresponding team management page.
+  $allTeams = TeamDao::getAllTeams();
   echo "<FORM ACTION='manageTeam.php' METHOD=POST>";
-
-  $team = TeamDao::getTeamById($teamId);
-  if ($team == null) {
-    die("<h1>team id " . $teamId . " does not exist!</h1>");
+  echo "<br/><label for='team_id'>Choose team: </label>";
+  echo "<select id='team_id' name='team_id' onchange='showTeam(this.value)'>
+          <option value='0'></option>";
+  foreach ($allTeams as $selectTeam) {
+    echo "<option value='" . $selectTeam->getId() . "'";
+    if ($selectTeam->getId() == $teamId) {
+      echo " selected";
+    }
+    echo ">" . $selectTeam->getName() . " (" . $selectTeam->getAbbreviation() . ")</option>";
   }
+  echo "</select><br/>";
+  echo "<div id='teamDisplay'></div><br/>";
+?>
 
-  echo "<h1>Manage: " . $team->getName() . "</h1>";
+<script>
+  // initialize teamDisplay with selected team
+  showTeam(document.getElementById("team_id").value);
+</script>
 
-  // Sportsline Image
-  echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
+<?php
+  echo "</form></div>";
 
-  // ID
-  echo "<table>";
-  echo "<tr><td><strong>Team Id:</strong></td><td>" . $team->getId() . "</td></tr>";
-  echo "<input type=hidden name='teamId' value='" . $team->getId() . "'>";
-
-  // Name
-  // TODO manageTeam: parse quotes
-  echo "<tr><td><strong>Name:</strong></td><td>
-         <input type=text name='teamName' maxLength=50 size=50 required " .
-       "placeholder='Team Name' value='" . $team->getName() . "'></td></tr>";
-
-  // League/Division
-  echo "<tr><td><strong>Division:</strong></td><td><select name='league' required>";
-  $leagues = array("AL", "NL");
-  foreach ($leagues as $league) {
-    $isSelected = ($league == $team->getLeague());
-    echo "<option value='" . $league . "'" . ($isSelected ? " selected" : "") .
-         ">" . $league . "</option>";
-  }
-  echo "</select> <select name='division' required>";
-  $divisions = array("East", "West");
-  foreach ($divisions as $division) {
-    $isSelected = ($division == $team->getDivision());
-    echo "<option value='" . $division . "'" . ($isSelected ? " selected" : "") .
-           ">" . $division . "</option>";
-  }
-  echo "</select></td></tr>";
-
-  // Abbreviation
-  echo "<tr><td><strong>Abbreviation:</strong></td><td>
-         <input type=text name='abbreviation' maxLength=5 size=5 required " .
-       "placeholder='Team Abbreviation' value='" . $team->getAbbreviation() . "'></td></tr>";
-
-  // Sportsline Image Name
-  echo "<tr><td><strong>Sportsline Image Name:</strong></td><td>
-         <input type=text name='sportslineImage'" .
-       " maxLength=65 size=65 value='" . $team->getSportslineImageName() . "' required></td></tr>";
-
-  // Owners
-  echo "<tr><td><strong>Owner(s):</strong></td><td>" . $team->getOwnersString() . "</td></tr>";
-
-  echo "</table><br/>";
-
-  // Buttons
-  echo "<input class='button' type=submit name='update' value='Update Team'>
-        &nbsp&nbsp<a href='../summaryPage.php?team_id=" . $team->getId() . "'>Back to Summary</a>";
-  echo "</div>";
-
-  // TODO add/delete contracts from this page
-  // TODO seltzer player?
+  // TODO add/delete contracts
+  // TODO seltzer player
 
   // Footer
   NavigationUtil::printFooter();
