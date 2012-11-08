@@ -28,7 +28,7 @@ class BrognaDao {
   	$brognas = BrognaDao::getBrognasByTeamFilteredByYears($teamId, $year, $year);
   	return $brognas[0];
   }
-  
+
   /**
    * Returns all of the brognas belonging to the specified team within the specified years.
    */
@@ -37,7 +37,7 @@ class BrognaDao {
     $query = "select B.team_id, B.year, B.total_points, B.banked_points, B.traded_in_points,
                      B.traded_out_points, B.tradeable_points
               from team_points B
-              where B.team_id = " . $teamId . " and B.year >= " . $startYear . 
+              where B.team_id = " . $teamId . " and B.year >= " . $startYear .
                   " and B.year <= " . $endYear . "
               order by B.year";
     return BrognaDao::createBrognasForQuery($query);
@@ -66,9 +66,9 @@ class BrognaDao {
     }
     return $brognas;
   }
-  
+
   /**
-   * Inserts the specified Brogna set in the 'team_points' table, and throws an exception if a 
+   * Inserts the specified Brogna set in the 'team_points' table, and throws an exception if a
    * record for the specified team & year already exists.
    */
   public static function createBrognas(Brogna $brognas) {
@@ -101,6 +101,28 @@ class BrognaDao {
                                " where team_id = " . $brognas->getTeam()->getId() .
                                " and year = " . $brognas->getYear();
     $result = mysql_query($query) or die('Invalid query: ' . mysql_error());
+  }
+
+  /**
+   * Returns the earliest brogna year.
+   */
+  public static function getMinimumYear() {
+    CommonDao::connectToDb();
+    $query = "select min(year) from team_points";
+    $res = mysql_query($query);
+    $row = mysql_fetch_row($res);
+    return $row[0];
+  }
+
+  /**
+   * Returns the latest brogna year.
+   */
+  public static function getMaximumYear() {
+    CommonDao::connectToDb();
+    $query = "select max(year) from team_points";
+    $res = mysql_query($query);
+    $row = mysql_fetch_row($res);
+    return $row[0];
   }
 }
 ?>

@@ -1,33 +1,49 @@
+<?php
+  require_once '../util/sessions.php';
+  SessionUtil::checkUserIsLoggedInAdmin();
+?>
+
 <html>
 <head>
-<title>Rotiss 2012</title>
+<title>Rotiss.com - Manage Brognas</title>
+<link href='../css/style.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
 
 <?php
-  require_once '../util/time.php';
   require_once '../dao/brognaDao.php';
+  require_once '../util/time.php';
+  require_once '../util/navigation.php';
 
-// TODO (manageBrognas): allot 450 points to each team for the upcoming year.
+  // Display header.
+  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_BROGNAS_BUTTON);
+  echo "<div class='bodycenter'>";
 
-// TODO default - show all teams' brognas for current year
-// allow user to select years & teams
-// allow user to edit individual row[?] or just team
-  function displayBrognas($startYear, $endYear) {
-    echo "<h1>Manage Brognas</h1>";
-    echo "<table border><tr><th>Year</th><th>Team</th><th>Total</th><th>Banked</th><th>Traded In</th>
+  function displayBrognas($year) {
+    echo "<h1>Manage $year Brognas</h1>";
+
+    // allow user to change year
+    $minYear = BrognaDao::getMinimumYear();
+    $maxYear = BrognaDao::getMaximumYear();
+    echo "<strong>Filter by year: </strong>";
+    echo "<select name='year'>";
+    for ($yr = $minYear; $yr <= $maxYear; $yr++) {
+      echo "<option value='$yr'";
+      if ($yr == $year) {
+        echo " selected";
+      }
+      echo ">$yr</option>";
+    }
+    echo "</select>&nbsp&nbsp<input type='submit' name='submit' value='Filter'><br/><br/>";
+
+    echo "<table border class='center'>
+            <tr><th>Team</th><th>Total</th><th>Banked</th><th>Traded In</th>
   		        <th>Traded Out</th><th>Tradeable</th></tr>";
 
-    $brognas = BrognaDao::getBrognasByYear($startYear, $endYear);
-    $currentYear = TimeUtil::getCurrentYear();
+    $brognas = BrognaDao::getBrognasByYear($year, $year);
     foreach ($brognas as $brogna) {
-      // Only show brogna info for this year & the future.
-      if ($brogna->getYear() < $currentYear) {
-        continue;
-      }
-      echo "<tr><td>" . $brogna->getYear() . "</td>
-                <td>" . $brogna->getTeam()->getName() . "</td>
+      echo "<tr><td>" . $brogna->getTeam()->getNameLink(false) . "</td>
                 <td><strong>" . $brogna->getTotalPoints() . "</strong></td>
        	        <td>" . $brogna->getBankedPoints() . "</td>
            	    <td>" . $brogna->getTradedInPoints() . "</td>
@@ -38,17 +54,22 @@
     echo "</table>";
   }
 
-  // TODO switch to POST
-  if (!isset($_GET["startYear"]) || !isset($_GET["endYear"])) {
-    $startYear = TimeUtil::getCurrentYear();
-    $endYear = $startYear;
+  // if year isn't specified, use the current year, based on keeper night.
+  if (isset($_REQUEST["year"])) {
+    $year = $_REQUEST["year"];
   } else {
-    $startYear = $_GET["startYear"];
-    $endYear = $_GET["endYear"];
+    $year = TimeUtil::getYearBasedOnKeeperNight();
   }
 
-  // Display points information
-  displayBrognas($startYear, $endYear);
+  // Display brognas for given year
+  echo "<form action='manageBrognas.php' method=post>";
+  displayBrognas($year);
+  echo "</form></div>";
+
+  // TODO should this be editable?
+
+  // Footer
+  NavigationUtil::printFooter();
 ?>
 
 </body>
