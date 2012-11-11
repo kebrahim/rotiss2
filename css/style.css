@@ -9,13 +9,15 @@ body {margin:0; font: 13px arial,helvetica,clean,sans-serif;}
 table {font-size:14;}
 table.left {text-align:center;}
 table.center {margin-left:auto; margin-right:auto; text-align:center;}
+table th {background-color: #1B75BB; color:white;}
 .vert_td_top {vertical-align:top;}
+.vert_td_middle {vertical-align:middle;}
 .smallfonttable {font-size:11;}
-h1 {margin:0.67em 0 0.67em;}
-h2 {margin:0.83em 0 0.83em;}
-h3 {margin:1em 0 1em;}
-h4 {margin:1.33em 0 1.33em;}
-label {font-weight:bold;}
+h1 {margin:0.67em 0 0.67em; color:#1B75BB;}
+h2 {margin:0.83em 0 0.83em; color:#1B75BB;}
+h3 {margin:1em 0 1em; color:#1B75BB;}
+h4 {margin:1.33em 0 1.33em; color:#1B75BB;}
+label {font-weight:bold; color:#1B75BB;}
 fieldset {width: 153px; text-align:left;}
 
 /* Messages */

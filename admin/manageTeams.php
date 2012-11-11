@@ -88,7 +88,7 @@
   }
 
   $teams = TeamDao::getAllTeams();
-  echo "<table border id='teams' class='center'>";
+  echo "<table id='teams' class='center'>";
   for ($i=0; $i<4; $i++) {
   	echo "<tr>";
   	for ($j=0; $j<4; $j++) {

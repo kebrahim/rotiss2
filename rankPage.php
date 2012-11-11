@@ -127,7 +127,7 @@
         <meter min='0' max='150' low='150' optimum='150' value='" . $numRanks . "'></meter>
         (" . $numRanks . "/150)<br/><br/>";
 
-  echo "<table border id='ranked' class='center'>";
+  echo "<table id='ranked' class='center'>";
   $count = 10;
   for ($i=0; $i<2; $i++) {
   	echo "<tr>";

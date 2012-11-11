@@ -41,7 +41,7 @@ class NavigationUtil {
     if (!$isTopLevel) {
       echo "../";
     }
-    echo "images/rotiss.jpg' width='240'>
+    echo "images/rotiss2.jpg' width='240'>
               </div>";
     if ($showNavigationLinks) {
       echo "  <nav id='menu'>

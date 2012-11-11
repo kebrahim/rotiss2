@@ -62,6 +62,8 @@ function getRedirectHTML(element, htmlString) {
     echo "<div class='alert_msg'>Team successfully updated!</div>";
   } else if (isset($_REQUEST["team_id"])) {
     $teamId = $_REQUEST["team_id"];
+  } else {
+  	$teamId = 0;
   }
 
   // Allow user to choose from list of teams to see corresponding team management page.

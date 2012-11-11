@@ -164,7 +164,7 @@ class Team {
     if ($isSelectable) {
       echo "<th></th>";
     }
-    echo "  <th></th><th>Name</th>
+    echo "  <th colspan='2'>Player</th>
           	<th>Position</th>
 	        <th>Team</th>
             <th>Age</th>
@@ -184,7 +184,7 @@ class Team {
       echo "<td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>
                   <td>" . $player->getNameLink(true) . "</td>
                   <td>" . $player->getPositionString() . "</td>
-                  <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
+                  <td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
                   <td>" . $player->getAge() . "</td>
                   <td>" . $contract->getTotalYears() . "</td>
                   <td>" . $contract->getPrice() . "</td>
@@ -414,7 +414,6 @@ class Team {
   /**
    * Displays all of the players currently belonging to this team.
    */
-  // TODO show cumulative rank, if exists
   function displayPlayers() {
     $players = PlayerDao::getPlayersByTeam($this);
     if (count($players) == 0) {
@@ -434,7 +433,7 @@ class Team {
       echo "<tr><td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>
                 <td>" . $player->getNameLink(true) . "</td>
                 <td>" . $player->getPositionString() . "</td>
-                <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
+                <td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
                 <td>" . $player->getAge() . "</td>
                 <td>" . (($rank != null) ? $rank->getRank() : "-") . "</td></tr>";
     }
