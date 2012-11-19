@@ -46,7 +46,8 @@
   // MLB Team
   $mlbTeam = $player->getMlbTeam();
   echo "<tr><td><strong>Team:</strong></td>
-            <td>" . $mlbTeam->getCity() . " " . $mlbTeam->getName() . "</td></tr>";
+            <td>" . $mlbTeam->getCity() . " " . $mlbTeam->getName() . " 
+            " . $mlbTeam->getImageTag(30, 30) . "</td></tr>";
 
   // Birth date & age
   echo "<tr><td><strong>Birth Date:</strong></td>

@@ -2,33 +2,35 @@
 
 * {margin: 0;}
 html, body {height: 100%;}
-#container {padding:0; min-height:100%; height:auto !important; height:100%; margin:0 auto -61px;}
+#container {padding:0; min-height:100%; height:auto !important; height:100%; margin:0 auto -61px;
+            background-image: url("../images/holiday.png");}
 #wrapper, #nowidthwrapper {padding: 12px 0 40px; margin: 0 auto;}
 #wrapper {width:1000px;}
+a {color:1B75BB;}
 
 /* Header */
-header {background-color:#257DFB; height:122px;}
+header {/*background-color:#257DFB;*/ background-color:#1B75BB; height:122px;}
 #banner {width:1000px; margin:0 auto;}
 #logo {float:left; padding-top:7px;}
 #menu {float:right; margin-top:45;}
 
 /* Navigation */
 nav > ul {float:left; width:100%; padding:0; margin:0; list-style-type:none;}
-nav > ul > li > a {float:left; text-decoration:none; color:#257DFB; background-color:white;
+nav > ul > li > a {float:left; text-decoration:none; color:#1b75bb; background-color:white;
       padding:0.2em 0.6em; border:1px solid black; text-align:center;}
-nav > ul > li > a:hover, #navselected {background-color:#257DFB; color:white;}
+nav > ul > li > a:hover, #navselected {background-color:#1b75bb; color:white;}
 nav > ul > li {display:inline;}
 nav > ul > li.dropdown {position:relative;}
 nav > ul > li.dropdown > .dropdown {background: #ffffff; list-style: none outside none;
     padding: 5px 5px; display: none; position: absolute; min-width: 130px; z-index: 99999;
-    top: 100%; left: 0%; margin: 21 0 0 -55; border: 1px solid #257DFB; }
+    top: 100%; left: 0%; margin: 21 0 0 -55; border: 1px solid #1b75bb; }
 nav > ul > li.dropdown:hover > .dropdown { display: block; z-index: 999999;
     -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.10); -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.10); 
     box-shadow:0 0 3px rgba(0, 0, 0, 0.10); }
 nav > ul > li.dropdown li { list-style: none; font-size: 14px; /*line-height: 30px;*/ }
-nav > ul > li.dropdown li a { line-height: 30px; height: 30px; font-size: 13px; color: #257DFB;
+nav > ul > li.dropdown li a { line-height: 30px; height: 30px; font-size: 13px; color: #1b75bb;
     padding: 0.2em 0.6em;}
-nav > ul > li.dropdown li a:hover { background-color:#257DFB; color:white; }
+nav > ul > li.dropdown li a:hover { background-color:#1b75bb; color:white; }
 
 /* Profile */
 #profileinfo {color:white; float:right; margin-top:-30; clear:both;}
@@ -43,5 +45,5 @@ nav > ul > li.dropdown li a:hover { background-color:#257DFB; color:white; }
 
 /* Footer */
 footer, .push {height:61px; clear:both;}
-footer {width: 100%; background-color:#257DFB;}
+footer {width: 100%; background-color:#1b75bb;}
 footer p {text-align:center; color:white; font-size:14; padding:20;}

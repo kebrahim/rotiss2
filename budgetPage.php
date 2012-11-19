@@ -90,7 +90,7 @@ function getRedirectHTML(element, htmlString) {
         if ($hasContracts == false) {
           echo "<h4>Contracts</h4>";
           echo "<table border class='left'>
-                  <tr><th></th><th>Name</th><th>Position</th><th>Team</th><th>Age</th>
+                  <tr><th colspan='2'>Player</th><th>Position</th><th>Team</th><th>Age</th>
                       <th>Years Remaining</th><th>Price</th></tr>";
           $hasContracts = true;
         }
@@ -98,14 +98,15 @@ function getRedirectHTML(element, htmlString) {
         echo "<tr><td>" . $player->getMiniHeadshotImg() . "</td>
                   <td>" . $player->getNameLink(true) . "</td>
                   <td>" . $player->getPositionString() . "</td>
-                  <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
+                  <td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
                   <td>" . $player->getAge() . "</td>
                   <td>" . ($contract->getEndYear() - $brogna->getYear() + 1) . "</td>
                   <td>" . $contract->getPrice() . "</td></tr>";
         $contractTotal += $contract->getPrice();
       }
+                  
       if ($hasContracts == true) {
-        echo "<tr><td></td><td></td><td></td><td></td><td></td><td></td>
+        echo "<tr><td colspan='6'></td>
                   <td><strong>" . $contractTotal . "</strong></td></tr>";
         echo "</table>";
       }

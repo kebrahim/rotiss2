@@ -11,6 +11,8 @@ class MlbTeam {
   private $league;
   private $division;
 
+  private static $IMAGE_URL_PREFIX = "http://sports.cbsimg.net/images/mlb/logos/90x90/";
+  
   public function __construct($mlbTeamId, $city, $name, $abbreviation, $league, $division) {
     $this->mlbTeamId = $mlbTeamId;
     $this->city = $city;
@@ -42,6 +44,11 @@ class MlbTeam {
 
   public function getDivision() {
     return $this->division;
+  }
+  
+  public function getImageTag($width, $height) {
+  	return "<img src='" . MlbTeam::$IMAGE_URL_PREFIX . $this->abbreviation . ".png' width=$width 
+  	    height=$height />";
   }
 }
 ?>
