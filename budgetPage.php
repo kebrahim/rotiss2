@@ -9,6 +9,39 @@
 <link href='css/style.css' rel='stylesheet' type='text/css'>
 </head>
 
+<script>
+//shows the team with the specified id
+function showTeam(teamId) {
+    // If teamid is blank, then clear the team div.
+	if (teamId=="" || teamId=="0") {
+		document.getElementById("teamDisplay").innerHTML="";
+		return;
+	}
+
+	// Display team information.
+	getRedirectHTML(document.getElementById("teamDisplay"),
+	    "admin/displayTeamForTransaction.php?type=budget&team_id="+teamId);
+}
+
+//populates the innerHTML of the specified elementId with the HTML returned by the specified
+//htmlString
+function getRedirectHTML(element, htmlString) {
+	var xmlhttp;
+	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	} else {// code for IE6, IE5
+	    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange=function() {
+		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+			element.innerHTML=xmlhttp.responseText;
+		}
+	};
+	xmlhttp.open("GET", htmlString, true);
+	xmlhttp.send();
+}
+</script>
+
 <body>
   <?php
   require_once 'dao/brognaDao.php';
@@ -87,7 +120,7 @@
   // Display header.
   NavigationUtil::printHeader(true, true, NavigationUtil::BUDGET_BUTTON);
   echo "<div class='bodyleft'>";
-  
+
   // Get team from REQUEST; otherwise, use logged-in user's team.
   if (isset($_REQUEST["team_id"])) {
   	$teamId = $_REQUEST["team_id"];
@@ -99,12 +132,12 @@
   if ($team == null) {
   	die("<h1>Team ID " . $teamId . " not found!</h1>");
   }
-  
+
   // Allow user to choose from list of teams to see corresponding summary page.
   $allTeams = TeamDao::getAllTeams();
   echo "<form action='budgetPage.php' method=post>";
   echo "<br/><label for='team_id'>Change team: </label>";
-  echo "<select id='team_id' name='team_id'>";
+  echo "<select id='team_id' name='team_id' onchange='showTeam(this.value)'>";
   foreach ($allTeams as $selectTeam) {
     echo "<option value='" . $selectTeam->getId() . "'";
     if ($selectTeam->getId() == $teamId) {
@@ -112,7 +145,16 @@
     }
     echo ">" . $selectTeam->getName() . " (" . $selectTeam->getAbbreviation() . ")</option>";
   }
-  echo "</select>&nbsp&nbsp<input type='submit' name='submit' value='Choose team'><br/></form>";
+  echo "</select><br/>";
+  echo "<div id='teamDisplay'></div><br/>";
+?>
+
+<script>
+  // initialize teamDisplay with selected team
+  showTeam(document.getElementById("team_id").value);
+</script>
+
+<?php
 
   // Show budget information for selected team
   echo "<h1>Budget: " . $team->getName() . "</h1>";

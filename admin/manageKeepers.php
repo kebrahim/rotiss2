@@ -78,7 +78,7 @@ function addContract(team_id) {
 
     // headshot column gets updated automatically when a player is selected
     var headshotCell = newRow.insertCell(0);
-    
+
     // name column gets drop-down of players
     var nameCell = newRow.insertCell(1);
     getRedirectHTML(nameCell,
@@ -323,6 +323,8 @@ require_once '../util/navigation.php';
   	echo "<input class='button' type=submit name='confirmBank' value='Confirm'>&nbsp";
   	echo "<input class='button' type=submit name='cancelBank' value='Cancel'><br>";
     echo "<input type='hidden' name='keeper_teamid' value='" . $team->getId() . "'>";
+
+    // TODO show all non-contracted players which will be dropped from team
   } elseif(isset($_POST['confirmBank'])) {
     // If confirmBank button was pressed, save brogna info.
   	$team = TeamDao::getTeamById($_POST['keeper_teamid']);
@@ -346,10 +348,12 @@ require_once '../util/navigation.php';
   	$team->displayBrognas($nextYear, $nextYear, false, 0, 'center');
 
   	echo "<br><a href='manageKeepers.php'>Let's do it again!</a><br>";
+
+  	// TODO drop all non-contracted players from team
   } else {
   	// clear out keeper session variables from previous keeper scenarios.
   	SessionUtil::clearSessionVarsWithPrefix("keeper_");
-  	 
+
     $teams = TeamDao::getAllTeams();
     echo "<h4>Select Team:</h4><select name='team' onchange='showTeam(this.value)'>
                              <option value='0'></option>";
@@ -361,7 +365,7 @@ require_once '../util/navigation.php';
     echo "<div id='teamDisplay'></div><br/>";
   }
   echo "</form></div>";
-  
+
   // Footer
   NavigationUtil::printFooter();
 ?>

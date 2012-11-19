@@ -414,7 +414,6 @@ class Team {
   /**
    * Displays all of the players currently belonging to this team.
    */
-  // TODO show cumulative rank, if exists
   function displayPlayers() {
     $players = PlayerDao::getPlayersByTeam($this);
     if (count($players) == 0) {
