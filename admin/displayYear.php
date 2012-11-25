@@ -1,4 +1,5 @@
 <?php
+  require_once '../dao/auctionDao.php';
   require_once '../dao/ballDao.php';
   require_once '../dao/draftPickDao.php';
   require_once '../util/sessions.php';
@@ -49,6 +50,31 @@
   	}
   }
 
+  /**
+   * Display list of auctioned players for specified year
+   */
+  function displayAuctionYear($year) {
+ 	echo "<h1>Auction " . $year . "</h1><hr/><br/><br/>";
+    
+  	// display table of auction results for specified year, highlighting row for specified team
+  	$loggedinTeamId = SessionUtil::getLoggedInTeam()->getId();
+  	echo "<table border class='center'>
+  	        <th>Team</th><th>Player</th><th>Cost</th></tr>";
+  	$auctionResults = AuctionResultDao::getAuctionResultsByYear($year);
+  	foreach ($auctionResults as $auctionResult) {
+  	  $team = $auctionResult->getTeam();
+  	  $player = $auctionResult->getPlayer();
+  	  echo "<tr";
+  	  if ($team->getId() == $loggedinTeamId) {
+  	    echo " class='selected_team_row'";
+  	  }
+      echo "><td>" . $team->getNameLink(true) . "</td>
+  	         <td>" . $player->getNameLink(true) . "</td>
+  	         <td>" . $auctionResult->getCost() . "</td></tr>";
+  	}
+  	echo "</table>";
+  }
+  
   // direct to corresponding function, depending on type of display
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
@@ -63,5 +89,7 @@
 
   if ($displayType == "draft") {
     displayDraftYear($year);
+  } else if ($displayType == "auction") {
+  	displayAuctionYear($year);
   }
 ?>
