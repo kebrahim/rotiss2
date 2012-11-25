@@ -19,6 +19,7 @@ h3 {margin:1em 0 1em; color:#1B75BB;}
 h4 {margin:1.33em 0 1.33em; color:#1B75BB;}
 label {font-weight:bold; color:#1B75BB;}
 fieldset {width: 153px; text-align:left;}
+hr {color:1B75BB; border-style:dashed; margin-top:25px;}
 
 /* Messages */
 .error_msg, .error_msg_pad, .error_msg_pad_bottom {color:red; font-weight:bold;}

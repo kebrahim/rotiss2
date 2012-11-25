@@ -5,14 +5,15 @@ html, body {height: 100%;}
 #container {padding:0; min-height:100%; height:auto !important; height:100%; margin:0 auto -61px;
             background-image: url("../images/holiday.png");}
 #wrapper, #nowidthwrapper {padding: 12px 0 40px; margin: 0 auto;}
-#wrapper {width:1000px;}
+#wrapper {width:1000px; border-left-style:ridge; border-right-style:ridge;
+          background-color:white;}
 a {color:1B75BB;}
 
 /* Header */
-header {/*background-color:#257DFB;*/ background-color:#1B75BB; height:122px;}
+header {background-color:#1B75BB; height:122px;}
 #banner {width:1000px; margin:0 auto;}
-#logo {float:left; padding-top:7px;}
-#menu {float:right; margin-top:45;}
+#logo {float:left; padding-top:7px; margin-left:30;}
+#menu {float:right; margin:45 30;}
 
 /* Navigation */
 nav > ul {float:left; width:100%; padding:0; margin:0; list-style-type:none;}
@@ -33,7 +34,7 @@ nav > ul > li.dropdown li a { line-height: 30px; height: 30px; font-size: 13px; 
 nav > ul > li.dropdown li a:hover { background-color:#1b75bb; color:white; }
 
 /* Profile */
-#profileinfo {color:white; float:right; margin-top:-30; clear:both;}
+#profileinfo {color:white; float:right; margin:-30 30; clear:both;}
 #profileinfo a {color:white; }
 
 /* Two-column pages */
