@@ -52,7 +52,7 @@
 
   // show cumulative ranks for all players, including placeholders & whether the ranks have
   // been saved
-  echo "<h1>Ranks " . $rankYear . "</h1>";
+  echo "<h1>Ranks " . $rankYear . "</h1><hr/>";
   $ranks = RankDao::calculateCumulativeRanksByYear($rankYear);
 
   echo "<input class='button' type=submit name='save' value='Save ranks'>&nbsp&nbsp";
@@ -89,9 +89,11 @@
   	echo "'>";
 
   	$fantasyTeam = $rank->getPlayer()->getFantasyTeam();
+  	$teamLink = ($fantasyTeam == null) ? "" : 
+        "<a href='../summaryPage.php?team_id=" . $fantasyTeam->getId() . "'>" .
+  	        $fantasyTeam->getAbbreviation() . "</a>";
   	echo "    <td>" . $rank->getPlayer()->getNameLink(false) . "</td>
-  	          <td><a href='../summaryPage.php?team_id=" . $fantasyTeam->getId() . "'>" .
-  	                 $fantasyTeam->getAbbreviation() . "</a></td>
+  	          <td>" . $teamLink . "</td>
   	          <td>" . $rank->getRank() . "</td>
   	          <td>" . ($rank->isPlaceholder() ? "Y" : "") . "</td>
   	          <td>" . ($hasCumulativeRank ? "Y" : "") . "</td>

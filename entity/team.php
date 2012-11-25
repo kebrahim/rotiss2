@@ -84,6 +84,10 @@ class Team {
     }
   }
 
+  public function getSportslineImg($width, $height) {
+  	return "<img src='" . $this->getSportslineImageUrl() . "' height=$height width=$width>";
+  }
+  
   public function getOwners() {
     if ($this->ownersLoaded != true) {
       $this->owners = UserDao::getUsersByTeamId($this->teamId);
@@ -213,12 +217,10 @@ class Team {
   	}
 
   	echo "<table id='keepertable' class='center smallfonttable' border><tr>";
-  	echo "  <th></th>
-  	        <th>Player</th>
+  	echo "  <th colspan=2>Player</th>
         	<th>Years Left</th>
   	        <th>Price</th>
-  	        <th>Start Year</th>
-  	        <th>End Year</th>
+  	        <th colspan=2>Years</th>
   	        <th>Buy Out</th>
   	        <th id='keeperRemoveColumn' style='display:none'>Remove</th></tr>";
   	$keeperCount = 0;

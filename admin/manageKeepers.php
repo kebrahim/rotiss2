@@ -94,7 +94,7 @@ function addContract(team_id) {
     // selected
     var priceCell = newRow.insertCell(3);
     priceCell.innerHTML = "<input type='text' name='keeper_price" + nextRowNumber +
-        "' style='text-align:center' placeholder='Based on rankings' readonly='true'/>";
+        "' style='text-align:center' size=10 placeholder='Rank' readonly='true'/>";
 
     // start year, end year, buyout are blank
     var startYearCell = newRow.insertCell(4);
@@ -263,11 +263,11 @@ require_once '../entity/keepers.php';
 require_once '../util/navigation.php';
 
   // Display header.
-  NavigationUtil::printNoWidthHeader(true, false, NavigationUtil::MANAGE_KEEPERS_BUTTON);
+  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_KEEPERS_BUTTON);
   echo "<div class='bodycenter'>";
 
   $currentYear = TimeUtil::getCurrentYear();
-  echo "<h1>Jeepers keepers $currentYear</h1>";
+  echo "<h1>Jeepers keepers $currentYear</h1><hr/>";
   echo "<FORM ACTION='manageKeepers.php' METHOD=POST>";
 
   if(isset($_POST['save'])) {
@@ -355,8 +355,9 @@ require_once '../util/navigation.php';
   	SessionUtil::clearSessionVarsWithPrefix("keeper_");
 
     $teams = TeamDao::getAllTeams();
-    echo "<h4>Select Team:</h4><select name='team' onchange='showTeam(this.value)'>
-                             <option value='0'></option>";
+    echo "<label for='team'>Select Team:</label>&nbsp
+          <select id='team' name='team' onchange='showTeam(this.value)'>
+            <option value='0'></option>";
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
           . " (" . $team->getAbbreviation() . ")</option>";

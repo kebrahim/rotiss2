@@ -147,10 +147,10 @@ function selectTeam(position, teamid) {
   require_once '../util/navigation.php';
   
   // Display header.
-  NavigationUtil::printNoWidthHeader(true, false, NavigationUtil::MANAGE_TRADE_BUTTON);
+  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_TRADE_BUTTON);
   echo "<div class='bodycenter'>";
   
-  echo "<h1>Let's Make a Deal!</h1>";
+  echo "<h1>Let's Make a Deal!</h1><hr/>";
   echo "<FORM ACTION='manageTrade.php' METHOD=POST>";
 
   // If trade button was pressed, execute validated trade.
@@ -193,8 +193,9 @@ function selectTeam(position, teamid) {
 
     // team 1
     echo "<div id='left_col'><div id='left_col_inner'>";
-    echo "<h4>Select Team:</h4><select name='team1' onchange='selectTeam(1, this.value)'>
-                         <option value='0'></option>";
+    echo "<label for='team1'>Select Team:</label>&nbsp
+          <select id='team1' name='team1' onchange='selectTeam(1, this.value)'>
+            <option value='0'></option>";
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
           . " (" . $team->getAbbreviation() . ")</option>";
@@ -204,8 +205,9 @@ function selectTeam(position, teamid) {
 
     // team 2
     echo "<div id='right_col'><div id='right_col_inner'>";
-    echo "<h4>Select Team:</h4><select name='team2' onchange='selectTeam(2, this.value)'>
-                         <option value='0'></option>";
+    echo "<label for='team2'>Select Team:</label>&nbsp
+          <select id='team2' name='team2' onchange='selectTeam(2, this.value)'>
+            <option value='0'></option>";
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
           . " (" . $team->getAbbreviation() . ")</option>";

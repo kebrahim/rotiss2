@@ -16,7 +16,7 @@
   require_once '../util/navigation.php';
 
   // Display header.
-  NavigationUtil::printNoWidthHeader(true, false, NavigationUtil::MANAGE_ROSTERS_BUTTON);
+  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_ROSTERS_BUTTON);
   echo "<div class='bodycenter'>";
 
   /**
@@ -31,7 +31,7 @@
     if ($playerTeam == null) {
       echo " selected";
     }
-    echo ">- None -</option>";
+    echo "></option>";
 
     // option to assign to each team
     $teams = TeamDao::getAllTeams();
@@ -50,7 +50,7 @@
    */
   function displayArrayOfPlayers($players) {
     echo "<table border class='center smallfonttable'>";
-    echo "<tr><th>Player</th><th>Pos</th><th>Team</th><th>Fantasy team</th></tr>";
+    echo "<tr><th>Player</th><th>Pos</th><th>Team</th><th>Rotiss Team</th></tr>";
     foreach ($players as $player) {
       echo "<tr><td>" . $player->getNameLink(false) . "</td>
       	        <td>" . $player->getPositionString() . "</td>
@@ -71,7 +71,7 @@
     displayArrayOfPlayers(PlayerDao::getPlayersByTeam($team));
   }
 
-  echo "<h1>Manage Rosters</h1>";
+  echo "<h1>Manage Rosters</h1><hr/>";
   echo "<FORM ACTION='manageTeams.php' METHOD=POST>";
 
   if (isset($_POST['save'])) {

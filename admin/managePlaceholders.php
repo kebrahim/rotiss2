@@ -50,7 +50,7 @@
   }
 
   // show stats for players belonging to teams for last season
-  echo "<h1>Placeholders " . $rankYear . "</h1>";
+  echo "<h1>Placeholders " . $rankYear . "</h1><hr/>";
   $stats = StatDao::getStatsForRankingByYear($lastYear);
 
   echo "<input class='button' type=submit name='save' value='Save placeholders'>&nbsp&nbsp";

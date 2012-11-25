@@ -96,10 +96,10 @@ function showTeam(teamId) {
   require_once '../util/time.php';
   
   // Display header.
-  NavigationUtil::printNoWidthHeader(true, false, NavigationUtil::MANAGE_AUCTION_BUTTON);
+  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_AUCTION_BUTTON);
   echo "<div class='bodycenter'>";
   
-  echo "<h1>Going once, Going twice, Sold!</h1>";
+  echo "<h1>Going once, Going twice, Sold!</h1><hr/>";
   echo "<FORM ACTION='manageAuction.php' METHOD=POST>";
 
   // If auction button was pressed...
@@ -152,13 +152,14 @@ function showTeam(teamId) {
   	if (count($auctionResults) > 0) {
   	  echo "</table>";
   	}
-
+    echo "<hr/>";
+    
     // allow user to select one player from list of players eligible to be auctioned.
     $players = PlayerDao::getPlayersForAuction($currentYear);
     echo "<div id='column_container'>";
     echo "<div id='left_col'><div id='left_col_inner'>";
-    echo "<h4>Select Player:</h4>
-          <select name='player' onchange='showPlayer(this.value)'>
+    echo "<label for='player'>Select Player:</label>&nbsp
+          <select id='player' name='player' onchange='showPlayer(this.value)'>
           <option value='0'></option>";
     foreach ($players as $player) {
       echo "<option value='" . $player->getId() . "'" . ">" . $player->getFullName()
@@ -171,7 +172,7 @@ function showTeam(teamId) {
     // allow user to select which team bid on player & how much they bid
     echo "<div id='right_col'><div id='right_col_inner'>";
     $teams = TeamDao::getAllTeams();
-    echo "<h4>Select Team:</h4>
+    echo "<label for='team'>Select Team:</label>&nbsp
           <select name='team' onchange='showTeam(this.value)'>
                            <option value='0'></option>";
     foreach ($teams as $team) {
@@ -182,7 +183,8 @@ function showTeam(teamId) {
     echo "<div id='teamDisplay'></div><br/></div></div></div>";
 
     echo "<div id='auctionButton' style='display:none'>
-            <strong>Auction amount: </strong><input type=number name='auction_amount'>
+            <label for='auction_amount'>Auction amount:</label>&nbsp
+            <input type=number id='auction_amount' name='auction_amount'><br/><br/>
             <input class='button' type=submit name='auction' value='Auction player'>
             <input class='button' type=submit name='cancel' value='Cancel'>
           </div>";

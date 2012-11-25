@@ -9,6 +9,39 @@
 <link href='../css/style.css' rel='stylesheet' type='text/css'>
 </head>
 
+<script>
+// shows the draft page for the specified year
+function showYear(year) {
+    // If year is blank, then clear the yearDisplay div.
+	if (year=="" || year=="0") {
+		document.getElementById("yearDisplay").innerHTML="";
+		return;
+	}
+
+	// Display team information.
+	getRedirectHTML(document.getElementById("yearDisplay"),
+	    "displayYear.php?type=brognas&year=" + year);
+}
+
+// populates the innerHTML of the specified elementId with the HTML returned by the specified
+// htmlString
+function getRedirectHTML(element, htmlString) {
+	var xmlhttp;
+	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	} else {// code for IE6, IE5
+	    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange=function() {
+		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+			element.innerHTML=xmlhttp.responseText;
+		}
+	};
+	xmlhttp.open("GET", htmlString, true);
+	xmlhttp.send();
+}
+</script>
+
 <body>
 
 <?php
@@ -20,40 +53,6 @@
   NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_BROGNAS_BUTTON);
   echo "<div class='bodycenter'>";
 
-  function displayBrognas($year) {
-    echo "<h1>Manage $year Brognas</h1>";
-
-    // allow user to change year
-    $minYear = BrognaDao::getMinimumYear();
-    $maxYear = BrognaDao::getMaximumYear();
-    echo "<strong>Filter by year: </strong>";
-    echo "<select name='year'>";
-    for ($yr = $minYear; $yr <= $maxYear; $yr++) {
-      echo "<option value='$yr'";
-      if ($yr == $year) {
-        echo " selected";
-      }
-      echo ">$yr</option>";
-    }
-    echo "</select>&nbsp&nbsp<input type='submit' name='submit' value='Filter'><br/><br/>";
-
-    echo "<table border class='center'>
-            <tr><th>Team</th><th>Total</th><th>Banked</th><th>Traded In</th>
-  		        <th>Traded Out</th><th>Tradeable</th></tr>";
-
-    $brognas = BrognaDao::getBrognasByYear($year, $year);
-    foreach ($brognas as $brogna) {
-      echo "<tr><td>" . $brogna->getTeam()->getNameLink(false) . "</td>
-                <td><strong>" . $brogna->getTotalPoints() . "</strong></td>
-       	        <td>" . $brogna->getBankedPoints() . "</td>
-           	    <td>" . $brogna->getTradedInPoints() . "</td>
-               	<td>" . $brogna->getTradedOutPoints() . "</td>
-               	<td>" . $brogna->getTradeablePoints() . "</td>
-           	</tr>";
-    }
-    echo "</table>";
-  }
-
   // if year isn't specified, use the current year, based on keeper night.
   if (isset($_REQUEST["year"])) {
     $year = $_REQUEST["year"];
@@ -61,11 +60,29 @@
     $year = TimeUtil::getYearBasedOnKeeperNight();
   }
 
-  // Display brognas for given year
-  echo "<form action='manageBrognas.php' method=post>";
-  displayBrognas($year);
-  echo "</form></div>";
-
+  // allow user to change year
+  $minYear = BrognaDao::getMinimumYear();
+  $maxYear = BrognaDao::getMaximumYear();
+  echo "<br/><label for='year'>Choose year:</label>&nbsp";
+  echo "<select id='year' name='year' onchange='showYear(this.value)'>";
+  for ($yr = $minYear; $yr <= $maxYear; $yr++) {
+  	echo "<option value='" . $yr . "'";
+  	if ($yr == $year) {
+  		echo " selected";
+  	}
+  	echo ">$yr</option>";
+  }
+  echo "</select>";
+  echo "<div id='yearDisplay'></div><br/>";
+?>
+      
+<script>
+  // initialize yearDisplay with selected year
+  showYear(document.getElementById("year").value);
+</script>
+      
+<?php
+  echo "</div>";
   // TODO should this be editable?
 
   // Footer

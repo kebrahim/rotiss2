@@ -1,10 +1,11 @@
 <?php
   require_once '../dao/auctionDao.php';
   require_once '../dao/ballDao.php';
+  require_once '../dao/brognaDao.php';
   require_once '../dao/draftPickDao.php';
   require_once '../util/sessions.php';
   require_once '../util/time.php';
-  
+
   /**
    * Displays draft results from specified year.
    */
@@ -13,7 +14,7 @@
   	
   	// display table of draft picks for selected year, highlighting row for logged-in team
   	$loggedInTeamId = SessionUtil::getLoggedInTeam()->getId();
-  	echo "<br/><br/><table border class='center'>
+  	echo "<table border class='center'>
   	        <th>Round</th><th>Pick</th><th>Team</th><th>Player</th></tr>";
   	
   	$pingPongBalls = BallDao::getPingPongBallsByYear($year);
@@ -54,7 +55,7 @@
    * Display list of auctioned players for specified year
    */
   function displayAuctionYear($year) {
- 	echo "<h1>Auction " . $year . "</h1><hr/><br/><br/>";
+ 	echo "<h1>Auction " . $year . "</h1><hr/>";
     
   	// display table of auction results for specified year, highlighting row for specified team
   	$loggedinTeamId = SessionUtil::getLoggedInTeam()->getId();
@@ -75,6 +76,30 @@
   	echo "</table>";
   }
   
+  /**
+   * Displays the brogna breakdown for all teams in the specified year.
+   */
+  function displayBrognaYear($year) {
+    echo "<h1>Manage $year Brognas</h1><hr/>";
+
+    echo "<table border class='center'>
+            <tr><th colspan=2>Team</th><th>Total</th><th>Banked</th><th>Traded In</th>
+  		        <th>Traded Out</th><th>Tradeable</th></tr>";
+
+    $brognas = BrognaDao::getBrognasByYear($year, $year);
+    foreach ($brognas as $brogna) {
+      echo "<tr><td>" . $brogna->getTeam()->getSportslineImg(36,36) . "</td>
+                <td>" . $brogna->getTeam()->getNameLink(false) . "</td>
+                <td><strong>" . $brogna->getTotalPoints() . "</strong></td>
+       	        <td>" . $brogna->getBankedPoints() . "</td>
+           	    <td>" . $brogna->getTradedInPoints() . "</td>
+               	<td>" . $brogna->getTradedOutPoints() . "</td>
+               	<td>" . $brogna->getTradeablePoints() . "</td>
+           	</tr>";
+    }
+    echo "</table>";
+  }
+  
   // direct to corresponding function, depending on type of display
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
@@ -91,5 +116,7 @@
     displayDraftYear($year);
   } else if ($displayType == "auction") {
   	displayAuctionYear($year);
+  } else if ($displayType == "brognas") {
+  	displayBrognaYear($year);
   }
 ?>

@@ -164,7 +164,7 @@
    * Display team on manage team page.
    */
   function displayTeamForManagement(Team $team) {
-    echo "<h1>Manage: " . $team->getName() . "</h1>";
+    echo "<h1>Manage: " . $team->getName() . "</h1><hr/>";
 
     // Sportsline Image
     echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";

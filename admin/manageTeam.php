@@ -69,7 +69,7 @@ function getRedirectHTML(element, htmlString) {
   // Allow user to choose from list of teams to see corresponding team management page.
   $allTeams = TeamDao::getAllTeams();
   echo "<FORM ACTION='manageTeam.php' METHOD=POST>";
-  echo "<br/><label for='team_id'>Choose team: </label>";
+  echo "<br/><label for='team_id'>Choose team: </label>&nbsp";
   echo "<select id='team_id' name='team_id' onchange='showTeam(this.value)'>
           <option value='0'></option>";
   foreach ($allTeams as $selectTeam) {
