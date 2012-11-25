@@ -147,7 +147,7 @@
     echo "<input class='button' type=submit name='create' value='Create Player'>";
   } else {
     echo "<input class='button' type=submit name='update' value='Update Player'>";
-    echo "&nbsp&nbsp<a href='../displayPlayer.php?player_id=" . $player->getId() .
+    echo "&nbsp&nbsp<a href='../playerPage.php?player_id=" . $player->getId() .
          "'>View player</a>";
   }
   echo "</div>";

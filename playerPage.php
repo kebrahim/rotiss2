@@ -41,26 +41,26 @@
 
   // ID
   echo "<table>";
-  echo "<tr><td><strong>Rotiss Id:</strong></td><td>" . $player->getId() . "</td></tr>";
+  echo "<tr><td><strong>Rotiss Id:</strong></td><td colspan=2>" . $player->getId() . "</td></tr>";
 
   // MLB Team
   $mlbTeam = $player->getMlbTeam();
   echo "<tr><td><strong>Team:</strong></td>
-            <td>" . $mlbTeam->getCity() . " " . $mlbTeam->getName() . " 
-            " . $mlbTeam->getImageTag(30, 30) . "</td></tr>";
+            <td>" . $mlbTeam->getCity() . " " . $mlbTeam->getName() . "</td> 
+            <td>" . $mlbTeam->getImageTag(30, 30) . "</td></tr>";
 
   // Birth date & age
   echo "<tr><td><strong>Birth Date:</strong></td>
-        <td>" . $player->getBirthDate() . "</td></tr>";
+        <td colspan=2>" . $player->getBirthDate() . "</td></tr>";
   echo "<tr><td><strong>Age:</strong></td>
-        <td>" . $player->getAge() . "</td></tr>";
+        <td colspan=2>" . $player->getAge() . "</td></tr>";
 
   // Positions
   echo "<tr><td><strong>Position(s):</strong></td>
-        <td>" . $player->getPositionString() . "</td></tr>";
+        <td colspan=2>" . $player->getPositionString() . "</td></tr>";
 
   // Fantasy team
-  echo "<tr><td><strong>Fantasy Team:</strong></td><td>";
+  echo "<tr><td><strong>Fantasy Team:</strong></td><td colspan=2>";
   $fantasyTeam = $player->getFantasyTeam();
   if ($fantasyTeam == null) {
   	echo "--";

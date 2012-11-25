@@ -61,7 +61,7 @@ class Player {
   }
   
   public function getNameLink($isTopLevel) {
-  	return "<a href='" . ($isTopLevel ? "" : "../") . "displayPlayer.php?player_id=" . 
+  	return "<a href='" . ($isTopLevel ? "" : "../") . "playerPage.php?player_id=" . 
     	$this->getId() . "'>" . $this->getFullName() . "</a>";
   }
 
