@@ -10,7 +10,7 @@
    * Displays draft results from specified year.
    */
   function displayDraftYear($year) {
-  	echo "<h1>Draft " . $year . "</h1><hr/>";
+  	echo "<h1>Draft Results " . $year . "</h1><hr/>";
   	
   	// display table of draft picks for selected year, highlighting row for logged-in team
   	$loggedInTeamId = SessionUtil::getLoggedInTeam()->getId();
@@ -55,7 +55,7 @@
    * Display list of auctioned players for specified year
    */
   function displayAuctionYear($year) {
- 	echo "<h1>Auction " . $year . "</h1><hr/>";
+ 	echo "<h1>Auction Results " . $year . "</h1><hr/>";
     
   	// display table of auction results for specified year, highlighting row for specified team
   	$loggedinTeamId = SessionUtil::getLoggedInTeam()->getId();

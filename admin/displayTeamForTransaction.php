@@ -130,7 +130,13 @@
    */
   function displayTeam(Team $team) {
     echo "<h1>Team Summary: " . $team->getName() . "</h1>";
-    echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
+    echo "<a href='#summary'>Summary</a>&nbsp&nbsp
+          <a href='#contracts'>Contracts</a>&nbsp&nbsp
+          <a href='#brognas'>Brognas</a>&nbsp&nbsp
+          <a href='#draft'>Draft Picks</a>&nbsp&nbsp
+          <a href='#players'>Players</a>&nbsp&nbsp
+          <hr/>";
+    echo "<a id='summary'><img src='" . $team->getSportslineImageUrl() . "'></a><br/><br/>";
 
     // Owners, Abbreviation, Division
     echo "<table>";
@@ -148,15 +154,19 @@
     }
 
     // Display contracts.
+    echo "<hr/><a id='contracts'></a>";
     $team->displayAllContracts();
 
     // Display points information
+    echo "<hr/><a id='brognas'></a>";
     $team->displayAllBrognas();
 
     // Display draft pick information
+    echo "<hr/><a id='draft'></a>";
     $team->displayAllDraftPicks();
 
     // Display current team
+    echo "<hr/><a id='players'></a>";
     $team->displayPlayers();
   }
 
@@ -224,6 +234,11 @@
   function displayTeamForBudget(Team $team) {
   	// Show budget information for selected team
   	echo "<h1>Budget: " . $team->getName() . "</h1>";
+  	$brognas = BrognaDao::getBrognasByTeamId($team->getId());
+  	foreach ($brognas as $brogna) {
+  	  echo "<a href='#" . $brogna->getYear() . "'>" . $brogna->getYear() . "<a/>&nbsp&nbsp";
+  	}
+  	echo "<hr/>";
   	echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
   	
   	echo "<table>";
@@ -231,77 +246,75 @@
   	<td>" . $team->getOwnersString() . "</td></tr>";
   	echo "</table>";
   	
-  	// Display contracts.
-  	displayBreakdown($team->getId());
+  	// Display brognas and contracts for each specified year.
+  	// TODO budget: allow user to adjust years
+  	displayBreakdown($team->getId(), $brognas);
   }
   
   /**
    * Show breakdown of brognas per year w/ contract info for specified team
    */
-  function displayBreakdown($teamId) {
-  	// get all points
-  	$brognas = BrognaDao::getBrognasByTeamId($teamId);
-  
+  function displayBreakdown($teamId, $brognas) {  
   	// get all contracts
   	$contracts = ContractDao::getContractsByTeamId($teamId);
   
   	// for ever brogna record,
   	$currentYear = TimeUtil::getYearBasedOnKeeperNight();
-  	// TODO budget: allow user to adjust start year
   	foreach ($brognas as $brogna) {
-  		if ($brogna->getYear() < $currentYear) {
-  			continue;
-  		}
-  		// show brogna info
-  		echo "<h3>" . $brogna->getYear() . "</h3>";
-  		echo "<h4>Brognas</h4>";
-  		echo "<table border class='left'>
-  		<tr><th>Alotted</th>
-  		<th>" . ($brogna->getYear() - 1) . " Bank</th>
-  		<th>Received in Trade</th>
-  		<th>Given in Trade</th><th>Total</th></tr>";
-  		echo "<tr><td>450</td>
-  		<td>" . $brogna->getBankedPoints() . "</td>
-  		<td>" . $brogna->getTradedInPoints() . "</td>
-  		<td>" . $brogna->getTradedOutPoints() . "</td>
-  		<td><strong>" . $brogna->getTotalPoints() . "</td></tr></table>";
+  	  if ($brogna->getYear() < $currentYear) {
+  	    continue;
+  	  }
+  	  // show brogna info
+  	  echo "<hr/><a id='" . $brogna->getYear() . "'></a>
+  	        <h3>" . $brogna->getYear() . "</h3>";
+  	  echo "<h4>Brognas</h4>";
+  	  echo "<table border class='left'>
+  		      <tr><th>Alotted</th>
+  		          <th>" . ($brogna->getYear() - 1) . " Bank</th>
+  		          <th>Received in Trade</th>
+  		          <th>Given in Trade</th><th>Total</th></tr>";
+  	  echo "<tr><td>450</td>
+  		        <td>" . $brogna->getBankedPoints() . "</td>
+  		        <td>" . $brogna->getTradedInPoints() . "</td>
+  		        <td>" . $brogna->getTradedOutPoints() . "</td>
+  		        <td><strong>" . $brogna->getTotalPoints() . "</td></tr></table>";
   
-  		// show contracts for that year
-  		$contractTotal = 0;
-  		$hasContracts = false;
-  		foreach ($contracts as $contract) {
-  			if (($contract->getStartYear() > $brogna->getYear()) ||
-  					($contract->getEndYear() < $brogna->getYear())) {
-  				continue;
-  			}
-  			if ($hasContracts == false) {
-  				echo "<h4>Contracts</h4>";
-  				echo "<table border class='left'>
-  				<tr><th colspan='2'>Player</th><th>Position</th><th>Team</th><th>Age</th>
-  				<th>Years Remaining</th><th>Price</th></tr>";
-  				$hasContracts = true;
-  			}
-  			$player = $contract->getPlayer();
-  			echo "<tr><td>" . $player->getMiniHeadshotImg() . "</td>
-  			<td>" . $player->getNameLink(true) . "</td>
-  			<td>" . $player->getPositionString() . "</td>
-  			<td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
-  			<td>" . $player->getAge() . "</td>
-  			<td>" . ($contract->getEndYear() - $brogna->getYear() + 1) . "</td>
-  			<td>" . $contract->getPrice() . "</td></tr>";
-  			$contractTotal += $contract->getPrice();
-  		}
+  	  // show contracts for that year
+  	  $contractTotal = 0;
+  	  $hasContracts = false;
+  	  foreach ($contracts as $contract) {
+  		if (($contract->getStartYear() > $brogna->getYear()) ||
+  	        ($contract->getEndYear() < $brogna->getYear())) {
+  		  continue;
+  	    }
+  		if ($hasContracts == false) {
+  		  echo "<h4>Contracts</h4>";
+  		  echo "<table border class='left'>
+  		          <tr><th colspan='2'>Player</th><th>Position</th><th>Team</th><th>Age</th>
+  				      <th>Years Remaining</th><th>Price</th></tr>";
+  		  $hasContracts = true;
+  	    }
+  		$player = $contract->getPlayer();
+  		echo "<tr><td>" . $player->getMiniHeadshotImg() . "</td>
+  			      <td>" . $player->getNameLink(true) . "</td>
+  			      <td>" . $player->getPositionString() . "</td>
+  			      <td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
+  			      <td>" . $player->getAge() . "</td>
+  			      <td>" . ($contract->getEndYear() - $brogna->getYear() + 1) . "</td>
+  			      <td>" . $contract->getPrice() . "</td></tr>";
+  	    $contractTotal += $contract->getPrice();
+      }
   
-  		if ($hasContracts == true) {
-  			echo "<tr><td colspan='6'></td>
-  			<td><strong>" . $contractTotal . "</strong></td></tr>";
-  			echo "</table>";
-  		}
+  	  if ($hasContracts == true) {
+        echo "<tr><td colspan='6'></td>
+  			      <td><strong>" . $contractTotal . "</strong></td></tr>";
+  		echo "</table>";
+  	  }
   
-  		// show leftover brognas
-  		echo "<br/><strong>Bank for " . ($brogna->getYear() + 1) . ": </strong>" .
-  				($brogna->getTotalPoints() - $contractTotal);
-  		// TODO budget: should bank from previous year be calculated?
+  	  // show leftover brognas
+  	  echo "<br/><strong>Bank for " . ($brogna->getYear() + 1) . ": </strong>" .
+          ($brogna->getTotalPoints() - $contractTotal);
+      // TODO budget: should bank from previous year be calculated?
   	}
   }
 
