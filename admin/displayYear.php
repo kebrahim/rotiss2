@@ -15,7 +15,7 @@
   	// display table of draft picks for selected year, highlighting row for logged-in team
   	$loggedInTeamId = SessionUtil::getLoggedInTeam()->getId();
   	echo "<table border class='center'>
-  	        <th>Round</th><th>Pick</th><th>Team</th><th>Player</th></tr>";
+  	        <th>Round</th><th>Pick</th><th colspan=2>Team</th><th colspan=2>Player</th></tr>";
   	
   	$pingPongBalls = BallDao::getPingPongBallsByYear($year);
   	foreach ($pingPongBalls as $pingPongBall) {
@@ -25,8 +25,9 @@
   	  }
   	  echo "><td>Ping Pong</td>
   	         <td>" . $pingPongBall->getCost() . "</td>
-  		     <td>" . $pingPongBall->getTeam()->getNameLink(true) . "</td>
-  		     <td>" . displayPlayerLink($pingPongBall->getPlayer()) . "</td></tr>";
+  	         <td>" . $pingPongBall->getTeam()->getSportslineImg(32, 32) . "</td>
+  		     <td>" . $pingPongBall->getTeam()->getNameLink(true) . "</td>"
+  		           . displayPlayerLink($pingPongBall->getPlayer()) . "</tr>";
   	  }
   	
   	  $draftPicks = DraftPickDao::getDraftPicksByYear($year);
@@ -37,20 +38,109 @@
   	    }
   	    echo "><td>" . $draftPick->getRound() . "</td>
   		       <td>" . $draftPick->getPick() . "</td>
-  	    	   <td>" . $draftPick->getTeam()->getNameLink(true) . "</td>
-  		       <td>" . displayPlayerLink($draftPick->getPlayer()) . "</td></tr>";
+  	           <td>" . $draftPick->getTeam()->getSportslineImg(32, 32) . "</td>
+  		       <td>" . $draftPick->getTeam()->getNameLink(true) . "</td>" .
+  		       displayPlayerLink($draftPick->getPlayer()) . "</tr>";
   	  }
     echo "</table>";
   }
   
   function displayPlayerLink($player) {
   	if ($player != null) {
-  	  return $player->getNameLink(true);
+  	  return "<td>" . $player->getHeadshotImg(24,32) . "</td>
+  	          <td>" . $player->getNameLink(true) . "</td>";
   	} else {
-  	  return "--";
+  	  return "<td colspan=2>--</td>";
   	}
   }
+  
+  /**
+   * Returns a dropdown of all of the undrafted players with the specified player selected.
+   */
+  function getPlayerDropdown($selectedPlayer, $pickId, $undraftedPlayers) {
+  	$playerDropdown = "<select name='player" . $pickId . "'>
+  	    <option value='0'";
+  	if ($selectedPlayer == null) {
+  	  $playerDropdown .= " selected";
+  	}
+  	$playerDropdown .= "></option>";
+  	
+  	if ($selectedPlayer != null) {
+  	  $playerDropdown .= "<option value='" . $selectedPlayer->getId() . "' selected>" . 
+  	      $selectedPlayer->getAttributes() . "</option>";
+  	}
+  	foreach ($undraftedPlayers as $player) {
+  	  $playerDropdown .= "<option value='" . $player->getId() . "'";
+  	  if ($selectedPlayer != null && $selectedPlayer->getId() == $player->getId()) {
+  	  	$playerDropdown .= " selected";
+  	  }
+  	  $playerDropdown .= ">" . $player->getAttributes() . "</option>";
+  	}
+  	$playerDropdown .= "</select>";
+  	return $playerDropdown;
+  }
+  
+  /**
+   * Returns a dropdown of all of the picks with the specified pick selected.
+   */
+  function getPickDropdown($selectedPick, $pickId, $numPicks) {
+  	$pickDropdown = "<select name='pick" . $pickId . "'>
+  	                   <option value='0'";
+  	if ($selectedPick == null) {
+  	  $pickDropdown .= " selected";
+  	}
+  	$pickDropdown .= "></option>";
+  	for ($pk = 1; $pk <= $numPicks; $pk++) {
+  	  $pickDropdown .= "<option value='" . $pk . "'";
+  	  if ($selectedPick != null && $selectedPick == $pk) {
+  	    $pickDropdown .= " selected";
+  	  }
+  	  $pickDropdown .= ">" . $pk . "</option>";
+  	}
+  	$pickDropdown .= "</select>";
+  	return $pickDropdown;
+  }
 
+  function displayDraftYearForManagement($year, $round) {
+  	if ($round == 0) {
+  	  echo "<hr/><h1>$year Draft - Ping Pong Round</h1>";
+  	} else {
+      echo "<hr/><h1>$year Draft - Round $round</h1>";
+  	}
+  	// allow user to select players who have not yet been drafted during the specified year.
+  	$undraftedPlayers = PlayerDao::getUndraftedPlayers($year);
+  	 
+  	// display table of draft picks for selected year, highlighting row for logged-in team
+  	$loggedInTeamId = SessionUtil::getLoggedInTeam()->getId();
+  	echo "<table border class='center'>
+  	      <th>Pick</th><th>Team</th><th>Player</th></tr>";
+
+  	if ($round == 0) {
+      $pingPongBalls = BallDao::getPingPongBallsByYear($year);
+  	  foreach ($pingPongBalls as $pingPongBall) {
+  	    echo "<tr>
+  		       <td>" . $pingPongBall->getCost() . "</td>
+  		       <td>" . $pingPongBall->getTeam()->getNameLink(false) . "</td>
+  		       <td>" . getPlayerDropdown(
+  		           $pingPongBall->getPlayer(), $pingPongBall->getId(), $undraftedPlayers) . "</td>
+  	          </tr>";
+  	  }
+  	} else {
+      $draftPicks = DraftPickDao::getDraftPicksByYearRound($year, $round);
+  	  foreach ($draftPicks as $draftPick) {
+  		echo "<tr>
+  		       <td>" . getPickDropdown(
+  		           $draftPick->getPick(), $draftPick->getId(), count($draftPicks)) . "</td>
+  		       <td>" . $draftPick->getTeam()->getNameLink(false) . "</td>
+  		       <td>" . getPlayerDropdown(
+  		           $draftPick->getPlayer(), $draftPick->getId(), $undraftedPlayers) . "</td></tr>";
+  	  }
+  	}
+  	echo "</table>";
+  	echo "<input type=hidden name='year' value='$year'>
+  	      <input type=hidden name='round' value='$round'>";
+  }
+  
   /**
    * Display list of auctioned players for specified year
    */
@@ -100,6 +190,23 @@
     echo "</table>";
   }
   
+  function displayRoundDropdown($year, $selectedRound) {
+  	$minRound = DraftPickDao::getMinimumRound($year);
+  	$maxRound = DraftPickDao::getMaximumRound($year);
+  	echo "<option value='0'";
+  	if (($selectedRound == 0) || ($selectedRound > $maxRound)) {
+  	  echo " selected";
+  	}
+  	echo ">PP</option>";
+  	for ($rd = $minRound; $rd <= $maxRound; $rd++) {
+  	  echo "<option value='" . $rd . "'";
+  	  if ($rd == $selectedRound) {
+  	    echo " selected";
+  	  }
+  	  echo ">$rd</option>";
+  	}
+  }
+  
   // direct to corresponding function, depending on type of display
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
@@ -118,5 +225,15 @@
   	displayAuctionYear($year);
   } else if ($displayType == "brognas") {
   	displayBrognaYear($year);
+  } else if ($displayType == "managedraft") {
+  	if (isset($_REQUEST["round"])) {
+  	  $round = $_REQUEST["round"];
+  	}
+  	displayDraftYearForManagement($year, $round);
+  } else if ($displayType == "draftround") {
+  	if (isset($_REQUEST["round"])) {
+  	  $round = $_REQUEST["round"];
+  	}
+  	displayRoundDropdown($year, $round);
   }
 ?>

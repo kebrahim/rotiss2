@@ -90,6 +90,12 @@ class PingPongBall {
     return $this->getPlayer()->getId();
   }
 
+  public function setPlayerId($playerId) {
+  	$this->playerId = $playerId;
+  	$this->playerLoaded = false;
+  	$this->player = null;
+  }
+  
   public function toString() {
     return $this->year . ":" . $this->cost;
   }

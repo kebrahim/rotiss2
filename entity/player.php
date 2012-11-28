@@ -136,7 +136,11 @@ class Player {
   }
 
   public function getMiniHeadshotImg() {
-  	return "<img src='" . $this->getHeadshotUrl() . "' width=24 height=32 />";
+  	return $this->getHeadshotImg(24, 32);
+  }
+  
+  public function getHeadshotImg($width, $height) {
+  	return "<img src='" . $this->getHeadshotUrl() . "' width=$width height=$height />";
   }
   
   public function getStPetesUrl() {
@@ -156,6 +160,11 @@ class Player {
 
   public function setStatLine($year, $statLine) {
   	$this->statLines[$year] = $statLine;
+  }
+  
+  public function getAttributes() {
+  	return $this->getLastName() . ", " . $this->getFirstName() .
+  	    " (" . $this->getPositionString() . ") - " . $this->getMlbTeam()->getAbbreviation();
   }
 }
 ?>

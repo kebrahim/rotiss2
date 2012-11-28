@@ -170,6 +170,21 @@ class PlayerDao {
               order by p.last_name, p.first_name";
     return PlayerDao::createPlayersFromQuery($query);
   }
+  
+  /**
+   * Returns an array of players who have not yet been drafted in the specified year.
+   */
+  public static function getUndraftedPlayers($year) {
+    CommonDao::connectToDb();
+    $query = "select p.* from player p where p.player_id not in (
+                  select player_id from (select distinct b.player_id from ping_pong b 
+                      where b.year = $year and b.player_id is not null) as t1
+                  union
+                  select player_id from (select distinct dp.player_id from draft_pick dp
+                      where dp.year = $year and dp.player_id is not null) as t2)
+              order by p.last_name, p.first_name";
+    return PlayerDao::createPlayersFromQuery($query);
+  }
 
   private static function createPlayerFromQuery($query) {
     $playerArray = PlayerDao::createPlayersFromQuery($query);

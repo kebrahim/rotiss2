@@ -34,6 +34,19 @@ class DraftPickDao {
   }
 
   /**
+   * Returns all of the draft picks in the specified year and specified round.
+   */
+  public static function getDraftPicksByYearRound($year, $round) {
+  	CommonDao::connectToDb();
+  	$query = "select D.draft_pick_id, D.team_id, D.year, D.round, D.pick, D.original_team_id,
+  	                 D.player_id
+  	          from draft_pick D
+  	          where D.year = $year and D.round = $round
+  	          order by D.pick";
+  	return DraftPickDao::createDraftPicks($query);
+  }
+  
+  /**
    * Returns the draft pick identified by the specified id.
    */
   public static function getDraftPickById($draftPickId) {
@@ -78,7 +91,29 @@ class DraftPickDao {
     $row = mysql_fetch_row($res);
     return $row[0];
   }
+  
+  /**
+   * Returns the earliest round in the specified draft year.
+   */
+  public static function getMinimumRound($year) {
+    CommonDao::connectToDb();
+    $query = "select min(round) from draft_pick where year = $year";
+    $res = mysql_query($query);
+    $row = mysql_fetch_row($res);
+    return $row[0];
+  }
 
+  /**
+   * Returns the latest round in the specified draft year.
+   */
+  public static function getMaximumRound($year) {
+    CommonDao::connectToDb();
+    $query = "select max(round) from draft_pick where year = $year";
+    $res = mysql_query($query);
+    $row = mysql_fetch_row($res);
+    return $row[0];
+  }
+  
   public static function createDraftPick(DraftPick $draftPick) {
     // TODO
   }
@@ -88,7 +123,8 @@ class DraftPickDao {
     $query = "update draft_pick set team_id = " . $draftPick->getTeam()->getId() . ",
                                     year = " . $draftPick->getYear() . ",
                                     round = " . $draftPick->getRound() . ",
-                                    pick = " . $draftPick->getPick() . ",
+                                    pick = " . ($draftPick->getPick() == null ? 
+                                    		   "null" : $draftPick->getPick()) . ",
                                     original_team_id = " . $draftPick->getOriginalTeamId() . ",
                                     player_id = " . $draftPick->getPlayerId() .
              " where draft_pick_id = " . $draftPick->getId();

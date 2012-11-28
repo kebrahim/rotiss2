@@ -63,6 +63,13 @@ class DraftPick {
     return $this->pick;
   }
 
+  public function setPick($pick) {
+  	if ($this->pick == 0) {
+  	  $this->pick = null;
+  	}
+  	$this->pick = $pick;
+  }
+  
   public function getOriginalTeamName() {
     if ($this->originalTeamId == null) {
       return "--";
@@ -114,6 +121,12 @@ class DraftPick {
       return "null";
     }
     return $this->getPlayer()->getId();
+  }
+  
+  public function setPlayerId($playerId) {
+  	$this->playerId = $playerId;
+  	$this->playerLoaded = false;
+  	$this->player = null;
   }
 
   public function getPlayerName() {

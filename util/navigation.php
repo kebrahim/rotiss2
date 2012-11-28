@@ -14,8 +14,9 @@ class NavigationUtil {
   const MANAGE_KEEPERS_BUTTON = 10;
   const MANAGE_BROGNAS_BUTTON = 11;
   const MANAGE_TEAM_BUTTON = 12;
-  const MANAGE_PLACEHOLDERS_BUTTON = 13;
-  const MANAGE_RANKS_BUTTON = 14;
+  const MANAGE_DRAFT_BUTTON = 13;
+  const MANAGE_PLACEHOLDERS_BUTTON = 14;
+  const MANAGE_RANKS_BUTTON = 15;
 
   public static function printHeader($showNavigationLinks, $isTopLevel, $selectedButton) {
     NavigationUtil::displayHeader($showNavigationLinks, $isTopLevel, $selectedButton, 'wrapper');
@@ -140,7 +141,11 @@ class NavigationUtil {
   	// Manage individual team
   	NavigationUtil::printListItem("admin/manageTeam.php", "Manage Team", $isTopLevel,
   	    $selectedButton, self::MANAGE_TEAM_BUTTON);
-
+  	
+  	// Manage draft
+  	NavigationUtil::printListItem("admin/manageDraft.php", "Manage Draft", $isTopLevel,
+  			$selectedButton, self::MANAGE_DRAFT_BUTTON);
+  	 
   	// If super-admin, show ranks & placeholders pages
   	if (SessionUtil::isLoggedInSuperAdmin()) {
   	  // Placeholders
