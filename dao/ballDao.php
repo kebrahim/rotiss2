@@ -85,7 +85,7 @@ class BallDao {
                                    team_id = " . $pingPongBall->getTeam()->getId() . ",
                                    player_id = " . $pingPongBall->getPlayerId() .
                              " where ping_pong_id = " . $pingPongBall->getId();
-    $result = mysql_query($query) or die('Invalid query: ' . mysql_error());
+    return mysql_query($query);
   }
 }
 ?>

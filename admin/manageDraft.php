@@ -71,6 +71,7 @@ function getRedirectHTML(element, htmlString) {
   
   // If save button was pressed, save results
   if (isset($_POST['save'])) {
+  	$currentYear = TimeUtil::getYearBasedOnEndOfSeason();
   	if ($round == 0) {
   	  // update ping pong balls
   	  $balls = BallDao::getPingPongBallsByYear($year);
@@ -78,7 +79,8 @@ function getRedirectHTML(element, htmlString) {
   	  	$ballUpdated = false;
   	  	
   	  	$playerSelection = "player" . $ball->getId();
-  	  	$currentPlayerId = $ball->getPlayerId();
+  	  	$currentPlayer = $ball->getPlayer();
+  	  	$currentPlayerId = ($currentPlayer == null ? 0 : $currentPlayer->getId());
   	  	if (isset($_POST[$playerSelection])
   	  	    && (intval($_POST[$playerSelection]) != $currentPlayerId)) {
   	  	  $ball->setPlayerId(intval($_POST[$playerSelection]));
@@ -86,8 +88,24 @@ function getRedirectHTML(element, htmlString) {
   	  	}
   	  	
   	  	if ($ballUpdated) {
-  	  	  BallDao::updatePingPongBall($ball);
-  	  	  // TODO assign player to team
+  	  	  $result = BallDao::updatePingPongBall($ball);
+  	  	  
+  	  	  // assign player to team if ball was saved and it's the current year.
+  	  	  if ($result) {
+  	  	  	if ($year == $currentYear) {
+  	  	  	  if (($ball->getPlayer() == null) && ($currentPlayer != null)) {
+  	  	  	  	// player was removed; remove player from team
+  	  	  	  	TeamDao::assignPlayerToTeam($currentPlayer, 0);
+  	  	  	  	echo "p: " . $currentPlayer->getFullName() . " removed from t: " . $ball->getTeam()->getAbbreviation() . "<br/>";
+  	  	  	  } else {
+    	        TeamDao::assignPlayerToTeam($ball->getPlayer(), $ball->getTeamId());
+  	  	  	    echo "p: " . $ball->getPlayerName() . " assigned to t: " . $ball->getTeam()->getAbbreviation() . "<br/>";
+  	  	  	  }
+  	  	  	}
+  	  	  } else {
+  	  	  	echo "<div class='error_msg'>Ping pong ball not updated: " . $ball->toString() .
+  	  	  	    "<br/></div>";
+  	  	  }
   	  	}
   	  }
   	} else {
@@ -97,7 +115,8 @@ function getRedirectHTML(element, htmlString) {
         $draftPickUpdated = false;
       	
       	$playerSelection = "player" . $draftPick->getId();
-        $currentPlayerId = $draftPick->getPlayerId();
+        $currentPlayer = $draftPick->getPlayer();
+        $currentPlayerId = ($currentPlayer == null ? 0 : $currentPlayer->getId());        
         if (isset($_POST[$playerSelection]) 
             && (intval($_POST[$playerSelection]) != $currentPlayerId)) {
           $draftPick->setPlayerId(intval($_POST[$playerSelection]));
@@ -113,8 +132,24 @@ function getRedirectHTML(element, htmlString) {
         }
         
         if ($draftPickUpdated) {
-          DraftPickDao::updateDraftPick($draftPick);
-          // TODO assign player to team
+          $result = DraftPickDao::updateDraftPick($draftPick);
+          
+  	  	  // assign player to team if draft pick was saved and it's the current year.
+          if ($result) {
+          	if ($year == $currentYear) {
+          	  if (($draftPick->getPlayer() == null) && ($currentPlayer != null)) {
+          		// player was removed; remove player from team
+          		TeamDao::assignPlayerToTeam($currentPlayer, 0);
+          		echo "p: " . $currentPlayer->getFullName() . " removed from t: " . $draftPick->getTeam()->getAbbreviation() . "<br/>";
+          	  } else {
+                TeamDao::assignPlayerToTeam($draftPick->getPlayer(), $draftPick->getTeamId());
+          	    echo "p: " . $draftPick->getPlayerName() . " assigned to t: " . $draftPick->getTeam()->getAbbreviation() . "<br/>";
+          	  }
+          	}
+          } else {
+          	echo "<div class='error_msg'>Draft pick not updated: " . $draftPick->toString() . 
+          	    "<br/></div>";
+          }
         }
       }
   	}

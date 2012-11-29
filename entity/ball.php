@@ -52,6 +52,10 @@ class PingPongBall {
     }
     return $this->team;
   }
+  
+  public function getTeamId() {
+  	return $this->teamId;
+  }
 
   public function setTeam(Team $team) {
     $this->team = $team;
@@ -80,7 +84,7 @@ class PingPongBall {
     if ($this->playerId == null) {
       return "--";
     }
-    return $this->getPlayer()->getFullName();
+    return $this->getPlayer()->getNameLink(true);
   }
 
   public function getPlayerId() {

@@ -425,7 +425,7 @@ class Team {
     $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
     echo "<h4>Players</h4>";
     echo "<table class='left' border><tr>";
-    echo "<th></th><th>Name</th>
+    echo "<th colspan=2>Name</th>
           <th>Position</th>
     	  <th>Team</th>
           <th>Age</th>

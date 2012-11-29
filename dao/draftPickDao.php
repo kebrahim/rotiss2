@@ -128,7 +128,7 @@ class DraftPickDao {
                                     original_team_id = " . $draftPick->getOriginalTeamId() . ",
                                     player_id = " . $draftPick->getPlayerId() .
              " where draft_pick_id = " . $draftPick->getId();
-    $result = mysql_query($query) or die('Invalid query: ' . mysql_error());
+    return mysql_query($query);
   }
 }
 ?>
