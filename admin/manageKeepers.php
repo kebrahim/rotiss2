@@ -317,14 +317,27 @@ require_once '../util/navigation.php';
     	$currentYearBrognas->getTotalPoints() . " = $" .
   	    (450 + $currentYearBrognas->getTotalPoints());
 
+  	// show all non-contracted players which will be dropped from team
+  	$playersToBeDropped = PlayerDao::getPlayersToBeDroppedForKeepers($team, $currentYear);
+  	if (count($playersToBeDropped) > 0) {
+   	  echo "<h4>Players to be Dropped</h4>
+  	        <table border class='center'>
+  	          <tr><th colspan=2>Player</th><th>Team</th><th>Position</th></tr>";
+   	  foreach ($playersToBeDropped as $player) {
+   	  	echo "<tr><td>" . $player->getHeadshotImg(24, 32) . "</td>
+   	  	          <td>" . $player->getNameLink(false) . "</td>
+   	  	          <td>" . $player->getMlbTeam()->getImageTag(32, 32) . "</td>
+   	  	          <td>" . $player->getPositionString() . "</td></tr>";
+   	  }
+   	  echo "</table>";
+  	}
+  	
   	// request final confirmation of keepers before execution
   	echo "<br/><br/><div style='color:red; font-weight:bold'>Note that once you confirm, this team
   	    will not be able to make any more selections for " . $currentYear . "!</div><br/>";
   	echo "<input class='button' type=submit name='confirmBank' value='Confirm'>&nbsp";
   	echo "<input class='button' type=submit name='cancelBank' value='Cancel'><br>";
     echo "<input type='hidden' name='keeper_teamid' value='" . $team->getId() . "'>";
-
-    // TODO show all non-contracted players which will be dropped from team
   } elseif(isset($_POST['confirmBank'])) {
     // If confirmBank button was pressed, save brogna info.
   	$team = TeamDao::getTeamById($_POST['keeper_teamid']);
@@ -335,9 +348,21 @@ require_once '../util/navigation.php';
   	echo "<h3 class='alert_msg'>Banking confirmed!</h3>";
   	$currentYear = TimeUtil::getCurrentYear();
   	$nextYear = $currentYear + 1;
+  	
+  	// drop all non-contracted players from team
+  	$playersToBeDropped = PlayerDao::getPlayersToBeDroppedForKeepers($team, $currentYear);
+  	if (count($playersToBeDropped) > 0) {
+  	  echo "<h4>Dropped Players</h4>";
+  	  foreach ($playersToBeDropped as $player) {
+  	  	TeamDao::assignPlayerToTeam($player, 0);
+  	    echo $player->getNameLink(false) . "</br>";
+  	  }
+  	}
+  	
+  	// Show brognas banked from previous season.
   	$currentYearBrognas = BrognaDao::getBrognasByTeamAndYear($team->getId(), $currentYear);
   	$bankedPoints = $currentYearBrognas->getTotalPoints();
-  	echo "<strong>" . $currentYear . " Bank:</strong> $" . $bankedPoints .
+  	echo "<br/><strong>" . $currentYear . " Bank:</strong> $" . $bankedPoints .
   	    " for " . $nextYear . " season";
 
   	// Save & display brogna info for next year
@@ -348,8 +373,6 @@ require_once '../util/navigation.php';
   	$team->displayBrognas($nextYear, $nextYear, false, 0, 'center');
 
   	echo "<br><a href='manageKeepers.php'>Let's do it again!</a><br>";
-
-  	// TODO drop all non-contracted players from team
   } else {
   	// clear out keeper session variables from previous keeper scenarios.
   	SessionUtil::clearSessionVarsWithPrefix("keeper_");

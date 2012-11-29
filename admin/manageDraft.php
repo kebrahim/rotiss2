@@ -96,10 +96,8 @@ function getRedirectHTML(element, htmlString) {
   	  	  	  if (($ball->getPlayer() == null) && ($currentPlayer != null)) {
   	  	  	  	// player was removed; remove player from team
   	  	  	  	TeamDao::assignPlayerToTeam($currentPlayer, 0);
-  	  	  	  	echo "p: " . $currentPlayer->getFullName() . " removed from t: " . $ball->getTeam()->getAbbreviation() . "<br/>";
   	  	  	  } else {
     	        TeamDao::assignPlayerToTeam($ball->getPlayer(), $ball->getTeamId());
-  	  	  	    echo "p: " . $ball->getPlayerName() . " assigned to t: " . $ball->getTeam()->getAbbreviation() . "<br/>";
   	  	  	  }
   	  	  	}
   	  	  } else {
@@ -140,10 +138,8 @@ function getRedirectHTML(element, htmlString) {
           	  if (($draftPick->getPlayer() == null) && ($currentPlayer != null)) {
           		// player was removed; remove player from team
           		TeamDao::assignPlayerToTeam($currentPlayer, 0);
-          		echo "p: " . $currentPlayer->getFullName() . " removed from t: " . $draftPick->getTeam()->getAbbreviation() . "<br/>";
           	  } else {
                 TeamDao::assignPlayerToTeam($draftPick->getPlayer(), $draftPick->getTeamId());
-          	    echo "p: " . $draftPick->getPlayerName() . " assigned to t: " . $draftPick->getTeam()->getAbbreviation() . "<br/>";
           	  }
           	}
           } else {

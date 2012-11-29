@@ -145,6 +145,24 @@ class PlayerDao {
     }
     return $eligibleKeepers;
   }
+  
+  /**
+   * Returns an array of players, belonging to the specified team who will be dropped when money
+   * is banked for the specified keeper year.
+   */
+  public static function getPlayersToBeDroppedForKeepers(Team $team, $year) {
+  	// first, get all players on specified team
+  	$allPlayers = PlayerDao::getPlayersByTeam($team);
+  	
+  	// filter out players who currently have a contract.
+  	$playersToBeDropped = array();
+  	foreach ($allPlayers as $player) {
+  	  if (!PlayerDao::hasContractForPlaceholders($player->getId(), $year)) {
+  	    $playersToBeDropped[] = $player;
+  	  }
+  	}
+  	return $playersToBeDropped;
+  }
 
   /**
    * Returns an array of players belonging to the specified fantasy team.
