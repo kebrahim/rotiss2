@@ -3,7 +3,7 @@
 * {margin: 0;}
 html, body {height: 100%;}
 #container {padding:0; min-height:100%; height:auto !important; height:100%; margin:0 auto -61px;
-            background-image: url("../images/holiday.png");}
+            background-image: url("../img/holiday.png");}
 #wrapper, #nowidthwrapper {padding: 12px 0 40px; margin: 0 auto;}
 #wrapper {width:1000px; border-left-style:ridge; border-right-style:ridge;
           background-color:white;}

@@ -2,22 +2,23 @@
 require_once "sessions.php";
 
 class NavigationUtil {
-  const MY_TEAM_BUTTON = 1;
-  const RANKING_BUTTON = 2;
-  const BUDGET_BUTTON = 3;
-  const DRAFT_BUTTON = 4;
-  const AUCTION_BUTTON = 5;
-  const ADMIN_BUTTON = 6;
-  const MANAGE_ROSTERS_BUTTON = 7;
-  const MANAGE_TRADE_BUTTON = 8;
-  const MANAGE_AUCTION_BUTTON = 9;
-  const MANAGE_KEEPERS_BUTTON = 10;
-  const MANAGE_BROGNAS_BUTTON = 11;
-  const MANAGE_TEAM_BUTTON = 12;
-  const MANAGE_DRAFT_BUTTON = 13;
-  const MANAGE_PLACEHOLDERS_BUTTON = 14;
-  const MANAGE_RANKS_BUTTON = 15;
-
+  const TEAM_SUMMARY_BUTTON = 1;
+  const BUDGET_BUTTON = 2;
+  const PLAYERS_BUTTON = 3;
+  const RANKING_BUTTON = 4;
+  const DRAFT_BUTTON = 5;
+  const AUCTION_BUTTON = 6;
+  const ADMIN_BUTTON = 7;
+  const MANAGE_ROSTERS_BUTTON = 8;
+  const MANAGE_TRADE_BUTTON = 9;
+  const MANAGE_AUCTION_BUTTON = 10;
+  const MANAGE_KEEPERS_BUTTON = 11;
+  const MANAGE_BROGNAS_BUTTON = 12;
+  const MANAGE_TEAM_BUTTON = 13;
+  const MANAGE_DRAFT_BUTTON = 14;
+  const MANAGE_PLACEHOLDERS_BUTTON = 15;
+  const MANAGE_RANKS_BUTTON = 16;
+  
   public static function printHeader($showNavigationLinks, $isTopLevel, $selectedButton) {
     NavigationUtil::displayHeader($showNavigationLinks, $isTopLevel, $selectedButton, 'wrapper');
   }
@@ -42,7 +43,7 @@ class NavigationUtil {
     if (!$isTopLevel) {
       echo "../";
     }
-    echo "images/rotiss2.jpg' width='240'>
+    echo "img/rotiss2.jpg' width='240'>
               </div>";
     if ($showNavigationLinks) {
       echo "  <nav id='menu'>
@@ -55,12 +56,16 @@ class NavigationUtil {
 
       // Summary page
       NavigationUtil::printListItem("summaryPage.php", "Team Summary", $isTopLevel, $selectedButton,
-          self::MY_TEAM_BUTTON);
+          self::TEAM_SUMMARY_BUTTON);
 
       // Budget page
       NavigationUtil::printListItem("budgetPage.php", "Budget", $isTopLevel, $selectedButton,
           self::BUDGET_BUTTON);
 
+      // Players page
+      NavigationUtil::printListItem("playersPage.php", "Players", $isTopLevel, $selectedButton,
+      		self::PLAYERS_BUTTON);
+      
       // Ranking page
       // TODO only show ranking page after placeholders have been set
       NavigationUtil::printListItem("rankPage.php", "Ranking", $isTopLevel, $selectedButton,

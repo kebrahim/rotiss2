@@ -204,6 +204,18 @@ class PlayerDao {
     return PlayerDao::createPlayersFromQuery($query);
   }
 
+  /**
+   * Returns an array of players whose first or last name contains the specified string.
+   */
+  public static function getPlayersByName($searchString) {
+  	CommonDao::connectToDb();
+  	$query = "select * from player
+              where first_name like '%$searchString%'
+  	          or last_name like '%$searchString%'
+  	          order by last_name, first_name";
+  	return PlayerDao::createPlayersFromQuery($query);
+  }
+  
   private static function createPlayerFromQuery($query) {
     $playerArray = PlayerDao::createPlayersFromQuery($query);
     if (count($playerArray) == 1) {
