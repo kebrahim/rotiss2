@@ -147,28 +147,36 @@ class Team {
     return $this->pingPongBalls;
   }
 
-  public function displayAllContracts() {
-    $currentYear = TimeUtil::getYearBasedOnEndOfSeason();
-    $this->displayContracts($currentYear, 3000, false, "left");
-  }
-
   public function displayTeamInfo() {
     echo "<h3>" . $this->getName() . "</h3>";
     echo "<img src='" . $this->getSportslineImageUrl() . "'><br/><br/>";
     echo $this->getOwnersString() . "<br/>";
   }
 
+  public function hasContracts() {
+    $contracts = $this->filterContractsByYear(
+        ContractDao::getContractsByTeamId($this->teamId),
+        TimeUtil::getYearBasedOnEndOfSeason(), 3000, true);
+    return (count($contracts) > 0);
+  }
+
+  public function displayAllContracts() {
+    $currentYear = TimeUtil::getYearBasedOnEndOfSeason();
+    $this->displayContracts($currentYear, 3000, false);
+  }
+
   /**
   * Display all contract information for this team.
   */
-  public function displayContracts($minYear, $maxYear, $isSelectable, $tableClass) {
+  public function displayContracts($minYear, $maxYear, $isSelectable) {
     $contracts = $this->filterContractsByYear(
         ContractDao::getContractsByTeamId($this->teamId), $minYear, $maxYear, true);
     if (count($contracts) == 0) {
       return;
     }
-    echo "<h4>Contracts</h4>";
-    echo "<table class='$tableClass' border><tr>";
+    echo "<a id='contracts'></a><h4>Contracts</h4>";
+    echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
+            <thead><tr>";
     if ($isSelectable) {
       echo "<th></th>";
     }
@@ -181,7 +189,7 @@ class Team {
             <th>Sign Date</th>
             <th>Start Year</th>
             <th>End Year</th>
-            <th>Type</th></tr>";
+            <th>Type</th></tr></thead>";
     foreach ($contracts as $contract) {
       $player = $contract->getPlayer();
       echo "<tr>";
@@ -264,24 +272,25 @@ class Team {
 
   function displayAllDraftPicks() {
     $currentYear = TimeUtil::getYearBasedOnStartOfSeason();
-    $this->displayDraftPicks($currentYear + 1, 3000, false, "left");
+    $this->displayDraftPicks($currentYear + 1, 3000, false);
   }
 
   /**
    * Display all draft pick information for this team.
    */
-  function displayDraftPicks($minYear, $maxYear, $isSelectable, $tableClass) {
+  function displayDraftPicks($minYear, $maxYear, $isSelectable) {
     if ((count($this->getPingPongBalls()) + count($this->getDraftPicks())) == 0) {
       return;
     }
 
-    echo "<h4>Draft Picks</h4>";
-    echo "<table class='$tableClass' border><tr>";
+    echo "<a id='draft'></a><h4>Draft Picks</h4>";
+    echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
+            <thead><tr>";
     if ($isSelectable) {
       echo "<th></th>";
     }
     echo "<th>Year</th><th>Round</th><th>Pick</th>
-                       <th>Player</th><th>Orig Team</th></tr>";
+                       <th>Player</th><th>Orig Team</th></tr></thead>";
     foreach ($this->getPingPongBalls() as $pingPongBall) {
       if (($pingPongBall->getYear() < $minYear) || ($pingPongBall->getYear() > $maxYear)) {
         continue;
@@ -360,7 +369,7 @@ class Team {
 
   function displayAllBrognas() {
     $currentYear = TimeUtil::getYearBasedOnKeeperNight();
-    $this->displayBrognas($currentYear, 3000, false, 0, "left");
+    $this->displayBrognas($currentYear, 3000, false, 0);
   }
 
   /**
@@ -368,13 +377,14 @@ class Team {
    * controls whether the rows can be selected & a value can be entered [for trading].
    * $tradePosition indicates which of the two teams is trading brognas.
    */
-  function displayBrognas($minYear, $maxYear, $isSelectable, $tradePosition, $tableClass) {
+  function displayBrognas($minYear, $maxYear, $isSelectable, $tradePosition) {
     if (count($this->getBrognas()) == 0) {
       return;
     }
 
-    echo "<h4>Brognas</h4>";
-    echo "<table class='$tableClass' id='brognaTable' border><tr>";
+    echo "<a id='brognas'></a><h4>Brognas</h4>";
+    echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'
+                 id='brognaTable'><thead><tr>";
     if ($isSelectable) {
       echo "<th></th>";
     }
@@ -383,7 +393,7 @@ class Team {
     if ($isSelectable) {
       echo "<th id='headerbox" . $tradePosition . "' style='display:none'>To Trade</th>";
     }
-    echo "</tr>";
+    echo "</tr></thead>";
     foreach ($this->getBrognas() as $brogna) {
       // Only show brogna info between the min and max years.
       if (($brogna->getYear() < $minYear) || ($brogna->getYear() > $maxYear)) {
@@ -427,13 +437,14 @@ class Team {
     }
 
     $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
-    echo "<h4>Players</h4>";
-    echo "<table class='left' border><tr>";
+    echo "<a id='roster'></a><h4>Roster</h4>";
+    echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
+            <thead><tr>";
     echo "<th colspan=2>Name</th>
           <th>Position</th>
     	  <th>Team</th>
           <th>Age</th>
-          <th>$rankYear Rank</th></tr>";
+          <th>$rankYear Rank</th></tr></thead>";
     foreach ($players as $player) {
       $rank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
       echo "<tr><td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>

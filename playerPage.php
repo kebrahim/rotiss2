@@ -2,9 +2,11 @@
   require_once 'util/sessions.php';
   SessionUtil::checkUserIsLoggedIn();
 ?>
+
+<!DOCTYPE html>
 <html>
 <head>
-<title>St Pete's Rotiss - Display Player</title>
+<title>St Pete's Rotiss - Player Summary</title>
 <link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
 <link href='css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
@@ -91,8 +93,9 @@
 
   // if admin user, show edit link
   if (SessionUtil::isLoggedInAdmin()) {
-    echo "<a href='admin/managePlayer.php?player_id=" . $player->getId() .
-        "'>Manage player</a><br><br/>";
+    echo "<div class='managelink'>
+            <a href='admin/managePlayer.php?player_id=" . $player->getId() . "'>Manage player</a>
+          </div>";
   }
 
   // TODO displayPlayer: show contract history

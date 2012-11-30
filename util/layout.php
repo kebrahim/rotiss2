@@ -24,12 +24,9 @@ class LayoutUtil {
    */
   public static function displayNavBar($isTopLevel, $selectedButton) {
     echo "<div id='wrap'><div class='container'>
-          <div class='navbar'><div class='navbar-inner'>
-          <img src='";
-    if (!$isTopLevel) {
-    	echo "../";
-    }
-    echo "img/rotiss2.jpg' width='80' />
+          <div class='navbar'><div class='navbar-inner'>";
+
+    echo "<div class=\"brand\">St Pete's Rotiss</div>
           <ul class='nav'>";
 
     // Summary page
@@ -162,11 +159,14 @@ class LayoutUtil {
     echo "<div id=\"footer\">
             <div class=\"container\">
               <div class=\"row\">
-                <div class=\"span6 center muted credit\">
+                <div class=\"span4 center muted credit\">
                   St. Pete's Rotiss 2.0
                 </div>
-                <div class=\"span6 center\">
-                  <img src='img/rotiss2.jpg' width='125' />
+                <div class=\"span4 center\">
+                  <img src='img/rotiss2.jpg' width='250' />
+                </div>
+                <div class=\"span4 center muted credit\">
+                  a <a href='http://www.zebrahim.com'>zebrahim</a> joint
                 </div>
               </div>
             </div>

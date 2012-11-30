@@ -3,10 +3,12 @@
   SessionUtil::checkUserIsLoggedIn();
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com - Team Summary</title>
-<link href='css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss - Team Summary</title>
+<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <script>
@@ -46,13 +48,11 @@ function getRedirectHTML(element, htmlString) {
 <?php
   require_once 'dao/contractDao.php';
   require_once 'dao/teamDao.php';
-  require_once 'util/navigation.php';
+  require_once 'util/layout.php';
   require_once 'util/time.php';
 
-  // Display header.
-  NavigationUtil::printHeader(true, true, NavigationUtil::TEAM_SUMMARY_BUTTON);
-
-  echo "<div class='bodyleft'>";
+  // Nav bar
+  LayoutUtil::displayNavBar(true, LayoutUtil::TEAM_SUMMARY_BUTTON);
 
   // Get team from REQUEST; otherwise, use logged-in user's team.
   if (isset($_REQUEST["team_id"])) {
@@ -63,8 +63,10 @@ function getRedirectHTML(element, htmlString) {
   $team = TeamDao::getTeamById($teamId);
 
   // Allow user to choose from list of teams to see corresponding summary page.
+  echo "<div class='row-fluid'>
+          <div class='span12 center chooser'>";
   $allTeams = TeamDao::getAllTeams();
-  echo "<br/><label for='team_id'>Choose team: </label>";
+  echo "<label for='team_id'>Select team:</label>&nbsp&nbsp";
   echo "<select id='team_id' name='team_id' onchange='showTeam(this.value)'>";
   foreach ($allTeams as $selectTeam) {
     echo "<option value='" . $selectTeam->getId() . "'";
@@ -73,7 +75,10 @@ function getRedirectHTML(element, htmlString) {
     }
     echo ">" . $selectTeam->getName() . " (" . $selectTeam->getAbbreviation() . ")</option>";
   }
-  echo "</select><br/>";
+  echo "</select>";
+  echo "</div>"; // span12
+  echo "</div>"; // row-fluid
+
   echo "<div id='teamDisplay'></div><br/>";
 ?>
 
@@ -83,12 +88,9 @@ function getRedirectHTML(element, htmlString) {
 </script>
 
 <?php
-  // TODO add bookmarks to various sections of page
-
-  echo "</div>";
 
   // Display footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayFooter();
 ?>
 
 </body>

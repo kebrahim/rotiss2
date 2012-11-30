@@ -129,45 +129,78 @@
    * Display specified team on team summary page.
    */
   function displayTeam(Team $team) {
-    echo "<h1>Team Summary: " . $team->getName() . "</h1>";
-    echo "<a href='#summary'>Summary</a>&nbsp&nbsp
-          <a href='#contracts'>Contracts</a>&nbsp&nbsp
-          <a href='#brognas'>Brognas</a>&nbsp&nbsp
-          <a href='#draft'>Draft Picks</a>&nbsp&nbsp
-          <a href='#players'>Players</a>&nbsp&nbsp
-          <hr/>";
-    echo "<a id='summary'><img src='" . $team->getSportslineImageUrl() . "'></a><br/><br/>";
+    echo "<div class='row-fluid'>";
+
+    // team logo
+    echo "<div class='span2 center teamlogo'>
+            <img src='" . $team->getSportslineImageUrl() . "'>
+          </div>";
+
+    // team name
+    echo "<div class='span10 center'>
+            <h1>" . $team->getName() . "</h1>
+            <div class='bookmarks'>
+              <a href='#summary'>Summary</a>&nbsp&nbsp
+              <a href='#contracts'>Contracts</a>&nbsp&nbsp
+              <a href='#brognas'>Brognas</a>&nbsp&nbsp
+              <a href='#draft'>Draft Picks</a>&nbsp&nbsp
+              <a href='#roster'>Roster</a>
+            </div>
+          </div>";
+    echo "</div>"; // row-fluid
+
+    echo "<div class='row-fluid'>
+            <div class='span12'>";
 
     // Owners, Abbreviation, Division
-    echo "<table>";
-    echo "  <tr><td><strong>Owner(s):</strong></td>
-                  <td>" . $team->getOwnersString() . "</td></tr>";
-    echo "  <tr><td><strong>Abbreviation:</strong></td>
-                  <td>" . $team->getAbbreviation() . "</td></tr>";
-    echo "  <tr><td><strong>Division:</strong></td>
-                  <td>" . $team->getLeague() . " " . $team->getDivision() . "</td></tr>";
-    echo "</table>";
+    echo "<a id='summary'></a><h4>Team Summary</h4>
+          <table class='table vertmiddle table-striped table-condensed table-bordered'>
+            <tr><td><strong>Owner(s):</strong></td>
+                  <td>" . $team->getOwnersString() . "</td></tr>
+            <tr><td><strong>Abbreviation:</strong></td>
+                  <td>" . $team->getAbbreviation() . "</td></tr>
+            <tr><td><strong>Division:</strong></td>
+                  <td>" . $team->getLeague() . " " . $team->getDivision() . "</td></tr>
+          </table>";
 
     // if admin user, show edit link
     if (SessionUtil::isLoggedInAdmin()) {
-      echo "<br/><a href='admin/manageTeam.php?team_id=" . $team->getId() . "'>Manage team</a><br/>";
+      echo "<div class='managelink'>
+              <a href='admin/manageTeam.php?team_id=" . $team->getId() . "'>Manage team</a>
+            </div>";
     }
+    echo "</div>"; // span12
+    echo "</div>"; // row-fluid
 
     // Display contracts.
-    echo "<hr/><a id='contracts'></a>";
-    $team->displayAllContracts();
+    if ($team->hasContracts()) {
+      echo "<div class='row-fluid'>
+              <div class='span12'>";
+      $team->displayAllContracts();
+      echo "</div>"; // span12
+      echo "</div>"; // row-fluid
+    }
 
     // Display points information
-    echo "<hr/><a id='brognas'></a>";
+    echo "<div class='row-fluid'>
+            <div class='span12'>";
     $team->displayAllBrognas();
+    echo "</div>"; // span12
+    echo "</div>"; // row-fluid
 
     // Display draft pick information
-    echo "<hr/><a id='draft'></a>";
+    echo "<div class='row-fluid'>
+            <div class='span12'>";
     $team->displayAllDraftPicks();
+    echo "</div>"; // span12
+    echo "</div>"; // row-fluid
 
     // Display current team
-    echo "<hr/><a id='players'></a>";
+    echo "<div class='row-fluid'>
+            <div class='span12'>";
     $team->displayPlayers();
+    echo "</div>"; // span12
+    echo "</div>"; // row-fluid
   }
 
   /**
