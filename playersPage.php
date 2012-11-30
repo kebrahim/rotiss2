@@ -15,7 +15,7 @@
 <?php
   require_once 'dao/playerDao.php';
   require_once 'util/layout.php';
-  
+
   /**
    * Returns the fantasy team cell in the table of players for the specified player
    */
@@ -26,7 +26,7 @@
   	return "<td>" . $player->getFantasyTeam()->getNameLink(true) . "</td>
   	<td>" . $player->getFantasyTeam()->getSportslineImg(32,32) . "</td>";
   }
-  
+
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::PLAYERS_BUTTON);
 
@@ -41,9 +41,9 @@
           <div class=\"span8 center\">
             <h1>MLB Players</h1>
           </div>";
-  
+
   // search section
-  echo "  <div class=\"span4 center\" style=\"height:64px; line-height:64px;\">
+  echo "  <div class=\"span4 center nexttoh1\">
             <form class=\"form-search\" action='playersPage.php' method=\"post\">";
   echo "<input type='text' class='input-medium search-query' placeholder='Enter player name'
          name='name'";
@@ -55,11 +55,11 @@
             </form>
           </div>
         </div>";
-  
+
   // players section - display search results, or all players if no string has been entered
   echo "<div class=\"row-fluid\">
           <div class=\"span12 center\">";
-    
+
   if ($nameString != null) {
     echo "<h3>Search results</h3>";
   	$players = PlayerDao::getPlayersByName($nameString);
@@ -80,7 +80,7 @@
   }
   echo "</table>
         </div></div>"; // span12, row-fluid
-  
+
   // footer
   LayoutUtil::displayFooter();
 ?>
