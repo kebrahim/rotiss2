@@ -46,7 +46,7 @@ function showPlayer(playerId) {
 			document.getElementById("playerDisplay").innerHTML=xmlhttp.responseText;
 		}
 	};
-	xmlhttp.open("GET","displayPlayerForTransaction.php?type=auction&player_id="+playerId,true);
+	xmlhttp.open("GET","displayPlayer.php?type=auction&player_id="+playerId,true);
 	xmlhttp.send();
 }
 
@@ -80,7 +80,7 @@ function showTeam(teamId) {
 			document.getElementById("teamDisplay").innerHTML=xmlhttp.responseText;
 		}
 	};
-	xmlhttp.open("GET","displayTeamForTransaction.php?type=auction&team_id="+teamId,true);
+	xmlhttp.open("GET","displayTeam.php?type=auction&team_id="+teamId,true);
 	xmlhttp.send();
 }
 </script>
@@ -94,11 +94,11 @@ function showTeam(teamId) {
   require_once '../entity/auction.php';
   require_once '../util/navigation.php';
   require_once '../util/time.php';
-  
+
   // Display header.
   NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_AUCTION_BUTTON);
   echo "<div class='bodycenter'>";
-  
+
   echo "<h1>Going once, Going twice, Sold!</h1><hr/>";
   echo "<FORM ACTION='manageAuction.php' METHOD=POST>";
 
@@ -135,7 +135,7 @@ function showTeam(teamId) {
   } else {
   	// clear out trade session variables from previous auction scenarios.
   	SessionUtil::clearSessionVarsWithPrefix("auction_");
-  	
+
   	// show auction results for current year
   	$currentYear = TimeUtil::getCurrentYear();
   	echo "<h2>Auction results " . $currentYear . "</h2>";
@@ -153,7 +153,7 @@ function showTeam(teamId) {
   	  echo "</table>";
   	}
     echo "<hr/>";
-    
+
     // allow user to select one player from list of players eligible to be auctioned.
     $players = PlayerDao::getPlayersForAuction($currentYear);
     echo "<div id='column_container'>";
@@ -190,7 +190,7 @@ function showTeam(teamId) {
           </div>";
   }
   echo "</form></div>";
-  
+
   // Footer
   NavigationUtil::printFooter();
 ?>

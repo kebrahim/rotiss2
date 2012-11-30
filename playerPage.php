@@ -4,7 +4,7 @@
 ?>
 <html>
 <head>
-<title>Rotiss.com - Display Player</title>
+<title>St Pete's Rotiss - Display Player</title>
 <link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
 <link href='css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>

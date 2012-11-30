@@ -26,7 +26,7 @@ function showTeam(teamId) {
 
 	// Display team information.
 	getRedirectHTML(document.getElementById("teamDisplay"),
-	    "displayTeamForTransaction.php?type=keepers&team_id="+teamId);
+	    "displayTeam.php?type=keepers&team_id="+teamId);
 }
 
 // populates the innerHTML of the specified elementId with the HTML returned by the specified
@@ -82,7 +82,7 @@ function addContract(team_id) {
     // name column gets drop-down of players
     var nameCell = newRow.insertCell(1);
     getRedirectHTML(nameCell,
-        "displayTeamForTransaction.php?type=keepercontracts&team_id=" + team_id + "&row=" + nextRowNumber);
+        "displayTeam.php?type=keepercontracts&team_id=" + team_id + "&row=" + nextRowNumber);
 
     // years column gets dropdown of 1 or 2-year contract
     var yearsCell = newRow.insertCell(2);
@@ -181,11 +181,11 @@ function removeContract(rowNumber) {
 function selectPlayer(player_id, rowNumber) {
     // update headshot field to show selected player's stupid face
     getRedirectHTML(document.getElementById("keepertable").rows[rowNumber].cells[0],
-        "displayPlayerForTransaction.php?type=headshot&player_id=" + player_id);
+        "displayPlayer.php?type=headshot&player_id=" + player_id);
 
 	// update price field to show cumulative rank for that player
 	getRedirectValue(document.getElementsByName("keeper_price" + rowNumber).item(0),
-	    "displayPlayerForTransaction.php?type=cumulativerank&player_id=" + player_id);
+	    "displayPlayer.php?type=cumulativerank&player_id=" + player_id);
 }
 
 // adds a row to the ping pong ball table
@@ -331,7 +331,7 @@ require_once '../util/navigation.php';
    	  }
    	  echo "</table>";
   	}
-  	
+
   	// request final confirmation of keepers before execution
   	echo "<br/><br/><div style='color:red; font-weight:bold'>Note that once you confirm, this team
   	    will not be able to make any more selections for " . $currentYear . "!</div><br/>";
@@ -348,7 +348,7 @@ require_once '../util/navigation.php';
   	echo "<h3 class='alert_msg'>Banking confirmed!</h3>";
   	$currentYear = TimeUtil::getCurrentYear();
   	$nextYear = $currentYear + 1;
-  	
+
   	// drop all non-contracted players from team
   	$playersToBeDropped = PlayerDao::getPlayersToBeDroppedForKeepers($team, $currentYear);
   	if (count($playersToBeDropped) > 0) {
@@ -358,7 +358,7 @@ require_once '../util/navigation.php';
   	    echo $player->getNameLink(false) . "</br>";
   	  }
   	}
-  	
+
   	// Show brognas banked from previous season.
   	$currentYearBrognas = BrognaDao::getBrognasByTeamAndYear($team->getId(), $currentYear);
   	$bankedPoints = $currentYearBrognas->getTotalPoints();

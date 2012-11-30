@@ -133,7 +133,7 @@ function selectTeam(position, teamid) {
 	}
   };
   xmlhttp.open("GET",
-      "displayTeamForTransaction.php?type=trade&team_id="+teamid+"&position="+position,true);
+      "displayTeam.php?type=trade&team_id="+teamid+"&position="+position,true);
   xmlhttp.send();
 }
 </script>
@@ -145,11 +145,11 @@ function selectTeam(position, teamid) {
   require_once '../entity/trade.php';
   require_once '../util/time.php';
   require_once '../util/navigation.php';
-  
+
   // Display header.
   NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_TRADE_BUTTON);
   echo "<div class='bodycenter'>";
-  
+
   echo "<h1>Let's Make a Deal!</h1><hr/>";
   echo "<FORM ACTION='manageTrade.php' METHOD=POST>";
 
@@ -186,7 +186,7 @@ function selectTeam(position, teamid) {
   } else {
   	// clear out trade session variables from previous trade scenarios.
   	SessionUtil::clearSessionVarsWithPrefix("trade_");
-  	 
+
     // allow user to select two teams.
     $teams = TeamDao::getAllTeams();
     echo "<div id='column_container'>";
@@ -214,14 +214,14 @@ function selectTeam(position, teamid) {
     }
     echo "</select><br>";
     echo "<div id='teamDisplay2'></div><br/></div></div></div>";
-    
+
     echo "<div id='tradeButton' style='display:none'>
             <input class='button' type=submit name='trade' value='Initiate Trade'>
             <input class='button' type=submit name='cancel' value='Cancel'>
           </div>";
   }
   echo "</form></div>";
-  
+
   // Footer
   NavigationUtil::printFooter();
 ?>

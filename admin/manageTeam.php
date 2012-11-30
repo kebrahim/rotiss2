@@ -20,7 +20,7 @@ function showTeam(teamId) {
 
 	// Display team information.
 	getRedirectHTML(document.getElementById("teamDisplay"),
-	    "displayTeamForTransaction.php?type=manage&team_id="+teamId);
+	    "displayTeam.php?type=manage&team_id="+teamId);
 }
 
 //populates the innerHTML of the specified elementId with the HTML returned by the specified
