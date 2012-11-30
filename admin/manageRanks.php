@@ -89,9 +89,8 @@
   	echo "'>";
 
   	$fantasyTeam = $rank->getPlayer()->getFantasyTeam();
-  	$teamLink = ($fantasyTeam == null) ? "" : 
-        "<a href='../summaryPage.php?team_id=" . $fantasyTeam->getId() . "'>" .
-  	        $fantasyTeam->getAbbreviation() . "</a>";
+  	$teamLink = ($fantasyTeam == null) ?
+  	    "" : $fantasyTeam->getIdLink(false, $fantasyTeam->getAbbreviation());
   	echo "    <td>" . $rank->getPlayer()->getNameLink(false) . "</td>
   	          <td>" . $teamLink . "</td>
   	          <td>" . $rank->getRank() . "</td>
@@ -114,8 +113,7 @@
 
     $fantasyTeam = $unrankedPlayer->getFantasyTeam();
     echo "<td>" . $unrankedPlayer->getNameLink(false) . "</td>
-          <td><a href='../summaryPage.php?team_id=" . $fantasyTeam->getId() . "'>" .
-  	                 $fantasyTeam->getAbbreviation() . "</a></td>
+          <td>" . $fantasyTeam->getIdLink(false, $fantasyTeam->getAbbreviation()) . "</td>
   	      <td>0</td>
   	      <td></td>
   	      <td>" . ($hasCumulativeRank ? "Y" : "") . "</td>

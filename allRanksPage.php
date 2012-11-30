@@ -42,8 +42,7 @@
   	  echo " class='finished_ranking'";
   	}
   	echo "><td><img height=36 width=36 src='" . $team->getSportslineImageUrl() . "'></td>
-  	          <td><a href='summaryPage.php?team_id=" . $team->getId() . "'>" .
-  	              $team->getName() . "</a></td>
+  	          <td>" . $team->getIdLink(true, $team->getName()) . "</td>
   	          <td>" . $team->getOwnersString() . "</td>";
 
   	// individual ranks

@@ -31,19 +31,19 @@ class LayoutUtil {
     }
     echo "img/rotiss2.jpg' width='80' />
           <ul class='nav'>";
-    
+
     // Summary page
-    LayoutUtil::displayListItem("summaryPage.php", "Team Summary", $isTopLevel, $selectedButton,
+    LayoutUtil::displayListItem("teamPage.php", "Team Summary", $isTopLevel, $selectedButton,
         self::TEAM_SUMMARY_BUTTON);
 
     // Budget page
     LayoutUtil::displayListItem("budgetPage.php", "Budget", $isTopLevel, $selectedButton,
         self::BUDGET_BUTTON);
-    
+
     // Players page
     LayoutUtil::displayListItem("playersPage.php", "Players", $isTopLevel, $selectedButton,
         self::PLAYERS_BUTTON);
-    
+
     // Ranking page
     // TODO only show ranking page after placeholders have been set
     LayoutUtil::displayListItem("rankPage.php", "Ranking", $isTopLevel, $selectedButton,
@@ -62,9 +62,9 @@ class LayoutUtil {
       LayoutUtil::displayListItem("admin/manageTeams.php", "Admin", $isTopLevel, $selectedButton,
           self::ADMIN_BUTTON);
     }
-    
+
     echo "</ul>";
-    
+
     // show logged-in user name with links for editing profile & signing out
     LayoutUtil::displayProfileInfo($isTopLevel);
 
@@ -79,11 +79,11 @@ class LayoutUtil {
   	          <a href='#' class='dropdown-toggle' data-toggle='dropdown'>
   	      Hi " . $user->getFirstName() . "!&nbsp<b class='caret'></b></a>";
   	echo "<ul class='dropdown-menu'>
-  	        <li><a href='" . ($isTopLevel ? "" : "../") . 
+  	        <li><a href='" . ($isTopLevel ? "" : "../") .
   	            "editProfilePage.php'>Edit profile</a></li>
   	        <li><a href='" . ($isTopLevel ? "" : "../") . "logoutPage.php'>Sign out</a></li>
   	      </ul>
-  	      </li></ul>";	
+  	      </li></ul>";
   }
 
   private static function displayListItem($url, $caption, $isTopLevel, $selectedButton, $listButton) {
@@ -134,11 +134,11 @@ class LayoutUtil {
   	// Manage individual team
   	LayoutUtil::displayListItem("admin/manageTeam.php", "Manage Team", $isTopLevel,
   	    $selectedButton, self::MANAGE_TEAM_BUTTON);
-  	
+
   	// Manage draft
   	LayoutUtil::displayListItem("admin/manageDraft.php", "Manage Draft", $isTopLevel,
   			$selectedButton, self::MANAGE_DRAFT_BUTTON);
-  	 
+
   	// If super-admin, show ranks & placeholders pages
   	if (SessionUtil::isLoggedInSuperAdmin()) {
   	  // Placeholders

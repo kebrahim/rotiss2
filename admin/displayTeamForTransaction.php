@@ -224,10 +224,10 @@
     echo "</table><br/>";
 
     // Buttons
-    echo "<input class='button' type=submit name='update' value='Update Team'>&nbsp&nbsp
-          <a href='../summaryPage.php?team_id=" . $team->getId() . "'>Back to Summary</a>";
+    echo "<input class='button' type=submit name='update' value='Update Team'>&nbsp&nbsp" .
+         $team->getIdLink(false, "Back to Summary");
   }
-  
+
   /**
    * Display team on budget page.
    */
@@ -240,24 +240,24 @@
   	}
   	echo "<hr/>";
   	echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
-  	
+
   	echo "<table>";
   	echo "  <tr><td><strong>Owner(s):</strong></td>
   	<td>" . $team->getOwnersString() . "</td></tr>";
   	echo "</table>";
-  	
+
   	// Display brognas and contracts for each specified year.
   	// TODO budget: allow user to adjust years
   	displayBreakdown($team->getId(), $brognas);
   }
-  
+
   /**
    * Show breakdown of brognas per year w/ contract info for specified team
    */
-  function displayBreakdown($teamId, $brognas) {  
+  function displayBreakdown($teamId, $brognas) {
   	// get all contracts
   	$contracts = ContractDao::getContractsByTeamId($teamId);
-  
+
   	// for ever brogna record,
   	$currentYear = TimeUtil::getYearBasedOnKeeperNight();
   	foreach ($brognas as $brogna) {
@@ -278,7 +278,7 @@
   		        <td>" . $brogna->getTradedInPoints() . "</td>
   		        <td>" . $brogna->getTradedOutPoints() . "</td>
   		        <td><strong>" . $brogna->getTotalPoints() . "</td></tr></table>";
-  
+
   	  // show contracts for that year
   	  $contractTotal = 0;
   	  $hasContracts = false;
@@ -304,13 +304,13 @@
   			      <td>" . $contract->getPrice() . "</td></tr>";
   	    $contractTotal += $contract->getPrice();
       }
-  
+
   	  if ($hasContracts == true) {
         echo "<tr><td colspan='6'></td>
   			      <td><strong>" . $contractTotal . "</strong></td></tr>";
   		echo "</table>";
   	  }
-  
+
   	  // show leftover brognas
   	  echo "<br/><strong>Bank for " . ($brogna->getYear() + 1) . ": </strong>" .
           ($brogna->getTotalPoints() - $contractTotal);

@@ -56,8 +56,12 @@ class Team {
   }
 
   public function getNameLink($isTopLevel) {
-  	return "<a href='" . ($isTopLevel ? "" : "../") . "summaryPage.php?team_id=" .
-  			$this->teamId . "'>" . $this->name . " (" . $this->abbreviation . ")</a>";
+  	return $this->getIdLink($isTopLevel, $this->name . " (" . $this->abbreviation . ")");
+  }
+
+  public function getIdLink($isTopLevel, $linkText) {
+    return "<a href='" . ($isTopLevel ? "" : "../") . "teamPage.php?team_id=" . $this->teamId .
+        "'>" . $linkText . "</a>";
   }
 
   public function getLeague() {
@@ -87,7 +91,7 @@ class Team {
   public function getSportslineImg($width, $height) {
   	return "<img src='" . $this->getSportslineImageUrl() . "' height=$height width=$width>";
   }
-  
+
   public function getOwners() {
     if ($this->ownersLoaded != true) {
       $this->owners = UserDao::getUsersByTeamId($this->teamId);

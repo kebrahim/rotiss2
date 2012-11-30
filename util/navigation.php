@@ -18,7 +18,7 @@ class NavigationUtil {
   const MANAGE_DRAFT_BUTTON = 14;
   const MANAGE_PLACEHOLDERS_BUTTON = 15;
   const MANAGE_RANKS_BUTTON = 16;
-  
+
   public static function printHeader($showNavigationLinks, $isTopLevel, $selectedButton) {
     NavigationUtil::displayHeader($showNavigationLinks, $isTopLevel, $selectedButton, 'wrapper');
   }
@@ -55,7 +55,7 @@ class NavigationUtil {
       }
 
       // Summary page
-      NavigationUtil::printListItem("summaryPage.php", "Team Summary", $isTopLevel, $selectedButton,
+      NavigationUtil::printListItem("teamPage.php", "Team Summary", $isTopLevel, $selectedButton,
           self::TEAM_SUMMARY_BUTTON);
 
       // Budget page
@@ -65,7 +65,7 @@ class NavigationUtil {
       // Players page
       NavigationUtil::printListItem("playersPage.php", "Players", $isTopLevel, $selectedButton,
       		self::PLAYERS_BUTTON);
-      
+
       // Ranking page
       // TODO only show ranking page after placeholders have been set
       NavigationUtil::printListItem("rankPage.php", "Ranking", $isTopLevel, $selectedButton,
@@ -146,11 +146,11 @@ class NavigationUtil {
   	// Manage individual team
   	NavigationUtil::printListItem("admin/manageTeam.php", "Manage Team", $isTopLevel,
   	    $selectedButton, self::MANAGE_TEAM_BUTTON);
-  	
+
   	// Manage draft
   	NavigationUtil::printListItem("admin/manageDraft.php", "Manage Draft", $isTopLevel,
   			$selectedButton, self::MANAGE_DRAFT_BUTTON);
-  	 
+
   	// If super-admin, show ranks & placeholders pages
   	if (SessionUtil::isLoggedInSuperAdmin()) {
   	  // Placeholders

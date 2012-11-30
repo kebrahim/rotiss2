@@ -24,7 +24,7 @@ class SessionUtil {
   	  unset($_SESSION[$key]);
   	}
   }
-  
+
   /**
    * Clears out all session variables that start with the specified prefix.
    */
@@ -56,7 +56,7 @@ class SessionUtil {
 
 
     // redirect to navigation page
-    SessionUtil::redirectToUrl("summaryPage.php");
+    SessionUtil::redirectToUrl("teamPage.php");
   }
 
   /**

@@ -89,8 +89,7 @@
   	$fantasyTeam = $stat->getPlayer()->getFantasyTeam();
   	echo "    <td>" . $ct . "</td>
   	          <td>" . $stat->getPlayer()->getNameLink(false) . "</td>
-  	          <td><a href='../summaryPage.php?team_id=" . $fantasyTeam->getId() . "'>" .
-  	                 $fantasyTeam->getAbbreviation() . "</a></td>
+  	          <td>" . $fantasyTeam->getIdLink(false, $fantasyTeam->getAbbreviation()) . "</td>
   	          <td>" . $stat->getStatLine()->getFantasyPoints() . "</td>
   	          <td>" . $rank . "</td>
   	          <td>" . ($isPlaceholder ? 'Y' : "") . "</td>
