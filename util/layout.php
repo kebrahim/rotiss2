@@ -19,6 +19,10 @@ class LayoutUtil {
   const MANAGE_PLACEHOLDERS_BUTTON = 15;
   const MANAGE_RANKS_BUTTON = 16;
 
+  public static function displayHeader() {
+    echo "<div id='wrap'><div class='container'>";
+  }
+
   /**
    * Displays the header banner with navigation links.
    */
@@ -72,12 +76,14 @@ class LayoutUtil {
   private static function displayProfileInfo($isTopLevel) {
   	$user = SessionUtil::getLoggedInUser();
   	echo "<ul class='nav pull-right'>
+  	        <li class=\"divider-vertical\"></li>
   	        <li class='dropdown'>
-  	          <a href='#' class='dropdown-toggle' data-toggle='dropdown'>
-  	      Hi " . $user->getFirstName() . "!&nbsp<b class='caret'></b></a>";
+  	          <a href='#' class='dropdown-toggle  profiledropdown' data-toggle='dropdown'>
+  	            Hi " . $user->getFirstName() . "!&nbsp<b class='caret'></b></a>";
   	echo "<ul class='dropdown-menu'>
   	        <li><a href='" . ($isTopLevel ? "" : "../") .
   	            "editProfilePage.php'>Edit profile</a></li>
+  	        <li class=\"divider\"></li>
   	        <li><a href='" . ($isTopLevel ? "" : "../") . "logoutPage.php'>Sign out</a></li>
   	      </ul>
   	      </li></ul>";
@@ -166,7 +172,7 @@ class LayoutUtil {
                   <img src='img/rotiss2.jpg' width='250' />
                 </div>
                 <div class=\"span4 center muted credit\">
-                  a <a href='http://www.zebrahim.com'>zebrahim</a> joint
+                  a <a href='http://www.zebrahim.com' target='_blank'>zebrahim</a> joint
                 </div>
               </div>
             </div>

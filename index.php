@@ -1,53 +1,60 @@
-<?php session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com</title>
-<link href='css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss</title>
+<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
-<style>
-#logo {float:none; text-align:center;}
-</style>
 <body>
 
 <?php
   require_once 'dao/userDao.php';
-  require_once 'util/navigation.php';
+  require_once 'util/layout.php';
   require_once 'util/sessions.php';
 
-  NavigationUtil::printHeader(false, true, 0);
-  echo "<div class='bodycenter'>";
+  LayoutUtil::displayHeader();
+  echo "<div class='row-fluid headrow'>";
+
+  // logo
+  echo "<div class='span12 center'>
+          <img src='img/rotiss2.jpg' width='360' />
+          <hr/>";
 
   if (isset($_POST['login'])) {
     $user = UserDao::getUserByUsernamePassword($_POST["username"], $_POST["password"]);
     if ($user == null) {
-      echo "<div class='error_msg_pad'>Invalid username or password; please try again.<br/></div>";
+      echo "<div class=\"alert alert-error\">
+              <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
+              <strong>Sorry!</strong> That is an incorrect username or password. Please try again!
+            </div>";
     } else {
       // add user information to session
+      // TODO handle 'remember me' checkbox
+      // TODO handle login and redirect to URL
       SessionUtil::loginAndRedirect($user);
     }
   }
 
-?>
-  <div id='logininfo'>
-    <form action='index.php' method=post>
-      <fieldset class="signinfieldset">
-        <legend>Sign in</legend>
-        <label for='username' >Username:</label><br/>
-        <input type='text' name='username' id='username'  maxlength="20" size="25" required /><br/><br/>
-        <label for='password' >Password:</label><br/>
-        <input type='password' name='password' id='password' maxlength="20" size="25" required /><br/><br/>
-        <div id='signinbutton'>
-          <input type='submit' name='login' value='Sign in' />
-        </div>
-      </fieldset><br/>
-      <a href='loginHelpPage.php'>Can't access your account?</a><br/>
-    </form>
-  </div></div>
+  // sign-in
+  echo "  <form class=\"form-signin\" action='index.php' method='post'>
+            <h2 class=\"form-signin-heading\">Please sign in</h2>
+            <input type=\"text\" name='username' class=\"input-block-level\"
+                   placeholder=\"Username\" required>
+            <input type=\"password\" name='password' class=\"input-block-level\"
+                   placeholder=\"Password\" required>
+            <label class=\"checkbox\">
+              <input type=\"checkbox\" value=\"remember-me\"> Remember me
+            </label>
+            <button class=\"btn btn-large btn-primary\" type=\"submit\"
+                    name='login'>Sign in</button>
+          </form>
+        </div>";
 
-<?php
+  echo "</div>"; // row-fluid
+
   // footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayFooter();
 ?>
 
 </body>
