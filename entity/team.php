@@ -7,6 +7,7 @@ CommonEntity::requireFileIn('/../dao/', 'contractDao.php');
 CommonEntity::requireFileIn('/../dao/', 'cumulativeRankDao.php');
 CommonEntity::requireFileIn('/../dao/', 'draftPickDao.php');
 CommonEntity::requireFileIn('/../dao/', 'userDao.php');
+CommonEntity::requireFileIn('/../util/', 'playerManager.php');
 CommonEntity::requireFileIn('/../util/', 'time.php');
 
 /**
@@ -197,8 +198,7 @@ class Team {
         echo "<td><input type=checkbox name='trade_t" . $this->getId() . "c[]'
                          value='" . $contract->getId() . "'></td>";
       }
-      echo "<td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>
-                  <td>" . $player->getNameLink(true) . "</td>
+      echo PlayerManager::getNameAndHeadshotRow($player) . "
                   <td>" . $player->getPositionString() . "</td>
                   <td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
                   <td>" . $player->getAge() . "</td>
@@ -290,7 +290,7 @@ class Team {
       echo "<th></th>";
     }
     echo "<th>Year</th><th>Round</th><th>Pick</th>
-                       <th>Player</th><th>Orig Team</th></tr></thead>";
+                       <th colspan=2>Player</th><th>Original Team</th></tr></thead>";
     foreach ($this->getPingPongBalls() as $pingPongBall) {
       if (($pingPongBall->getYear() < $minYear) || ($pingPongBall->getYear() > $maxYear)) {
         continue;
@@ -302,9 +302,9 @@ class Team {
               </td>";
       }
       echo "<td>" . $pingPongBall->getYear() . "</td><td>Ping Pong</td>
-                  <td>" . $pingPongBall->getCost() . "</td>
-                  <td>" . $pingPongBall->getPlayerName() . "</td>
-                  <td>--</td></tr>";
+                  <td>" . $pingPongBall->getCost() . "</td>" .
+                  PlayerManager::getNameAndHeadshotRow($pingPongBall->getPlayer()) .
+                 "<td>--</td></tr>";
     }
     foreach ($this->getDraftPicks() as $draftPick) {
       if (($draftPick->getYear() < $minYear) || ($draftPick->getYear() > $maxYear)) {
@@ -318,9 +318,9 @@ class Team {
       }
 
       echo "<td>" . $draftPick->getYear() . "</td><td>" . $draftPick->getRound() . "</td>
-                  <td>" . $draftPick->getPick() . "</td>
-                  <td>" . $draftPick->getPlayerName() . "</td>
-                  <td>" . $draftPick->getOriginalTeamName() . "</td></tr>";
+                  <td>" . $draftPick->getPick() . "</td>" .
+                  PlayerManager::getNameAndHeadshotRow($draftPick->getPlayer()) .
+                 "<td>" . $draftPick->getOriginalTeamName() . "</td></tr>";
     }
     echo "</table>";
   }
@@ -447,9 +447,8 @@ class Team {
           <th>$rankYear Rank</th></tr></thead>";
     foreach ($players as $player) {
       $rank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
-      echo "<tr><td><img src='" . $player->getHeadshotUrl() . "' width=24 height=32 /></td>
-                <td>" . $player->getNameLink(true) . "</td>
-                <td>" . $player->getPositionString() . "</td>
+      echo "<tr>" . PlayerManager::getNameAndHeadshotRow($player) .
+               "<td>" . $player->getPositionString() . "</td>
                 <td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
                 <td>" . $player->getAge() . "</td>
                 <td>" . (($rank != null) ? $rank->getRank() : "-") . "</td></tr>";

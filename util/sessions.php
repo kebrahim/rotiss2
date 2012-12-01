@@ -1,14 +1,8 @@
 <?php
 
-function requireFileIn($path, $file) {
-  $now_at_dir = getcwd();
-  chdir(realpath(dirname(__FILE__).$path));
-  require_once $file;
-  chdir($now_at_dir);
-}
-
-requireFileIn('/../dao/', 'teamDao.php');
-requireFileIn('/../entity/', 'user.php');
+require_once 'commonUtil.php';
+CommonUtil::requireFileIn('/../dao/', 'teamDao.php');
+CommonUtil::requireFileIn('/../entity/', 'user.php');
 
 class SessionUtil {
 

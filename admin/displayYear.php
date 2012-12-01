@@ -3,6 +3,7 @@
   require_once '../dao/ballDao.php';
   require_once '../dao/brognaDao.php';
   require_once '../dao/draftPickDao.php';
+  require_once '../util/playerManager.php';
   require_once '../util/sessions.php';
   require_once '../util/time.php';
 
@@ -27,7 +28,7 @@
   	         <td>" . $pingPongBall->getCost() . "</td>
   	         <td>" . $pingPongBall->getTeam()->getSportslineImg(32, 32) . "</td>
   		     <td>" . $pingPongBall->getTeam()->getNameLink(true) . "</td>"
-  		           . displayPlayerLink($pingPongBall->getPlayer()) . "</tr>";
+  		           . PlayerManager::getNameAndHeadshotRow($pingPongBall->getPlayer()) . "</tr>";
   	  }
   	
   	  $draftPicks = DraftPickDao::getDraftPicksByYear($year);
@@ -40,18 +41,9 @@
   		       <td>" . $draftPick->getPick() . "</td>
   	           <td>" . $draftPick->getTeam()->getSportslineImg(32, 32) . "</td>
   		       <td>" . $draftPick->getTeam()->getNameLink(true) . "</td>" .
-  		       displayPlayerLink($draftPick->getPlayer()) . "</tr>";
+  		       PlayerManager::getNameAndHeadshotRow($draftPick->getPlayer()) . "</tr>";
   	  }
     echo "</table>";
-  }
-  
-  function displayPlayerLink($player) {
-  	if ($player != null) {
-  	  return "<td>" . $player->getHeadshotImg(24,32) . "</td>
-  	          <td>" . $player->getNameLink(true) . "</td>";
-  	} else {
-  	  return "<td colspan=2>--</td>";
-  	}
   }
   
   /**

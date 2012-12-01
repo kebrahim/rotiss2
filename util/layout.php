@@ -82,9 +82,10 @@ class LayoutUtil {
   	            Hi " . $user->getFirstName() . "!&nbsp<b class='caret'></b></a>";
   	echo "<ul class='dropdown-menu'>
   	        <li><a href='" . ($isTopLevel ? "" : "../") .
-  	            "editProfilePage.php'>Edit profile</a></li>
+  	            "editProfilePage.php'><i class=\"icon-edit\"></i>&nbsp&nbspEdit profile</a></li>
   	        <li class=\"divider\"></li>
-  	        <li><a href='" . ($isTopLevel ? "" : "../") . "logoutPage.php'>Sign out</a></li>
+  	        <li><a href='" . ($isTopLevel ? "" : "../") . "logoutPage.php'>
+  	            <i class=\"icon-eject\"></i>&nbsp&nbspSign out</a></li>
   	      </ul>
   	      </li></ul>";
   }

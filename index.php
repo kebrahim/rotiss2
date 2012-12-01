@@ -17,9 +17,8 @@
   echo "<div class='row-fluid headrow'>";
 
   // logo
-  echo "<div class='span12 center'>
-          <img src='img/rotiss2.jpg' width='360' />
-          <hr/>";
+  echo "<div class='span12 center' id='loginbox'>
+          <img src='img/rotiss-logotype.png' width='480' />";
 
   if (isset($_POST['login'])) {
     $user = UserDao::getUserByUsernamePassword($_POST["username"], $_POST["password"]);
@@ -52,9 +51,8 @@
         </div>";
 
   echo "</div>"; // row-fluid
-
-  // footer
-  LayoutUtil::displayFooter();
+  echo "</div>"; // container
+  echo "</div>"; // wrap
 ?>
 
 </body>

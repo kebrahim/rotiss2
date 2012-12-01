@@ -67,7 +67,7 @@ function getRedirectHTML(element, htmlString) {
           <div class='span12 center chooser'>";
   $allTeams = TeamDao::getAllTeams();
   echo "<label for='team_id'>Select team:</label>&nbsp&nbsp";
-  echo "<select id='team_id' name='team_id' onchange='showTeam(this.value)'>";
+  echo "<select id='team_id' name='team_id' class='span6' onchange='showTeam(this.value)'>";
   foreach ($allTeams as $selectTeam) {
     echo "<option value='" . $selectTeam->getId() . "'";
     if ($selectTeam->getId() == $teamId) {

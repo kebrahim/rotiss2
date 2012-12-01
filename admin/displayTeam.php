@@ -141,19 +141,19 @@
             <h1>" . $team->getName() . "</h1>
             <div class='bookmarks'>
               <a href='#summary'>Summary</a>&nbsp&nbsp
-              <a href='#contracts'>Contracts</a>&nbsp&nbsp
               <a href='#brognas'>Brognas</a>&nbsp&nbsp
+              <a href='#contracts'>Contracts</a>&nbsp&nbsp
               <a href='#draft'>Draft Picks</a>&nbsp&nbsp
               <a href='#roster'>Roster</a>
             </div>
           </div>";
     echo "</div>"; // row-fluid
 
-    echo "<div class='row-fluid'>
-            <div class='span12'>";
+    echo "<div class='row-fluid'>";
 
-    // Owners, Abbreviation, Division
-    echo "<a id='summary'></a><h4>Team Summary</h4>
+    // Team Summary - Owners, Abbreviation, Division
+    echo "<div class='span6'>
+          <a id='summary'></a><h4>Team Summary</h4>
           <table class='table vertmiddle table-striped table-condensed table-bordered'>
             <tr><td><strong>Owner(s):</strong></td>
                   <td>" . $team->getOwnersString() . "</td></tr>
@@ -169,10 +169,17 @@
               <a href='admin/manageTeam.php?team_id=" . $team->getId() . "'>Manage team</a>
             </div>";
     }
-    echo "</div>"; // span12
+    echo "</div>"; // span6
+    
+    // brognas
+    echo "<div class='span6'>";
+    // TODO show brognas from this year & next year; allow user to select years
+    $team->displayAllBrognas();
+    echo "</div>"; // span6
+    
     echo "</div>"; // row-fluid
 
-    // Display contracts.
+    // Display active contracts.
     if ($team->hasContracts()) {
       echo "<div class='row-fluid'>
               <div class='span12'>";
@@ -181,16 +188,10 @@
       echo "</div>"; // row-fluid
     }
 
-    // Display points information
-    echo "<div class='row-fluid'>
-            <div class='span12'>";
-    $team->displayAllBrognas();
-    echo "</div>"; // span12
-    echo "</div>"; // row-fluid
-
     // Display draft pick information
     echo "<div class='row-fluid'>
             <div class='span12'>";
+    // TODO show draft picks from this year; allow user to select year
     $team->displayAllDraftPicks();
     echo "</div>"; // span12
     echo "</div>"; // row-fluid
