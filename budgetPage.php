@@ -3,10 +3,12 @@
   SessionUtil::checkUserIsLoggedIn();
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com - Budget</title>
-<link href='css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss - Budget</title>
+<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <script>
@@ -44,16 +46,14 @@ function getRedirectHTML(element, htmlString) {
 
 <body>
   <?php
-  require_once 'dao/brognaDao.php';
-  require_once 'dao/contractDao.php';
   require_once 'dao/teamDao.php';
-  require_once 'util/navigation.php';
+  require_once 'util/layout.php';
+  require_once 'util/teamManager.php';
   require_once 'util/time.php';
-
-  // Display header.
-  NavigationUtil::printHeader(true, true, NavigationUtil::BUDGET_BUTTON);
-  echo "<div class='bodyleft'>";
-
+  
+  // Nav bar
+  LayoutUtil::displayNavBar(true, LayoutUtil::BUDGET_BUTTON);
+  
   // Get team from REQUEST; otherwise, use logged-in user's team.
   if (isset($_REQUEST["team_id"])) {
   	$teamId = $_REQUEST["team_id"];
@@ -67,18 +67,8 @@ function getRedirectHTML(element, htmlString) {
   }
 
   // Allow user to choose from list of teams to see corresponding summary page.
-  $allTeams = TeamDao::getAllTeams();
-  echo "<form action='budgetPage.php' method=post>";
-  echo "<br/><label for='team_id'>Choose team: </label>";
-  echo "<select id='team_id' name='team_id' onchange='showTeam(this.value)'>";
-  foreach ($allTeams as $selectTeam) {
-    echo "<option value='" . $selectTeam->getId() . "'";
-    if ($selectTeam->getId() == $teamId) {
-      echo " selected";
-    }
-    echo ">" . $selectTeam->getName() . " (" . $selectTeam->getAbbreviation() . ")</option>";
-  }
-  echo "</select><br/>";
+  TeamManager::displayTeamChooser($team);
+  
   echo "<div id='teamDisplay'></div><br/>";
 ?>
 
@@ -88,10 +78,10 @@ function getRedirectHTML(element, htmlString) {
 </script>
 
 <?php
-  echo "</div>";
 
   // Display footer
-  NavigationUtil::printFooter();
-  ?>
+  LayoutUtil::displayFooter();
+?>
+
 </body>
 </html>

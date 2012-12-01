@@ -266,19 +266,24 @@
    * Display team on budget page.
    */
   function displayTeamForBudget(Team $team) {
-  	// Show budget information for selected team
-  	echo "<h1>Budget: " . $team->getName() . "</h1>";
+  	echo "<div class='row-fluid'>";
+  	
+  	// team logo
+  	echo "<div class='span2 center teamlogo'>
+  	        <img src='" . $team->getSportslineImageUrl() . "'>
+  	      </div>";
+  	
+  	// team name w/ bookmarks for each year
+  	echo "<div class='span10 center'>
+  	        <h1>Budget: " . $team->getName() . "</h1>
+  	        <div class='bookmarks'>";
   	$brognas = BrognaDao::getBrognasByTeamId($team->getId());
   	foreach ($brognas as $brogna) {
-  	  echo "<a href='#" . $brogna->getYear() . "'>" . $brogna->getYear() . "<a/>&nbsp&nbsp";
+  	  echo "<a href='#" . $brogna->getYear() . "'>" . $brogna->getYear() . "</a>&nbsp&nbsp";
   	}
-  	echo "<hr/>";
-  	echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
-
-  	echo "<table>";
-  	echo "  <tr><td><strong>Owner(s):</strong></td>
-  	<td>" . $team->getOwnersString() . "</td></tr>";
-  	echo "</table>";
+    echo "  </div>
+  	      </div>";
+  	echo "</div>"; // row-fluid
 
   	// Display brognas and contracts for each specified year.
   	// TODO budget: allow user to adjust years
@@ -298,15 +303,18 @@
   	  if ($brogna->getYear() < $currentYear) {
   	    continue;
   	  }
+  	  
+  	  echo "<div class='row-fluid'>
+  	          <div class='span12'>";
+
   	  // show brogna info
-  	  echo "<hr/><a id='" . $brogna->getYear() . "'></a>
-  	        <h3>" . $brogna->getYear() . "</h3>";
+  	  echo "<a id='" . $brogna->getYear() . "'></a><h3>" . $brogna->getYear() . "</h3>";
   	  echo "<h4>Brognas</h4>";
-  	  echo "<table border class='left'>
-  		      <tr><th>Alotted</th>
+  	  echo "<table border class='table vertmiddle table-striped table-condensed table-bordered center'>
+  		      <thead><tr><th>Alotted</th>
   		          <th>" . ($brogna->getYear() - 1) . " Bank</th>
   		          <th>Received in Trade</th>
-  		          <th>Given in Trade</th><th>Total</th></tr>";
+  		          <th>Given in Trade</th><th>Total</th></tr></thead>";
   	  echo "<tr><td>450</td>
   		        <td>" . $brogna->getBankedPoints() . "</td>
   		        <td>" . $brogna->getTradedInPoints() . "</td>
@@ -323,9 +331,9 @@
   	    }
   		if ($hasContracts == false) {
   		  echo "<h4>Contracts</h4>";
-  		  echo "<table border class='left'>
-  		          <tr><th colspan='2'>Player</th><th>Position</th><th>Team</th><th>Age</th>
-  				      <th>Years Remaining</th><th>Price</th></tr>";
+  		  echo "<table border class='table vertmiddle table-striped table-condensed table-bordered center'>
+  		          <thead><tr><th colspan='2'>Player</th><th>Position</th><th>Team</th><th>Age</th>
+  				      <th>Years Remaining</th><th>Price</th></tr></thead>";
   		  $hasContracts = true;
   	    }
   		$player = $contract->getPlayer();
@@ -346,9 +354,12 @@
   	  }
 
   	  // show leftover brognas
-  	  echo "<br/><strong>Bank for " . ($brogna->getYear() + 1) . ": </strong>" .
-          ($brogna->getTotalPoints() - $contractTotal);
+  	  echo "<label>Bank for " . ($brogna->getYear() + 1) . ": </label>" .
+          ($brogna->getTotalPoints() - $contractTotal) . "<br/><br/>";
       // TODO budget: should bank from previous year be calculated?
+      
+  	  echo "</div>"; // span 12
+  	  echo "</div>"; // row-fluid
   	}
   }
 

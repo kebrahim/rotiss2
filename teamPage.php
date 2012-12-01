@@ -46,11 +46,10 @@ function getRedirectHTML(element, htmlString) {
 
 <body>
 <?php
-  require_once 'dao/contractDao.php';
   require_once 'dao/teamDao.php';
   require_once 'util/layout.php';
-  require_once 'util/time.php';
-
+  require_once 'util/teamManager.php';
+  
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::TEAM_SUMMARY_BUTTON);
 
@@ -61,23 +60,12 @@ function getRedirectHTML(element, htmlString) {
     $teamId = SessionUtil::getLoggedInTeam()->getId();
   }
   $team = TeamDao::getTeamById($teamId);
-
-  // Allow user to choose from list of teams to see corresponding summary page.
-  echo "<div class='row-fluid'>
-          <div class='span12 center chooser'>";
-  $allTeams = TeamDao::getAllTeams();
-  echo "<label for='team_id'>Select team:</label>&nbsp&nbsp";
-  echo "<select id='team_id' name='team_id' class='span6' onchange='showTeam(this.value)'>";
-  foreach ($allTeams as $selectTeam) {
-    echo "<option value='" . $selectTeam->getId() . "'";
-    if ($selectTeam->getId() == $teamId) {
-      echo " selected";
-    }
-    echo ">" . $selectTeam->getName() . " (" . $selectTeam->getAbbreviation() . ")</option>";
+  if ($team == null) {
+  	die("<h1>Team ID " . $teamId . " not found!</h1>");
   }
-  echo "</select>";
-  echo "</div>"; // span12
-  echo "</div>"; // row-fluid
+  
+  // Allow user to choose from list of teams to see corresponding summary page.
+  TeamManager::displayTeamChooser($team);
 
   echo "<div id='teamDisplay'></div><br/>";
 ?>

@@ -37,7 +37,7 @@
   // Headshot
   echo "<div class='span2 center headshotimg nexttoh1'>";
   if ($player->hasSportslineId()) {
-    echo "<a href='" . $player->getStPetesUrl() . "'>" .
+    echo "<a href='" . $player->getStPetesUrl() . "' target='_blank'>" .
           $player->getHeadshotImg(42, 56) . "</a><br/><br/>";
   } else {
     // TODO show blank face

@@ -27,7 +27,7 @@
 
   	// Headshot
   	if ($player->hasSportslineId()) {
-  		echo "<a href='" . $player->getStPetesUrl() . "'>
+  		echo "<a href='" . $player->getStPetesUrl() . "' target='_blank'>
   		<img src='" . $player->getHeadshotUrl() . "'></a><br/><br/>";
   	}
 

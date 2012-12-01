@@ -95,11 +95,7 @@ label {
 	color: #1B75BB;
 }
 
-/* Player page */
-.headshotimg img {
-	margin-top: 2px;
-}
-
+/* Player/Team page */
 .managelink {
 	margin-bottom: 10px;
 }
