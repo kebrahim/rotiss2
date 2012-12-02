@@ -5,19 +5,20 @@ class LayoutUtil {
   const TEAM_SUMMARY_BUTTON = 1;
   const BUDGET_BUTTON = 2;
   const PLAYERS_BUTTON = 3;
-  const RANKING_BUTTON = 4;
-  const DRAFT_BUTTON = 5;
-  const AUCTION_BUTTON = 6;
-  const ADMIN_BUTTON = 7;
-  const MANAGE_ROSTERS_BUTTON = 8;
-  const MANAGE_TRADE_BUTTON = 9;
-  const MANAGE_AUCTION_BUTTON = 10;
-  const MANAGE_KEEPERS_BUTTON = 11;
-  const MANAGE_BROGNAS_BUTTON = 12;
-  const MANAGE_TEAM_BUTTON = 13;
-  const MANAGE_DRAFT_BUTTON = 14;
-  const MANAGE_PLACEHOLDERS_BUTTON = 15;
-  const MANAGE_RANKS_BUTTON = 16;
+  const MY_RANKS_BUTTON = 4;
+  const ALL_RANKS_BUTTON = 5;
+  const DRAFT_BUTTON = 6;
+  const AUCTION_BUTTON = 7;
+  const ADMIN_BUTTON = 8;
+  const MANAGE_ROSTERS_BUTTON = 9;
+  const MANAGE_TRADE_BUTTON = 10;
+  const MANAGE_AUCTION_BUTTON = 11;
+  const MANAGE_KEEPERS_BUTTON = 12;
+  const MANAGE_BROGNAS_BUTTON = 13;
+  const MANAGE_TEAM_BUTTON = 14;
+  const MANAGE_DRAFT_BUTTON = 15;
+  const MANAGE_PLACEHOLDERS_BUTTON = 16;
+  const MANAGE_RANKS_BUTTON = 17;
 
   public static function displayHeader() {
     echo "<div id='wrap'><div class='container'>";
@@ -46,9 +47,8 @@ class LayoutUtil {
         self::PLAYERS_BUTTON);
 
     // Ranking page
-    // TODO only show ranking page after placeholders have been set
-    LayoutUtil::displayListItem("rankPage.php", "Ranking", $isTopLevel, $selectedButton,
-        self::RANKING_BUTTON);
+    // TODO only show ranking page after placeholders have been set - after ranking period begins?
+    LayoutUtil::displayRankingDropdown($isTopLevel, $selectedButton);
 
     // Draft page
     LayoutUtil::displayListItem("draftPage.php", "Draft", $isTopLevel, $selectedButton,
@@ -72,6 +72,23 @@ class LayoutUtil {
     echo "</div>"; // navbar-inner
     echo "</div>"; // navbar
   }
+  
+  private static function displayRankingDropdown($isTopLevel, $selectedButton) {
+  	$dropdownSelected = ($selectedButton == LayoutUtil::MY_RANKS_BUTTON) || 
+  	    ($selectedButton == LayoutUtil::ALL_RANKS_BUTTON);
+  	echo "<li class='dropdown";
+  	if ($dropdownSelected) {
+  	  echo " active";
+  	}
+  	echo "'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>
+  	            Ranking&nbsp<b class='caret'></b></a>";
+  	echo "<ul class='dropdown-menu'>";
+  	LayoutUtil::displayListItem("rankPage.php", "My Ranks", $isTopLevel, $selectedButton, 
+  	    LayoutUtil::MY_RANKS_BUTTON);
+  	LayoutUtil::displayListItem("allRanksPage.php", "All Ranks", $isTopLevel, $selectedButton, 
+  	    LayoutUtil::ALL_RANKS_BUTTON);
+  	echo "</ul></li>";
+  }
 
   private static function displayProfileInfo($isTopLevel) {
   	$user = SessionUtil::getLoggedInUser();
@@ -90,7 +107,8 @@ class LayoutUtil {
   	      </li></ul>";
   }
 
-  private static function displayListItem($url, $caption, $isTopLevel, $selectedButton, $listButton) {
+  private static function displayListItem($url, $caption, $isTopLevel, $selectedButton, 
+      $listButton) {
     echo "<li";
     if ($selectedButton == $listButton) {
       echo " class='active'";
