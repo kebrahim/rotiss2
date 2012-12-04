@@ -3,17 +3,19 @@
   SessionUtil::checkUserIsLoggedIn();
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com - My Ranks</title>
-<link href='css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss - My Ranks</title>
+<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
 <?php
   require_once 'dao/rankDao.php';
   require_once 'dao/statDao.php';
-  require_once 'util/navigation.php';
+  require_once 'util/layout.php';
   require_once 'util/time.php';
 
   /**
@@ -21,7 +23,7 @@
    * selected.
    */
   function displaySelectForPlayer(Player $player, $selectedRank) {
-  	echo "<select name='pk" . $player->getId() . "' size=1>";
+  	echo "<select class='input-mini' name='pk" . $player->getId() . "' size=1>";
   	for ($i=0; $i<=10; $i++) {
   	  echo "<option";
   	  if ($i == $selectedRank) {
@@ -39,15 +41,13 @@
   function displayPlayersByRank($teamId, $rankYear, $rank) {
   	$lastYear = $rankYear - 1;
   	$ranks = RankDao::getRanksByTeamYearRank($teamId, $rankYear, $rank);
-  	echo "<br/><strong>" . $rank . "'s</strong> ";
-  	echo "<meter min='0' max='15' low='15' optimum='15' value='" . count($ranks) . "'></meter>
-  	      (" . count($ranks) . "/15)
-  	      <br/><br/>";
+  	echo "<h5>" . $rank . "'s</h5>";
   	if (count($ranks) > 15) {
-  	  echo "<div class='error_msg'>Too many " . $rank . "s!</div><br/>";
+  	  echo "<div class=\"alert alert-error\">Too many " . $rank . "s!</div>";
   	}
-  	echo "<table border class='center smallfonttable'>";
-  	echo "<tr><th>Player</th><th>Pos</th><th>Team</th><th>FPTS</th><th>Rank</th></tr>";
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center 
+  	                    smallfonttable'>";
+  	echo "<thead><tr><th>Player</th><th>FPTS</th><th>Rank</th></tr></thead>";
 
   	foreach ($ranks as $rank) {
       // if rank is a placeholder, update style
@@ -57,9 +57,7 @@
   	  }
   	  $fantasyPts = ($rank->getPlayer()->getStatLine($lastYear) != null) ?
           $rank->getPlayer()->getStatLine($lastYear)->getFantasyPoints() : "--";
-  	  echo "><td>" . $rank->getPlayer()->getNameLink(true) . "</td>
-  	         <td>" . $rank->getPlayer()->getPositionString() . "</td>
-  	         <td>" . $rank->getPlayer()->getMlbTeam()->getAbbreviation() . "</td>
+  	  echo "><td>" . $rank->getPlayer()->getIdLink(true, $rank->getPlayer()->getFullName()) . "</td>
   	         <td>" . $fantasyPts . "</td>";
   	  echo "<td>";
   	  if ($rank->isPlaceholder()) {
@@ -71,16 +69,58 @@
   	  }
   	  echo "</td></tr>";
   	}
-  	echo "</table><br/>";
+  	echo "</table>";
+  }
+  
+  function displayTotalRanks($teamId, $rankYear) {
+  	$numRanks = RankDao::getTotalRankCount($teamId, $rankYear);
+  	echo "<h4>Total Ranks: " . $numRanks . " / 150</h4>";
+  	displayProgressBar($numRanks, 150, "");
+  }
+  
+  function displayProgressBar($currentValue, $maxValue, $extraClass) {
+  	echo "<div class='progress progress-striped $extraClass'>
+  	        <div class=\"bar ";
+  	if ($currentValue < $maxValue) {
+  	  echo "bar";
+  	} else if ($currentValue > $maxValue) {
+  	  echo "bar-danger";
+  	} else {
+  	  echo "bar-success";
+  	}
+  	echo "\" style=\"width: " . (($currentValue / $maxValue) * 100) . "%;\"></div>
+  	     </div>";
+  }
+  
+  function displayRankSummary($teamId, $rankYear) {
+  	$count = 10;
+  	for ($i=0; $i<2; $i++) {
+  	  echo "<div class='row-fluid'>";
+  	  for ($j=0; $j<5; $j++) {
+  	  	if ($j == 0) {
+  	  	echo "<div class='span2 offset1'>";
+  	  	} else {
+   	      echo "<div class='span2'>";
+  	  	}
+  	  	$numRanks = count(RankDao::getRanksByTeamYearRank($teamId, $rankYear, $count));
+  	  	echo "<label>$count:</label> ($numRanks / 15)<br/>";
+        displayProgressBar($numRanks, 15, "smallprogress");  	  	
+  	  	$count--;
+  		echo "</div>";
+  	  }
+  	  echo "</div>"; // row-fluid
+  	}
   }
 
-  // Display header.
-  NavigationUtil::printNoWidthHeader(true, true, NavigationUtil::RANKING_BUTTON);
-
+  // Display nav bar.
+  LayoutUtil::displayNavBar(true, LayoutUtil::MY_RANKS_BUTTON);
+  
   // Get selected team from logged-in user.
   $teamId = SessionUtil::getLoggedInTeam()->getId();
 
-  echo "<div class='bodycenter'><h1>My Ranks</h1>";
+  echo "<div class='row-fluid'>
+          <div class='span12 center'>";
+  echo "<h1>My Ranks</h1>";
   echo "<FORM ACTION='rankPage.php' METHOD=POST>";
   $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
   $lastYear = $rankYear - 1;
@@ -118,55 +158,64 @@
 
   // navigation links
   echo "<a href='rankPage.php'>My Ranks</a>&nbsp
-        <a href='allRanksPage.php'>All Ranks</a>";
-
-  // display ranked players
-  echo "<h3>Ranked Players</h3>";
-  $numRanks = RankDao::getTotalRankCount($teamId, $rankYear);
-  echo "<strong>Total Ranks:</strong>
-        <meter min='0' max='150' low='150' optimum='150' value='" . $numRanks . "'></meter>
-        (" . $numRanks . "/150)<br/><br/>";
-
-  echo "<table id='ranked' class='center'>";
-  $count = 10;
-  for ($i=0; $i<2; $i++) {
-  	echo "<tr>";
-  	for ($j=0; $j<5; $j++) {
-      echo "<td class='vert_td_top'>";
-      displayPlayersByRank($teamId, $rankYear, $count--);
-      echo "</td>";
-  	}
-  	echo "</tr>";
-  }
-  echo "</table><br/><br/>";
-
-  // TODO do not show 'save' button after rankings period ends
+        <a href='allRanksPage.php'>All Ranks</a><hr/>";
   
-  echo "<input type='submit' name='save' value='Save my changes'>&nbsp";
-  echo "<input type='submit' name='cancel' value='Reset'>";
-  echo "<input type='hidden' name='team_id' value='" . $teamId . "'>";
-
+  displayTotalRanks($teamId, $rankYear);
+  displayRankSummary($teamId, $rankYear);
+  echo "</div>"; // span12
+  echo "</div>"; // row-fluid
+  
+  echo "<div class='row-fluid'>
+          <div class='span3 center'>";
+  
   // display unranked players
-  echo "<h3>Unranked Players</h3>";
+  echo "<h4>Unranked Players</h4>";
   $rankablePlayers = PlayerDao::getPlayersForRanking($teamId, $lastYear);
-  echo "<table border id='unranked' class='center smallfonttable'>
-          <tr><th>Player</th><th>Pos</th><th>Team</th><th>FPTS</th><th>Rank</th></tr>";
+  echo "<table id='unranked'
+               class='table vertmiddle table-striped table-condensed table-bordered 
+                      center smallfonttable'>
+          <thead><tr><th>Player</th><th>FPTS</th><th>Rank</th></tr></thead>";
   foreach ($rankablePlayers as $player) {
   	$fantasyPts = ($player->getStatLine($lastYear) != null) ?
-  	    $player->getStatLine($lastYear)->getFantasyPoints() : "--";
-  	echo "<tr><td>" . $player->getNameLink(true) . "</td>
-  	          <td>" . $player->getPositionString() . "</td>
-  	          <td>" . $player->getMlbTeam()->getAbbreviation() . "</td>
+  	$player->getStatLine($lastYear)->getFantasyPoints() : "--";
+  	echo "<tr><td>" . $player->getIdLink(true, $player->getFullName()) . "</td>
   	          <td>" . $fantasyPts . "</td><td>";
   	displaySelectForPlayer($player, 0);
   	echo "</td></tr>";
   }
   echo "</table>";
+  echo "</div>"; //span2
+  
+  echo "<div class='span9 center'>";
 
-  echo "</FORM></div>";
+  // display ranked players
+  echo "<h4>Ranked Players</h4>";
+  // TODO do not show 'save' button after rankings period ends
+  echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save my changes</button>";
+  echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
+  echo "<input type='hidden' name='team_id' value='" . $teamId . "'>";
+  $count = 10;
+  for ($i=0; $i<4; $i++) {
+  	echo "<div class='row-fluid'>";
+  	for ($j=0; $j<3; $j++) {
+  	  if ($count > 0) {
+    	echo "<div class='span4'>";
+        displayPlayersByRank($teamId, $rankYear, $count--);
+        echo "</div>";
+  	  }
+  	}
+  	echo "</div>"; // row-fluid
+  }
 
+  echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save my changes</button>";
+  echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
+  
+  echo "</FORM>";
+  echo "</div>"; // span10
+  echo "</div>"; // row-fluid
+  
   // Footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayFooter();
 ?>
 </body>
 </html>

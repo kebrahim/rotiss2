@@ -61,10 +61,14 @@ class Player {
   }
   
   public function getNameLink($isTopLevel) {
-  	return "<a href='" . ($isTopLevel ? "" : "../") . "playerPage.php?player_id=" . 
-    	$this->getId() . "'>" . $this->getFullName() . "</a>";
+  	return $this->getIdLink($isTopLevel, $this->getFullName());
   }
-
+  	
+  public function getIdLink($isTopLevel, $linkText) {
+  	return "<a href='" . ($isTopLevel ? "" : "../") . "playerPage.php?player_id=" . 
+  	    $this->playerId . "'>" . $linkText . "</a>";
+  }
+  
   public function getBirthDate() {
     return $this->birthDate;
   }

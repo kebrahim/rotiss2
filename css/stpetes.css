@@ -35,6 +35,9 @@ html, body {
 	height:62px; 
 	line-height:58px;
 }
+.smallprogress {
+	margin-bottom:10px;
+}
 .teamlogo {
 	height: 92px;
 	line-height: 88px;
@@ -84,7 +87,16 @@ table.center th {text-align:center; vertical-align: middle;}
 table.center td {text-align:center; vertical-align: middle;}
 table.vertmiddle td {vertical-align:middle;}
 table th {background-color: #1B75BB; color:white;}
-
+.smallfonttable {font-size:11px;}
+.smallfonttable select {
+	font-size:11px;
+}
+.smallfonttable .input-mini {
+	width: 43px;
+}
+.table-striped .placeholder_row td {
+	background-color:#E3F2F9 !important;
+}
 img {
 	border-radius: 4px;
 }

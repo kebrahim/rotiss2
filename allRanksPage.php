@@ -25,11 +25,11 @@
           <div class='span12 center'>";
   
   $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
-  echo "<div class='bodycenter'><h1>Offseason Ranks $rankYear</h1>";
+  echo "<h1>Offseason Ranks $rankYear</h1>";
 
   // navigation links
   echo "<a href='rankPage.php'>My Ranks</a>&nbsp
-        <a href='allRanksPage.php'>All Ranks</a><br/><br/>";
+        <a href='allRanksPage.php'>All Ranks</a><hr/>";
   
   // display ranked players
   $teams = TeamDao::getAllTeams();
@@ -42,11 +42,8 @@
   echo "<th>Total</th></tr></thead>";
   foreach ($teams as $team) {
     $totalCount = RankDao::getTotalRankCount($team->getId(), $rankYear);
-  	echo "<tr";
-  	if ($totalCount == 150) {
-  	  echo " class='finished_ranking'";
-  	}
-  	echo "><td><img height=36 width=36 src='" . $team->getSportslineImageUrl() . "'></td>
+  	echo "<tr>";
+  	echo "<td><img height=36 width=36 src='" . $team->getSportslineImageUrl() . "'></td>
   	          <td>" . $team->getNameLink(true) . "</td>";
 
   	// individual ranks
@@ -58,8 +55,18 @@
   	  $rankCount += $numRanks;
   	}
   	echo "<td>($rankCount / 150)
-  	        <meter min='0' max='150' low='150' optimum='150' value='" . $rankCount . "'></meter>
-  	      </td></tr>";
+  	        <div class='progress progress-striped smallprogress'>
+  	        <div class=\"bar ";
+  	if ($rankCount < 150) {
+  	  echo "bar";
+  	} else if ($rankCount > 150) {
+  	  echo "bar-danger";
+  	} else {
+  	  echo "bar-success";
+  	}
+  	echo "\" style=\"width: " . (($rankCount / 150) * 100) . "%;\"></div>
+  	     </div>";
+  	echo "</td></tr>";
   }
   echo "</table>";
   echo "</div>"; // span12
