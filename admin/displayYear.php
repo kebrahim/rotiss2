@@ -4,6 +4,7 @@
   require_once '../dao/brognaDao.php';
   require_once '../dao/draftPickDao.php';
   require_once '../util/playerManager.php';
+  require_once '../util/teamManager.php';
   require_once '../util/sessions.php';
   require_once '../util/time.php';
 
@@ -31,10 +32,9 @@
   		echo " class='selected_team_row'";
   	  }
   	  echo "><td>Ping Pong</td>
-  	         <td>" . $pingPongBall->getCost() . "</td>
-  	         <td>" . $pingPongBall->getTeam()->getSportslineImg(32, 32) . "</td>
-  		     <td>" . $pingPongBall->getTeam()->getNameLink(true) . "</td>"
-  		           . PlayerManager::getNameAndHeadshotRow($pingPongBall->getPlayer()) . "</tr>";
+  	         <td>" . $pingPongBall->getCost() . "</td>" .
+  	         TeamManager::getNameAndLogoRow($pingPongBall->getTeam()) .
+  		     PlayerManager::getNameAndHeadshotRow($pingPongBall->getPlayer()) . "</tr>";
   	  }
   	
   	  $draftPicks = DraftPickDao::getDraftPicksByYear($year);
@@ -44,9 +44,8 @@
   		  echo " class='selected_team_row'";
   	    }
   	    echo "><td>" . $draftPick->getRound() . "</td>
-  		       <td>" . $draftPick->getPick() . "</td>
-  	           <td>" . $draftPick->getTeam()->getSportslineImg(32, 32) . "</td>
-  		       <td>" . $draftPick->getTeam()->getNameLink(true) . "</td>" .
+  		       <td>" . $draftPick->getPick() . "</td>" .
+  		       TeamManager::getNameAndLogoRow($draftPick->getTeam()) .
   		       PlayerManager::getNameAndHeadshotRow($draftPick->getPlayer()) . "</tr>";
   	  }
     echo "</table>";
@@ -145,12 +144,16 @@
    * Display list of auctioned players for specified year
    */
   function displayAuctionYear($year) {
- 	echo "<h1>Auction Results " . $year . "</h1><hr/>";
-    
+  	echo "<div class='row-fluid'>
+  	        <div class='span12 center'>
+  	          <h1>Auction Results " . $year . "</h1><hr/>";
+
   	// display table of auction results for specified year, highlighting row for specified team
   	$loggedinTeamId = SessionUtil::getLoggedInTeam()->getId();
-  	echo "<table border class='center'>
-  	        <th>Team</th><th>Player</th><th>Cost</th></tr>";
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
+  	        <thead><tr>
+  	          <th colspan=2>Team</th><th colspan=2>Player</th><th>Cost</th>
+  	        </tr></thead>";
   	$auctionResults = AuctionResultDao::getAuctionResultsByYear($year);
   	foreach ($auctionResults as $auctionResult) {
   	  $team = $auctionResult->getTeam();
@@ -159,11 +162,13 @@
   	  if ($team->getId() == $loggedinTeamId) {
   	    echo " class='selected_team_row'";
   	  }
-      echo "><td>" . $team->getNameLink(true) . "</td>
-  	         <td>" . $player->getNameLink(true) . "</td>
-  	         <td>" . $auctionResult->getCost() . "</td></tr>";
+      echo ">" . TeamManager::getNameAndLogoRow($team) .
+                 PlayerManager::getNameAndHeadshotRow($player) .
+  	             "<td>" . $auctionResult->getCost() . "</td></tr>";
   	}
   	echo "</table>";
+  	echo "</div>"; // span12
+  	echo "</div>"; // row-fluid
   }
   
   /**

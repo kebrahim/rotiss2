@@ -18,7 +18,7 @@ class DraftManager {
   	$minYear = DraftPickDao::getMinimumDraftYear();
   	$maxYear = DraftPickDao::getMaximumDraftYear();
   	echo "<label for='year'>Choose year: </label>";
-  	echo "<select id='year' name='year' onchange='showYear(this.value)'>";
+  	echo "<select id='year' class='input-small' name='year' onchange='showYear(this.value)'>";
   	for ($year = $minYear; $year <= $maxYear; $year++) {
   		echo "<option value='" . $year . "'";
   		if ($year == $selectedYear) {

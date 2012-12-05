@@ -28,6 +28,18 @@ class TeamManager {
   	echo "</div>"; // span12
   	echo "</div>"; // row-fluid
   }
+  
+  /**
+   * Returns a row in a table with the specified team name and logo.
+   */
+  public static function getNameAndLogoRow($team) {
+  	if ($team != null) {
+  	  return "<td>" . $team->getSportslineImg(32, 32) . "</td>
+  		      <td>" . $team->getNameLink(true) . "</td>";
+  	} else {
+  	  return "<td colspan=2>--</td>";
+  	}
+  }
 }
 
 ?>

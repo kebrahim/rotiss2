@@ -1,5 +1,6 @@
 <?php
   require_once 'util/sessions.php';
+  require_once 'util/time.php';
   
   // if year is not specified, use the year based on the end of the season.
   $redirectUrl = "draftPage.php";
@@ -59,7 +60,6 @@ function getRedirectHTML(element, htmlString) {
   require_once 'dao/draftPickDao.php';
   require_once 'util/draftManager.php';
   require_once 'util/layout.php';
-  require_once 'util/time.php';
 
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::DRAFT_BUTTON);

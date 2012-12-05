@@ -1,12 +1,24 @@
 <?php
   require_once 'util/sessions.php';
-  SessionUtil::checkUserIsLoggedIn();
+  require_once 'util/time.php';
+  
+  // if year is not specified, use the current year.
+  $redirectUrl = "auctionPage.php";
+  if (isset($_REQUEST["year"])) {
+  	$year = $_REQUEST["year"];
+  	$redirectUrl .="?year=$year";
+  } else {
+  	$year = TimeUtil::getCurrentYear();
+  }
+  SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com - Draft</title>
-<link href='css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss - Auction</title>
+<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <script>
@@ -45,38 +57,15 @@ function getRedirectHTML(element, htmlString) {
 <body>
 <?php
   require_once 'dao/auctionDao.php';
-  require_once 'util/navigation.php';
-  require_once 'util/time.php';
+  require_once 'util/auctionManager.php';
+  require_once 'util/layout.php';
 
-  // Display header.
-  NavigationUtil::printHeader(true, true, NavigationUtil::AUCTION_BUTTON);
-  echo "<div class='bodycenter'>";
+  // Nav bar
+  LayoutUtil::displayNavBar(true, LayoutUtil::AUCTION_BUTTON);
   
-  // if year is not specified, use the current year.
-  if (isset($_REQUEST["year"])) {
-    $year = $_REQUEST["year"];
-  } else {
-    $year = TimeUtil::getCurrentYear();
-  }
-
-  // allow user to choose year
-  $minYear = AuctionResultDao::getMinimumAuctionYear();
-  $maxYear = AuctionResultDao::getMaximumAuctionYear();
-  if ($year < $minYear) {
-  	$year = $minYear;
-  } else if ($year > $maxYear) {
-  	$year = $maxYear;
-  }
-  echo "<br/><label for='year'>Choose year: </label>";
-  echo "<select id='year' name='year' onchange='showYear(this.value)'>";
-  for ($yr = $minYear; $yr <= $maxYear; $yr++) {
-  	echo "<option value='" . $yr . "'";
-  	if ($yr == $year) {
-  		echo " selected";
-  	}
-  	echo ">$yr</option>";
-  }
-  echo "</select>";
+  // allow user to choose year.
+  AuctionManager::displayYearChooser($year);
+  
   echo "<div id='yearDisplay'></div><br/>";
 ?>
       
@@ -86,10 +75,9 @@ function getRedirectHTML(element, htmlString) {
 </script>
       
 <?php
-  echo "</div>";
 
   // Display footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayFooter();
 ?>
 </body>
 </html>
