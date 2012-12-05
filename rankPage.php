@@ -1,6 +1,6 @@
 <?php
   require_once 'util/sessions.php';
-  SessionUtil::checkUserIsLoggedIn();
+  SessionUtil::logoutUserIfNotLoggedIn("rankPage.php");
 ?>
 
 <!DOCTYPE html>

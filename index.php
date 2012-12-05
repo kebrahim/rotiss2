@@ -20,6 +20,8 @@
   echo "<div class='span12 center' id='loginbox'>
           <img src='img/rotiss-logotype.png' width='480' />";
 
+  $continueUrl = isset($_REQUEST['continue']) ? $_REQUEST['continue'] : null;
+  
   if (isset($_POST['login'])) {
     $user = UserDao::getUserByUsernamePassword($_POST["username"], $_POST["password"]);
     if ($user == null) {
@@ -28,10 +30,9 @@
               <strong>Sorry!</strong> That is an incorrect username or password. Please try again!
             </div>";
     } else {
-      // add user information to session
+      // login and redirect to continue URL
       // TODO handle 'remember me' checkbox
-      // TODO handle login and redirect to URL
-      SessionUtil::loginAndRedirect($user);
+      SessionUtil::loginAndRedirect($user, $continueUrl);
     }
   }
 
@@ -46,8 +47,11 @@
               <input type=\"checkbox\" value=\"remember-me\"> Remember me
             </label>
             <button class=\"btn btn-large btn-primary\" type=\"submit\"
-                    name='login'>Sign in</button>
-          </form>
+                    name='login'>Sign in</button>";
+  if ($continueUrl != null) {
+    echo "<input type='hidden' name='continue' value='$continueUrl'>";
+  }
+  echo "  </form>
         </div>";
 
   echo "</div>"; // row-fluid

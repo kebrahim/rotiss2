@@ -1,6 +1,16 @@
 <?php
   require_once 'util/sessions.php';
-  SessionUtil::checkUserIsLoggedIn();
+  
+  // Get team from REQUEST; otherwise, use logged-in user's team.
+  $redirectUrl = "teamPage.php";
+  if (isset($_REQUEST["team_id"])) {
+  	$teamId = $_REQUEST["team_id"];
+  	$redirectUrl .= "?team_id=$teamId";
+  } else if (SessionUtil::isLoggedIn()) {
+  	$teamId = SessionUtil::getLoggedInTeam()->getId();
+  }
+  
+  SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
 <!DOCTYPE html>
@@ -53,12 +63,6 @@ function getRedirectHTML(element, htmlString) {
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::TEAM_SUMMARY_BUTTON);
 
-  // Get team from REQUEST; otherwise, use logged-in user's team.
-  if (isset($_REQUEST["team_id"])) {
-    $teamId = $_REQUEST["team_id"];
-  } else {
-    $teamId = SessionUtil::getLoggedInTeam()->getId();
-  }
   $team = TeamDao::getTeamById($teamId);
   if ($team == null) {
   	die("<h1>Team ID " . $teamId . " not found!</h1>");

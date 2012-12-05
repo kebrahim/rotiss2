@@ -1,6 +1,14 @@
 <?php
   require_once 'util/sessions.php';
-  SessionUtil::checkUserIsLoggedIn();
+  
+  $redirectUrl = "playersPage.php";
+  if (isset($_REQUEST['name'])) {
+  	$nameString = $_REQUEST['name'];
+  	$redirectUrl .= "?name=$nameString";
+  } else {
+  	$nameString = null;
+  }
+  SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
 <!DOCTYPE html>
@@ -29,12 +37,6 @@
 
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::PLAYERS_BUTTON);
-
-  if (isset($_REQUEST['name'])) {
-    $nameString = $_REQUEST['name'];
-  } else {
-  	$nameString = null;
-  }
 
   // header section
   echo "<div class=\"row-fluid\">

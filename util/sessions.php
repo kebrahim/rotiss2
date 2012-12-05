@@ -35,10 +35,10 @@ class SessionUtil {
   }
 
   /**
-   * Login with the specified user, after clearing out the session, and redirect to the navigation
-   * page.
+   * Login with the specified user, after clearing out the session, and redirect to the specified
+   * URL.
    */
-  public static function loginAndRedirect(User $user) {
+  public static function loginAndRedirect(User $user, $redirectUrl) {
     if (!isset($_SESSION)) {
       session_start();
     }
@@ -49,20 +49,29 @@ class SessionUtil {
     $_SESSION["loggedinsuperadmin"] = $user->isSuperAdmin();
 
 
-    // redirect to navigation page
-    SessionUtil::redirectToUrl("teamPage.php");
+    // redirect to URL if specified; otherwise teamPage
+    SessionUtil::redirectToUrl(($redirectUrl != null) ? $redirectUrl : "teamPage.php");
   }
 
   /**
    * Determine if a user is logged in & if not, redirect the user back to the login page.
    */
   public static function checkUserIsLoggedIn() {
-    SessionUtil::checkTimeout();
-    if (!SessionUtil::isLoggedIn()) {
+    if (SessionUtil::hasUserTimedOut() || !SessionUtil::isLoggedIn()) {
       SessionUtil::logOut();
     }
   }
 
+  /**
+   * Determine if a user is logged in & if not, redirect the user back to the login page with the
+   * specified continue URL.
+   */
+  public static function logoutUserIfNotLoggedIn($continueUrl) {
+  	if (SessionUtil::hasUserTimedOut() || !SessionUtil::isLoggedIn()) {
+  	  SessionUtil::logOutAndRedirect($continueUrl);
+  	}
+  }
+  
   /**
    * Returns true if a user is currently logged in.
    */
@@ -81,9 +90,9 @@ class SessionUtil {
    * Determine if a user is logged in & an admin, & if not, redirect the user back to the login
    * page.
    */
+  // TODO figure out what to do for continue URLs for admin pages
   public static function checkUserIsLoggedInAdmin() {
-    SessionUtil::checkTimeout();
-    if (!SessionUtil::isLoggedInAdmin()) {
+    if (SessionUtil::hasUserTimedOut() || !SessionUtil::isLoggedInAdmin()) {
       SessionUtil::logOut();
     }
   }
@@ -93,8 +102,7 @@ class SessionUtil {
    * page.
    */
   public static function checkUserIsLoggedInSuperAdmin() {
-    SessionUtil::checkTimeout();
-    if (!SessionUtil::isLoggedInSuperAdmin()) {
+    if (SessionUtil::hasUserTimedOut() || !SessionUtil::isLoggedInSuperAdmin()) {
       SessionUtil::logOut();
     }
   }
@@ -131,6 +139,10 @@ class SessionUtil {
    * Logs out the currently logged-in user.
    */
   public static function logOut() {
+  	SessionUtil::logOutAndRedirect(null);
+  }
+  
+  public static function logOutAndRedirect($continueUrl) {
     if (!isset($_SESSION)) {
       session_start();
     }
@@ -143,9 +155,9 @@ class SessionUtil {
     session_unset();
 
     // redirect to home page.
-    SessionUtil::redirectHome();
+	SessionUtil::redirectHome($continueUrl);
   }
-
+  
   /**
    * Redirects the user to the specified URL
    */
@@ -154,26 +166,35 @@ class SessionUtil {
     exit;
   }
 
-  public static function redirectHome() {
-    // TODO Change to http://baseball.rotiss.com
-    SessionUtil::redirectToUrl("http://localhost/rotiss2/");
+  /**
+   * Redirects to home page and adds redirect URL to query string if specified.
+   */
+  public static function redirectHome($continueUrl) {
+    // TODO Change to http://stpetes.rotiss.com
+  	$homePage = "http://localhost/rotiss2/";
+  	if ($continueUrl != null) {
+  	  $homePage .= "?continue=$continueUrl";
+  	}
+    SessionUtil::redirectToUrl($homePage);
   }
 
   /**
-   * Checks to see if the logged-in user has generated any activity in the past 20 minutes; if not,
-   * the user is logged out.
+   * Returns true if the logged-in user has not generated any activity in the past 20 minutes.
    */
-  public static function checkTimeout() {
+  private static function hasUserTimedOut() {
     session_cache_expire(20);
-    session_start();
+    if (!isset($_SESSION)) {
+      session_start();
+    }
     $inactive = 1200;
     if (isset($_SESSION['start']) ) {
       $session_life = time() - $_SESSION['start'];
       if ($session_life > $inactive) {
-        SessionUtil::logOut();
+        return true;
       }
     }
     $_SESSION['start'] = time();
+    return false;
   }
 
   private static function unsetSessionVariable($sessionVar) {

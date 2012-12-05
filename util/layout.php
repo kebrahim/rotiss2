@@ -191,7 +191,7 @@ class LayoutUtil {
                   <img src='img/rotiss2.jpg' width='250' />
                 </div>
                 <div class=\"span4 center muted credit\">
-                  a <a href='http://www.zebrahim.com' target='_blank'>zebrahim</a> joint
+                  a <a href='http://www.zebrahim.com' target='_blank'>zebrahim</a> original
                 </div>
               </div>
             </div>

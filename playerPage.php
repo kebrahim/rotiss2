@@ -1,6 +1,14 @@
 <?php
   require_once 'util/sessions.php';
-  SessionUtil::checkUserIsLoggedIn();
+  
+  $redirectUrl = "playerPage.php";
+  if (isset($_REQUEST['player_id'])) {
+  	$playerId = $_REQUEST['player_id'];
+  	$redirectUrl .= "?player_id=$playerId";
+  } else {
+  	die("<h1>Missing playerId for player page</h1>");
+  }
+  SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
 <!DOCTYPE html>
@@ -20,22 +28,18 @@
   // Display header.
   LayoutUtil::displayNavBar(TRUE, LayoutUtil::PLAYERS_BUTTON);
 
-  if (isset($_REQUEST["player_id"])) {
-    $playerId = $_REQUEST["player_id"];
-  } else {
-    die("<h1>Missing playerId for player page</h1>");
-  }
-
+  echo "<div class='row-fluid'>";
   // Get player from db.
   $player = PlayerDao::getPlayerById($playerId);
   if ($player == null) {
-    die("<h1>player id " . $playerId . " does not exist!</h1>");
+  	die("<div class='span12 center'>
+  			<h1>player id " . $playerId . " does not exist!</h1>
+  	     </div></div>");
   }
-
-  echo "<div class='row-fluid'>";
+  
+  echo "<div class='span2 center headshotimg nexttoh1'>";
 
   // Headshot
-  echo "<div class='span2 center headshotimg nexttoh1'>";
   if ($player->hasSportslineId()) {
     echo "<a href='" . $player->getStPetesUrl() . "' target='_blank'>" .
           $player->getHeadshotImg(42, 56) . "</a><br/><br/>";
