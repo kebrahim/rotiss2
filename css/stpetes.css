@@ -97,6 +97,9 @@ table th {background-color: #1B75BB; color:white;}
 .table-striped .placeholder_row td {
 	background-color:#E3F2F9 !important;
 }
+.table-striped .selected_team_row td {
+	background-color:#E3F2F9 !important;
+}
 img {
 	border-radius: 4px;
 }

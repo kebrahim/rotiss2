@@ -1,12 +1,23 @@
 <?php
   require_once 'util/sessions.php';
-  SessionUtil::checkUserIsLoggedIn();
+  
+  // if year is not specified, use the year based on the end of the season.
+  $redirectUrl = "draftPage.php";
+  if (isset($_REQUEST["year"])) {
+  	$year = $_REQUEST["year"];
+  	$redirectUrl .="?year=$year";
+  } else {
+  	$year = TimeUtil::getYearBasedOnEndOfSeason();
+  }
+  SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com - Draft</title>
-<link href='css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss - Draft</title>
+<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <script>
@@ -46,33 +57,16 @@ function getRedirectHTML(element, htmlString) {
 
 <?php
   require_once 'dao/draftPickDao.php';
-  require_once 'util/navigation.php';
+  require_once 'util/draftManager.php';
+  require_once 'util/layout.php';
   require_once 'util/time.php';
 
-  // Display header.
-  NavigationUtil::printHeader(true, true, NavigationUtil::DRAFT_BUTTON);
-  echo "<div class='bodycenter'>";
+  // Nav bar
+  LayoutUtil::displayNavBar(true, LayoutUtil::DRAFT_BUTTON);
   
-  // if year is not specified, use the year based on the end of the season.
-  if (isset($_REQUEST["year"])) {
-    $year = $_REQUEST["year"];
-  } else {
-    $year = TimeUtil::getYearBasedOnEndOfSeason();
-  }
-
   // allow user to choose year.
-  $minYear = DraftPickDao::getMinimumDraftYear();
-  $maxYear = DraftPickDao::getMaximumDraftYear();
-  echo "<br/><label for='year'>Choose year: </label>";
-  echo "<select id='year' name='year' onchange='showYear(this.value)'>";
-  for ($yr = $minYear; $yr <= $maxYear; $yr++) {
-  	echo "<option value='" . $yr . "'";
-  	if ($yr == $year) {
-  		echo " selected";
-  	}
-  	echo ">$yr</option>";
-  }
-  echo "</select>";
+  DraftManager::displayYearChooser($year);
+  
   echo "<div id='yearDisplay'></div><br/>";
 ?>
     
@@ -82,10 +76,9 @@ function getRedirectHTML(element, htmlString) {
 </script>
     
 <?php
-  echo "</div>";
 
   // Display footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayFooter();
 ?>
 
 </body>

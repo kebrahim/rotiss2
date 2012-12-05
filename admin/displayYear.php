@@ -11,12 +11,18 @@
    * Displays draft results from specified year.
    */
   function displayDraftYear($year) {
-  	echo "<h1>Draft Results " . $year . "</h1><hr/>";
+  	echo "<div class='row-fluid'>
+  	        <div class='span12 center'>
+  	          <h1>Draft Results " . $year . "</h1><hr/>";
+  	
+  	// TODO allow filtering by round
   	
   	// display table of draft picks for selected year, highlighting row for logged-in team
   	$loggedInTeamId = SessionUtil::getLoggedInTeam()->getId();
-  	echo "<table border class='center'>
-  	        <th>Round</th><th>Pick</th><th colspan=2>Team</th><th colspan=2>Player</th></tr>";
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
+  	        <thead><tr>
+  	          <th>Round</th><th>Pick</th><th colspan=2>Team</th><th colspan=2>Player</th>
+  	        </tr></thead>";
   	
   	$pingPongBalls = BallDao::getPingPongBallsByYear($year);
   	foreach ($pingPongBalls as $pingPongBall) {
@@ -44,6 +50,8 @@
   		       PlayerManager::getNameAndHeadshotRow($draftPick->getPlayer()) . "</tr>";
   	  }
     echo "</table>";
+    echo "</div>"; // span12
+    echo "</div>"; // row-fluid
   }
   
   /**
