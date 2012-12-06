@@ -91,8 +91,11 @@ table th {background-color: #1B75BB; color:white;}
 .smallfonttable select {
 	font-size:11px;
 }
-.smallfonttable .input-mini {
+.input-micro {
 	width: 43px;
+}
+.input-xsmall {
+	width: 65px;
 }
 .table-striped .placeholder_row td {
 	background-color:#E3F2F9 !important;

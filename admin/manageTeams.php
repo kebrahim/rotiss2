@@ -1,30 +1,32 @@
 <?php
   require_once '../util/sessions.php';
   SessionUtil::checkUserIsLoggedInAdmin();
+  SessionUtil::logoutUserIfNotLoggedIn("admin/manageTeams.php");
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com - Manage Teams</title>
-<link href='../css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss - Manage Teams</title>
+<link href='../css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='../css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
 <?php
   require_once '../dao/playerDao.php';
   require_once '../dao/teamDao.php';
-  require_once '../util/navigation.php';
+  require_once '../util/layout.php';
 
-  // Display header.
-  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_ROSTERS_BUTTON);
-  echo "<div class='bodycenter'>";
-
+  // Display nav bar.
+  LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_ROSTERS_BUTTON);
+  
   /**
    * Creates a select tag for the assignment of the specified player to any of the fantasy teams.
    */
   function displayTeamSelectForPlayer(Player $player) {
     $playerTeam = $player->getFantasyTeam();
-    echo "<select name='tp" . $player->getId() . "' size=1>";
+    echo "<select name='tp" . $player->getId() . "' class='input-xsmall' size=1>";
 
     // option for unassigning from all teams
     echo "<option value='0'";
@@ -49,12 +51,12 @@
    * Displays the array of players in a table.
    */
   function displayArrayOfPlayers($players) {
-    echo "<table border class='center smallfonttable'>";
-    echo "<tr><th>Player</th><th>Pos</th><th>Team</th><th>Rotiss Team</th></tr>";
+    echo "<table class='table vertmiddle table-striped table-condensed table-bordered
+                        center smallfonttable'>";
+    echo "<thead><tr><th>Player</th><th>Rotiss Team</th></tr></thead>";
     foreach ($players as $player) {
       echo "<tr><td>" . $player->getNameLink(false) . "</td>
-      	        <td>" . $player->getPositionString() . "</td>
-      	        <td>" . $player->getMlbTeam()->getAbbreviation() . "</td><td>";
+                <td>";
       displayTeamSelectForPlayer($player);
       echo "</td></tr>";
     }
@@ -66,11 +68,14 @@
    */
   function displayPlayersByTeam(Team $team) {
     echo "<h4>" . $team->getIdLink(false, $team->getAbbreviation()) . "</h4>";
-    echo "<img src='" . $team->getSportslineImageUrl() . "' height=36 width=36><br/><br/>";
     displayArrayOfPlayers(PlayerDao::getPlayersByTeam($team));
   }
 
-  echo "<h1>Manage Rosters</h1><hr/>";
+  echo "<div class='row-fluid'>
+          <div class='span12 center'>
+            <h1>Manage Rosters</h1>
+          </div>
+        </div>";
   echo "<FORM ACTION='manageTeams.php' METHOD=POST>";
 
   if (isset($_POST['save'])) {
@@ -86,29 +91,42 @@
     }
   }
 
-  $teams = TeamDao::getAllTeams();
-  echo "<table id='teams' class='center'>";
-  for ($i=0; $i<4; $i++) {
-  	echo "<tr>";
-  	for ($j=0; $j<4; $j++) {
-      echo "<td class='vert_td_top'>";
-      displayPlayersByTeam($teams[($i * 4) + $j]);
-      echo "</td>";
-  	}
-  	echo "</tr>";
-  }
-  echo "</table><br/><br/>";
-
-  echo "<input type='submit' name='save' value='Save changes'>";
-  echo "<input type='submit' name='cancel' value='Cancel'>";
-
   // display unassigned players
-  echo "<h2>Unassigned players</h2>";
+  echo "<div class='row-fluid'>
+          <div class='span3 center'>
+            <h4>Unassigned players</h4>";
   displayArrayOfPlayers(PlayerDao::getUnassignedPlayers());
-  echo "</form></div>";
+  echo "  </div>";
+  
+  echo "  <div class='span9 center'>
+            <h4>Roster grid</h4>";
+  echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save my changes</button>";
+  echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
+  
+  $teams = TeamDao::getAllTeams();
+  $teamCount = count($teams);
+  for ($i=0; $i<6; $i++) {
+  	echo "<div class='row-fluid'>";
+  	for ($j=0; $j<3; $j++) {
+  	  if ($teamCount > 0) {
+        echo "<div class='span4'>";
+        displayPlayersByTeam($teams[count($teams) - $teamCount]);
+        echo "</div>";
+        $teamCount--;
+  	  }
+  	}
+  	echo "</div>";
+  }
+
+  echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save my changes</button>";
+  echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
+  echo "</form>";
+  echo "</div>"; // span9
+  echo "</div>"; // row-fluid
 
   // Footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayAdminFooter();
 ?>
+
 </body>
 </html>

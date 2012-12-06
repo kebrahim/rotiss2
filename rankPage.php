@@ -23,7 +23,7 @@
    * selected.
    */
   function displaySelectForPlayer(Player $player, $selectedRank) {
-  	echo "<select class='input-mini' name='pk" . $player->getId() . "' size=1>";
+  	echo "<select class='input-micro' name='pk" . $player->getId() . "' size=1>";
   	for ($i=0; $i<=10; $i++) {
   	  echo "<option";
   	  if ($i == $selectedRank) {

@@ -5,7 +5,8 @@ CommonUtil::requireFileIn('/../dao/', 'teamDao.php');
 CommonUtil::requireFileIn('/../entity/', 'user.php');
 
 class SessionUtil {
-
+  // TODO add prefix to session vars so they do not conflict w/ topchef rotiss
+  
   /**
    * Updates the _SESSION array with the value of the specified key within the
    * specified array; if isPost = false, then remove the value from the SESSION.
@@ -87,22 +88,20 @@ class SessionUtil {
   }
 
   /**
-   * Determine if a user is logged in & an admin, & if not, redirect the user back to the login
-   * page.
+   * Determine if a user is an admin, & if not, redirect the user back to the login page.
    */
-  // TODO figure out what to do for continue URLs for admin pages
+  // TODO combine w/ continueURL method?
   public static function checkUserIsLoggedInAdmin() {
-    if (SessionUtil::hasUserTimedOut() || !SessionUtil::isLoggedInAdmin()) {
+    if (!SessionUtil::isLoggedInAdmin()) {
       SessionUtil::logOut();
     }
   }
 
   /**
-   * Determine if a user is logged in & a super-admin, & if not, redirect the user back to the login
-   * page.
+   * Determine if a user is a super-admin, & if not, redirect the user back to the login page.
    */
   public static function checkUserIsLoggedInSuperAdmin() {
-    if (SessionUtil::hasUserTimedOut() || !SessionUtil::isLoggedInSuperAdmin()) {
+    if (!SessionUtil::isLoggedInSuperAdmin()) {
       SessionUtil::logOut();
     }
   }

@@ -60,14 +60,13 @@ class LayoutUtil {
 
     // if admin user, show admin button/menu
     if (SessionUtil::isLoggedInAdmin()) {
-      LayoutUtil::displayListItem("admin/manageTeams.php", "Admin", $isTopLevel, $selectedButton,
-          self::ADMIN_BUTTON);
+      LayoutUtil::displayAdminDropdown($isTopLevel, $selectedButton);
     }
 
     echo "</ul>";
 
     // show logged-in user name with links for editing profile & signing out
-    LayoutUtil::displayProfileInfo($isTopLevel);
+    LayoutUtil::displayProfileDropdown($isTopLevel);
 
     echo "</div>"; // navbar-inner
     echo "</div>"; // navbar
@@ -90,7 +89,7 @@ class LayoutUtil {
   	echo "</ul></li>";
   }
 
-  private static function displayProfileInfo($isTopLevel) {
+  private static function displayProfileDropdown($isTopLevel) {
   	$user = SessionUtil::getLoggedInUser();
   	echo "<ul class='nav pull-right'>
   	        <li class=\"divider-vertical\"></li>
@@ -107,32 +106,16 @@ class LayoutUtil {
   	      </li></ul>";
   }
 
-  private static function displayListItem($url, $caption, $isTopLevel, $selectedButton, 
-      $listButton) {
-    echo "<li";
-    if ($selectedButton == $listButton) {
-      echo " class='active'";
-    }
-    echo ">";
-    LayoutUtil::displayLink($url, $caption, $isTopLevel);
-    echo "</li>";
-  }
-
-  private static function displayLink($url, $caption, $isTopLevel) {
-  	echo "<a href='" . ($isTopLevel ? "" : "../") . $url . "'>" . $caption . "</a>";
-  }
-
-  // TODO show admin menu on sidebar, on every admin page
-  private static function displayAdminMenu($isTopLevel, $selectedButton) {
-  	// top-level button directs to manage teams page
-  	echo "<li class='dropdown'>";
-  	$adminSelected = ($selectedButton >= self::ADMIN_BUTTON);
-  	LayoutUtil::displayLink(
-  			"admin/manageTeams.php", "Admin", $isTopLevel, $adminSelected);
-
-  	// sub-menu includes all admin options
-  	echo "<ul class='dropdown'>";
-
+  private static function displayAdminDropdown($isTopLevel, $selectedButton) {
+  	$dropdownSelected = ($selectedButton >= self::ADMIN_BUTTON);
+  	echo "<li class='dropdown";
+  	if ($dropdownSelected) {
+  	  echo " active";
+  	}
+  	echo "'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>
+  	        Admin&nbsp<b class='caret'></b></a>";
+  	echo "<ul class='dropdown-menu'>";
+  	 
     // Manage teams
   	LayoutUtil::displayListItem("admin/manageTeams.php", "Manage Rosters", $isTopLevel,
   	    $selectedButton, self::MANAGE_ROSTERS_BUTTON);
@@ -173,11 +156,34 @@ class LayoutUtil {
   	}
   	echo "</ul></li>";
   }
+  
+  private static function displayListItem($url, $caption, $isTopLevel, $selectedButton,
+  		$listButton) {
+  	echo "<li";
+  	if ($selectedButton == $listButton) {
+  		echo " class='active'";
+  	}
+  	echo ">";
+  	LayoutUtil::displayLink($url, $caption, $isTopLevel);
+  	echo "</li>";
+  }
+  
+  private static function displayLink($url, $caption, $isTopLevel) {
+  	echo "<a href='" . ($isTopLevel ? "" : "../") . $url . "'>" . $caption . "</a>";
+  }
 
   /**
    * Displays the footer, attached to the bottom of the page.
    */
   public static function displayFooter() {
+    LayoutUtil::closeDivsAndDisplayFooter(true);	
+  }
+  
+  public static function displayAdminFooter() {
+  	LayoutUtil::closeDivsAndDisplayFooter(false);
+  }
+  
+  private static function closeDivsAndDisplayFooter($isTopLevel) {
     echo "</div>";  // container
     echo "<div id='push'></div>";
     echo "</div>"; // wrap
@@ -188,7 +194,7 @@ class LayoutUtil {
                   St. Pete's Rotiss 2.0
                 </div>
                 <div class=\"span4 center\">
-                  <img src='img/rotiss2.jpg' width='250' />
+                  <img src='" . ($isTopLevel ? "" : "../") . "img/rotiss2.jpg' width='250' />
                 </div>
                 <div class=\"span4 center muted credit\">
                   a <a href='http://www.zebrahim.com' target='_blank'>zebrahim</a> original
@@ -196,7 +202,7 @@ class LayoutUtil {
               </div>
             </div>
           </div>
-          <script src=\"http://code.jquery.com/jquery-latest.js\"></script>
-          <script src=\"js/bootstrap.js\"></script>";
+          <script src=\"http://code.jquery.com/jquery-latest.js\"></script>    
+          <script src=\"" . ($isTopLevel ? "" : "../") . "js/bootstrap.js\"></script>";
   }
 }
