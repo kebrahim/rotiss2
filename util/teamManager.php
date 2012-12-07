@@ -15,7 +15,7 @@ class TeamManager {
   	echo "<div class='row-fluid'>
   	        <div class='span12 center chooser'>";
   	$allTeams = TeamDao::getAllTeams();
-  	echo "<label for='team_id'>Choose team: </label>";
+  	echo "<label for='team_id'>Choose team:</label>";
   	echo "<select id='team_id' name='team_id' class='span6' onchange='showTeam(this.value)'>";
   	foreach ($allTeams as $team) {
   	  echo "<option value='" . $team->getId() . "'";

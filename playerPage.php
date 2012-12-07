@@ -50,7 +50,7 @@
 
   // player name heading
   echo "<div class='span10 center'>
-            <h1>" . $player->getFullName() . "</h1>
+            <h3>" . $player->getFullName() . "</h3>
           </div>";
   echo "</div>"; // row-fluid
 

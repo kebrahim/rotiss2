@@ -35,7 +35,7 @@ class LayoutUtil {
           <ul class='nav'>";
 
     // Summary page
-    LayoutUtil::displayListItem("teamPage.php", "Team Summary", $isTopLevel, $selectedButton,
+    LayoutUtil::displayListItem("teamPage.php", "Teams", $isTopLevel, $selectedButton,
         self::TEAM_SUMMARY_BUTTON);
 
     // Budget page
@@ -146,6 +146,8 @@ class LayoutUtil {
 
   	// If super-admin, show ranks & placeholders pages
   	if (SessionUtil::isLoggedInSuperAdmin()) {
+  	  echo "<li class=\"divider\"></li>";
+  		
   	  // Placeholders
   	  LayoutUtil::displayListItem("admin/managePlaceholders.php", "Placeholders", $isTopLevel,
           $selectedButton, self::MANAGE_PLACEHOLDERS_BUTTON);

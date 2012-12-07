@@ -67,7 +67,7 @@
    * Displays all players assigned to the specified team in a table.
    */
   function displayPlayersByTeam(Team $team) {
-    echo "<h4>" . $team->getIdLink(false, $team->getAbbreviation()) . "</h4>";
+    echo "<h5>" . $team->getIdLink(false, $team->getAbbreviation()) . "</h5>";
     displayArrayOfPlayers(PlayerDao::getPlayersByTeam($team));
   }
 

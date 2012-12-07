@@ -1,12 +1,15 @@
 <?php
   require_once '../util/sessions.php';
   SessionUtil::checkUserIsLoggedInAdmin();
+  SessionUtil::logoutUserIfNotLoggedIn("admin/manageTrade.php");
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com - Manage Trades</title>
-<link href='../css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss - Manage Trades</title>
+<link href='../css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='../css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <script>
@@ -63,7 +66,8 @@ function addOption(option, selection, position) {
 function addOptionToDropDown(selection, selectedOption) {
   for (var i=0; i<selection.length; i++) {
 	// if selection.options[i] comes after teamName, add it before this position
-    if (selection.options[i].text.toUpperCase().localeCompare(selectedOption.text.toUpperCase()) > 0) {
+    if (selection.options[i].text.toUpperCase().localeCompare(
+    	    selectedOption.text.toUpperCase()) > 0) {
       addOption(selectedOption, selection, i);
       return;
     }
@@ -144,13 +148,30 @@ function selectTeam(position, teamid) {
   require_once '../dao/teamDao.php';
   require_once '../entity/trade.php';
   require_once '../util/time.php';
-  require_once '../util/navigation.php';
+  require_once '../util/layout.php';
 
-  // Display header.
-  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_TRADE_BUTTON);
-  echo "<div class='bodycenter'>";
+  function displayTeamPicker($teamNum, $teams) {
+  	echo "<div class='span6 center'>
+  	      <div class='chooser'>";
+    echo "<label for='team$teamNum'>Select Team:</label>
+          <select id='team$teamNum' class='span8 smallfonttable' name='team$teamNum' 
+                  onchange='selectTeam($teamNum, this.value)'>
+            <option value='0'></option>";
+    foreach ($teams as $team) {
+      echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
+          . " (" . $team->getAbbreviation() . ")</option>";
+    }
+    echo "</select></div>";
+    echo "<div id='teamDisplay$teamNum'></div>";
+    echo "</div>"; // span6
+  }
+  
+  // Display nav bar.
+  LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_TRADE_BUTTON);
 
-  echo "<h1>Let's Make a Deal!</h1><hr/>";
+  echo "<div class='row-fluid'>
+          <div class='span12 center'>
+            <h1>Let's Make a Deal!</h1><hr/>";
   echo "<FORM ACTION='manageTrade.php' METHOD=POST>";
 
   // If trade button was pressed, execute validated trade.
@@ -165,8 +186,9 @@ function selectTeam(position, teamid) {
       $trade->showTradeSummary();
 
       // request final confirmation of trade before execution
-      echo "<input class='button' type=submit name='confirmTrade' value='Confirm'>&nbsp";
-      echo "<input class='button' type=submit name='cancelTrade' value='Cancel'><br>";
+      echo "<p><button class=\"btn btn-primary\" name='confirmTrade' 
+                       type=\"submit\">Confirm Trade</button>
+            &nbsp&nbsp<button class=\"btn\" name='cancelTrade' type=\"submit\">Cancel</button></p>";
     } else {
       echo "<h3>Cannot execute trade! Please <a href='manageTrade.php'>try again</a>.</h3>";
     }
@@ -179,7 +201,7 @@ function selectTeam(position, teamid) {
     if ($trade->validateTrade()) {
       // Initiate trade & report results.
       $trade->initiateTrade();
-      echo "<br><a href='manageTrade.php'>Let's do it again!</a><br>";
+      echo "<a href='manageTrade.php' class='btn btn-primary'>Let's do it again!</a><br>";
     } else {
       echo "<h3>Cannot execute trade! Please <a href='manageTrade.php'>try again</a>.</h3>";
     }
@@ -189,41 +211,26 @@ function selectTeam(position, teamid) {
 
     // allow user to select two teams.
     $teams = TeamDao::getAllTeams();
-    echo "<div id='column_container'>";
 
-    // team 1
-    echo "<div id='left_col'><div id='left_col_inner'>";
-    echo "<label for='team1'>Select Team:</label>&nbsp
-          <select id='team1' name='team1' onchange='selectTeam(1, this.value)'>
-            <option value='0'></option>";
-    foreach ($teams as $team) {
-      echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
-          . " (" . $team->getAbbreviation() . ")</option>";
-    }
-    echo "</select><br>";
-    echo "<div id='teamDisplay1'></div><br/></div></div>";
-
-    // team 2
-    echo "<div id='right_col'><div id='right_col_inner'>";
-    echo "<label for='team2'>Select Team:</label>&nbsp
-          <select id='team2' name='team2' onchange='selectTeam(2, this.value)'>
-            <option value='0'></option>";
-    foreach ($teams as $team) {
-      echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
-          . " (" . $team->getAbbreviation() . ")</option>";
-    }
-    echo "</select><br>";
-    echo "<div id='teamDisplay2'></div><br/></div></div></div>";
-
+    // show pickers for team 1 and 2
+    echo "<div class='row-fluid'>";
+    displayTeamPicker(1, $teams);
+    displayTeamPicker(2, $teams);
+    echo "</div>"; // row-fluid
+    
     echo "<div id='tradeButton' style='display:none'>
-            <input class='button' type=submit name='trade' value='Initiate Trade'>
-            <input class='button' type=submit name='cancel' value='Cancel'>
+            <p><button class=\"btn btn-primary\" name='trade' 
+                       type=\"submit\">Initiate Trade</button>
+            &nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Cancel</button></p>
           </div>";
   }
-  echo "</form></div>";
-
+    
+  echo "</form>";
+  echo "</div>"; // span12
+  echo "</div>"; // row-fluid
+  
   // Footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayAdminFooter();
 ?>
 
 </body>

@@ -149,9 +149,9 @@ class Team {
   }
 
   public function displayTeamInfo() {
-    echo "<h3>" . $this->getName() . "</h3>";
-    echo "<img src='" . $this->getSportslineImageUrl() . "'><br/><br/>";
-    echo $this->getOwnersString() . "<br/>";
+    echo "<h4>" . $this->getName() . "</h4>";
+    echo "<img src='" . $this->getSportslineImageUrl() . "'>";
+    echo "<br/><p class='ptop'>" . $this->getOwnersString() . "</p>";
   }
 
   public function hasContracts() {
@@ -167,8 +167,8 @@ class Team {
   }
 
   /**
-  * Display all contract information for this team.
-  */
+   * Display all contract information for this team.
+   */
   public function displayContracts($minYear, $maxYear, $isSelectable) {
     $contracts = $this->filterContractsByYear(
         ContractDao::getContractsByTeamId($this->teamId), $minYear, $maxYear, true);
@@ -212,6 +212,36 @@ class Team {
     echo "</table>";
   }
 
+  public function displayContractsForTrade($minYear, $maxYear) {
+  	$contracts = $this->filterContractsByYear(
+  	    ContractDao::getContractsByTeamId($this->teamId), $minYear, $maxYear, true);
+  	if (count($contracts) == 0) {
+  	  return;
+  	}
+
+  	echo "<a id='contracts'></a><h5>Contracts</h5>";
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center 
+  	                    smallfonttable'>
+  	        <thead><tr>
+  	          <th class='checkth'></th><th colspan='2'>Player</th><th>Years</th><th>Price</th>
+  	          <th>Signed</th><th>Start</th><th>End</th><th>Type</th>
+  	        </tr></thead>";
+  	foreach ($contracts as $contract) {
+  		$player = $contract->getPlayer();
+  		echo "<tr>";
+  		echo "<td><input type=checkbox name='trade_t" . $this->getId() . "c[]'
+  			             value='" . $contract->getId() . "'></td>";
+  		echo PlayerManager::getNameAndHeadshotRowAtLevel($player, false) . "
+  		<td>" . $contract->getTotalYears() . "</td>
+  		<td>" . $contract->getPrice() . "</td>
+  		<td>" . $contract->getSignDate() . "</td>
+  		<td>" . $contract->getStartYear() . "</td>
+  		<td>" . $contract->getEndYear() . "</td>
+  		<td>" . ($contract->isAuction() ? "Auction" : "Regular") . "</td></tr>";
+  	}
+  	echo "</table>";  	 
+  }
+   
   /**
    * Display non-auction contracts for the keeper page, filtered by year.
    */
@@ -325,6 +355,42 @@ class Team {
     echo "</table>";
   }
 
+  function displayDraftPicksForTrade($minYear, $maxYear) {
+  	if ((count($this->getPingPongBalls()) + count($this->getDraftPicks())) == 0) {
+  	  return;
+  	}
+  
+  	echo "<a id='draft'></a><h5>Draft Picks</h5>";
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center
+  	                    smallfonttable'>
+  	      <thead><tr>";
+  	echo "<th class='checkth'></th><th>Year</th><th>Round</th><th>Pick</th>
+  	      <th>Original Team</th></tr></thead>";
+  	foreach ($this->getPingPongBalls() as $pingPongBall) {
+  	  if (($pingPongBall->getYear() < $minYear) || ($pingPongBall->getYear() > $maxYear)) {
+  	    continue;
+  	  }
+  	  echo "<tr><td><input type=checkbox name='trade_t" . $this->getId() . "dpb[]'
+  			               value='" . $pingPongBall->getId() . "'>
+  			</td>
+  	        <td>" . $pingPongBall->getYear() . "</td><td>Ping Pong</td>
+  		    <td>" . $pingPongBall->getCost() . "</td>" .
+  		   "<td>--</td></tr>";
+  	}
+  	foreach ($this->getDraftPicks() as $draftPick) {
+  	  if (($draftPick->getYear() < $minYear) || ($draftPick->getYear() > $maxYear)) {
+  	    continue;
+  	  }
+  	  echo "<tr>
+  	          <td><input type=checkbox name='trade_t" . $this->getId() . "dpp[]'
+  			               value='" . $draftPick->getId() . "'></td>
+  	          <td>" . $draftPick->getYear() . "</td><td>" . $draftPick->getRound() . "</td>
+  		      <td>" . $draftPick->getPick() . "</td>" .
+  		     "<td>" . $draftPick->getOriginalTeamName() . "</td></tr>";
+  	}
+  	echo "</table>";
+  }
+  
   /**
    * Displays the ping pong ball information only, between the specified years.
    */
@@ -425,6 +491,44 @@ class Team {
       echo "</tr>";
     }
     echo "</table>";
+  }
+  
+  function displayBrognasForTrade($minYear, $maxYear, $tradePosition) {
+  	if (count($this->getBrognas()) == 0) {
+  	  return;
+  	}
+  
+  	echo "<a id='brognas'></a><h5>Brognas</h5>";
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center 
+  	                    smallfonttable brognatrade'
+  	             id='brognaTable'><thead><tr>";
+  	echo "<th class='checkth'></th><th>Year</th><th>Total</th><th>Tradeable</th>";
+  	echo "<th id='headerbox" . $tradePosition . "' style='display:none'>To Trade</th></tr></thead>";
+  	foreach ($this->getBrognas() as $brogna) {
+  	  // Only show brogna info between the min and max years.
+  	  if (($brogna->getYear() < $minYear) || ($brogna->getYear() > $maxYear)) {
+  	    continue;
+  	  }
+  	  echo "<tr>";
+	  if ($brogna->getTradeablePoints() > 0) {
+  	    echo "<td><input type=checkbox name='trade_t" . $this->getId() . "b'
+  		                 onclick='toggle(" . $tradePosition . ")'
+  		                 value='" . $brogna->getYear() . "'>
+  		      </td>";
+  	  } else {
+  	    echo "<td><input type=checkbox disabled></td>";
+  	  }
+      echo "<td>" . $brogna->getYear() . "</td>
+  		    <td><strong>" . $brogna->getTotalPoints() . "</strong></td>
+  		    <td>" . $brogna->getTradeablePoints() . "</td>
+  		    <td id='tradebox" . $tradePosition . "' style='display:none'>
+  	          <input type='text' name='trade_t" . $this->getId() . "bv'
+  	                 class='input-medium center'
+  			         placeholder='Enter value 1 to " . $brogna->getTradeablePoints() . "'/>
+  		    </td>
+        </tr>";
+    }
+  	echo "</table>";
   }
 
   /**

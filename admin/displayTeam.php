@@ -24,24 +24,24 @@
    * be traded.
    */
   function displayTeamForTrade(Team $team, $position) {
+  	echo "<hr class='bothr'/>";
   	// Team info
   	$team->displayTeamInfo();
-
+  	echo "<hr/>";
+  	 
     // Contracts
     $contractSeason = TimeUtil::getYearBasedOnEndOfSeason();
-    $team->displayContracts($contractSeason, 3000, true, 'center smallfonttable');
+    $team->displayContractsForTrade($contractSeason, 3000);
 
     // Brognas
     $keeperSeason = TimeUtil::getYearBasedOnKeeperNight();
-    $team->displayBrognas($keeperSeason + 1, $keeperSeason + 1, true, $position,
-        'center smallfonttable');
+    $team->displayBrognasForTrade($keeperSeason + 1, $keeperSeason + 1, $position);
 
     // Picks
     $draftSeason = TimeUtil::getYearBasedOnStartOfSeason();
-    $team->displayDraftPicks($draftSeason + 1, 3000, true, 'center smallfonttable');
+    $team->displayDraftPicksForTrade($draftSeason + 1, 3000);
 
     echo "<input type='hidden' name='trade_team". $position . "id' value='" . $team->getId() . "'>";
-    echo "<br/>";
   }
 
   /**
@@ -138,7 +138,7 @@
 
     // team name
     echo "<div class='span10 center'>
-            <h1>" . $team->getName() . "</h1>
+            <h3>" . $team->getName() . "</h3>
             <div class='bookmarks'>
               <a href='#summary'>Summary</a>&nbsp&nbsp
               <a href='#brognas'>Brognas</a>&nbsp&nbsp
@@ -275,7 +275,7 @@
   	
   	// team name w/ bookmarks for each year
   	echo "<div class='span10 center'>
-  	        <h1>Budget: " . $team->getName() . "</h1>
+  	        <h3>Budget: " . $team->getName() . "</h3>
   	        <div class='bookmarks'>";
   	$brognas = BrognaDao::getBrognasByTeamId($team->getId());
   	foreach ($brognas as $brogna) {

@@ -136,9 +136,9 @@ class Contract {
   }
 
   public function toString() {
-  	return $this->getPlayer()->getFullName() . ": " . $this->getTeam()->getName() . " [" .
-  	    $this->startYear . ":" . $this->endYear . "] - $" . $this->price . " (" .
-  	    $this->signDate . ")";
+  	return $this->getPlayer()->getFullName() . ": " . $this->getYearsLeft() .
+        " year(s) at $" . $this->getPrice() . " [" . $this->getStartYear() . " - " .
+        $this->getEndYear() . "]";
   }
 }
 ?>
