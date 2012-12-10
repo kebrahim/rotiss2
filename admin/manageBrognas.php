@@ -1,12 +1,25 @@
 <?php
   require_once '../util/sessions.php';
+  require_once '../util/time.php';
+  
   SessionUtil::checkUserIsLoggedInAdmin();
+  // if year is not specified, use the year based on keeper night.
+  $redirectUrl = "admin/manageBrognas.php";
+  if (isset($_REQUEST["year"])) {
+  	$year = $_REQUEST["year"];
+  	$redirectUrl .="?year=$year";
+  } else {
+  	$year = TimeUtil::getYearBasedOnKeeperNight();
+  }
+  SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com - Manage Brognas</title>
-<link href='../css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss - Manage Brognas</title>
+<link href='../css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='../css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <script>
@@ -46,33 +59,14 @@ function getRedirectHTML(element, htmlString) {
 
 <?php
   require_once '../dao/brognaDao.php';
-  require_once '../util/time.php';
-  require_once '../util/navigation.php';
-
-  // Display header.
-  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_BROGNAS_BUTTON);
-  echo "<div class='bodycenter'>";
-
-  // if year isn't specified, use the current year, based on keeper night.
-  if (isset($_REQUEST["year"])) {
-    $year = $_REQUEST["year"];
-  } else {
-    $year = TimeUtil::getYearBasedOnKeeperNight();
-  }
-
-  // allow user to change year
-  $minYear = BrognaDao::getMinimumYear();
-  $maxYear = BrognaDao::getMaximumYear();
-  echo "<br/><label for='year'>Choose year:</label>&nbsp";
-  echo "<select id='year' name='year' onchange='showYear(this.value)'>";
-  for ($yr = $minYear; $yr <= $maxYear; $yr++) {
-  	echo "<option value='" . $yr . "'";
-  	if ($yr == $year) {
-  		echo " selected";
-  	}
-  	echo ">$yr</option>";
-  }
-  echo "</select>";
+  require_once '../util/layout.php';
+  require_once '../util/yearManager.php';
+  
+  // Nav bar
+  LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_BROGNAS_BUTTON);
+  
+  // allow user to choose year.
+  YearManager::displayYearChooser($year, BrognaDao::getMinimumYear(), BrognaDao::getMaximumYear());
   echo "<div id='yearDisplay'></div><br/>";
 ?>
       
@@ -82,11 +76,10 @@ function getRedirectHTML(element, htmlString) {
 </script>
       
 <?php
-  echo "</div>";
   // TODO should this be editable?
 
   // Footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayAdminFooter();
 ?>
 
 </body>

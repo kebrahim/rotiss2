@@ -119,8 +119,8 @@
   $teamId = SessionUtil::getLoggedInTeam()->getId();
 
   echo "<div class='row-fluid'>
-          <div class='span12 center'>";
-  echo "<h1>My Ranks</h1>";
+          <div class='span6 offset3 center'>";
+  echo "<h3>My Ranks</h3>";
   echo "<FORM ACTION='rankPage.php' METHOD=POST>";
   $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
   $lastYear = $rankYear - 1;
@@ -158,7 +158,11 @@
 
   // navigation links
   echo "<a href='rankPage.php'>My Ranks</a>&nbsp
-        <a href='allRanksPage.php'>All Ranks</a><hr/>";
+        <a href='allRanksPage.php'>All Ranks</a>";
+  echo "  </div>
+        </div>
+        <div class='row-fluid'>
+          <div class='span12 center'>";
   
   displayTotalRanks($teamId, $rankYear);
   displayRankSummary($teamId, $rankYear);

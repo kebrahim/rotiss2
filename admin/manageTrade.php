@@ -170,8 +170,12 @@ function selectTeam(position, teamid) {
   LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_TRADE_BUTTON);
 
   echo "<div class='row-fluid'>
-          <div class='span12 center'>
-            <h3>Let's Make a Deal!</h3><hr/>";
+          <div class='span6 offset3 center'>
+            <h3>Let's Make a Deal!</h3>
+          </div>
+        </div>
+        <div class='row-fluid'>
+          <div class='span12 center'>";
   echo "<FORM ACTION='manageTrade.php' METHOD=POST>";
 
   // If trade button was pressed, execute validated trade.
@@ -215,7 +219,7 @@ function selectTeam(position, teamid) {
     $teams = TeamDao::getAllTeams();
 
     // show pickers for team 1 and 2
-    echo "<div class='row-fluid'>";
+    echo "<br/><div class='row-fluid'>";
     displayTeamPicker(1, $teams);
     displayTeamPicker(2, $teams);
     echo "</div>"; // row-fluid

@@ -44,7 +44,7 @@ html, body {
    bottom:0;
    left:0;
    right:0;
-   background:url("../img/background-tiles-outfield.png");
+   background:transparent url("../img/background-tiles-01.png") repeat 0 0;
    opacity:0.2;
 }
 
@@ -105,6 +105,7 @@ h1, h2, h3, h4, h5, h6 {
 
 hr {
 	border-top-color: #aedee4;
+	border-top-width: 2px;
 }
 
 .bothr {

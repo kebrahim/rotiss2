@@ -72,8 +72,8 @@
   }
 
   echo "<div class='row-fluid'>
-          <div class='span12 center'>
-            <h1>Roster Grid</h1>
+          <div class='span6 offset3 center'>
+            <h3>Roster Grid</h3>
           </div>
         </div>";
   echo "<FORM ACTION='manageTeams.php' METHOD=POST>";

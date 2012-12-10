@@ -57,14 +57,15 @@ function getRedirectHTML(element, htmlString) {
 <body>
 <?php
   require_once 'dao/auctionDao.php';
-  require_once 'util/auctionManager.php';
+  require_once 'util/yearManager.php';
   require_once 'util/layout.php';
 
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::AUCTION_BUTTON);
   
   // allow user to choose year.
-  AuctionManager::displayYearChooser($year);
+  YearManager::displayYearChooser($year, AuctionResultDao::getMinimumAuctionYear(), 
+      AuctionResultDao::getMaximumAuctionYear());
   
   echo "<div id='yearDisplay'></div><br/>";
 ?>

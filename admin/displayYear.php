@@ -13,8 +13,12 @@
    */
   function displayDraftYear($year) {
   	echo "<div class='row-fluid'>
-  	        <div class='span12 center'>
-  	          <h1>Draft Results " . $year . "</h1><hr/>";
+  	        <div class='span6 offset3 center'>
+  	          <h3>Draft Results " . $year . "</h3>";
+  	echo "  </div>
+  	      </div>
+  	      <div class='row-fluid'>
+  	        <div class='span12 center'><br/>";
   	
   	// TODO allow filtering by round
   	
@@ -145,8 +149,12 @@
    */
   function displayAuctionYear($year) {
   	echo "<div class='row-fluid'>
-  	        <div class='span12 center'>
-  	          <h1>Auction Results " . $year . "</h1><hr/>";
+  	        <div class='span6 offset3 center'>
+  	          <h3>Auction Results " . $year . "</h3>";
+  	echo "  </div>
+  	      </div>
+  	      <div class='row-fluid'>
+  	        <div class='span12 center'><br/>";
 
   	// display table of auction results for specified year, highlighting row for specified team
   	$loggedinTeamId = SessionUtil::getLoggedInTeam()->getId();
@@ -175,11 +183,16 @@
    * Displays the brogna breakdown for all teams in the specified year.
    */
   function displayBrognaYear($year) {
-    echo "<h1>Manage $year Brognas</h1><hr/>";
-
-    echo "<table border class='center'>
-            <tr><th colspan=2>Team</th><th>Total</th><th>Banked</th><th>Traded In</th>
-  		        <th>Traded Out</th><th>Tradeable</th></tr>";
+  	echo "<div class='row-fluid'>
+   	        <div class='span6 offset3 center'>
+  	          <h3>Manage $year Brognas</h3>";
+  	echo "  </div>
+  	      </div>
+  	      <div class='row-fluid'>
+  	        <div class='span12 center'><br/>";
+    echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
+            <thead><tr><th colspan=2>Team</th><th>Total</th><th>Banked</th><th>Traded In</th>
+  		        <th>Traded Out</th><th>Tradeable</th></tr></thead>";
 
     $brognas = BrognaDao::getBrognasByYear($year, $year);
     foreach ($brognas as $brogna) {
@@ -193,6 +206,8 @@
            	</tr>";
     }
     echo "</table>";
+    echo "</div>"; // span12
+    echo "</div>"; // row-fluid
   }
   
   function displayRoundDropdown($year, $selectedRound) {

@@ -58,14 +58,15 @@ function getRedirectHTML(element, htmlString) {
 
 <?php
   require_once 'dao/draftPickDao.php';
-  require_once 'util/draftManager.php';
+  require_once 'util/yearManager.php';
   require_once 'util/layout.php';
 
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::DRAFT_BUTTON);
   
   // allow user to choose year.
-  DraftManager::displayYearChooser($year);
+  YearManager::displayYearChooser(
+  		$year, DraftPickDao::getMinimumDraftYear(), DraftPickDao::getMaximumDraftYear());
   
   echo "<div id='yearDisplay'></div><br/>";
 ?>

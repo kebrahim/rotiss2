@@ -22,14 +22,18 @@
   LayoutUtil::displayNavBar(true, LayoutUtil::ALL_RANKS_BUTTON);
 
   echo "<div class='row-fluid'>
-          <div class='span12 center'>";
+          <div class='span6 offset3 center'>";
   
   $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
-  echo "<h1>Offseason Ranks $rankYear</h1>";
+  echo "<h3>Offseason Ranks $rankYear</h3>";
 
   // navigation links
   echo "<a href='rankPage.php'>My Ranks</a>&nbsp
-        <a href='allRanksPage.php'>All Ranks</a><hr/>";
+        <a href='allRanksPage.php'>All Ranks</a><br/><br/>";
+  echo "  </div>
+        </div>
+        <div class='row-fluid'>
+          <div class='span12 center'><br/>";
   
   // display ranked players
   $teams = TeamDao::getAllTeams();

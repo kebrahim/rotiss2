@@ -103,8 +103,12 @@ function showTeam(teamId) {
 
   echo "<FORM ACTION='manageAuction.php' METHOD=POST>";
   echo "<div class='row-fluid'>
-          <div class='span12 center'>
-            <h3>Going once... Going twice... Sold!</h3><hr/>";
+          <div class='span6 offset3 center'>
+            <h3>Going once... Going twice... Sold!</h3>
+          </div>
+        </div>
+        <div class='row-fluid'>
+          <div class='span12 center'>";
 
   // If auction button was pressed...
   if(isset($_POST['auction'])) {
