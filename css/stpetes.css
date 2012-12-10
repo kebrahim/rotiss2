@@ -31,6 +31,28 @@ html, body {
     padding: 0 10px 0 10px;
 }
 
+.row-fluid [class*="span"] {
+   position:relative;
+   z-index:1;
+}
+
+.row-fluid [class*="span"]:before {
+   content:"";
+   position:absolute;
+   z-index:-1;
+   top:0;
+   bottom:0;
+   left:0;
+   right:0;
+   background:url("../img/background-tiles-outfield.png");
+   opacity:0.2;
+}
+
+[class*="span"] [class*="span"]:before {
+  background-color:white;
+  background-image: none;
+}
+
 .nexttoh1 {
 	height:62px; 
 	line-height:58px;
@@ -114,6 +136,10 @@ table th {background-color: #faaf40; color:white;}
 }
 .checkth {
 	width: 13px;
+}
+.table-striped tbody tr:nth-child(even) td,
+.table-striped tbody tr:nth-child(even) th {
+  background-color: white;
 }
 
 /* inputs */
@@ -210,4 +236,18 @@ label {
    background-size:100% 100%;
    background-repeat:no-repeat;
    opacity:0.5;
+}
+
+.input-prepend, .input-append {
+	height: 30px;
+	line-height: 30px;
+	margin-bottom:20px;
+}
+
+.input-prepend label {
+	line-height: 30px;
+}
+
+.auctionsummary {
+	height:160px;
 }

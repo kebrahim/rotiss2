@@ -170,5 +170,16 @@ class Player {
   	return $this->getLastName() . ", " . $this->getFirstName() .
   	    " (" . $this->getPositionString() . ") - " . $this->getMlbTeam()->getAbbreviation();
   }
+  
+  public function displayPlayerInfo() {
+  	// Name
+  	echo "<h4>" . $this->getFullName() . "</h4>";
+  	
+  	// Headshot
+  	if ($this->hasSportslineId()) {
+  		echo "<a href='" . $this->getStPetesUrl() . "' target='_blank'>
+  		      <img src='" . $this->getHeadshotUrl() . "'></a>";
+  	}
+  }
 }
 ?>

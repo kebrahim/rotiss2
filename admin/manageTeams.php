@@ -73,7 +73,7 @@
 
   echo "<div class='row-fluid'>
           <div class='span12 center'>
-            <h1>Manage Rosters</h1>
+            <h1>Roster Grid</h1>
           </div>
         </div>";
   echo "<FORM ACTION='manageTeams.php' METHOD=POST>";
@@ -99,7 +99,7 @@
   echo "  </div>";
   
   echo "  <div class='span9 center'>
-            <h4>Roster grid</h4>";
+            <h4>Assigned players</h4>";
   echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save my changes</button>";
   echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
   

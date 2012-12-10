@@ -31,7 +31,7 @@ class Trade {
   }
 
   public function showTradeSummary() {
-    echo "<h3>Trade Summary:</h3>";
+    echo "<h3>Trade Summary</h3>";
     echo "<div class='row-fluid'>
             <div class='span6 center'>";
     $this->tradePartner1->showSummary();

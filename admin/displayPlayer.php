@@ -23,16 +23,12 @@
    */
   function displayPlayerForAuction(Player $player) {
   	// Display player attributes.
-  	echo "<h3>" . $player->getFullName() . "</h3>";
-
-  	// Headshot
-  	if ($player->hasSportslineId()) {
-  		echo "<a href='" . $player->getStPetesUrl() . "' target='_blank'>
-  		<img src='" . $player->getHeadshotUrl() . "'></a><br/><br/>";
-  	}
-
+  	echo "<hr class='bothr'/>";
+    $player->displayPlayerInfo();
+  	echo "<hr/>";
+  	 
   	// MLB Team
-  	echo "<table class='center'>";
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>";
   	$mlbTeam = $player->getMlbTeam();
   	echo "<tr><td><strong>Team:</strong></td>
   	<td>" . $mlbTeam->getCity() . " " . $mlbTeam->getName() . "</td></tr>";
@@ -46,7 +42,7 @@
   	// Positions
   	echo "<tr><td><strong>Position(s):</strong></td>
   	<td>" . $player->getPositionString() . "</td></tr>";
-  	echo "</table><br/>";
+  	echo "</table>";
 
   	echo "<input type='hidden' name='auction_playerid' value='" . $player->getId() . "'>";
   }

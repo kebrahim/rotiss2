@@ -25,6 +25,7 @@
    */
   function displayTeamForTrade(Team $team, $position) {
   	echo "<hr class='bothr'/>";
+  	
   	// Team info
   	$team->displayTeamInfo();
   	echo "<hr/>";
@@ -48,15 +49,17 @@
    * Display team information for auction.
    */
   function displayTeamForAuction(Team $team) {
+  	echo "<hr class='bothr'/>";
+  	 
   	// Team info
   	$team->displayTeamInfo();
-
+  	echo "<hr/>";
+  	 
   	// Brognas - auctions always happen in january, so current year is sufficient.
   	$currentYear = TimeUtil::getCurrentYear();
-  	$team->displayBrognas($currentYear, $currentYear, false, 0, 'center smallfonttable');
+  	$team->displayBrognas($currentYear, $currentYear, false, 0);
 
   	echo "<input type='hidden' name='auction_teamid' value='" . $team->getId() . "'>";
-    echo "<br/>";
   }
 
   /**

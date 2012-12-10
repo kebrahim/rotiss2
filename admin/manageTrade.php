@@ -161,7 +161,7 @@ function selectTeam(position, teamid) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
           . " (" . $team->getAbbreviation() . ")</option>";
     }
-    echo "</select></div>";
+    echo "</select></div>"; // chooser
     echo "<div id='teamDisplay$teamNum'></div>";
     echo "</div>"; // span6
   }
@@ -171,7 +171,7 @@ function selectTeam(position, teamid) {
 
   echo "<div class='row-fluid'>
           <div class='span12 center'>
-            <h1>Let's Make a Deal!</h1><hr/>";
+            <h3>Let's Make a Deal!</h3><hr/>";
   echo "<FORM ACTION='manageTrade.php' METHOD=POST>";
 
   // If trade button was pressed, execute validated trade.
@@ -190,7 +190,8 @@ function selectTeam(position, teamid) {
                        type=\"submit\">Confirm Trade</button>
             &nbsp&nbsp<button class=\"btn\" name='cancelTrade' type=\"submit\">Cancel</button></p>";
     } else {
-      echo "<h3>Cannot execute trade! Please <a href='manageTrade.php'>try again</a>.</h3>";
+      echo "<h3>Cannot execute trade! Please <a href='manageTrade.php' 
+            class='btn btn-primary'>try again</a></h3>";
     }
   } elseif(isset($_POST['confirmTrade'])) {
     // Re-create trade scenario from SESSION
@@ -201,9 +202,10 @@ function selectTeam(position, teamid) {
     if ($trade->validateTrade()) {
       // Initiate trade & report results.
       $trade->initiateTrade();
-      echo "<a href='manageTrade.php' class='btn btn-primary'>Let's do it again!</a><br>";
+      echo "<a href='manageTrade.php' class='btn btn-primary'>Let's do it again!</a><br/>";
     } else {
-      echo "<h3>Cannot execute trade! Please <a href='manageTrade.php'>try again</a>.</h3>";
+      echo "<h3>Cannot execute trade! Please <a href='manageTrade.php' 
+            class=\"btn btn-primary\">try again</a></h3>";
     }
   } else {
   	// clear out trade session variables from previous trade scenarios.

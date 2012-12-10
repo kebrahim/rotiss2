@@ -37,21 +37,30 @@ class Auction {
   }
 
   public function showAuctionSummary() {
-    echo "<h2>Auction Summary</h2>";
+    echo "<h3>Auction Summary</h3>";
+    echo "<div class='row-fluid'>
+            <div class='span12 center'><br/>";
+    echo "    <div class='row-fluid'>
+                <div class='span6 center auctionsummary'>";
+    $this->player->displayPlayerInfo();
+    echo "        <br/>";
+    echo "<p class='ptop'>" . $this->player->getPositionString() . " (" . 
+         $this->player->getMlbTeam()->getAbbreviation() . ")</p>";
+    echo "      </div>
+                <div class='span6 center auctionsummary'>";
     $this->team->displayTeamInfo();
-    echo "<br/><table class='center'>
-            <tr><td><strong>Player:</strong></td>
-                <td>" . $this->player->getFullName() . ", " . $this->player->getPositionString() . 
-                    " (" . $this->player->getMlbTeam()->getAbbreviation() . ")</td></tr>
-            <tr><td><strong>Amount:</strong></td>
-                <td>" . $this->amount . "</td></tr>
-          </table>";
+    echo "      </div>
+              </div>";
+    echo "<hr class='bothr'/>";
+    echo "<label>Auction amount:</label> $" . $this->amount . "<br/><br/>";
+    echo "  </div>
+          </div>";
   }
 
   public function validateAuction() {
   	// confirm amount is a valid numeric value > 0.
   	if (!is_numeric($this->amount) || $this->amount <= 0) {
-  	  $this->printError("Error: " . $this->team->getName() . 
+  	  $this->printError($this->team->getName() . 
   	      " cannot spend an invalid number of brognas: " . $this->amount);
   	  return false;
   	}
@@ -60,7 +69,7 @@ class Auction {
   	$currentYear = TimeUtil::getCurrentYear();
   	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
   	if ($brognas->getTotalPoints() < $this->amount) {
-  	  $this->printError("Error: " . $this->team->getName() . " cannot spend " . $this->amount .
+  	  $this->printError($this->team->getName() . " cannot spend " . $this->amount .
   	  	  " brognas; only has " . $brognas->getTotalPoints() . " total brognas.");
   	  return false;
   	}
@@ -68,12 +77,28 @@ class Auction {
   }
 
   public function initiateAuction() {
-  	echo "<h2 class='alert_msg'>Auction Completed!</h2>";
+  	echo "<h3 class='conf_msg'>Auction Completed!</h3>";
+  	echo "<div class='row-fluid'>
+  	        <div class='span12 center'><br/>";
+  	echo "    <div class='row-fluid'>
+  	            <div class='span6 center auctionsummary'>";
+  	$this->player->displayPlayerInfo();
+  	echo "        <br/>";
+  	echo "<p class='ptop'>" . $this->player->getPositionString() . " (" .
+  			$this->player->getMlbTeam()->getAbbreviation() . ")</p>";
+  	echo "      </div>
+  	            <div class='span6 center auctionsummary'>";
   	$this->team->displayTeamInfo();
-
+  	echo "      </div>
+  	          </div>";
+  	echo "<hr class='bothr'/>";
+  	
   	$this->saveAuctionResult();
-    $this->saveAuctionContract();
+  	$this->saveAuctionContract();
   	$this->updateBrognas();
+  	 
+  	echo "<br/></div>
+  	      </div>";
 
   	// TODO update changelog
   }
@@ -86,7 +111,7 @@ class Auction {
     $auctionResult = new AuctionResult(-1, $currentYear, $this->team->getId(),
         $this->player->getId(), $this->amount);
     AuctionResultDao::createAuctionResult($auctionResult);
-    echo "<br/><strong>Auctioned:</strong> " . $this->player->getFullName() . " for " .
+    echo "<strong>Auctioned:</strong> " . $this->player->getFullName() . " for " .
         $this->amount . " brognas<br>";
   }
 
@@ -120,7 +145,7 @@ class Auction {
   }
   
   private function printError($errorMsg) {
-  	echo "<div class='error_msg'>" . $errorMsg . "</div>";
+  	echo "<div class='alert alert-error'><strong>Error: </strong>" . $errorMsg . "</div>";
   }
 }
 ?>

@@ -117,7 +117,7 @@ class LayoutUtil {
   	echo "<ul class='dropdown-menu'>";
   	 
     // Manage teams
-  	LayoutUtil::displayListItem("admin/manageTeams.php", "Manage Rosters", $isTopLevel,
+  	LayoutUtil::displayListItem("admin/manageTeams.php", "Roster Grid", $isTopLevel,
   	    $selectedButton, self::MANAGE_ROSTERS_BUTTON);
 
   	// Trade
