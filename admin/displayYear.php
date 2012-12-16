@@ -61,7 +61,7 @@
    * Returns a dropdown of all of the undrafted players with the specified player selected.
    */
   function getPlayerDropdown($selectedPlayer, $pickId, $undraftedPlayers) {
-  	$playerDropdown = "<select name='player" . $pickId . "'>
+  	$playerDropdown = "<select name='player" . $pickId . "' class='input-xlarge'>
   	    <option value='0'";
   	if ($selectedPlayer == null) {
   	  $playerDropdown .= " selected";
@@ -87,7 +87,7 @@
    * Returns a dropdown of all of the picks with the specified pick selected.
    */
   function getPickDropdown($selectedPick, $pickId, $numPicks) {
-  	$pickDropdown = "<select name='pick" . $pickId . "'>
+  	$pickDropdown = "<select class='input-mini' name='pick" . $pickId . "'>
   	                   <option value='0'";
   	if ($selectedPick == null) {
   	  $pickDropdown .= " selected";
@@ -106,22 +106,22 @@
 
   function displayDraftYearForManagement($year, $round) {
   	if ($round == 0) {
-  	  echo "<hr/><h1>$year Draft - Ping Pong Round</h1>";
+  	  echo "<h4>$year Draft - Ping Pong Round</h4>";
   	} else {
-      echo "<hr/><h1>$year Draft - Round $round</h1>";
+      echo "<h4>$year Draft - Round $round</h4>";
   	}
   	// allow user to select players who have not yet been drafted during the specified year.
   	$undraftedPlayers = PlayerDao::getUndraftedPlayers($year);
   	 
   	// display table of draft picks for selected year, highlighting row for logged-in team
   	$loggedInTeamId = SessionUtil::getLoggedInTeam()->getId();
-  	echo "<table border class='center'>
-  	      <th>Pick</th><th>Team</th><th>Player</th></tr>";
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
+  	      <thead><tr><th>Pick</th><th>Team</th><th>Player</th></tr></thead>";
 
   	if ($round == 0) {
       $pingPongBalls = BallDao::getPingPongBallsByYear($year);
   	  foreach ($pingPongBalls as $pingPongBall) {
-  	    echo "<tr>
+  	    echo "<tr class='tdselect'>
   		       <td>" . $pingPongBall->getCost() . "</td>
   		       <td>" . $pingPongBall->getTeam()->getNameLink(false) . "</td>
   		       <td>" . getPlayerDropdown(
@@ -131,7 +131,7 @@
   	} else {
       $draftPicks = DraftPickDao::getDraftPicksByYearRound($year, $round);
   	  foreach ($draftPicks as $draftPick) {
-  		echo "<tr>
+  		echo "<tr class='tdselect'>
   		       <td>" . getPickDropdown(
   		           $draftPick->getPick(), $draftPick->getId(), count($draftPicks)) . "</td>
   		       <td>" . $draftPick->getTeam()->getNameLink(false) . "</td>

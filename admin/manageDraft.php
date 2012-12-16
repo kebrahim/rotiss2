@@ -1,12 +1,32 @@
 <?php
   require_once '../util/sessions.php';
+  
   SessionUtil::checkUserIsLoggedInAdmin();
+  
+  // if year isn't specified, use the current year, based on end of season.
+  $redirectUrl = "admin/manageDraft.php";
+  if (isset($_REQUEST["year"])) {
+  	$year = $_REQUEST["year"];
+  	$redirectUrl .= "?year=$year";
+  } else {
+  	$year = TimeUtil::getYearBasedOnEndOfSeason();
+  }
+  if (isset($_REQUEST["round"])) {
+  	$round = $_REQUEST["round"];
+  	$redirectUrl .= "&round=$round";
+  } else {
+  	$round = 0;
+  }
+  
+  SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
 <title>St Pete's Rotiss - Manage Draft</title>
-<link href='../css/style.css' rel='stylesheet' type='text/css'>
+<link href='../css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='../css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <script>
@@ -50,24 +70,14 @@ function getRedirectHTML(element, htmlString) {
 
 <?php
   require_once '../dao/draftPickDao.php';
-  require_once '../util/navigation.php';
+  require_once '../util/layout.php';
   require_once '../util/time.php';
   
-  // Display header.
-  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_DRAFT_BUTTON);
-  echo "<div class='bodycenter'>";
-
-  // if year isn't specified, use the current year, based on end of season.
-  if (isset($_REQUEST["year"])) {
-  	$year = $_REQUEST["year"];
-  } else {
-  	$year = TimeUtil::getYearBasedOnEndOfSeason();
-  }
-  if (isset($_REQUEST["round"])) {
-  	$round = $_REQUEST["round"];
-  } else {
-  	$round = 0;
-  }
+  // Display nav bar.
+  LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_DRAFT_BUTTON);
+  
+  echo "<div class='row-fluid'>
+          <div class='span12 center'>";
   
   // If save button was pressed, save results
   if (isset($_POST['save'])) {
@@ -101,8 +111,9 @@ function getRedirectHTML(element, htmlString) {
   	  	  	  }
   	  	  	}
   	  	  } else {
-  	  	  	echo "<div class='error_msg'>Ping pong ball not updated: " . $ball->toString() .
-  	  	  	    "<br/></div>";
+  	  	  	echo "<br/><div class='alert alert-error'>
+     	  	  	  Ping pong ball not updated: " . $ball->toString() .
+  	  	  	    "</div>";
   	  	  }
   	  	}
   	  }
@@ -143,21 +154,27 @@ function getRedirectHTML(element, htmlString) {
           	  }
           	}
           } else {
-          	echo "<div class='error_msg'>Draft pick not updated: " . $draftPick->toString() . 
-          	    "<br/></div>";
+          	echo "<br/><div class='alert alert-error'>
+          	      Draft pick not updated: " . $draftPick->toString() . 
+          	    "</div>";
           }
         }
       }
   	}
   }
 
-  echo "<h1>Manage Draft</h1><hr/>";
+  echo "<h3>Manage Draft</h3>
+        </div>
+        </div>";
+
+  echo "<div class='row-fluid'>
+          <div class='span4 offset1 center chooser'>";
   
   // allow user to choose year.
   $minYear = DraftPickDao::getMinimumDraftYear();
   $maxYear = DraftPickDao::getMaximumDraftYear();
   echo "<label for='year'>Choose year: </label>";
-  echo "<select id='year' name='year'
+  echo "<select id='year' name='year' class='input-small'
                 onchange='showYear(this.value, document.getElementById(\"round\").value)'>";
   for ($yr = $minYear; $yr <= $maxYear; $yr++) {
   	echo "<option value='" . $yr . "'";
@@ -167,12 +184,14 @@ function getRedirectHTML(element, htmlString) {
   	echo ">$yr</option>";
   }
   echo "</select>";
+  echo "</div>"; // span6
   
+  echo "<div class='span4 offset2 center chooser'>";
   // allow user to choose round.
   $minRound = DraftPickDao::getMinimumRound($year);
   $maxRound = DraftPickDao::getMaximumRound($year);
   echo "&nbsp&nbsp<label for='round'>Choose round: </label>";
-  echo "<select id='round' name='round' 
+  echo "<select id='round' name='round' class='input-small'
                 onchange='showRound(document.getElementById(\"year\").value, this.value)'>";
   echo "<option value='0'>PP</option>";
   for ($rd = $minRound; $rd <= $maxRound; $rd++) {
@@ -183,10 +202,13 @@ function getRedirectHTML(element, htmlString) {
   	echo ">$rd</option>";
   }
   echo "</select>";
+  echo "</div>"; // span6
+  echo "</div>"; // row-fluid
   
+  echo "<div class='row-fluid'>
+          <div class='span12 center'>";
   echo "<FORM ACTION='manageDraft.php' METHOD=POST>";
-  
-  echo "<div id='yearDisplay'></div><br/>";
+  echo "<div id='yearDisplay'></div>";
 ?>
       
 <script>
@@ -195,11 +217,14 @@ function getRedirectHTML(element, htmlString) {
 </script>
       
 <?php
-  echo "<input type='submit' name='save' value='Save changes'>";
-  echo "</form></div>";
+  echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save changes</button>";
+  echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
+  echo "</form>";
+  echo "</div>"; // span12
+  echo "</div>"; // row-fluid
   
   // Footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayAdminFooter();
 ?>
 
 </body>

@@ -146,6 +146,13 @@ table th {background-color: #faaf40; color:white;}
 .table-striped tbody tr:nth-child(even) th {
   background-color: white;
 }
+.tdselect {
+	height: 40px;
+	line-height: 36px;
+}
+.tdselect select {
+	margin-bottom: 0px;
+}
 
 /* inputs */
 .input-micro {
