@@ -410,7 +410,7 @@ class TradePartner {
   }
   
   private function printError($errorMsg) {
-    echo "<div class='alert alert-error'>
+    echo "<br/><div class='alert alert-error'>
             <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button> . 
             <strong>Error: </strong>" . $errorMsg .
          "</div>";

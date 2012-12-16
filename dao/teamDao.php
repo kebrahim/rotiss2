@@ -63,7 +63,7 @@ class TeamDao {
   */
   public static function updateTeam($team) {
     CommonDao::connectToDb();
-    $query = "update team set team_name = '" . $team->getName() . "',
+    $query = "update team set team_name = \"" . $team->getName() . "\",
                               league = '" . $team->getLeague() . "',
                               division = '" . $team->getDivision() . "',
                               abbreviation = '" . $team->getAbbreviation() . "',

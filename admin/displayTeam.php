@@ -211,21 +211,31 @@
    * Display team on manage team page.
    */
   function displayTeamForManagement(Team $team) {
-    echo "<h1>Manage: " . $team->getName() . "</h1><hr/>";
-
-    // Sportsline Image
-    echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
-
+  	echo "<div class='row-fluid'>";
+  	
+  	// team logo
+  	echo "<div class='span2 center teamlogo'>
+  	        <img src='" . $team->getSportslineImageUrl() . "'>
+  	      </div>";
+  	
+  	// team name
+  	echo "  <div class='span10 center teamlogo'>
+  	          <h3 class='nexttologo'>Manage: " . $team->getName() . "</h3>
+  	        </div>
+  	      </div>"; // row-fluid
+  	 
+  	echo "<div class='row-fluid'>
+  	        <div class='span12 center'>";
+  	 
     // ID
-    echo "<table>";
+    echo "<br/><table class='table vertmiddle table-striped table-condensed table-bordered'>";
     echo "<tr><td><strong>Team Id:</strong></td><td>" . $team->getId() . "</td></tr>";
     echo "<input type=hidden name='teamId' value='" . $team->getId() . "'>";
 
     // Name
-    // TODO parse quotes of team name field
     echo "<tr><td><strong>Name:</strong></td><td>
-             <input type=text name='teamName' maxLength=50 size=50 required " .
-           "placeholder='Team Name' value='" . $team->getName() . "'></td></tr>";
+             <input type=text name='teamName' maxLength=50 class='span8' required " .
+           "placeholder='Team Name' value=\"" . $team->getName() . "\"></td></tr>";
 
     // League/Division
     echo "<tr><td><strong>Division:</strong></td><td><select name='league' required>";
@@ -252,17 +262,20 @@
     // Sportsline Image Name
     echo "<tr><td><strong>Sportsline Image Name:</strong></td><td>
              <input type=text name='sportslineImage'" .
-           " maxLength=65 size=65 value='" . $team->getSportslineImageName() . "' required>
+           " maxLength=65 class='span8' value='" . $team->getSportslineImageName() . "' required>
               </td></tr>";
 
     // Owners
     echo "<tr><td><strong>Owner(s):</strong></td><td>" . $team->getOwnersString() . "</td></tr>";
 
-    echo "</table><br/>";
+    echo "</table>";
 
     // Buttons
-    echo "<input class='button' type=submit name='update' value='Update Team'>&nbsp&nbsp" .
-         $team->getIdLink(false, "Back to Summary");
+    echo "<p><button class=\"btn btn-primary\" name='update' type=\"submit\">Update Team</button>";
+    echo "&nbsp&nbsp" . $team->getIdLink(false, "Back to Summary");
+
+    echo "  </div>"; // span12
+    echo "</div>";   // row-fluid
   }
 
   /**

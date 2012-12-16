@@ -1,12 +1,26 @@
 <?php
   require_once '../util/sessions.php';
+  
   SessionUtil::checkUserIsLoggedInAdmin();
+  
+  // Get team from REQUEST; otherwise, use logged-in user's team.
+  $redirectUrl = "admin/manageTeam.php";
+  if (isset($_REQUEST["team_id"])) {
+  	$teamId = $_REQUEST["team_id"];
+  	$redirectUrl .= "?team_id=$teamId";
+  } else if (SessionUtil::isLoggedIn()) {
+  	$teamId = SessionUtil::getLoggedInTeam()->getId();
+  }
+  
+  SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com - Manage Team</title>
-<link href='../css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss - Manage Team</title>
+<link href='../css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='../css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <script>
@@ -47,39 +61,33 @@ function getRedirectHTML(element, htmlString) {
 <?php
   require_once '../dao/teamDao.php';
   require_once '../entity/team.php';
-  require_once '../util/navigation.php';
-
-  // Display header.
-  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_TEAM_BUTTON);
-  echo "<div class='bodyleft'>";
-
+  require_once '../util/layout.php';
+  require_once '../util/teamManager.php';
+  
+  // Nav bar
+  LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_TEAM_BUTTON);
+  
   if (isset($_POST['update'])) {
     // Update team.
     $teamToUpdate = new Team($_POST['teamId'], $_POST['teamName'], $_POST['league'],
         $_POST['division'], $_POST['abbreviation'], $_POST['sportslineImage']);
     TeamDao::updateTeam($teamToUpdate);
-    $teamId = $_POST['teamId'];
-    echo "<div class='alert_msg'>Team successfully updated!</div>";
-  } else if (isset($_REQUEST["team_id"])) {
-    $teamId = $_REQUEST["team_id"];
-  } else {
-  	$teamId = 0;
+    echo "<div class='alert alert-success center'>
+            <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
+            <strong>Team successfully updated!</strong>
+          </div>";
   }
-
-  // Allow user to choose from list of teams to see corresponding team management page.
-  $allTeams = TeamDao::getAllTeams();
+  
+  $team = TeamDao::getTeamById($teamId);
+  if ($team == null) {
+  	die("<h1>Team ID " . $teamId . " not found!</h1>");
+  }
+  
   echo "<FORM ACTION='manageTeam.php' METHOD=POST>";
-  echo "<br/><label for='team_id'>Choose team: </label>&nbsp";
-  echo "<select id='team_id' name='team_id' onchange='showTeam(this.value)'>
-          <option value='0'></option>";
-  foreach ($allTeams as $selectTeam) {
-    echo "<option value='" . $selectTeam->getId() . "'";
-    if ($selectTeam->getId() == $teamId) {
-      echo " selected";
-    }
-    echo ">" . $selectTeam->getName() . " (" . $selectTeam->getAbbreviation() . ")</option>";
-  }
-  echo "</select><br/>";
+  
+  // Allow user to choose from list of teams to see corresponding team management page.
+  TeamManager::displayTeamChooser($team);
+
   echo "<div id='teamDisplay'></div><br/>";
 ?>
 
@@ -89,13 +97,12 @@ function getRedirectHTML(element, htmlString) {
 </script>
 
 <?php
-  echo "</form></div>";
 
   // TODO add/delete contracts
   // TODO seltzer player
 
   // Footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayAdminFooter();
 ?>
 
 </body>
