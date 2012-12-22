@@ -131,7 +131,8 @@ class RankDao {
   	$query = "select count(r.rank)
   	          from rank r
   	          where r.year = " . $year . "
-  	          and r.team_id = " . $teamId;
+  	          and r.team_id = " . $teamId . "
+  	          and r.rank > 0";
   	$res = mysql_query($query);
   	$row = mysql_fetch_row($res);
   	return $row[0];

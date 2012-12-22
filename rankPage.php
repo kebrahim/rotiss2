@@ -57,7 +57,7 @@
   	  }
   	  $fantasyPts = ($rank->getPlayer()->getStatLine($lastYear) != null) ?
           $rank->getPlayer()->getStatLine($lastYear)->getFantasyPoints() : "--";
-  	  echo "><td>" . $rank->getPlayer()->getIdLink(true, $rank->getPlayer()->getFullName()) . "</td>
+  	  echo "><td>" . $rank->getPlayer()->getIdNewTabLink(true, $rank->getPlayer()->getFullName()) . "</td>
   	         <td>" . $fantasyPts . "</td>";
   	  echo "<td>";
   	  if ($rank->isPlaceholder()) {
@@ -181,12 +181,25 @@
           <thead><tr><th>Player</th><th>FPTS</th><th>Rank</th></tr></thead>";
   foreach ($rankablePlayers as $player) {
   	$fantasyPts = ($player->getStatLine($lastYear) != null) ?
-  	$player->getStatLine($lastYear)->getFantasyPoints() : "--";
-  	echo "<tr><td>" . $player->getIdLink(true, $player->getFullName()) . "</td>
+  	    $player->getStatLine($lastYear)->getFantasyPoints() : "--";
+  	echo "<tr><td>" . $player->getIdNewTabLink(true, $player->getFullName()) . "</td>
   	          <td>" . $fantasyPts . "</td><td>";
   	displaySelectForPlayer($player, 0);
   	echo "</td></tr>";
   }
+  
+  // display all 0 placeholders
+  $zeroPlaceholders = RankDao::getRanksByTeamYearRank($teamId, $rankYear, 0);
+  foreach ($zeroPlaceholders as $zeroPlaceholder) {
+  	$placeholderPlayer = $zeroPlaceholder->getPlayer();
+  	$fantasyPts = ($placeholderPlayer->getStatLine($lastYear) != null) ?
+   	    $placeholderPlayer->getStatLine($lastYear)->getFantasyPoints() : "--";
+  	echo "<tr class='placeholder_row'>
+  	        <td>" . $placeholderPlayer->getIdNewTabLink(true, $placeholderPlayer->getFullName()) . "</td>
+  	        <td>" . $fantasyPts . "</td>
+  	        <td>0</td>
+  	      </tr>";
+  } 
   echo "</table>";
   echo "</div>"; //span2
   

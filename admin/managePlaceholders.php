@@ -35,6 +35,9 @@
   	$teams = TeamDao::getAllTeams();
   	foreach($stats as $stat) {
       $ranking = floor(11.0 - ($ct++ / 15.0));
+      if ($ranking < 0) {
+      	$ranking = 0;
+      }
   	  $isPlaceholder = PlayerDao::hasContractForPlaceholders($stat->getPlayerId(), $lastYear);
   	  if ($isPlaceholder &&
   	      !RankDao::hasAllPlaceholderRanks($stat->getPlayerId(), $rankYear)) {
@@ -71,6 +74,9 @@
   foreach($stats as $stat) {
   	$ct++;
   	$rank = floor(11.0 - ($ct / 15.0));
+    if ($rank < 0) {
+      $rank = 0;
+    }
   	$isPlaceholder = PlayerDao::hasContractForPlaceholders($stat->getPlayerId(), $lastYear);
   	$placeholderInDb = ($isPlaceholder &&
   	    RankDao::hasAllPlaceholderRanks($stat->getPlayerId(), $rankYear));

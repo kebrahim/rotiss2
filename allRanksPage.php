@@ -45,7 +45,6 @@
   }
   echo "<th>Total</th></tr></thead>";
   foreach ($teams as $team) {
-    $totalCount = RankDao::getTotalRankCount($team->getId(), $rankYear);
   	echo "<tr>";
   	echo "<td><img height=36 width=36 src='" . $team->getSportslineImageUrl() . "'></td>
   	          <td>" . $team->getNameLink(true) . "</td>";

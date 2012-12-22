@@ -68,6 +68,11 @@ class Player {
   	return "<a href='" . ($isTopLevel ? "" : "../") . "playerPage.php?player_id=" . 
   	    $this->playerId . "'>" . $linkText . "</a>";
   }
+
+  public function getIdNewTabLink($isTopLevel, $linkText) {
+  	return "<a href='" . ($isTopLevel ? "" : "../") . "playerPage.php?player_id=" .
+  			$this->playerId . "' target='_blank'>" . $linkText . "</a>";
+  }
   
   public function getBirthDate() {
     return $this->birthDate;
