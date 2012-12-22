@@ -9,7 +9,7 @@ class PositionDao {
    */
   static function getPositions() {
     CommonDao::connectToDb();
-    $query = "select P.position_id, P.position_name, P.abbreviation
+    $query = "select P.*
               from position P
               order by P.position_id";
     return PositionDao::createPositionsFromQuery($query);
@@ -20,7 +20,7 @@ class PositionDao {
    */
   static function getPositionsByPositionIds($positionIds) {
     CommonDao::connectToDb();
-    $query = "select P.position_id, P.position_name, P.abbreviation
+    $query = "select P.*
               from position P where P.position_id in (";
     $firstPos = true;
     foreach ($positionIds as $positionId) {
@@ -40,10 +40,21 @@ class PositionDao {
    */
   static function getPositionsByPlayerId($playerId) {
     CommonDao::connectToDb();
-    $query = "select P.position_id, P.position_name, P.abbreviation
+    $query = "select P.*
     	      from player_position PP, position P
               where PP.player_id = $playerId and PP.position_id = P.position_id";
     return PositionDao::createPositionsFromQuery($query);
+  }
+  
+  /**
+   * Returns the position with the specified abbreviation or null if none exists.
+   */
+  static function getPositionByAbbreviation($abbreviation) {
+  	CommonDao::connectToDb();
+  	$query = "select P.*
+  	          from position P
+  	          where P.abbreviation = '" . $abbreviation . "'";
+  	return PositionDao::createPositionFromQuery($query);  	 
   }
 
   /**
@@ -88,14 +99,31 @@ class PositionDao {
     return false;
   }
 
+  private static function createPositionFromQuery($query) {
+  	$positionArray = PositionDao::createPositionsFromQuery($query);
+  	if (count($positionArray) == 1) {
+  	  return $positionArray[0];
+  	}
+  	return null;
+  }
+  
   private static function createPositionsFromQuery($query) {
-    $positions_db = mysql_query($query);
-
+    $res = mysql_query($query);
     $positions = array();
-    while ($position_db = mysql_fetch_row ($positions_db)) {
-      $positions[] = new Position($position_db[0], $position_db[1], $position_db[2]);
+    while ($position_db =  mysql_fetch_assoc($res)) {
+      $positions[] = new Position($position_db["position_id"], $position_db["position_name"], 
+          $position_db["abbreviation"]);
     }
     return $positions;
+  }
+  
+  /**
+   * Deletes all of the player-position associations.
+   */
+  public static function deleteAllPlayerAssociations() {
+  	CommonDao::connectToDb();
+  	$query = "delete from player_position where player_id > 0";
+  	mysql_query($query);
   }
 }
 ?>

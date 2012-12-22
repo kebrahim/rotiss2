@@ -87,5 +87,14 @@ class BallDao {
                              " where ping_pong_id = " . $pingPongBall->getId();
     return mysql_query($query);
   }
+  
+  /**
+   * Deletes all of the ping pong balls.
+   */
+  public static function deleteAllPingPongBalls() {
+  	CommonDao::connectToDb();
+  	$query = "delete from ping_pong where ping_pong_id > 0";
+  	mysql_query($query);
+  }
 }
 ?>

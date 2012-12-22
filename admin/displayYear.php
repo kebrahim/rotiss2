@@ -160,7 +160,7 @@
   	$loggedinTeamId = SessionUtil::getLoggedInTeam()->getId();
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
   	        <thead><tr>
-  	          <th colspan=2>Team</th><th colspan=2>Player</th><th>Cost</th>
+  	          <th colspan=2>Player</th><th colspan=2>Team</th><th>Cost</th>
   	        </tr></thead>";
   	$auctionResults = AuctionResultDao::getAuctionResultsByYear($year);
   	foreach ($auctionResults as $auctionResult) {
@@ -170,9 +170,9 @@
   	  if ($team->getId() == $loggedinTeamId) {
   	    echo " class='selected_team_row'";
   	  }
-      echo ">" . TeamManager::getNameAndLogoRow($team) .
-                 PlayerManager::getNameAndHeadshotRow($player) .
-  	             "<td>" . $auctionResult->getCost() . "</td></tr>";
+      echo ">" . PlayerManager::getNameAndHeadshotRow($player) .
+  	             TeamManager::getNameAndLogoRow($team) .
+                 "<td>" . $auctionResult->getCost() . "</td></tr>";
   	}
   	echo "</table>";
   	echo "</div>"; // span12

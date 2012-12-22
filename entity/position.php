@@ -25,5 +25,9 @@ class Position {
   public function getAbbreviation() {
     return $this->abbreviation;
   }
+  
+  public function toString() {
+  	return $this->name . " (" . $this->positionId . ") - " . $this->abbreviation;
+  }
 }
 ?>

@@ -541,13 +541,15 @@ class Team {
     }
 
     $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
+    $prevYear = $rankYear - 1;
     echo "<a id='roster'></a><h4>Roster</h4>";
     echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
             <thead><tr>";
-    echo "<th colspan=2>Name</th>
+    echo "<th colspan=2>Player</th>
           <th>Position</th>
     	  <th>Team</th>
           <th>Age</th>
+          <th>$prevYear Fantasy Pts</th>
           <th>$rankYear Rank</th></tr></thead>";
     foreach ($players as $player) {
       $rank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
@@ -555,6 +557,7 @@ class Team {
                "<td>" . $player->getPositionString() . "</td>
                 <td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
                 <td>" . $player->getAge() . "</td>
+                <td>" . $player->getStatLine($prevYear)->getFantasyPoints() . "</td>
                 <td>" . (($rank != null) ? $rank->getRank() : "-") . "</td></tr>";
     }
     echo "</table>";

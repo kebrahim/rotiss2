@@ -25,6 +25,10 @@ class Stat {
   	return $this->statId;
   }
   
+  public function setId($statId) {
+  	$this->statId = $statId;
+  }
+  
   public function getYear() {
   	return $this->year;
   }
@@ -43,6 +47,11 @@ class Stat {
   
   public function getStatLine() {
   	return $this->statLine;
+  }
+  
+  public function toString() {
+  	return $this->getYear() . ": " . $this->getPlayerId() . " - " . 
+  	    $this->getStatLine()->toString();
   }
 }
 ?>

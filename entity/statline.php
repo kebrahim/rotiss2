@@ -14,5 +14,9 @@ class StatLine {
   public function getFantasyPoints() {
   	return $this->fantasyPts;
   }
+  
+  public function toString() {
+  	return $this->fantasyPts;
+  }
 }
 ?>

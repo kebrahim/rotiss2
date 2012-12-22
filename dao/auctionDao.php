@@ -85,5 +85,14 @@ class AuctionResultDao {
   	$auctionResult->setId($row["auction_id"]);
   	return $auctionResult;
   }
+  
+  /**
+   * Deletes all of the auction results.
+   */
+  public static function deleteAllAuctionResults() {
+  	CommonDao::connectToDb();
+  	$query = "delete from auction where auction_id > 0";
+  	mysql_query($query);
+  }
 }
 ?>

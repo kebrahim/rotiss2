@@ -1,6 +1,7 @@
 <?php
 
 require_once 'commonDao.php';
+CommonDao::requireFileIn('/../entity/', 'player.php');
 CommonDao::requireFileIn('/../entity/', 'stat.php');
 
 class StatDao {
@@ -55,5 +56,38 @@ class StatDao {
   // TODO add rest of stats
   public static function populateStatLine($statDb) {
     return new StatLine($statDb["fantasy_pts"]);
+  }
+  
+  /**
+   * Creates the specified stat in the 'stat' table and returns the same Stat with its id set.
+   */
+  public static function createStat(Stat $stat) {
+  	CommonDao::connectToDb();
+  	$query = "insert into stat(year, player_id, fantasy_pts)
+  	          values (" .
+   	          $stat->getYear() . ", " .
+   	          $stat->getPlayerId() . ", " .
+   	          $stat->getStatLine()->getFantasyPoints() . ")";
+  	$result = mysql_query($query);
+  	if (!$result) {
+  		echo "Stat " . $stat->toString() . " already exists in DB. Try again.";
+  		return null;
+  	}
+  	
+  	$idQuery = "select stat_id from stat where year = " . $stat->getYear() .
+  	           " and player_id = " . $stat->getPlayerId();
+  	$result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
+  	$row = mysql_fetch_assoc($result);
+  	$stat->setId($row["stat_id"]);
+  	return $stat;  	 
+  }
+  
+  /**
+   * Deletes all of the player stats.
+   */
+  public static function deleteAllStats() {
+  	CommonDao::connectToDb();
+  	$query = "delete from stat where stat_id > 0";
+  	mysql_query($query);
   }
 }

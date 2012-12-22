@@ -83,5 +83,14 @@ class ContractDao {
              " where contract_id = " . $contract->getId();
     $result = mysql_query($query) or die('Invalid query: ' . mysql_error());
   }
+  
+  /**
+   * Deletes all of the contracts.
+   */
+  public static function deleteAllContracts() {
+  	CommonDao::connectToDb();
+  	$query = "delete from contract where contract_id > 0";
+  	mysql_query($query);
+  }
 }
 ?>

@@ -9,17 +9,10 @@ class MlbTeamDao {
    */
   static function getMlbTeams() {
     CommonDao::connectToDb();
-    $query = "select M.mlb_team_id, M.city, M.team_name, M.abbreviation, M.league, M.division
+    $query = "select M.*
               from mlb_team M
               order by M.city, M.team_name";
-    $mlb_teams_db = mysql_query($query);
-
-    $mlb_teams = array();
-    while ($mlb_team_db = mysql_fetch_row ($mlb_teams_db)) {
-      $mlb_teams[] = new MlbTeam($mlb_team_db[0], $mlb_team_db[1], $mlb_team_db[2],
-          $mlb_team_db[3], $mlb_team_db[4], $mlb_team_db[5]);
-    }
-    return $mlb_teams;
+    return MlbTeamDao::createMlbTeamsFromQuery($query);
   }
 
   /**
@@ -27,15 +20,39 @@ class MlbTeamDao {
    */
   static function getMlbTeamById($mlbTeamId) {
     CommonDao::connectToDb();
-    $query = "select M.mlb_team_id, M.city, M.team_name, M.abbreviation, M.league, M.division
+    $query = "select M.*
               from mlb_team M
               where M.mlb_team_id = " . $mlbTeamId;
-    $mlbTeamDb = mysql_fetch_row(mysql_query($query));
-    if ($mlbTeamDb == null) {
-      return null;
+    return MlbTeamDao::createMlbTeamFromQuery($query);
+  }
+  
+  /**
+   * Returns the MLB team with the specified abbreviation or null if none is found.
+   */
+  static function getMlbTeamByAbbreviation($abbreviation) {
+  	CommonDao::connectToDb();
+  	$query = "select M.*
+  	          from mlb_team M
+  	          where M.abbreviation = '" . $abbreviation . "'";
+  	return MlbTeamDao::createMlbTeamFromQuery($query);
+  }
+  
+  private static function createMlbTeamFromQuery($query) {
+    $teamArray = MlbTeamDao::createMlbTeamsFromQuery($query);
+    if (count($teamArray) == 1) {
+      return $teamArray[0];
     }
-    return new MlbTeam($mlbTeamDb[0], $mlbTeamDb[1], $mlbTeamDb[2], $mlbTeamDb[3], $mlbTeamDb[4],
-        $mlbTeamDb[5]);
+    return null;
+  }
+
+  private static function createMlbTeamsFromQuery($query) {
+    $res = mysql_query($query);
+    $teamsDb = array();
+    while($teamDb = mysql_fetch_assoc($res)) {
+      $teamsDb[] = new MlbTeam($teamDb["mlb_team_id"], $teamDb["city"], $teamDb["team_name"],
+          $teamDb["abbreviation"], $teamDb["league"], $teamDb["division"]);
+    }
+    return $teamsDb;
   }
 }
 ?>

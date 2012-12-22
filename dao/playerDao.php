@@ -3,6 +3,7 @@
 require_once 'commonDao.php';
 CommonDao::requireFileIn('/../dao/', 'statDao.php');
 CommonDao::requireFileIn('/../entity/', 'player.php');
+CommonDao::requireFileIn('/../util/', 'time.php');
 
 class PlayerDao {
 
@@ -169,11 +170,23 @@ class PlayerDao {
    */
   public static function getPlayersByTeam(Team $team) {
     CommonDao::connectToDb();
-    $query = "select p.*
-        	  from player p, team_player tp
-        	  where p.player_id = tp.player_id and tp.team_id = " . $team->getId() .
+    $query = "select p.*, s.fantasy_pts
+        	  from player p
+        	  left outer join stat s on s.player_id = p.player_id
+        	  inner join team_player tp on p.player_id = tp.player_id
+        	  where tp.team_id = " . $team->getId() .
         	" order by p.last_name, p.first_name";
-    return PlayerDao::createPlayersFromQuery($query);
+    $res = mysql_query($query);
+    $playersDb = array();
+    while($playerDb = mysql_fetch_assoc($res)) {
+    	$player = new Player($playerDb["player_id"], $playerDb["first_name"],
+    			$playerDb["last_name"], $playerDb["birth_date"], $playerDb["mlb_team_id"],
+    			$playerDb["sportsline_id"]); 
+    	$player->setStatLine(TimeUtil::getYearBasedOnEndOfSeason() - 1,
+    	    StatDao::populateStatLine($playerDb));
+    	$playersDb[] = $player;
+    }
+    return $playersDb;
   }
 
   /**
@@ -248,8 +261,8 @@ class PlayerDao {
   static function createPlayer(Player $player) {
     CommonDao::connectToDb();
     $query = "insert into player(first_name, last_name, mlb_team_id, birth_date, sportsline_id)
-                 values ('" .
-             $player->getFirstName() . "', '" . $player->getLastName() . "', " .
+                 values (\"" .
+             $player->getFirstName() . "\", \"" . $player->getLastName() . "\", " .
              $player->getMlbTeam()->getId() . ", '" . $player->getBirthDate() . "', " .
              $player->getSportslineId() . ")";
     $result = mysql_query($query);
@@ -258,8 +271,8 @@ class PlayerDao {
       return null;
     }
 
-    $idQuery = "select player_id from player where first_name = '" . $player->getFirstName() .
-        "' and last_name = '" . $player->getLastName() . "' and birth_date = '" .
+    $idQuery = "select player_id from player where first_name = \"" . $player->getFirstName() .
+        "\" and last_name = \"" . $player->getLastName() . "\" and birth_date = '" .
         $player->getBirthDate() . "'";
     $result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
     $row = mysql_fetch_assoc($result);
@@ -272,13 +285,22 @@ class PlayerDao {
    */
   static function updatePlayer($player) {
     CommonDao::connectToDb();
-    $query = "update player set first_name = '" . $player->getFirstName() . "',
-                                last_name = '" . $player->getLastName() . "',
+    $query = "update player set first_name = \"" . $player->getFirstName() . "\",
+                                last_name = \"" . $player->getLastName() . "\",
                                 mlb_team_id = " . $player->getMlbTeam()->getId() . ",
                                 birth_date = '" . $player->getBirthDate() . "',
                                 sportsline_id = " . $player->getSportslineId() .
              " where player_id = " . $player->getId();
     $result = mysql_query($query) or die('Invalid query: ' . mysql_error());
+  }
+
+  /**
+   * Deletes all of the players.
+   */
+  public static function deleteAllPlayers() {
+  	CommonDao::connectToDb();
+  	$query = "delete from player where player_id > 0";
+  	mysql_query($query);
   }
 }
 ?>

@@ -38,6 +38,17 @@ class TeamDao {
   	return TeamDao::createTeamFromQuery($query);
   }
 
+  /**
+   * Returns the team with the specified team name, or null if none exists.
+   */
+  public static function getTeamByName($teamName) {
+  	CommonDao::connectToDb();
+  	$query = "select t.*
+  	          from team t
+  	          where t.team_name = \"" . $teamName . "\"";
+  	return TeamDao::createTeamFromQuery($query);
+  }
+  
   private static function createTeamFromQuery($query) {
   	$teamArray = TeamDao::createTeamsFromQuery($query);
   	if (count($teamArray) == 1) {
@@ -100,6 +111,15 @@ class TeamDao {
   	  }
   	}
   	$result = mysql_query($query) or die(mysql_error());
+  }
+  
+  /**
+   * Deletes all of the team-player associations.
+   */
+  public static function deleteAllPlayerAssociations() {
+  	CommonDao::connectToDb();
+  	$query = "delete from team_player where team_player_id > 0";
+  	mysql_query($query);
   }
 }
 ?>

@@ -181,5 +181,9 @@ class Player {
   		      <img src='" . $this->getHeadshotUrl() . "'></a>";
   	}
   }
+  
+  public function toString() {
+  	return $this->getAttributes() . ", " . $this->getAge() . ", " . $this->getSportslineId();
+  }
 }
 ?>

@@ -78,5 +78,14 @@ class CumulativeRankDao {
   	$cumulativeRank->setId($row["cumulative_rank_id"]);
   	return $cumulativeRank;
   }
+  
+  /**
+   * Deletes all cumulative ranks.
+   */
+  public static function deleteAllCumulativeRanks() {
+  	CommonDao::connectToDb();
+  	$query = "delete from cumulative_rank where cumulative_rank_id > 0";
+  	mysql_query($query);
+  }
 }
 ?>

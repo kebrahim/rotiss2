@@ -184,5 +184,14 @@ class RankDao {
   	$query = "delete from rank where rank_id = " . $rank->getId();
   	$result = mysql_query($query) or die('Invalid query: ' . mysql_error());
   }
+  
+  /**
+   * Deletes all of the ranks.
+   */
+  public static function deleteAllRanks() {
+  	CommonDao::connectToDb();
+  	$query = "delete from rank where rank_id > 0";
+  	mysql_query($query);
+  }
 }
 ?>

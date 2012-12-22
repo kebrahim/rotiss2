@@ -130,5 +130,14 @@ class DraftPickDao {
              " where draft_pick_id = " . $draftPick->getId();
     return mysql_query($query);
   }
+  
+  /**
+   * Deletes all of the draft picks.
+   */
+  public static function deleteAllDraftPicks() {
+  	CommonDao::connectToDb();
+  	$query = "delete from draft_pick where draft_pick_id > 0";
+  	mysql_query($query);
+  }
 }
 ?>
