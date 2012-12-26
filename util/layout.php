@@ -71,9 +71,9 @@ class LayoutUtil {
     echo "</div>"; // navbar-inner
     echo "</div>"; // navbar
   }
-  
+
   private static function displayRankingDropdown($isTopLevel, $selectedButton) {
-  	$dropdownSelected = ($selectedButton == LayoutUtil::MY_RANKS_BUTTON) || 
+  	$dropdownSelected = ($selectedButton == LayoutUtil::MY_RANKS_BUTTON) ||
   	    ($selectedButton == LayoutUtil::ALL_RANKS_BUTTON);
   	echo "<li class='dropdown";
   	if ($dropdownSelected) {
@@ -82,9 +82,9 @@ class LayoutUtil {
   	echo "'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>
   	            Ranking&nbsp<b class='caret'></b></a>";
   	echo "<ul class='dropdown-menu'>";
-  	LayoutUtil::displayListItem("rankPage.php", "My Ranks", $isTopLevel, $selectedButton, 
+  	LayoutUtil::displayListItem("rankPage.php", "My Ranks", $isTopLevel, $selectedButton,
   	    LayoutUtil::MY_RANKS_BUTTON);
-  	LayoutUtil::displayListItem("allRanksPage.php", "All Ranks", $isTopLevel, $selectedButton, 
+  	LayoutUtil::displayListItem("allRanksPage.php", "All Ranks", $isTopLevel, $selectedButton,
   	    LayoutUtil::ALL_RANKS_BUTTON);
   	echo "</ul></li>";
   }
@@ -115,14 +115,24 @@ class LayoutUtil {
   	echo "'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>
   	        Admin&nbsp<b class='caret'></b></a>";
   	echo "<ul class='dropdown-menu'>";
-  	 
-    // Manage teams
+
+  	// Brognas
+  	LayoutUtil::displayListItem("admin/manageBrognas.php", "Brognas", $isTopLevel,
+  	    $selectedButton, self::MANAGE_BROGNAS_BUTTON);
+
+  	// Manage individual team
+  	LayoutUtil::displayListItem("admin/manageTeam.php", "Team Mgmt", $isTopLevel,
+  	    $selectedButton, self::MANAGE_TEAM_BUTTON);
+
+  	// Roster Grid
   	LayoutUtil::displayListItem("admin/manageTeams.php", "Roster Grid", $isTopLevel,
   	    $selectedButton, self::MANAGE_ROSTERS_BUTTON);
 
   	// Trade
   	LayoutUtil::displayListItem("admin/manageTrade.php", "Trades", $isTopLevel, $selectedButton,
   		self::MANAGE_TRADE_BUTTON);
+
+  	echo "<li class=\"divider\"></li>";
 
   	// Auction
   	LayoutUtil::displayListItem("admin/manageAuction.php", "Auction", $isTopLevel,
@@ -132,22 +142,14 @@ class LayoutUtil {
   	LayoutUtil::displayListItem("admin/manageKeepers.php", "Keepers", $isTopLevel,
   		$selectedButton, self::MANAGE_KEEPERS_BUTTON);
 
-  	// Brognas
-  	LayoutUtil::displayListItem("admin/manageBrognas.php", "Brognas", $isTopLevel,
-  	    $selectedButton, self::MANAGE_BROGNAS_BUTTON);
-
-  	// Manage individual team
-  	LayoutUtil::displayListItem("admin/manageTeam.php", "Manage Team", $isTopLevel,
-  	    $selectedButton, self::MANAGE_TEAM_BUTTON);
-
   	// Manage draft
-  	LayoutUtil::displayListItem("admin/manageDraft.php", "Manage Draft", $isTopLevel,
-  			$selectedButton, self::MANAGE_DRAFT_BUTTON);
+  	LayoutUtil::displayListItem("admin/manageDraft.php", "Draft", $isTopLevel,
+  	$selectedButton, self::MANAGE_DRAFT_BUTTON);
 
   	// If super-admin, show ranks & placeholders pages
   	if (SessionUtil::isLoggedInSuperAdmin()) {
   	  echo "<li class=\"divider\"></li>";
-  		
+
   	  // Placeholders
   	  LayoutUtil::displayListItem("admin/managePlaceholders.php", "Placeholders", $isTopLevel,
           $selectedButton, self::MANAGE_PLACEHOLDERS_BUTTON);
@@ -158,7 +160,7 @@ class LayoutUtil {
   	}
   	echo "</ul></li>";
   }
-  
+
   private static function displayListItem($url, $caption, $isTopLevel, $selectedButton,
   		$listButton) {
   	echo "<li";
@@ -169,7 +171,7 @@ class LayoutUtil {
   	LayoutUtil::displayLink($url, $caption, $isTopLevel);
   	echo "</li>";
   }
-  
+
   private static function displayLink($url, $caption, $isTopLevel) {
   	echo "<a href='" . ($isTopLevel ? "" : "../") . $url . "'>" . $caption . "</a>";
   }
@@ -178,13 +180,13 @@ class LayoutUtil {
    * Displays the footer, attached to the bottom of the page.
    */
   public static function displayFooter() {
-    LayoutUtil::closeDivsAndDisplayFooter(true);	
+    LayoutUtil::closeDivsAndDisplayFooter(true);
   }
-  
+
   public static function displayAdminFooter() {
   	LayoutUtil::closeDivsAndDisplayFooter(false);
   }
-  
+
   private static function closeDivsAndDisplayFooter($isTopLevel) {
     echo "</div>";  // container
     echo "<div id='push'></div>";
@@ -204,7 +206,7 @@ class LayoutUtil {
               </div>
             </div>
           </div>
-          <script src=\"http://code.jquery.com/jquery-latest.js\"></script>    
+          <script src=\"http://code.jquery.com/jquery-latest.js\"></script>
           <script src=\"" . ($isTopLevel ? "" : "../") . "js/bootstrap.js\"></script>";
   }
 }

@@ -6,7 +6,7 @@ CommonUtil::requireFileIn('/../entity/', 'user.php');
 
 class SessionUtil {
   // TODO add prefix to session vars so they do not conflict w/ topchef rotiss
-  
+
   /**
    * Updates the _SESSION array with the value of the specified key within the
    * specified array; if isPost = false, then remove the value from the SESSION.
@@ -72,7 +72,7 @@ class SessionUtil {
   	  SessionUtil::logOutAndRedirect($continueUrl);
   	}
   }
-  
+
   /**
    * Returns true if a user is currently logged in.
    */
@@ -140,7 +140,7 @@ class SessionUtil {
   public static function logOut() {
   	SessionUtil::logOutAndRedirect(null);
   }
-  
+
   public static function logOutAndRedirect($continueUrl) {
     if (!isset($_SESSION)) {
       session_start();
@@ -156,7 +156,7 @@ class SessionUtil {
     // redirect to home page.
 	SessionUtil::redirectHome($continueUrl);
   }
-  
+
   /**
    * Redirects the user to the specified URL
    */

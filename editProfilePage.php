@@ -1,23 +1,33 @@
 <?php
   require_once 'util/sessions.php';
-  SessionUtil::checkUserIsLoggedIn();
+  SessionUtil::logoutUserIfNotLoggedIn("editProfilePage.php");
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com - Edit profile</title>
-<link href='css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss - Edit profile</title>
+<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
 <?php
-  require_once 'util/navigation.php';
+  require_once 'util/layout.php';
 
-  // Display header.
-  NavigationUtil::printHeader(true, true, 0);
+    // Nav bar
+  LayoutUtil::displayNavBar(true, LayoutUtil::BUDGET_BUTTON);
 
   $user = SessionUtil::getLoggedInUser();
-  echo "<div class='bodyleft'>";
+  echo "<div class='row-fluid'>
+          <div class='span12 center'>";
+
+  /**
+   * Displays the specified error message.
+   */
+  function displayError($errorMsg) {
+    echo "<br/><div class='alert alert-error'><strong>Error:</strong> $errorMsg</div>";
+  }
 
   /**
    * Validates the user fields specified in POST, and updates specified user with those fields if
@@ -29,16 +39,14 @@
     if (ctype_alpha($firstName)) {
       $user->setFirstName($firstName);
     } else {
-      echo "<div class='error_msg_pad'>Invalid first name [must be alphabetic chars only]: "
-            . $firstName . "</div>";
+      displayError("Invalid first name [must be alphabetic chars only]: ". $firstName);
       return false;
     }
     $lastName = $_POST['lastName'];
     if (ctype_alpha($lastName)) {
       $user->setLastName($lastName);
     } else {
-      echo "<div class='error_msg_pad'>Invalid last name [must be alphabetic chars only]: " .
-            $lastName . "</div>";
+      displayError("Invalid last name [must be alphabetic chars only]: " . $lastName);
       return false;
     }
 
@@ -50,8 +58,7 @@
     if (ctype_alnum($username)) {
       $user->setUsername($username);
     } else {
-      echo "<div class='error_msg_pad'>Invalid username [must be alpha-numeric chars only]: "
-            . $username . "</div>";
+      displayError("Invalid username [must be alpha-numeric chars only]: " . $username);
       return false;
     }
 
@@ -60,7 +67,7 @@
         (strlen($_POST['confnewpass']) > 0)) {
       if (validatePassword($user->getPassword())) {
         $user->setPassword($_POST['newpass']);
-        echo "<div class='alert_msg_pad_top'>Password successfully changed!</div>";
+        echo "<br/><div class='alert alert-success'>Password successfully changed!</div>";
       } else {
         return false;
       }
@@ -74,15 +81,15 @@
    */
   function validatePassword($oldPassword) {
     if ($_POST['oldpass'] != $oldPassword) {
-      echo "<div class='error_msg_pad'>Old password is incorrect!</div>";
+      displayError("Old password is incorrect!");
       return false;
     }
     if ((strlen($_POST['newpass']) == 0) || !ctype_alnum($_POST['newpass'])) {
-      echo "<div class='error_msg_pad'>New password is invalid; must be alphanumeric!</div>";
+      displayError("New password is invalid; must be alphanumeric!");
       return false;
     }
     if ($_POST['newpass'] != $_POST['confnewpass']) {
-      echo "<div class='error_msg_pad'>Passwords do not match!</div>";
+      displayError("Passwords do not match!");
       return false;
     }
     return true;
@@ -92,54 +99,79 @@
     if (validateUser($user)) {
       // update user
       UserDao::updateUser($user);
-      echo "<div class='alert_msg_pad_top'>User successfully updated!</div>";
+      echo "<br/><div class='alert alert-success'>User successfully updated!</div>";
     }
   }
 
-  echo "<h1>Edit " . $user->getFullName() . "'s Profile</h1>";
+  echo "    <h3>Edit " . $user->getFullName() . "'s Profile</h3>
+          </div>
+        </div>"; // row-fluid
+
+  echo "<div class='row-fluid'>
+          <div class='span12'><br/>";
   echo "<form action='editProfilePage.php' method=post>";
-  echo "<table>";
+  echo "   <div class='row-fluid'>
+              <div class='span7'>";
+  echo "<fieldset>
+        <legend>User Settings</legend>
+  <table class='table vertmiddle table-striped table-condensed table-bordered'>";
 
   // ID
-  echo "<tr><td><strong>User Id:</strong></td><td>" . $user->getId() . "</td></tr>";
+  echo "<tr><td><label>User Id:</label></td><td>" . $user->getId() . "</td></tr>";
 
   // Name
   echo "<tr><td><label for='firstName'>Name:</label></td>
         <td><input type=text id='firstName' name='firstName' required placeholder='First Name'
-            value='" . $user->getFirstName() . "' maxlength='20' size='25'> ";
+            value='" . $user->getFirstName() . "' maxlength='20' class='input-medium'> ";
   echo "<input type=text name='lastName' id='lastName' required placeholder='Last Name' value='" .
-         $user->getLastName() . "' maxlength='20' size='25'></td></tr>";
+         $user->getLastName() . "' maxlength='20' class='input-medium'></td></tr>";
 
   // Email
-  echo "<tr><td><label for='email'>Email:</label></td>
+  echo "<tr class='tdselect'><td><label for='email'>Email:</label></td>
             <td><input type=email id='email' name='email' required
-                 value='" . $user->getEmail() . "' maxlength='45' size='25'></td></tr>";
+                 value='" . $user->getEmail() . "' maxlength='45' class='input-large'></td></tr>";
 
   // Username
   echo "<tr><td><label for='username'>Username:</label></td>
          <td><input type=text id='username' name='username' required " .
-             "value='" . $user->getUsername() . "' maxlength='20' size='25'></td>
+             "value='" . $user->getUsername() . "' maxlength='20' class='input-large'></td>
         </tr>
-      </table><br/>";
+      </table></fieldset>
+      </div>"; // span7
 
   // Password
+  echo "<div class='span5'>";
   echo "<fieldset>
         <legend>Change Password</legend>
-        <label for='oldpass' >Old password:</label><br/>
-        <input type='password' name='oldpass' id='oldpass' maxlength='20' size='25' /><br/><br/>
-        <label for='newpass' >New password:</label><br/>
-        <input type='password' name='newpass' id='newpass' maxlength='20' size='25' /><br/><br/>
-        <label for='confnewpass' >Confirm new password:</label><br/>
-        <input type='password' name='confnewpass' id='confnewpass' maxlength='20' size='25' />
-        </fieldset>";
+        <table class='table vertmiddle table-striped table-condensed table-bordered'>
+        <tr>
+          <td><label for='oldpass'>Old password:</label></td>
+          <td><input type='password' name='oldpass' id='oldpass' maxlength='20' class='input-medium'/></td>
+        </tr>
+        <tr>
+          <td><label for='newpass'>New password:</label></td>
+          <td><input type='password' name='newpass' id='newpass' maxlength='20'  class='input-medium'/></td>
+        </tr>
+        <tr>
+          <td><label for='confnewpass'>Confirm password:</label></td>
+          <td><input type='password' name='confnewpass' id='confnewpass' maxlength='20'  class='input-medium'/></td>
+        </tr>
+        </table>
+        </fieldset><br/>";
 
-  echo "<br/>";
+  echo "</div>"; // span5
+  echo "</div>"; // row-fluid
 
   // Buttons
-  echo "<input class='button' type=submit name='update' value='Update settings'>";
+  echo "<p class='center'>
+          <button class=\"btn btn-primary\" name='update' type=\"submit\">Update settings</button>
+          &nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Cancel</button>
+        </p>";
 
-  echo "</form></div>";
+  echo "</form>";
+  echo "</div>"; // span12
+  echo "</div>"; // row-fluid
 
   // Display footer.
-  NavigationUtil::printFooter();
+  LayoutUtil::displayFooter();
 ?>

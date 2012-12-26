@@ -25,11 +25,11 @@
    */
   function displayTeamForTrade(Team $team, $position) {
   	echo "<hr class='bothr'/>";
-  	
+
   	// Team info
   	$team->displayTeamInfo();
   	echo "<hr/>";
-  	 
+
     // Contracts
     $contractSeason = TimeUtil::getYearBasedOnEndOfSeason();
     $team->displayContractsForTrade($contractSeason, 3000);
@@ -50,11 +50,11 @@
    */
   function displayTeamForAuction(Team $team) {
   	echo "<hr class='bothr'/>";
-  	 
+
   	// Team info
   	$team->displayTeamInfo();
   	echo "<hr/>";
-  	 
+
   	// Brognas - auctions always happen in january, so current year is sufficient.
   	$currentYear = TimeUtil::getCurrentYear();
   	$team->displayBrognas($currentYear, $currentYear, false, 0);
@@ -173,13 +173,13 @@
             </div>";
     }
     echo "</div>"; // span6
-    
+
     // brognas
     echo "<div class='span6'>";
     // TODO show brognas from this year & next year; allow user to select years
     $team->displayAllBrognas();
     echo "</div>"; // span6
-    
+
     echo "</div>"; // row-fluid
 
     // Display active contracts.
@@ -212,40 +212,41 @@
    */
   function displayTeamForManagement(Team $team) {
   	echo "<div class='row-fluid'>";
-  	
+
   	// team logo
   	echo "<div class='span2 center teamlogo'>
   	        <img src='" . $team->getSportslineImageUrl() . "'>
   	      </div>";
-  	
+
   	// team name
   	echo "  <div class='span10 center teamlogo'>
   	          <h3 class='nexttologo'>Manage: " . $team->getName() . "</h3>
   	        </div>
   	      </div>"; // row-fluid
-  	 
+
   	echo "<div class='row-fluid'>
   	        <div class='span12 center'>";
-  	 
+
     // ID
     echo "<br/><table class='table vertmiddle table-striped table-condensed table-bordered'>";
-    echo "<tr><td><strong>Team Id:</strong></td><td>" . $team->getId() . "</td></tr>";
+    echo "<tr><td><label>Team Id:</label></td><td>" . $team->getId() . "</td></tr>";
     echo "<input type=hidden name='teamId' value='" . $team->getId() . "'>";
 
     // Name
-    echo "<tr><td><strong>Name:</strong></td><td>
-             <input type=text name='teamName' maxLength=50 class='span8' required " .
-           "placeholder='Team Name' value=\"" . $team->getName() . "\"></td></tr>";
+    echo "<tr><td><label for='teamName'>Name:</label></td><td>
+             <input type=text name='teamName' id='teamName' maxLength=50 class='input-xxlarge'
+             required placeholder='Team Name' value=\"" . $team->getName() . "\"></td></tr>";
 
     // League/Division
-    echo "<tr><td><strong>Division:</strong></td><td><select name='league' required>";
+    echo "<tr><td><label for='league'>Division:</label></td>
+              <td><select name='league' id='league' class='input-small' required>";
     $leagues = array("AL", "NL");
     foreach ($leagues as $league) {
       $isSelected = ($league == $team->getLeague());
       echo "<option value='" . $league . "'" . ($isSelected ? " selected" : "") .
              ">" . $league . "</option>";
     }
-    echo "</select> <select name='division' required>";
+    echo "</select> <select name='division' class='input-small' required>";
     $divisions = array("East", "West");
     foreach ($divisions as $division) {
       $isSelected = ($division == $team->getDivision());
@@ -255,18 +256,20 @@
     echo "</select></td></tr>";
 
     // Abbreviation
-    echo "<tr><td><strong>Abbreviation:</strong></td><td>
-             <input type=text name='abbreviation' maxLength=10 size=10 required " .
-           "placeholder='Team Abbreviation' value='" . $team->getAbbreviation() . "'></td></tr>";
+    echo "<tr><td><label for='abbr'>Abbreviation:</label></td><td>
+             <input type=text name='abbreviation' id='abbr' maxLength=10 class='input-medium'
+             required placeholder='Team Abbreviation' value='" . $team->getAbbreviation() . "'>
+          </td></tr>";
 
     // Sportsline Image Name
-    echo "<tr><td><strong>Sportsline Image Name:</strong></td><td>
-             <input type=text name='sportslineImage'" .
-           " maxLength=65 class='span8' value='" . $team->getSportslineImageName() . "' required>
+    echo "<tr><td><label for='sportslineImage'>Sportsline Image Name:</label></td><td>
+             <input type=text name='sportslineImage' id='sportslineImage'" .
+           " maxLength=65 class='input-xxlarge' value='" . $team->getSportslineImageName() . "'
+             required>
               </td></tr>";
 
     // Owners
-    echo "<tr><td><strong>Owner(s):</strong></td><td>" . $team->getOwnersString() . "</td></tr>";
+    echo "<tr><td><label>Owner(s):</label></td><td>" . $team->getOwnersString() . "</td></tr>";
 
     echo "</table>";
 
@@ -283,12 +286,12 @@
    */
   function displayTeamForBudget(Team $team) {
   	echo "<div class='row-fluid'>";
-  	
+
   	// team logo
   	echo "<div class='span2 center teamlogo'>
   	        <img src='" . $team->getSportslineImageUrl() . "'>
   	      </div>";
-  	
+
   	// team name w/ bookmarks for each year
   	echo "<div class='span10 center'>
   	        <h3>Budget: " . $team->getName() . "</h3>
@@ -319,7 +322,7 @@
   	  if ($brogna->getYear() < $currentYear) {
   	    continue;
   	  }
-  	  
+
   	  echo "<div class='row-fluid'>
   	          <div class='span12'>";
 
@@ -370,10 +373,10 @@
   	  }
 
   	  // show leftover brognas
-  	  echo "<label>Bank for " . ($brogna->getYear() + 1) . ": </label>" .
+  	  echo "<label>Cash Balance for " . ($brogna->getYear() + 1) . ": </label>" .
           ($brogna->getTotalPoints() - $contractTotal) . "<br/><br/>";
       // TODO budget: should bank from previous year be calculated?
-      
+
   	  echo "</div>"; // span 12
   	  echo "</div>"; // row-fluid
   	}
