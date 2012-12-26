@@ -220,7 +220,7 @@ class Team {
   	}
 
   	echo "<a id='contracts'></a><h5>Contracts</h5>";
-  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center 
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center
   	                    smallfonttable'>
   	        <thead><tr>
   	          <th class='checkth'></th><th colspan='2'>Player</th><th>Years</th><th>Price</th>
@@ -239,9 +239,9 @@ class Team {
   		<td>" . $contract->getEndYear() . "</td>
   		<td>" . ($contract->isAuction() ? "Auction" : "Regular") . "</td></tr>";
   	}
-  	echo "</table>";  	 
+  	echo "</table>";
   }
-   
+
   /**
    * Display non-auction contracts for the keeper page, filtered by year.
    */
@@ -359,7 +359,7 @@ class Team {
   	if ((count($this->getPingPongBalls()) + count($this->getDraftPicks())) == 0) {
   	  return;
   	}
-  
+
   	echo "<a id='draft'></a><h5>Draft Picks</h5>";
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center
   	                    smallfonttable'>
@@ -390,7 +390,7 @@ class Team {
   	}
   	echo "</table>";
   }
-  
+
   /**
    * Displays the ping pong ball information only, between the specified years.
    */
@@ -492,14 +492,14 @@ class Team {
     }
     echo "</table>";
   }
-  
+
   function displayBrognasForTrade($minYear, $maxYear, $tradePosition) {
   	if (count($this->getBrognas()) == 0) {
   	  return;
   	}
-  
+
   	echo "<a id='brognas'></a><h5>Brognas</h5>";
-  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center 
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center
   	                    smallfonttable brognatrade'
   	             id='brognaTable'><thead><tr>";
   	echo "<th class='checkth'></th><th>Year</th><th>Total</th><th>Tradeable</th>";
@@ -557,10 +557,21 @@ class Team {
                "<td>" . $player->getPositionString() . "</td>
                 <td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
                 <td>" . $player->getAge() . "</td>
-                <td>" . $player->getStatLine($prevYear)->getFantasyPoints() . "</td>
-                <td>" . (($rank != null) ? $rank->getRank() : "-") . "</td></tr>";
+                <td>" . $player->getStatLine($prevYear)->getFantasyPoints() . "</td>" .
+                $this->getRankCell($rank) .
+           "</tr>";
     }
     echo "</table>";
+  }
+
+  /**
+   * Returns a table cell containing the specified rank information.
+   */
+  function getRankCell($rank) {
+    if ($rank == null) {
+      return "<td>-<td>";
+    }
+    return "<td>" . $rank->getRank() . ($rank->isPlaceholder() ? " (PH)" : "") . "</td>";
   }
 }
 ?>

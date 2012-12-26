@@ -38,14 +38,14 @@
    * Displays a table of ranked players for the specified team, during the specified year, for the
    * specified rank value.
    */
-  function displayPlayersByRank($teamId, $rankYear, $rank) {
+  function displayPlayersByRank($teamId, $rankYear, $rank, $isReadOnly) {
   	$lastYear = $rankYear - 1;
   	$ranks = RankDao::getRanksByTeamYearRank($teamId, $rankYear, $rank);
   	echo "<h5>" . $rank . "'s</h5>";
   	if (count($ranks) > 15) {
   	  echo "<div class=\"alert alert-error\">Too many " . $rank . "s!</div>";
   	}
-  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center 
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center
   	                    smallfonttable'>";
   	echo "<thead><tr><th>Player</th><th>FPTS</th><th>Rank</th></tr></thead>";
 
@@ -60,7 +60,7 @@
   	  echo "><td>" . $rank->getPlayer()->getIdNewTabLink(true, $rank->getPlayer()->getFullName()) . "</td>
   	         <td>" . $fantasyPts . "</td>";
   	  echo "<td>";
-  	  if ($rank->isPlaceholder()) {
+  	  if ($rank->isPlaceholder() || $isReadOnly) {
   	  	// placeholder; show read-only value
   	  	echo $rank->getRank();
   	  } else {
@@ -71,13 +71,13 @@
   	}
   	echo "</table>";
   }
-  
+
   function displayTotalRanks($teamId, $rankYear) {
   	$numRanks = RankDao::getTotalRankCount($teamId, $rankYear);
   	echo "<h4>Total Ranks: " . $numRanks . " / 150</h4>";
   	displayProgressBar($numRanks, 150, "");
   }
-  
+
   function displayProgressBar($currentValue, $maxValue, $extraClass) {
   	echo "<div class='progress progress-striped $extraClass'>
   	        <div class=\"bar ";
@@ -91,7 +91,7 @@
   	echo "\" style=\"width: " . (($currentValue / $maxValue) * 100) . "%;\"></div>
   	     </div>";
   }
-  
+
   function displayRankSummary($teamId, $rankYear) {
   	$count = 10;
   	for ($i=0; $i<2; $i++) {
@@ -104,7 +104,7 @@
   	  	}
   	  	$numRanks = count(RankDao::getRanksByTeamYearRank($teamId, $rankYear, $count));
   	  	echo "<label>$count:</label> ($numRanks / 15)<br/>";
-        displayProgressBar($numRanks, 15, "smallprogress");  	  	
+        displayProgressBar($numRanks, 15, "smallprogress");
   	  	$count--;
   		echo "</div>";
   	  }
@@ -114,7 +114,7 @@
 
   // Display nav bar.
   LayoutUtil::displayNavBar(true, LayoutUtil::MY_RANKS_BUTTON);
-  
+
   // Get selected team from logged-in user.
   $teamId = SessionUtil::getLoggedInTeam()->getId();
 
@@ -163,20 +163,23 @@
         </div>
         <div class='row-fluid'>
           <div class='span12 center'>";
-  
+
   displayTotalRanks($teamId, $rankYear);
   displayRankSummary($teamId, $rankYear);
   echo "</div>"; // span12
   echo "</div>"; // row-fluid
-  
+
+  // if any cumulative ranks exist for the rank year, then display page in read-only mode.
+  $isReadOnly = CumulativeRankDao::hasCumulativeRanks($rankYear);
+
   echo "<div class='row-fluid'>
           <div class='span3 center'>";
-  
+
   // display unranked players
   echo "<h4>Unranked Players</h4>";
   $rankablePlayers = PlayerDao::getPlayersForRanking($teamId, $lastYear);
   echo "<table id='unranked'
-               class='table vertmiddle table-striped table-condensed table-bordered 
+               class='table vertmiddle table-striped table-condensed table-bordered
                       center smallfonttable'>
           <thead><tr><th>Player</th><th>FPTS</th><th>Rank</th></tr></thead>";
   foreach ($rankablePlayers as $player) {
@@ -184,10 +187,14 @@
   	    $player->getStatLine($lastYear)->getFantasyPoints() : "--";
   	echo "<tr><td>" . $player->getIdNewTabLink(true, $player->getFullName()) . "</td>
   	          <td>" . $fantasyPts . "</td><td>";
-  	displaySelectForPlayer($player, 0);
+  	if ($isReadOnly) {
+      echo "0";
+  	} else {
+  	  displaySelectForPlayer($player, 0);
+  	}
   	echo "</td></tr>";
   }
-  
+
   // display all 0 placeholders
   $zeroPlaceholders = RankDao::getRanksByTeamYearRank($teamId, $rankYear, 0);
   foreach ($zeroPlaceholders as $zeroPlaceholder) {
@@ -199,38 +206,42 @@
   	        <td>" . $fantasyPts . "</td>
   	        <td>0</td>
   	      </tr>";
-  } 
+  }
   echo "</table>";
   echo "</div>"; //span2
-  
+
   echo "<div class='span9 center'>";
 
   // display ranked players
   echo "<h4>Ranked Players</h4>";
-  // TODO do not show 'save' button after rankings period ends
-  echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save my changes</button>";
-  echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
-  echo "<input type='hidden' name='team_id' value='" . $teamId . "'>";
+
+  if (!$isReadOnly) {
+    echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save my changes</button>";
+    echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
+    echo "<input type='hidden' name='team_id' value='" . $teamId . "'>";
+  }
   $count = 10;
   for ($i=0; $i<4; $i++) {
   	echo "<div class='row-fluid'>";
   	for ($j=0; $j<3; $j++) {
   	  if ($count > 0) {
     	echo "<div class='span4'>";
-        displayPlayersByRank($teamId, $rankYear, $count--);
+        displayPlayersByRank($teamId, $rankYear, $count--, $isReadOnly);
         echo "</div>";
   	  }
   	}
   	echo "</div>"; // row-fluid
   }
 
-  echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save my changes</button>";
-  echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
-  
+  if (!$isReadOnly) {
+    echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save my changes</button>";
+    echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
+  }
+
   echo "</FORM>";
   echo "</div>"; // span10
   echo "</div>"; // row-fluid
-  
+
   // Footer
   LayoutUtil::displayFooter();
 ?>
