@@ -1,14 +1,14 @@
 <?php
   require_once 'util/sessions.php';
   require_once 'util/time.php';
-  
+
   // if year is not specified, use the current year.
   $redirectUrl = "auctionPage.php";
   if (isset($_REQUEST["year"])) {
   	$year = $_REQUEST["year"];
   	$redirectUrl .="?year=$year";
   } else {
-  	$year = TimeUtil::getCurrentYear();
+  	$year = TimeUtil::getYearBasedOnEndOfSeason();
   }
   SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
@@ -62,19 +62,23 @@ function getRedirectHTML(element, htmlString) {
 
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::AUCTION_BUTTON);
-  
-  // allow user to choose year.
-  YearManager::displayYearChooser($year, AuctionResultDao::getMinimumAuctionYear(), 
-      AuctionResultDao::getMaximumAuctionYear());
-  
+
+  // allow user to choose year; include current year (based on end of season) even if auction hasn't
+  // taken place yet.
+  $maxYear = AuctionResultDao::getMaximumAuctionYear();
+  if ($maxYear < TimeUtil::getYearBasedOnEndOfSeason()) {
+    $maxYear = TimeUtil::getYearBasedOnEndOfSeason();
+  }
+  YearManager::displayYearChooser($year, AuctionResultDao::getMinimumAuctionYear(), $maxYear);
+
   echo "<div id='yearDisplay'></div><br/>";
 ?>
-      
+
 <script>
   // initialize yearDisplay with selected year
   showYear(document.getElementById("year").value);
 </script>
-      
+
 <?php
 
   // Display footer

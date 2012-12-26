@@ -28,7 +28,7 @@ class TeamManager {
   	echo "</div>"; // span12
   	echo "</div>"; // row-fluid
   }
-  
+
   /**
    * Returns a row in a table with the specified team name and logo.
    */
@@ -39,6 +39,18 @@ class TeamManager {
   	} else {
   	  return "<td colspan=2>--</td>";
   	}
+  }
+
+  /**
+   * Returns a row in a table with the specified team abbreviation and logo.
+   */
+  public static function getAbbreviationAndLogoRow($team) {
+    if ($team != null) {
+      return "<td>" . $team->getSportslineImg(32, 32) . "</td>
+    		  <td>" . $team->getIdLink(true, $team->getAbbreviation()) . "</td>";
+    } else {
+      return "<td colspan=2>--</td>";
+    }
   }
 }
 

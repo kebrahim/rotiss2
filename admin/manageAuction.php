@@ -122,13 +122,13 @@ function showTeam(teamId) {
   	  $auction->showAuctionSummary();
 
   	  // request final confirmation of auction before execution
-  	  echo "<p><button class=\"btn btn-primary\" name='confirmAuction' 
+  	  echo "<p><button class=\"btn btn-primary\" name='confirmAuction'
                        type=\"submit\">Confirm</button>&nbsp&nbsp
                <button class=\"btn\" name='cancelAuction' type=\"submit\">Cancel</button>
   	        </p>";
   	} else {
   	  echo "<h3>
-  	          Cannot execute auction! Please <a href='manageAuction.php' 
+  	          Cannot execute auction! Please <a href='manageAuction.php'
   	          class=\"btn btn-primary\">try again</a>
   	        </h3>";
   	}
@@ -143,7 +143,7 @@ function showTeam(teamId) {
       $auction->initiateAuction();
   	  echo "<a href='manageAuction.php' class='btn btn-primary'>Let's do it again!</a><br/><br/>";
   	} else {
-  	  echo "<h3>Cannot execute auction! Please <a href='manageAuction.php' 
+  	  echo "<h3>Cannot execute auction! Please <a href='manageAuction.php'
   	        class='btn btn-primary'>try again</a></h3>";
   	}
   } else {
@@ -177,7 +177,7 @@ function showTeam(teamId) {
     echo "<div class='row-fluid'>
             <div class='span6 center'><div class='chooser'>";
     echo "<label for='player'>Select Player:</label>&nbsp
-          <select id='player' class='span8 smallfonttable' name='player' 
+          <select id='player' class='span8 smallfonttable' name='player'
                   onchange='showPlayer(this.value)'>
           <option value='0'></option>";
     foreach ($players as $player) {
@@ -203,14 +203,14 @@ function showTeam(teamId) {
     echo "<div id='teamDisplay'></div>";
     echo "</div>"; // span6
     echo "</div>"; // row-fluid
-    
+
     echo "<div id='auctionButton' style='display:none'>
             <div class=\"input-prepend\">
               <label for='auction_amount'>Auction amount:</label>&nbsp
               <span class=\"add-on\">$</span>
               <input type=number id='auction_amount' name='auction_amount'
                    placeholder='Enter non-zero value'></div>
-            <p><button class=\"btn btn-primary\" name='auction' 
+            <p><button class=\"btn btn-primary\" name='auction'
                        type=\"submit\">Auction player</button>
             &nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Cancel</button></p>
           </div>";

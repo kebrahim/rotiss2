@@ -3,6 +3,7 @@
   require_once '../dao/ballDao.php';
   require_once '../dao/brognaDao.php';
   require_once '../dao/draftPickDao.php';
+  require_once '../dao/playerDao.php';
   require_once '../util/playerManager.php';
   require_once '../util/teamManager.php';
   require_once '../util/sessions.php';
@@ -19,16 +20,16 @@
   	      </div>
   	      <div class='row-fluid'>
   	        <div class='span12 center'><br/>";
-  	
+
   	// TODO allow filtering by round
-  	
+
   	// display table of draft picks for selected year, highlighting row for logged-in team
   	$loggedInTeamId = SessionUtil::getLoggedInTeam()->getId();
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
   	        <thead><tr>
   	          <th>Round</th><th>Pick</th><th colspan=2>Team</th><th colspan=2>Player</th>
   	        </tr></thead>";
-  	
+
   	$pingPongBalls = BallDao::getPingPongBallsByYear($year);
   	foreach ($pingPongBalls as $pingPongBall) {
   	  echo "<tr";
@@ -40,7 +41,7 @@
   	         TeamManager::getNameAndLogoRow($pingPongBall->getTeam()) .
   		     PlayerManager::getNameAndHeadshotRow($pingPongBall->getPlayer()) . "</tr>";
   	  }
-  	
+
   	  $draftPicks = DraftPickDao::getDraftPicksByYear($year);
   	  foreach ($draftPicks as $draftPick) {
   		echo "<tr";
@@ -56,7 +57,7 @@
     echo "</div>"; // span12
     echo "</div>"; // row-fluid
   }
-  
+
   /**
    * Returns a dropdown of all of the undrafted players with the specified player selected.
    */
@@ -67,9 +68,9 @@
   	  $playerDropdown .= " selected";
   	}
   	$playerDropdown .= "></option>";
-  	
+
   	if ($selectedPlayer != null) {
-  	  $playerDropdown .= "<option value='" . $selectedPlayer->getId() . "' selected>" . 
+  	  $playerDropdown .= "<option value='" . $selectedPlayer->getId() . "' selected>" .
   	      $selectedPlayer->getAttributes() . "</option>";
   	}
   	foreach ($undraftedPlayers as $player) {
@@ -82,7 +83,7 @@
   	$playerDropdown .= "</select>";
   	return $playerDropdown;
   }
-  
+
   /**
    * Returns a dropdown of all of the picks with the specified pick selected.
    */
@@ -112,7 +113,7 @@
   	}
   	// allow user to select players who have not yet been drafted during the specified year.
   	$undraftedPlayers = PlayerDao::getUndraftedPlayers($year);
-  	 
+
   	// display table of draft picks for selected year, highlighting row for logged-in team
   	$loggedInTeamId = SessionUtil::getLoggedInTeam()->getId();
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
@@ -143,7 +144,7 @@
   	echo "<input type=hidden name='year' value='$year'>
   	      <input type=hidden name='round' value='$round'>";
   }
-  
+
   /**
    * Display list of auctioned players for specified year
    */
@@ -153,14 +154,39 @@
   	          <h3>Auction Results " . $year . "</h3>";
   	echo "  </div>
   	      </div>
-  	      <div class='row-fluid'>
-  	        <div class='span12 center'><br/>";
+  	      <div class='row-fluid'>";
 
-  	// display table of auction results for specified year, highlighting row for specified team
   	$loggedinTeamId = SessionUtil::getLoggedInTeam()->getId();
+
+  	// display table of players eligible to be auctioned
+  	echo "  <div class='span6 center'>
+  	          <h4>To Be Auctioned</h4>";
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
   	        <thead><tr>
-  	          <th colspan=2>Player</th><th colspan=2>Team</th><th>Cost</th>
+  	          <th colspan=4>Player</th><th colspan=2>Fantasy Team</th>
+  	        </tr></thead>";
+  	$players = PlayerDao::getPlayersForAuction($year);
+    foreach ($players as $player) {
+      $team = $player->getFantasyTeam();
+      echo "<tr";
+  	  if ($team != null && $team->getId() == $loggedinTeamId) {
+  	    echo " class='selected_team_row'";
+  	  }
+      echo   ">" . PlayerManager::getNameAndHeadshotRow($player) .
+                   "<td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
+                   <td>" . $player->getPositionString() . "</td>" .
+                   TeamManager::getAbbreviationAndLogoRow($team) .
+             "</tr>";
+    }
+  	echo "    </table>
+  	        </div>";
+
+  	// display table of auction results for specified year, highlighting row for specified team
+  	echo "  <div class='span6 center'>
+  	          <h4>The Auction</h4>";
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
+  	        <thead><tr>
+  	          <th colspan=2>Player</th><th colspan=2>Fantasy Team</th><th>Cost</th>
   	        </tr></thead>";
   	$auctionResults = AuctionResultDao::getAuctionResultsByYear($year);
   	foreach ($auctionResults as $auctionResult) {
@@ -171,14 +197,14 @@
   	    echo " class='selected_team_row'";
   	  }
       echo ">" . PlayerManager::getNameAndHeadshotRow($player) .
-  	             TeamManager::getNameAndLogoRow($team) .
-                 "<td>" . $auctionResult->getCost() . "</td></tr>";
+                 TeamManager::getAbbreviationAndLogoRow($team) .
+                "<td>" . $auctionResult->getCost() . "</td></tr>";
   	}
   	echo "</table>";
-  	echo "</div>"; // span12
+  	echo "</div>"; // span6
   	echo "</div>"; // row-fluid
   }
-  
+
   /**
    * Displays the brogna breakdown for all teams in the specified year.
    */
@@ -209,7 +235,7 @@
     echo "</div>"; // span12
     echo "</div>"; // row-fluid
   }
-  
+
   function displayRoundDropdown($year, $selectedRound) {
   	$minRound = DraftPickDao::getMinimumRound($year);
   	$maxRound = DraftPickDao::getMaximumRound($year);
@@ -226,7 +252,7 @@
   	  echo ">$rd</option>";
   	}
   }
-  
+
   // direct to corresponding function, depending on type of display
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
