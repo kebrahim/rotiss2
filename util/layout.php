@@ -9,16 +9,17 @@ class LayoutUtil {
   const ALL_RANKS_BUTTON = 5;
   const DRAFT_BUTTON = 6;
   const AUCTION_BUTTON = 7;
-  const ADMIN_BUTTON = 8;
-  const MANAGE_ROSTERS_BUTTON = 9;
-  const MANAGE_TRADE_BUTTON = 10;
-  const MANAGE_AUCTION_BUTTON = 11;
-  const MANAGE_KEEPERS_BUTTON = 12;
-  const MANAGE_BROGNAS_BUTTON = 13;
-  const MANAGE_TEAM_BUTTON = 14;
-  const MANAGE_DRAFT_BUTTON = 15;
-  const MANAGE_PLACEHOLDERS_BUTTON = 16;
-  const MANAGE_RANKS_BUTTON = 17;
+  const EDIT_PROFILE_BUTTON = 8;
+  const ADMIN_BUTTON = 9;
+  const MANAGE_ROSTERS_BUTTON = 10;
+  const MANAGE_TRADE_BUTTON = 11;
+  const MANAGE_AUCTION_BUTTON = 12;
+  const MANAGE_KEEPERS_BUTTON = 13;
+  const MANAGE_BROGNAS_BUTTON = 14;
+  const MANAGE_TEAM_BUTTON = 15;
+  const MANAGE_DRAFT_BUTTON = 16;
+  const MANAGE_PLACEHOLDERS_BUTTON = 17;
+  const MANAGE_RANKS_BUTTON = 18;
 
   public static function displayHeader() {
     echo "<div id='wrap'><div class='container'>";
@@ -66,7 +67,7 @@ class LayoutUtil {
     echo "</ul>";
 
     // show logged-in user name with links for editing profile & signing out
-    LayoutUtil::displayProfileDropdown($isTopLevel);
+    LayoutUtil::displayProfileDropdown($isTopLevel, $selectedButton);
 
     echo "</div>"; // navbar-inner
     echo "</div>"; // navbar
@@ -89,15 +90,23 @@ class LayoutUtil {
   	echo "</ul></li>";
   }
 
-  private static function displayProfileDropdown($isTopLevel) {
+  private static function displayProfileDropdown($isTopLevel, $selectedButton) {
+    $dropdownSelected = ($selectedButton == self::EDIT_PROFILE_BUTTON);
   	$user = SessionUtil::getLoggedInUser();
   	echo "<ul class='nav pull-right'>
   	        <li class=\"divider-vertical\"></li>
-  	        <li class='dropdown'>
-  	          <a href='#' class='dropdown-toggle  profiledropdown' data-toggle='dropdown'>
+  	        <li class='dropdown";
+  	if ($dropdownSelected) {
+  	  echo " active";
+  	}
+    echo "'><a href='#' class='dropdown-toggle  profiledropdown' data-toggle='dropdown'>
   	            Hi " . $user->getFirstName() . "!&nbsp<b class='caret'></b></a>";
   	echo "<ul class='dropdown-menu'>
-  	        <li><a href='" . ($isTopLevel ? "" : "../") .
+  	        <li";
+  	if ($dropdownSelected) {
+  	  echo " class='active'";
+  	}
+  	echo "><a href='" . ($isTopLevel ? "" : "../") .
   	            "editProfilePage.php'><i class=\"icon-edit\"></i>&nbsp&nbspEdit profile</a></li>
   	        <li class=\"divider\"></li>
   	        <li><a href='" . ($isTopLevel ? "" : "../") . "logoutPage.php'>

@@ -16,7 +16,7 @@
   require_once 'util/layout.php';
 
     // Nav bar
-  LayoutUtil::displayNavBar(true, LayoutUtil::BUDGET_BUTTON);
+  LayoutUtil::displayNavBar(true, LayoutUtil::EDIT_PROFILE_BUTTON);
 
   $user = SessionUtil::getLoggedInUser();
   echo "<div class='row-fluid'>
