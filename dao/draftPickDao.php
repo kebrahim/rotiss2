@@ -45,7 +45,7 @@ class DraftPickDao {
   	          order by D.pick";
   	return DraftPickDao::createDraftPicks($query);
   }
-  
+
   /**
    * Returns the draft pick identified by the specified id.
    */
@@ -91,7 +91,7 @@ class DraftPickDao {
     $row = mysql_fetch_row($res);
     return $row[0];
   }
-  
+
   /**
    * Returns the earliest round in the specified draft year.
    */
@@ -113,7 +113,23 @@ class DraftPickDao {
     $row = mysql_fetch_row($res);
     return $row[0];
   }
-  
+
+  /**
+   * Returns the number of picks in the specified year, for the specified team, occurring before or
+   * during the specified round.
+   */
+  public static function getNumberPicksByTeamByRound($year, $teamId, $round) {
+    CommonDao::connectToDb();
+    $query = "select count(*)
+      	      from draft_pick D
+      	      where D.year = $year
+      	      and D.team_id = $teamId
+      	      and D.round <= $round";
+    $res = mysql_query($query);
+    $row = mysql_fetch_row($res);
+    return $row[0];
+  }
+
   public static function createDraftPick(DraftPick $draftPick) {
     // TODO
   }
@@ -123,14 +139,14 @@ class DraftPickDao {
     $query = "update draft_pick set team_id = " . $draftPick->getTeam()->getId() . ",
                                     year = " . $draftPick->getYear() . ",
                                     round = " . $draftPick->getRound() . ",
-                                    pick = " . ($draftPick->getPick() == null ? 
+                                    pick = " . ($draftPick->getPick() == null ?
                                     		   "null" : $draftPick->getPick()) . ",
                                     original_team_id = " . $draftPick->getOriginalTeamId() . ",
                                     player_id = " . $draftPick->getPlayerId() .
              " where draft_pick_id = " . $draftPick->getId();
     return mysql_query($query);
   }
-  
+
   /**
    * Deletes all of the draft picks.
    */

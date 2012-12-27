@@ -44,6 +44,20 @@ class BallDao {
     return $balls[0];
   }
 
+  /**
+  * Returns the number of ping pong balls belonging to the specified team during the specified year.
+  */
+  public static function getNumPingPongBallsByTeamYear($year, $teamId) {
+    CommonDao::connectToDb();
+    $query = "select count(*)
+              from ping_pong P
+              where P.team_id = $teamId
+              and P.year = $year";
+    $res = mysql_query($query);
+    $row = mysql_fetch_row($res);
+    return $row[0];
+  }
+
   private static function createPingPongBalls($query) {
     $balls_db = mysql_query($query);
 
@@ -87,7 +101,7 @@ class BallDao {
                              " where ping_pong_id = " . $pingPongBall->getId();
     return mysql_query($query);
   }
-  
+
   /**
    * Deletes all of the ping pong balls.
    */

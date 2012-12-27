@@ -126,7 +126,7 @@ class LayoutUtil {
   	echo "<ul class='dropdown-menu'>";
 
   	// Brognas
-  	LayoutUtil::displayListItem("admin/manageBrognas.php", "Brognas", $isTopLevel,
+  	LayoutUtil::displayListItem("admin/manageBrognas.php", "Team Budgets", $isTopLevel,
   	    $selectedButton, self::MANAGE_BROGNAS_BUTTON);
 
   	// Manage individual team

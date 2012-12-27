@@ -22,6 +22,9 @@ class DraftPick {
   private $playerLoaded;
   private $player;
 
+  const EXTRA_PICK_ROUND_CUTOFF = 5;
+  const MAX_EXTRA_PICKS = 3;
+
   public function __construct($draftPickId, $teamId, $year, $round, $pick, $originalTeamId,
       $playerId) {
     $this->draftPickId = $draftPickId;
@@ -48,7 +51,7 @@ class DraftPick {
   public function getTeamId() {
   	return $this->teamId;
   }
-  
+
   public function setTeam(Team $team) {
     $this->team = $team;
     $this->teamId = $team->getId();
@@ -73,7 +76,7 @@ class DraftPick {
   	}
   	$this->pick = $pick;
   }
-  
+
   public function getOriginalTeamName() {
     if ($this->originalTeamId == null) {
       return "--";
@@ -126,7 +129,7 @@ class DraftPick {
     }
     return $this->getPlayer()->getId();
   }
-  
+
   public function setPlayerId($playerId) {
   	$this->playerId = $playerId;
   	$this->playerLoaded = false;

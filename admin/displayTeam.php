@@ -176,6 +176,7 @@
 
     // brognas
     echo "<div class='span6'>";
+
     // if upcoming year's brognas are negative, show warning.
     foreach ($team->getBrognas() as $brogna) {
       if (($brogna->getYear() == (TimeUtil::getYearByEvent(TimeUtil::KEEPER_NIGHT_EVENT) + 1))
@@ -204,6 +205,22 @@
     // Display draft pick information
     echo "<div class='row-fluid'>
             <div class='span12'>";
+
+    // if team has too many extra draft picks for upcoming draft, then show warning.
+    $upcomingDraftYear = TimeUtil::getYearByEvent(TimeUtil::DRAFT_EVENT) + 1;
+    $extraDraftPicks =
+        DraftPickDao::getNumberPicksByTeamByRound(
+            $upcomingDraftYear, $team->getId(), DraftPick::EXTRA_PICK_ROUND_CUTOFF)
+        - DraftPick::EXTRA_PICK_ROUND_CUTOFF;
+    $numBalls = BallDao::getNumPingPongBallsByTeamYear($upcomingDraftYear, $team->getId());
+    $extraPicks = $extraDraftPicks + $numBalls;
+    if ($extraPicks > DraftPick::MAX_EXTRA_PICKS) {
+      echo "<br/>
+        <div class='alert alert-error'>
+          <strong>Warning!</strong> Too many extra draft picks for $upcomingDraftYear: $extraPicks
+        </div>";
+    }
+
     // TODO show draft picks from this year; allow user to select year
     $team->displayAllDraftPicks();
     echo "</div>"; // span12

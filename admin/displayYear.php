@@ -211,20 +211,35 @@
   function displayBrognaYear($year) {
   	echo "<div class='row-fluid'>
    	        <div class='span6 offset3 center'>
-  	          <h3>Manage $year Brognas</h3>";
+  	          <h3>Manage $year Team Budgets</h3>";
   	echo "  </div>
   	      </div>
   	      <div class='row-fluid'>
   	        <div class='span12 center'><br/>";
     echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
-            <thead><tr><th colspan=2>Team</th><th>Total</th><th>Banked</th><th>Traded In</th>
-  		        <th>Traded Out</th><th>Tradeable</th></tr></thead>";
+            <thead><tr><th rowspan=2 colspan=2>Team</th>
+                       <th colspan=5>Brognas</th><th colspan=3>Draft Picks</th></tr>
+                   <tr><th>Total</th><th>Banked</th><th>Traded In</th>
+  		        <th>Traded Out</th><th>Tradeable</th>
+                <th><abbr title='In first 5 rounds'>Extra Draft Picks</abbr></th>
+                <th>Ping Pong Balls</th>
+                <th><abbr title='Cannot be more than 3'>Extra Picks</abbr></th>
+            </tr></thead>";
 
     $brognas = BrognaDao::getBrognasByYear($year, $year);
     foreach ($brognas as $brogna) {
-      echo "<tr><td>" . $brogna->getTeam()->getSportslineImg(36,36) . "</td>
-                <td>" . $brogna->getTeam()->getNameLink(false) . "</td>
-                <td";
+      // display number of extra draft picks in the first 5 rounds, and ping pong balls; show
+      // warning if team has more than 3 extra picks.
+      $extraDraftPicks = DraftPickDao::getNumberPicksByTeamByRound(
+              $brogna->getYear(), $brogna->getTeam()->getId(), DraftPick::EXTRA_PICK_ROUND_CUTOFF)
+          - DraftPick::EXTRA_PICK_ROUND_CUTOFF;
+      $numBalls = BallDao::getNumPingPongBallsByTeamYear(
+          $brogna->getYear(), $brogna->getTeam()->getId());
+      $extraPicks = ($extraDraftPicks + $numBalls);
+
+      echo "<tr>" .
+                TeamManager::getAbbreviationAndLogoRowAtLevel($brogna->getTeam(), false) .
+                "<td";
       if ($brogna->getTotalPoints() < 0) {
         echo " class ='warning'";
       }
@@ -233,7 +248,14 @@
            	    <td>" . $brogna->getTradedInPoints() . "</td>
                	<td>" . $brogna->getTradedOutPoints() . "</td>
                	<td>" . $brogna->getTradeablePoints() . "</td>
-           	</tr>";
+               	<td>" . $extraDraftPicks . "</td>
+               	<td>" . $numBalls . "</td>
+               	<td";
+      if ($extraPicks > DraftPick::MAX_EXTRA_PICKS) {
+        echo " class='warning'";
+      }
+      echo        ">" . $extraPicks . "</td>
+      </tr>";
     }
     echo "</table>";
     echo "</div>"; // span12
