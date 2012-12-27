@@ -11,7 +11,7 @@ class ContractDao {
     CommonDao::connectToDb();
     $query = "select * from contract
               where team_id = " . $teamId . " and is_bought_out = 0" .
-              " order by sign_date, end_year, price DESC";
+              " order by end_year, start_year, price DESC";
     return ContractDao::createContractsFromQuery($query);
   }
 
@@ -33,7 +33,7 @@ class ContractDao {
       $contracts[] = new Contract($contractDb["contract_id"], $contractDb["player_id"],
           $contractDb["team_id"], $contractDb["num_years"], $contractDb["price"],
           $contractDb["sign_date"], $contractDb["start_year"], $contractDb["end_year"],
-          $contractDb["is_auction"], $contractDb["is_bought_out"]);
+          $contractDb["is_auction"], $contractDb["is_bought_out"], $contractDb["contract_type"]);
     }
     return $contracts;
   }
@@ -44,12 +44,13 @@ class ContractDao {
   public static function createContract(Contract $contract) {
     CommonDao::connectToDb();
     $query = "insert into contract(player_id, team_id, num_years, price, sign_date, start_year,
-              end_year, is_auction, is_bought_out) values (" .
+              end_year, is_auction, is_bought_out, contract_type) values (" .
               $contract->getPlayer()->getId() . ", " . $contract->getTeam()->getId() . ", " .
               $contract->getTotalYears() . ", " . $contract->getPrice() . ", '" .
               $contract->getSignDate() . "', " . $contract->getStartYear() . ", " .
               $contract->getEndYear() . ", " . ($contract->isAuction() ? "1" : "0") . ", " .
-              ($contract->isBoughtOut() ? "1" : "0") . ")";
+              ($contract->isBoughtOut() ? "1" : "0") . ", '" .
+              $contract->getType() . "')";
     $result = mysql_query($query);
     if (!$result) {
       echo "<div class='error_msg'>DB Error: Contract (" . $contract->toString() .
@@ -79,8 +80,9 @@ class ContractDao {
                                   start_year = " . $contract->getStartYear() . ",
                                   end_year = " . $contract->getEndYear() . ",
                                   is_auction = " . ($contract->isAuction() ? "1" : "0") . ",
-                                  is_bought_out = " . ($contract->isBoughtOut() ? "1" : "0") .
-             " where contract_id = " . $contract->getId();
+                                  is_bought_out = " . ($contract->isBoughtOut() ? "1" : "0") . ",
+                                  contract_type = '" . $contract->getType() . "'
+              where contract_id = " . $contract->getId();
     $result = mysql_query($query) or die('Invalid query: ' . mysql_error());
   }
   

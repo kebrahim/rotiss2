@@ -162,7 +162,7 @@ class Team {
   }
 
   public function displayAllContracts() {
-    $currentYear = TimeUtil::getYearBasedOnEndOfSeason();
+    $currentYear = TimeUtil::getYearByEvent(TimeUtil::AUCTION_EVENT);
     $this->displayContracts($currentYear, 3000, false);
   }
 
@@ -207,7 +207,7 @@ class Team {
                   <td>" . $contract->getSignDate() . "</td>
                   <td>" . $contract->getStartYear() . "</td>
                   <td>" . $contract->getEndYear() . "</td>
-                  <td>" . ($contract->isAuction() ? "Auction" : "Regular") . "</td></tr>";
+                  <td>" . $contract->getType() . "</td></tr>";
     }
     echo "</table>";
   }
@@ -237,7 +237,7 @@ class Team {
   		<td>" . $contract->getSignDate() . "</td>
   		<td>" . $contract->getStartYear() . "</td>
   		<td>" . $contract->getEndYear() . "</td>
-  		<td>" . ($contract->isAuction() ? "Auction" : "Regular") . "</td></tr>";
+  		<td>" . $contract->getType() . "</td></tr>";
   	}
   	echo "</table>";
   }

@@ -80,9 +80,10 @@ class Keepers {
       $priceKey = 'keeper_price' . $i;
 
       $numYears = intval($assocArray[$yearKey]);
+      // TODO parse free minor contracts
       $newContracts[] = new Contract(-1, $assocArray[$playerKey], $this->team->getId(), $numYears,
           $assocArray[$priceKey], TimeUtil::getTodayString(), $currentYear,
-          ($currentYear + $numYears) - 1, false, false);
+          ($currentYear + $numYears) - 1, false, false, Contract::KEEPER_TYPE);
 
       SessionUtil::updateSession($playerKey, $assocArray, $isPost);
       SessionUtil::updateSession($yearKey, $assocArray, $isPost);

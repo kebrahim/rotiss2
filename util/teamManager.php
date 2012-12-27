@@ -45,12 +45,19 @@ class TeamManager {
    * Returns a row in a table with the specified team abbreviation and logo.
    */
   public static function getAbbreviationAndLogoRow($team) {
-    if ($team != null) {
-      return "<td>" . $team->getSportslineImg(32, 32) . "</td>
-    		  <td>" . $team->getIdLink(true, $team->getAbbreviation()) . "</td>";
-    } else {
-      return "<td colspan=2>--</td>";
-    }
+    return TeamManager::getAbbreviationAndLogoRowAtLevel($team, true);
+  }
+  
+  /**
+   * Returns a row in a table with the specified team abbreviation and logo.
+   */
+  public static function getAbbreviationAndLogoRowAtLevel($team, $isTopLevel) {
+  	if ($team != null) {
+  		return "<td>" . $team->getSportslineImg(32, 32) . "</td>
+  		<td>" . $team->getIdLink($isTopLevel, $team->getAbbreviation()) . "</td>";
+  	} else {
+  		return "<td colspan=2>--</td>";
+  	}
   }
 }
 

@@ -65,14 +65,6 @@ class Auction {
   	  return false;
   	}
 
-  	// confirm team has enough brognas to cover auction.
-  	$currentYear = TimeUtil::getCurrentYear();
-  	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
-  	if ($brognas->getTotalPoints() < $this->amount) {
-  	  $this->printError($this->team->getName() . " cannot spend " . $this->amount .
-  	  	  " brognas; only has " . $brognas->getTotalPoints() . " total brognas.");
-  	  return false;
-  	}
   	return true;
   }
 
@@ -122,7 +114,7 @@ class Auction {
   	$currentYear = TimeUtil::getCurrentYear();
   	$todayString = TimeUtil::getTodayString();
   	$contract = new Contract(-1, $this->player->getId(), $this->team->getId(), 1, $this->amount,
-  	    $todayString, $currentYear, $currentYear, true, false);
+  	    $todayString, $currentYear, $currentYear, true, false, Contract::AUCTION_TYPE);
 	ContractDao::createContract($contract);
 	echo "<strong>Signed:</strong> a 1-year auction " .
 		 "contract [" . $contract->getStartYear() . ":" . $contract->getEndYear() . "] for " .
@@ -145,7 +137,7 @@ class Auction {
   }
   
   private function printError($errorMsg) {
-  	echo "<div class='alert alert-error'><strong>Error: </strong>" . $errorMsg . "</div>";
+  	echo "<br/><div class='alert alert-error'><strong>Error: </strong>" . $errorMsg . "</div>";
   }
 }
 ?>

@@ -96,6 +96,8 @@ function showTeam(teamId) {
   require_once '../dao/teamDao.php';
   require_once '../entity/auction.php';
   require_once '../util/layout.php';
+  require_once '../util/playerManager.php';
+  require_once '../util/teamManager.php';
   require_once '../util/time.php';
 
   // Display nav bar.
@@ -127,10 +129,10 @@ function showTeam(teamId) {
                <button class=\"btn\" name='cancelAuction' type=\"submit\">Cancel</button>
   	        </p>";
   	} else {
-  	  echo "<h3>
+  	  echo "<h4>
   	          Cannot execute auction! Please <a href='manageAuction.php'
   	          class=\"btn btn-primary\">try again</a>
-  	        </h3>";
+  	        </h4>";
   	}
   } elseif (isset($_POST['confirmAuction'])) {
     // Re-create auction scenario from session.
@@ -156,12 +158,17 @@ function showTeam(teamId) {
   	$auctionResults = AuctionResultDao::getAuctionResultsByYear($currentYear);
   	if (count($auctionResults) > 0) {
   	  echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
-  	          <thead><tr><th>Player</th><th>Team</th><th>Amount</th></tr></thead>";
+  	          <thead><tr><th colspan=4>Player</th><th colspan=2>Fantasy Team</th><th>Amount</th>
+  	          </tr></thead>";
   	}
   	foreach($auctionResults as $auctionResult) {
-  	  echo "<tr><td>" . $auctionResult->getPlayer()->getNameLink(false) . "</td>
-  	            <td>" . $auctionResult->getTeam()->getNameLink(false) . "</td>
-  	            <td>" . $auctionResult->getCost() . "</td></tr>";
+  	  $player = $auctionResult->getPlayer();
+  	  echo "<tr>" .
+  	            PlayerManager::getNameAndHeadshotRowAtLevel($player, false) .
+  	            "<td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
+  	            <td>" . $player->getPositionString() . "</td>" .
+  	            TeamManager::getAbbreviationAndLogoRowAtLevel($auctionResult->getTeam(), false) .
+  	            "<td>" . $auctionResult->getCost() . "</td></tr>";
   	}
   	if (count($auctionResults) > 0) {
   	  echo "</table>";
