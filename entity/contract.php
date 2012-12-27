@@ -14,10 +14,9 @@ class Contract {
   private $signDate;
   private $startYear;
   private $endYear;
-  private $isAuction;
   private $isBoughtOut;
   private $contractType;
-  
+
   private $playerId;
   private $playerLoaded;
   private $player;
@@ -30,9 +29,9 @@ class Contract {
   const AUCTION_TYPE = 'Auction';
   const SELTZER_TYPE = 'Seltzer';
   const MINOR_TYPE = 'Minor';
-  
+
   public function __construct($contractId, $playerId, $teamId, $totalYears, $price, $signDate,
-      $startYear, $endYear, $isAuction, $isBoughtOut, $contractType) {
+      $startYear, $endYear, $isBoughtOut, $contractType) {
     $this->contractId = $contractId;
     $this->playerId = $playerId;
     $this->playerLoaded = false;
@@ -43,7 +42,6 @@ class Contract {
     $this->signDate = $signDate;
     $this->startYear = $startYear;
     $this->endYear = $endYear;
-    $this->isAuction = $isAuction;
     $this->isBoughtOut = $isBoughtOut;
     $this->contractType = $contractType;
   }
@@ -94,10 +92,6 @@ class Contract {
     return $this->endYear;
   }
 
-  public function isAuction() {
-  	return $this->isAuction;
-  }
-
   public function isBoughtOut() {
   	return $this->isBoughtOut;
   }
@@ -105,7 +99,7 @@ class Contract {
   public function buyOut() {
   	$this->isBoughtOut = true;
   }
-  
+
   public function getType() {
   	return $this->contractType;
   }

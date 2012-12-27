@@ -83,7 +83,7 @@ class Keepers {
       // TODO parse free minor contracts
       $newContracts[] = new Contract(-1, $assocArray[$playerKey], $this->team->getId(), $numYears,
           $assocArray[$priceKey], TimeUtil::getTodayString(), $currentYear,
-          ($currentYear + $numYears) - 1, false, false, Contract::KEEPER_TYPE);
+          ($currentYear + $numYears) - 1, false, Contract::KEEPER_TYPE);
 
       SessionUtil::updateSession($playerKey, $assocArray, $isPost);
       SessionUtil::updateSession($yearKey, $assocArray, $isPost);
@@ -152,8 +152,8 @@ class Keepers {
 	// validate buyout contracts
   	if ($this->buyoutContracts) {
 	  foreach ($this->buyoutContracts as $contract) {
-	  	if ($contract->isAuction() || $contract->isBoughtOut()) {
-		  $this->printError("Error: cannot buy out contract: " . 
+	  	if (($contract->getType() == Contract::AUCTION_TYPE) || $contract->isBoughtOut()) {
+		  $this->printError("Error: cannot buy out contract: " .
 		      $contract->getBuyoutContractString());
 	  	  return false;
 	  	}
@@ -185,7 +185,7 @@ class Keepers {
   	  foreach ($this->pingPongBalls as $pingPongBall) {
   	  	$cost = $pingPongBall->getCost();
   	  	if (!is_numeric($cost) || $cost < 100) {
-    	  $this->printError("Error: cannot spend an invalid number of brognas on a ball: " . 
+    	  $this->printError("Error: cannot spend an invalid number of brognas on a ball: " .
     	      $cost);
   	  	  return false;
   	  	}

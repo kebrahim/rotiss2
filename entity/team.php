@@ -293,7 +293,7 @@ class Team {
   	$filteredContracts = array();
   	foreach ($contracts as $contract) {
   	  if (($contract->getEndYear() >= $minYear) && ($contract->getStartYear() <= $maxYear)
-  	      && ($includeAuction || !$contract->isAuction())) {
+  	      && ($includeAuction || ($contract->getType() != Contract::AUCTION_TYPE))) {
 	    $filteredContracts[] = $contract;
   	  }
   	}

@@ -44,7 +44,7 @@ class Auction {
                 <div class='span6 center auctionsummary'>";
     $this->player->displayPlayerInfo();
     echo "        <br/>";
-    echo "<p class='ptop'>" . $this->player->getPositionString() . " (" . 
+    echo "<p class='ptop'>" . $this->player->getPositionString() . " (" .
          $this->player->getMlbTeam()->getAbbreviation() . ")</p>";
     echo "      </div>
                 <div class='span6 center auctionsummary'>";
@@ -60,7 +60,7 @@ class Auction {
   public function validateAuction() {
   	// confirm amount is a valid numeric value > 0.
   	if (!is_numeric($this->amount) || $this->amount <= 0) {
-  	  $this->printError($this->team->getName() . 
+  	  $this->printError($this->team->getName() .
   	      " cannot spend an invalid number of brognas: " . $this->amount);
   	  return false;
   	}
@@ -84,11 +84,11 @@ class Auction {
   	echo "      </div>
   	          </div>";
   	echo "<hr class='bothr'/>";
-  	
+
   	$this->saveAuctionResult();
   	$this->saveAuctionContract();
   	$this->updateBrognas();
-  	 
+
   	echo "<br/></div>
   	      </div>";
 
@@ -114,7 +114,7 @@ class Auction {
   	$currentYear = TimeUtil::getCurrentYear();
   	$todayString = TimeUtil::getTodayString();
   	$contract = new Contract(-1, $this->player->getId(), $this->team->getId(), 1, $this->amount,
-  	    $todayString, $currentYear, $currentYear, true, false, Contract::AUCTION_TYPE);
+  	    $todayString, $currentYear, $currentYear, false, Contract::AUCTION_TYPE);
 	ContractDao::createContract($contract);
 	echo "<strong>Signed:</strong> a 1-year auction " .
 		 "contract [" . $contract->getStartYear() . ":" . $contract->getEndYear() . "] for " .
@@ -135,7 +135,7 @@ class Auction {
 	echo "<strong>" . $currentYear . " Brognas:</strong> reduced by " . $this->amount . ", from " .
 		$originalTotalPoints . " to " . $brognas->getTotalPoints() . "<br>";
   }
-  
+
   private function printError($errorMsg) {
   	echo "<br/><div class='alert alert-error'><strong>Error: </strong>" . $errorMsg . "</div>";
   }
