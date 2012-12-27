@@ -38,8 +38,10 @@ class PlayerDao {
   	$lastYear = $year - 1;
   	$query = "SELECT P.*
   	          FROM player P, contract C
-  	          WHERE P.player_id = C.player_id and C.is_auction = 0 and C.end_year = " . $lastYear
-  	          . " ORDER BY P.last_name, P.first_name";
+  	          WHERE P.player_id = C.player_id
+  	            AND C.contract_type != 'Auction'
+  	            AND C.end_year = " . $lastYear
+  	      . " ORDER BY P.last_name, P.first_name";
   	$eligiblePlayers = PlayerDao::createPlayersFromQuery($query);
 
   	// filter out players who already have an auction contract for this year.
@@ -60,15 +62,15 @@ class PlayerDao {
   	CommonDao::connectToDb();
   	$query = "SELECT C.*
   	          FROM contract C
-  	          WHERE C.player_id = " . $playerId . " AND C.is_auction = 1
+  	          WHERE C.player_id = " . $playerId . " AND c.contract_type = 'Auction'
   	          AND C.start_year = " . $startYear;
   	$res = mysql_query($query);
   	return (mysql_num_rows($res) > 0);
   }
 
   /**
-   * Returns true if the player w/ the specified id has a contract that either ended in the
-   * specified year or is still active after the specified year.
+   * Returns true if the player w/ the specified id has a non-auction contract that either ended in
+   * the specified year or is still active after the specified year.
    */
   public static function hasContractForPlaceholders($playerId, $year) {
   	CommonDao::connectToDb();
@@ -76,6 +78,7 @@ class PlayerDao {
   	          FROM contract c
   	          WHERE c.player_id = " . $playerId . "
   	          AND c.is_bought_out = 0
+  	          AND c.contract_type != 'Auction'
   	          AND c.end_year >= " . $year;
   	$res = mysql_query($query);
   	return (mysql_num_rows($res) > 0);
@@ -146,7 +149,7 @@ class PlayerDao {
     }
     return $eligibleKeepers;
   }
-  
+
   /**
    * Returns an array of players, belonging to the specified team who will be dropped when money
    * is banked for the specified keeper year.
@@ -154,7 +157,7 @@ class PlayerDao {
   public static function getPlayersToBeDroppedForKeepers(Team $team, $year) {
   	// first, get all players on specified team
   	$allPlayers = PlayerDao::getPlayersByTeam($team);
-  	
+
   	// filter out players who currently have a contract.
   	$playersToBeDropped = array();
   	foreach ($allPlayers as $player) {
@@ -181,7 +184,7 @@ class PlayerDao {
     while($playerDb = mysql_fetch_assoc($res)) {
     	$player = new Player($playerDb["player_id"], $playerDb["first_name"],
     			$playerDb["last_name"], $playerDb["birth_date"], $playerDb["mlb_team_id"],
-    			$playerDb["sportsline_id"]); 
+    			$playerDb["sportsline_id"]);
     	$player->setStatLine(TimeUtil::getYearBasedOnEndOfSeason() - 1,
     	    StatDao::populateStatLine($playerDb));
     	$playersDb[] = $player;
@@ -201,14 +204,14 @@ class PlayerDao {
               order by p.last_name, p.first_name";
     return PlayerDao::createPlayersFromQuery($query);
   }
-  
+
   /**
    * Returns an array of players who have not yet been drafted in the specified year.
    */
   public static function getUndraftedPlayers($year) {
     CommonDao::connectToDb();
     $query = "select p.* from player p where p.player_id not in (
-                  select player_id from (select distinct b.player_id from ping_pong b 
+                  select player_id from (select distinct b.player_id from ping_pong b
                       where b.year = $year and b.player_id is not null) as t1
                   union
                   select player_id from (select distinct dp.player_id from draft_pick dp
@@ -228,7 +231,7 @@ class PlayerDao {
   	          order by last_name, first_name";
   	return PlayerDao::createPlayersFromQuery($query);
   }
-  
+
   private static function createPlayerFromQuery($query) {
     $playerArray = PlayerDao::createPlayersFromQuery($query);
     if (count($playerArray) == 1) {

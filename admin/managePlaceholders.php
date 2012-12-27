@@ -25,7 +25,7 @@
   echo "<div class='bodycenter'>";
 
   echo "<FORM ACTION='managePlaceholders.php' METHOD=POST>";
-  $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
+  $rankYear = TimeUtil::getYearByEvent(TimeUtil::SEASON_END_EVENT);
   $lastYear = $rankYear - 1;
 
   // Save placeholders

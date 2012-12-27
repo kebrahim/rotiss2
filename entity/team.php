@@ -157,7 +157,7 @@ class Team {
   public function hasContracts() {
     $contracts = $this->filterContractsByYear(
         ContractDao::getContractsByTeamId($this->teamId),
-        TimeUtil::getYearBasedOnEndOfSeason(), 3000, true);
+        TimeUtil::getYearByEvent(TimeUtil::AUCTION_EVENT), 3000, true);
     return (count($contracts) > 0);
   }
 
