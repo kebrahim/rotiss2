@@ -1,8 +1,8 @@
 <?php
   require_once '../util/sessions.php';
-  
+
   SessionUtil::checkUserIsLoggedInAdmin();
-  
+
   // if year isn't specified, use the current year, based on end of season.
   $redirectUrl = "admin/manageDraft.php";
   if (isset($_REQUEST["year"])) {
@@ -17,7 +17,7 @@
   } else {
   	$round = 0;
   }
-  
+
   SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
@@ -72,13 +72,13 @@ function getRedirectHTML(element, htmlString) {
   require_once '../dao/draftPickDao.php';
   require_once '../util/layout.php';
   require_once '../util/time.php';
-  
+
   // Display nav bar.
   LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_DRAFT_BUTTON);
-  
+
   echo "<div class='row-fluid'>
           <div class='span12 center'>";
-  
+
   // If save button was pressed, save results
   if (isset($_POST['save'])) {
   	$currentYear = TimeUtil::getYearBasedOnEndOfSeason();
@@ -87,7 +87,7 @@ function getRedirectHTML(element, htmlString) {
   	  $balls = BallDao::getPingPongBallsByYear($year);
   	  foreach ($balls as $ball) {
   	  	$ballUpdated = false;
-  	  	
+
   	  	$playerSelection = "player" . $ball->getId();
   	  	$currentPlayer = $ball->getPlayer();
   	  	$currentPlayerId = ($currentPlayer == null ? 0 : $currentPlayer->getId());
@@ -96,10 +96,10 @@ function getRedirectHTML(element, htmlString) {
   	  	  $ball->setPlayerId(intval($_POST[$playerSelection]));
   	  	  $ballUpdated = true;
   	  	}
-  	  	
+
   	  	if ($ballUpdated) {
   	  	  $result = BallDao::updatePingPongBall($ball);
-  	  	  
+
   	  	  // assign player to team if ball was saved and it's the current year.
   	  	  if ($result) {
   	  	  	if ($year == $currentYear) {
@@ -122,16 +122,16 @@ function getRedirectHTML(element, htmlString) {
       $draftPicks = DraftPickDao::getDraftPicksByYearRound($year, $round);
       foreach ($draftPicks as $draftPick) {
         $draftPickUpdated = false;
-      	
+
       	$playerSelection = "player" . $draftPick->getId();
         $currentPlayer = $draftPick->getPlayer();
-        $currentPlayerId = ($currentPlayer == null ? 0 : $currentPlayer->getId());        
-        if (isset($_POST[$playerSelection]) 
+        $currentPlayerId = ($currentPlayer == null ? 0 : $currentPlayer->getId());
+        if (isset($_POST[$playerSelection])
             && (intval($_POST[$playerSelection]) != $currentPlayerId)) {
           $draftPick->setPlayerId(intval($_POST[$playerSelection]));
           $draftPickUpdated = true;
         }
-        
+
         $pickSelection = "pick" . $draftPick->getId();
         $currentPick = $draftPick->getPick();
         if (isset($_POST[$pickSelection])
@@ -139,23 +139,23 @@ function getRedirectHTML(element, htmlString) {
           $draftPick->setPick(intval($_POST[$pickSelection]));
           $draftPickUpdated = true;
         }
-        
+
         if ($draftPickUpdated) {
           $result = DraftPickDao::updateDraftPick($draftPick);
-          
+
   	  	  // assign player to team if draft pick was saved and it's the current year.
           if ($result) {
           	if ($year == $currentYear) {
           	  if (($draftPick->getPlayer() == null) && ($currentPlayer != null)) {
           		// player was removed; remove player from team
           		TeamDao::assignPlayerToTeam($currentPlayer, 0);
-          	  } else {
+          	  } else if ($draftPick->getPlayer() != null) {
                 TeamDao::assignPlayerToTeam($draftPick->getPlayer(), $draftPick->getTeamId());
           	  }
           	}
           } else {
           	echo "<br/><div class='alert alert-error'>
-          	      Draft pick not updated: " . $draftPick->toString() . 
+          	      Draft pick not updated: " . $draftPick->toString() .
           	    "</div>";
           }
         }
@@ -169,7 +169,7 @@ function getRedirectHTML(element, htmlString) {
 
   echo "<div class='row-fluid'>
           <div class='span4 offset1 center chooser'>";
-  
+
   // allow user to choose year.
   $minYear = DraftPickDao::getMinimumDraftYear();
   $maxYear = DraftPickDao::getMaximumDraftYear();
@@ -185,7 +185,7 @@ function getRedirectHTML(element, htmlString) {
   }
   echo "</select>";
   echo "</div>"; // span6
-  
+
   echo "<div class='span4 offset2 center chooser'>";
   // allow user to choose round.
   $minRound = DraftPickDao::getMinimumRound($year);
@@ -204,25 +204,25 @@ function getRedirectHTML(element, htmlString) {
   echo "</select>";
   echo "</div>"; // span6
   echo "</div>"; // row-fluid
-  
+
   echo "<div class='row-fluid'>
           <div class='span12 center'>";
   echo "<FORM ACTION='manageDraft.php' METHOD=POST>";
   echo "<div id='yearDisplay'></div>";
 ?>
-      
+
 <script>
   // initialize yearDisplay with selected year
   showYear(document.getElementById("year").value, document.getElementById("round").value);
 </script>
-      
+
 <?php
   echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save changes</button>";
   echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
   echo "</form>";
   echo "</div>"; // span12
   echo "</div>"; // row-fluid
-  
+
   // Footer
   LayoutUtil::displayAdminFooter();
 ?>

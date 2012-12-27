@@ -28,6 +28,7 @@
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
   	        <thead><tr>
   	          <th>Round</th><th>Pick</th><th colspan=2>Team</th><th colspan=2>Player</th>
+  	          <th colspan=2>Original Team</th>
   	        </tr></thead>";
 
   	$pingPongBalls = BallDao::getPingPongBallsByYear($year);
@@ -39,7 +40,9 @@
   	  echo "><td>Ping Pong</td>
   	         <td>" . $pingPongBall->getCost() . "</td>" .
   	         TeamManager::getNameAndLogoRow($pingPongBall->getTeam()) .
-  		     PlayerManager::getNameAndHeadshotRow($pingPongBall->getPlayer()) . "</tr>";
+  		     PlayerManager::getNameAndHeadshotRow($pingPongBall->getPlayer()) .
+  		     "<td colspan=2>--</td>" .
+  	    "</tr>";
   	  }
 
   	  $draftPicks = DraftPickDao::getDraftPicksByYear($year);
@@ -51,7 +54,9 @@
   	    echo "><td>" . $draftPick->getRound() . "</td>
   		       <td>" . $draftPick->getPick() . "</td>" .
   		       TeamManager::getNameAndLogoRow($draftPick->getTeam()) .
-  		       PlayerManager::getNameAndHeadshotRow($draftPick->getPlayer()) . "</tr>";
+  		       PlayerManager::getNameAndHeadshotRow($draftPick->getPlayer()) .
+         	   TeamManager::getAbbreviationAndLogoRow($draftPick->getOriginalTeam()) .
+  	        "</tr>";
   	  }
     echo "</table>";
     echo "</div>"; // span12

@@ -130,10 +130,36 @@ class DraftPickDao {
     return $row[0];
   }
 
+  /**
+   * Creates and returns the specified draft pick with its ID populated.
+   */
   public static function createDraftPick(DraftPick $draftPick) {
-    // TODO
+    CommonDao::connectToDb();
+  	$query = "insert into draft_pick(team_id, year, round, pick, original_team_id, player_id)
+  	    values (" .
+  	        $draftPick->getTeamId() . ", " .
+  	        $draftPick->getYear() . ", " .
+  	        $draftPick->getRound() . ", " .
+  	        ($draftPick->getPick() == null ? "null" : $draftPick->getPick()) . ", " .
+  	        $draftPick->getOriginalTeamId() . ", " .
+  	        $draftPick->getPlayerId() . ")";
+  	$result = mysql_query($query);
+  	if (!$result) {
+  	  echo "Draft pick " . $draftPick->toString() . " already exists in DB. Try again.";
+  	  return null;
+  	}
+
+  	$idQuery = "select draft_pick_id from draft_pick where year = " . $draftPick->getYear() .
+  	    " and team_id = " . $draftPick->getTeamId() . " and round = " . $draftPick->getRound();
+  	$result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
+  	$row = mysql_fetch_assoc($result);
+  	$draftPick->setId($row["draft_pick_id"]);
+  	return $draftPick;
   }
 
+  /**
+   * Updates the specified draft pick in the db.
+   */
   public static function updateDraftPick(DraftPick $draftPick) {
     CommonDao::connectToDb();
     $query = "update draft_pick set team_id = " . $draftPick->getTeam()->getId() . ",

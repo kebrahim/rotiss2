@@ -40,6 +40,10 @@ class DraftPick {
     return $this->draftPickId;
   }
 
+  public function setId($draftPickId) {
+    $this->draftPickId = $draftPickId;
+  }
+
   public function getTeam() {
     if ($this->teamLoaded != true) {
       $this->team = TeamDao::getTeamById($this->teamId);
