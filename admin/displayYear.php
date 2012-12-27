@@ -224,7 +224,11 @@
     foreach ($brognas as $brogna) {
       echo "<tr><td>" . $brogna->getTeam()->getSportslineImg(36,36) . "</td>
                 <td>" . $brogna->getTeam()->getNameLink(false) . "</td>
-                <td><strong>" . $brogna->getTotalPoints() . "</strong></td>
+                <td";
+      if ($brogna->getTotalPoints() < 0) {
+        echo " class ='warning'";
+      }
+      echo      "><strong>" . $brogna->getTotalPoints() . "</strong></td>
        	        <td>" . $brogna->getBankedPoints() . "</td>
            	    <td>" . $brogna->getTradedInPoints() . "</td>
                	<td>" . $brogna->getTradedOutPoints() . "</td>

@@ -176,6 +176,16 @@
 
     // brognas
     echo "<div class='span6'>";
+    // if upcoming year's brognas are negative, show warning.
+    foreach ($team->getBrognas() as $brogna) {
+      if (($brogna->getYear() == (TimeUtil::getYearByEvent(TimeUtil::KEEPER_NIGHT_EVENT) + 1))
+          && ($brogna->getTotalPoints() < 0)) {
+        echo "<br/><div class='alert alert-error'>
+                <strong>Warning!</strong> Over-budget for the upcoming year!
+              </div>";
+      }
+    }
+
     // TODO show brognas from this year & next year; allow user to select years
     $team->displayAllBrognas();
     echo "</div>"; // span6

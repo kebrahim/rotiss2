@@ -142,6 +142,9 @@ table th {background-color: #faaf40; color:white;}
 .table-striped .selected_team_row td {
 	background-color:#E3F2F9 !important;
 }
+.table-striped td.warning {
+    background-color:#F2DEDE !important;
+}
 .checkth {
 	width: 13px;
 }
