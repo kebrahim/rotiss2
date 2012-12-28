@@ -1,3 +1,21 @@
+<?php
+  require_once 'dao/userDao.php';
+  require_once 'util/sessions.php';
+
+  $continueUrl = isset($_REQUEST['continue']) ? $_REQUEST['continue'] : null;
+
+  if (isset($_POST['login'])) {
+    $user = UserDao::getUserByUsernamePassword($_POST["username"], $_POST["password"]);
+    if ($user == null) {
+      $incorrectLogin = true;
+    } else {
+      // login and redirect to continue URL
+      // TODO handle 'remember me' checkbox
+      SessionUtil::loginAndRedirect($user, $continueUrl);
+    }
+  }
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,9 +28,7 @@
 <body>
 
 <?php
-  require_once 'dao/userDao.php';
   require_once 'util/layout.php';
-  require_once 'util/sessions.php';
 
   LayoutUtil::displayHeader();
   echo "<div class='row-fluid headrow'>";
@@ -21,20 +37,11 @@
   echo "<div class='span12 center' id='loginbox'>
           <img src='img/rotiss-logotype.png' width='480' />";
 
-  $continueUrl = isset($_REQUEST['continue']) ? $_REQUEST['continue'] : null;
-
-  if (isset($_POST['login'])) {
-    $user = UserDao::getUserByUsernamePassword($_POST["username"], $_POST["password"]);
-    if ($user == null) {
-      echo "<div class=\"alert alert-error\">
-              <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
-              <strong>Sorry!</strong> That is an incorrect username or password. Please try again!
-            </div>";
-    } else {
-      // login and redirect to continue URL
-      // TODO handle 'remember me' checkbox
-      SessionUtil::loginAndRedirect($user, $continueUrl);
-    }
+  if ($incorrectLogin) {
+    echo "<div class=\"alert alert-error\">
+            <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
+            <strong>Sorry!</strong> That is an incorrect username or password. Please try again!
+          </div>";
   }
 
   // sign-in
