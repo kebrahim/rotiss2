@@ -10,6 +10,7 @@
 <title>St Pete's Rotiss - Manage Trades</title>
 <link href='../css/bootstrap.css' rel='stylesheet' type='text/css'>
 <link href='../css/stpetes.css' rel='stylesheet' type='text/css'>
+<link rel="shortcut icon" href="../img/background-tiles-01.png" />
 </head>
 
 <script>
@@ -154,7 +155,7 @@ function selectTeam(position, teamid) {
   	echo "<div class='span6 center'>
   	      <div class='chooser'>";
     echo "<label for='team$teamNum'>Select Team:</label>
-          <select id='team$teamNum' class='span8 smallfonttable' name='team$teamNum' 
+          <select id='team$teamNum' class='span8 smallfonttable' name='team$teamNum'
                   onchange='selectTeam($teamNum, this.value)'>
             <option value='0'></option>";
     foreach ($teams as $team) {
@@ -165,7 +166,7 @@ function selectTeam(position, teamid) {
     echo "<div id='teamDisplay$teamNum'></div>";
     echo "</div>"; // span6
   }
-  
+
   // Display nav bar.
   LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_TRADE_BUTTON);
 
@@ -190,11 +191,11 @@ function selectTeam(position, teamid) {
       $trade->showTradeSummary();
 
       // request final confirmation of trade before execution
-      echo "<p><button class=\"btn btn-primary\" name='confirmTrade' 
+      echo "<p><button class=\"btn btn-primary\" name='confirmTrade'
                        type=\"submit\">Confirm Trade</button>
             &nbsp&nbsp<button class=\"btn\" name='cancelTrade' type=\"submit\">Cancel</button></p>";
     } else {
-      echo "<h3>Cannot execute trade! Please <a href='manageTrade.php' 
+      echo "<h3>Cannot execute trade! Please <a href='manageTrade.php'
             class='btn btn-primary'>try again</a></h3>";
     }
   } elseif(isset($_POST['confirmTrade'])) {
@@ -208,7 +209,7 @@ function selectTeam(position, teamid) {
       $trade->initiateTrade();
       echo "<a href='manageTrade.php' class='btn btn-primary'>Let's do it again!</a><br/>";
     } else {
-      echo "<h3>Cannot execute trade! Please <a href='manageTrade.php' 
+      echo "<h3>Cannot execute trade! Please <a href='manageTrade.php'
             class=\"btn btn-primary\">try again</a></h3>";
     }
   } else {
@@ -223,18 +224,18 @@ function selectTeam(position, teamid) {
     displayTeamPicker(1, $teams);
     displayTeamPicker(2, $teams);
     echo "</div>"; // row-fluid
-    
+
     echo "<div id='tradeButton' style='display:none'>
-            <p><button class=\"btn btn-primary\" name='trade' 
+            <p><button class=\"btn btn-primary\" name='trade'
                        type=\"submit\">Initiate Trade</button>
             &nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Cancel</button></p>
           </div>";
   }
-    
+
   echo "</form>";
   echo "</div>"; // span12
   echo "</div>"; // row-fluid
-  
+
   // Footer
   LayoutUtil::displayAdminFooter();
 ?>

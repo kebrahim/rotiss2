@@ -1,7 +1,7 @@
 <?php
   require_once 'util/sessions.php';
   require_once 'util/time.php';
-  
+
   // if year is not specified, use the year based on the end of the season.
   $redirectUrl = "draftPage.php";
   if (isset($_REQUEST["year"])) {
@@ -19,6 +19,7 @@
 <title>St Pete's Rotiss - Draft</title>
 <link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
 <link href='css/stpetes.css' rel='stylesheet' type='text/css'>
+<link rel="shortcut icon" href="img/background-tiles-01.png" />
 </head>
 
 <script>
@@ -63,19 +64,19 @@ function getRedirectHTML(element, htmlString) {
 
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::DRAFT_BUTTON);
-  
+
   // allow user to choose year.
   YearManager::displayYearChooser(
   		$year, DraftPickDao::getMinimumDraftYear(), DraftPickDao::getMaximumDraftYear());
-  
+
   echo "<div id='yearDisplay'></div><br/>";
 ?>
-    
+
 <script>
   // initialize yearDisplay with selected year
   showYear(document.getElementById("year").value);
 </script>
-    
+
 <?php
 
   // Display footer

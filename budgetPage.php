@@ -1,6 +1,6 @@
 <?php
   require_once 'util/sessions.php';
-  
+
   // Get team from REQUEST; otherwise, use logged-in user's team.
   $redirectUrl = "budgetPage.php";
   if (isset($_REQUEST["team_id"])) {
@@ -9,7 +9,7 @@
   } else if (SessionUtil::isLoggedIn()) {
   	$teamId = SessionUtil::getLoggedInTeam()->getId();
   }
-  
+
   SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
@@ -19,6 +19,7 @@
 <title>St Pete's Rotiss - Budget</title>
 <link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
 <link href='css/stpetes.css' rel='stylesheet' type='text/css'>
+<link rel="shortcut icon" href="img/background-tiles-01.png" />
 </head>
 
 <script>
@@ -60,10 +61,10 @@ function getRedirectHTML(element, htmlString) {
   require_once 'util/layout.php';
   require_once 'util/teamManager.php';
   require_once 'util/time.php';
-  
+
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::BUDGET_BUTTON);
-  
+
   $team = TeamDao::getTeamById($teamId);
   if ($team == null) {
   	die("<h1>Team ID " . $teamId . " not found!</h1>");
@@ -71,7 +72,7 @@ function getRedirectHTML(element, htmlString) {
 
   // Allow user to choose from list of teams to see corresponding summary page.
   TeamManager::displayTeamChooser($team);
-  
+
   echo "<div id='teamDisplay'></div><br/>";
 ?>
 

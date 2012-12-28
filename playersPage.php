@@ -1,6 +1,6 @@
 <?php
   require_once 'util/sessions.php';
-  
+
   $redirectUrl = "playersPage.php";
   if (isset($_REQUEST['name'])) {
   	$nameString = $_REQUEST['name'];
@@ -17,6 +17,7 @@
     <title>St Pete's Rotiss - Players</title>
     <link href="css/bootstrap.css" rel="stylesheet" media="screen">
     <link href="css/stpetes.css" rel="stylesheet" media="screen">
+    <link rel="shortcut icon" href="img/background-tiles-01.png" />
   </head>
   <body>
 

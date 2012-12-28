@@ -1,6 +1,6 @@
 <?php
   require_once 'util/sessions.php';
-  
+
   $redirectUrl = "playerPage.php";
   if (isset($_REQUEST['player_id'])) {
   	$playerId = $_REQUEST['player_id'];
@@ -17,6 +17,7 @@
 <title>St Pete's Rotiss - Player Summary</title>
 <link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
 <link href='css/stpetes.css' rel='stylesheet' type='text/css'>
+<link rel="shortcut icon" href="img/background-tiles-01.png" />
 </head>
 
 <body>
@@ -36,7 +37,7 @@
   			<h1>player id " . $playerId . " does not exist!</h1>
   	     </div></div>");
   }
-  
+
   echo "<div class='span2 center headshotimg nexttoh1'>";
 
   // Headshot

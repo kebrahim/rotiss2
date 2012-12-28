@@ -27,6 +27,7 @@
 <title>St Pete's Rotiss - Manage Draft</title>
 <link href='../css/bootstrap.css' rel='stylesheet' type='text/css'>
 <link href='../css/stpetes.css' rel='stylesheet' type='text/css'>
+<link rel="shortcut icon" href="../img/background-tiles-01.png" />
 </head>
 
 <script>

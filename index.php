@@ -4,6 +4,7 @@
 <title>St Pete's Rotiss</title>
 <link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
 <link href='css/stpetes.css' rel='stylesheet' type='text/css'>
+<link rel="shortcut icon" href="img/background-tiles-01.png" />
 </head>
 
 <body>
@@ -21,7 +22,7 @@
           <img src='img/rotiss-logotype.png' width='480' />";
 
   $continueUrl = isset($_REQUEST['continue']) ? $_REQUEST['continue'] : null;
-  
+
   if (isset($_POST['login'])) {
     $user = UserDao::getUserByUsernamePassword($_POST["username"], $_POST["password"]);
     if ($user == null) {

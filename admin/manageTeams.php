@@ -10,6 +10,7 @@
 <title>St Pete's Rotiss - Manage Teams</title>
 <link href='../css/bootstrap.css' rel='stylesheet' type='text/css'>
 <link href='../css/stpetes.css' rel='stylesheet' type='text/css'>
+<link rel="shortcut icon" href="../img/background-tiles-01.png" />
 </head>
 
 <body>
@@ -20,7 +21,7 @@
 
   // Display nav bar.
   LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_ROSTERS_BUTTON);
-  
+
   /**
    * Creates a select tag for the assignment of the specified player to any of the fantasy teams.
    */
@@ -97,12 +98,12 @@
             <h4>Unassigned players</h4>";
   displayArrayOfPlayers(PlayerDao::getUnassignedPlayers());
   echo "  </div>";
-  
+
   echo "  <div class='span9 center'>
             <h4>Assigned players</h4>";
   echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save my changes</button>";
   echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
-  
+
   $teams = TeamDao::getAllTeams();
   $teamCount = count($teams);
   for ($i=0; $i<6; $i++) {

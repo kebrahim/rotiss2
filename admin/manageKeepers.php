@@ -7,6 +7,7 @@
 <head>
 <title>Rotiss.com - Manage Keepers</title>
 <link href='../css/style.css' rel='stylesheet' type='text/css'>
+<link rel="shortcut icon" href="../img/background-tiles-01.png" />
 </head>
 
 <script>
