@@ -20,6 +20,7 @@ class LayoutUtil {
   const MANAGE_DRAFT_BUTTON = 16;
   const MANAGE_PLACEHOLDERS_BUTTON = 17;
   const MANAGE_RANKS_BUTTON = 18;
+  const MANAGE_PLAYER_BUTTON = 19;
 
   public static function displayHeader() {
     echo "<div id='wrap'><div class='container'>";
@@ -132,6 +133,10 @@ class LayoutUtil {
   	// Manage individual team
   	LayoutUtil::displayListItem("admin/manageTeam.php", "Team Mgmt", $isTopLevel,
   	    $selectedButton, self::MANAGE_TEAM_BUTTON);
+
+  	// Manage individual player
+  	LayoutUtil::displayListItem("admin/managePlayer.php", "Player Mgmt", $isTopLevel,
+  	    $selectedButton, self::MANAGE_PLAYER_BUTTON);
 
   	// Roster Grid
   	LayoutUtil::displayListItem("admin/manageTeams.php", "Roster Grid", $isTopLevel,

@@ -302,7 +302,7 @@
 
     // Buttons
     echo "<p><button class=\"btn btn-primary\" name='update' type=\"submit\">Update Team</button>";
-    echo "&nbsp&nbsp" . $team->getIdLink(false, "Back to Summary");
+    echo "&nbsp&nbsp" . $team->getIdLink(false, "Return to Team");
 
     echo "  </div>"; // span12
     echo "</div>";   // row-fluid
