@@ -121,7 +121,7 @@
   $teamId = SessionUtil::getLoggedInTeam()->getId();
 
   echo "<div class='row-fluid'>
-          <div class='span6 offset3 center'>";
+          <div class='span12 center'>";
   echo "<h3>My Ranks</h3>";
   echo "<FORM ACTION='rankPage.php' METHOD=POST>";
   $rankYear = TimeUtil::getYearBasedOnEndOfSeason();

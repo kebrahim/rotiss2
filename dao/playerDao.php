@@ -62,7 +62,7 @@ class PlayerDao {
   	CommonDao::connectToDb();
   	$query = "SELECT C.*
   	          FROM contract C
-  	          WHERE C.player_id = " . $playerId . " AND c.contract_type = 'Auction'
+  	          WHERE C.player_id = " . $playerId . " AND C.contract_type = 'Auction'
   	          AND C.start_year = " . $startYear;
   	$res = mysql_query($query);
   	return (mysql_num_rows($res) > 0);

@@ -42,7 +42,7 @@
   // header section
   echo "<div class=\"row-fluid\">
           <div class=\"span8 center\">
-            <h1>MLB Players</h1>
+            <h3>MLB Players</h3>
           </div>";
 
   // search section
@@ -64,10 +64,10 @@
           <div class=\"span12 center\">";
 
   if ($nameString != null) {
-    echo "<h3>Search results</h3>";
+    echo "<h4>Search results</h4>";
   	$players = PlayerDao::getPlayersByName($nameString);
   } else {
-  	echo "<h3>All Players</h3>";
+  	echo "<h4>All Players</h4>";
   	$players = PlayerDao::getAllPlayers();
   }
   echo "<table class='table table-bordered table-striped table-condensed center'>

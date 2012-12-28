@@ -12,9 +12,9 @@
   /**
    * Displays draft results from specified year.
    */
-  function displayDraftYear($year) {
+  function displayDraftYear($year, $loggedInTeamId) {
   	echo "<div class='row-fluid'>
-  	        <div class='span6 offset3 center'>
+  	        <div class='span12 center'>
   	          <h3>Draft Results " . $year . "</h3>";
   	echo "  </div>
   	      </div>
@@ -24,7 +24,6 @@
   	// TODO allow filtering by round
 
   	// display table of draft picks for selected year, highlighting row for logged-in team
-  	$loggedInTeamId = SessionUtil::getLoggedInTeam()->getId();
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
   	        <thead><tr>
   	          <th>Round</th><th>Pick</th><th colspan=2>Team</th><th colspan=2>Player</th>
@@ -110,7 +109,7 @@
   	return $pickDropdown;
   }
 
-  function displayDraftYearForManagement($year, $round) {
+  function displayDraftYearForManagement($year, $round, $loggedInTeamId) {
   	if ($round == 0) {
   	  echo "<h4>$year Draft - Ping Pong Round</h4>";
   	} else {
@@ -120,7 +119,6 @@
   	$undraftedPlayers = PlayerDao::getUndraftedPlayers($year);
 
   	// display table of draft picks for selected year, highlighting row for logged-in team
-  	$loggedInTeamId = SessionUtil::getLoggedInTeam()->getId();
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
   	      <thead><tr><th>Pick</th><th>Team</th><th>Player</th></tr></thead>";
 
@@ -153,15 +151,13 @@
   /**
    * Display list of auctioned players for specified year
    */
-  function displayAuctionYear($year) {
+  function displayAuctionYear($year, $loggedinTeamId) {
   	echo "<div class='row-fluid'>
-  	        <div class='span6 offset3 center'>
+  	        <div class='span12 center'>
   	          <h3>Auction Results " . $year . "</h3>";
   	echo "  </div>
   	      </div>
   	      <div class='row-fluid'>";
-
-  	$loggedinTeamId = SessionUtil::getLoggedInTeam()->getId();
 
   	// display table of players eligible to be auctioned
   	echo "  <div class='span6 center'>
@@ -296,17 +292,18 @@
   	die("<h1>Invalid year param for year</h1>");
   }
 
+  $loggedInTeamId = SessionUtil::getLoggedInTeam()->getId();
   if ($displayType == "draft") {
-    displayDraftYear($year);
+    displayDraftYear($year, $loggedInTeamId);
   } else if ($displayType == "auction") {
-  	displayAuctionYear($year);
+  	displayAuctionYear($year, $loggedInTeamId);
   } else if ($displayType == "brognas") {
   	displayBrognaYear($year);
   } else if ($displayType == "managedraft") {
   	if (isset($_REQUEST["round"])) {
   	  $round = $_REQUEST["round"];
   	}
-  	displayDraftYearForManagement($year, $round);
+  	displayDraftYearForManagement($year, $round, $loggedInTeamId);
   } else if ($displayType == "draftround") {
   	if (isset($_REQUEST["round"])) {
   	  $round = $_REQUEST["round"];

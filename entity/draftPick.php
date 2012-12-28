@@ -91,7 +91,9 @@ class DraftPick {
 
   public function getOriginalTeam() {
     if ($this->originalTeamLoaded != true) {
-      $this->originalTeam = TeamDao::getTeamById($this->originalTeamId);
+      if ($this->originalTeamId != null) {
+        $this->originalTeam = TeamDao::getTeamById($this->originalTeamId);
+      }
       $this->originalTeamLoaded = true;
     }
     return $this->originalTeam;

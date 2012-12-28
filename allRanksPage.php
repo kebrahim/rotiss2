@@ -31,7 +31,7 @@
   $rankingOver = CumulativeRankDao::hasCumulativeRanks($rankYear);
 
   echo "<div class='row-fluid'>
-          <div class='span6 offset3 center'>";
+          <div class='span12 center'>";
 
   echo "<h3>Offseason Ranks $rankYear</h3>";
 

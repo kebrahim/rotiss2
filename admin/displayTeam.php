@@ -131,7 +131,7 @@
   /**
    * Display specified team on team summary page.
    */
-  function displayTeam(Team $team) {
+  function displayTeam(Team $team, $isLoggedInAdmin) {
     echo "<div class='row-fluid'>";
 
     // team logo
@@ -167,7 +167,7 @@
           </table>";
 
     // if admin user, show edit link
-    if (SessionUtil::isLoggedInAdmin()) {
+    if ($isLoggedInAdmin) {
       echo "<div class='managelink'>
               <a href='admin/manageTeam.php?team_id=" . $team->getId() . "'>Manage team</a>
             </div>";
@@ -432,7 +432,7 @@
     }
     displayEligibleKeeperPlayers($team, $rowNumber);
   } else if ($displayType == "display") {
-    displayTeam($team);
+    displayTeam($team, SessionUtil::isLoggedInAdmin());
   } else if ($displayType == "manage") {
     displayTeamForManagement($team);
   } else if ($displayType == "budget") {
