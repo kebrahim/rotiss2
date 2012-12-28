@@ -1,12 +1,16 @@
 <?php
   require_once '../util/sessions.php';
+
   SessionUtil::checkUserIsLoggedInSuperAdmin();
+  SessionUtil::logoutUserIfNotLoggedIn("admin/managePlaceholders.php");
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com - Manage Placeholders</title>
-<link href='../css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss - Manage Placeholders</title>
+<link href='../css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='../css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
@@ -17,13 +21,14 @@
   require_once '../dao/statDao.php';
   require_once '../entity/rank.php';
   require_once '../entity/stat.php';
-  require_once '../util/navigation.php';
+  require_once '../util/layout.php';
   require_once '../util/time.php';
 
-  // Display header.
-  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_PLACEHOLDERS_BUTTON);
-  echo "<div class='bodycenter'>";
+  // Nav bar
+  LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_PLACEHOLDERS_BUTTON);
 
+  echo "<div class='row-fluid'>
+          <div class='span12 center'>";
   echo "<FORM ACTION='managePlaceholders.php' METHOD=POST>";
   $rankYear = TimeUtil::getYearByEvent(TimeUtil::SEASON_END_EVENT);
   $lastYear = $rankYear - 1;
@@ -53,10 +58,11 @@
   }
 
   // show stats for players belonging to teams for last season
-  echo "<h1>Placeholders " . $rankYear . "</h1><hr/>";
+  echo "<h3>Placeholders " . $rankYear . "</h3>";
   $stats = StatDao::getStatsForRankingByYear($lastYear);
 
-  echo "<input class='button' type=submit name='save' value='Save placeholders'>&nbsp&nbsp";
+  echo "<p><button class='btn btn-primary' name='save' type='submit'>Save placeholders</button>
+        &nbsp&nbsp";
   if (isset($_REQUEST["filter"])) {
   	echo "<a href='managePlaceholders.php'>Show all</a>";
   	echo "<input type=hidden name='filter'>";
@@ -65,11 +71,14 @@
   	echo "<a href='managePlaceholders.php?filter'>Show placeholders</a>";
   	$filter = false;
   }
-  echo "<br/><br/>";
+  echo "</p></div></div>"; // span12, row-fluid
+  echo "<div class='row-fluid'>
+            <div class='span12 center'>";
 
-  echo "<table class='center smallfonttable' border>
-  	          <tr><th></th><th>Player</th><th>Team</th><th>$lastYear Fantasy Pts</th><th>Rank</th>
-                  <th>Is Placeholder</th><th>Saved In DB</th></tr>";
+  echo "<br/><table class='center smallfonttable table vertmiddle table-striped table-condensed
+                           table-bordered'>
+  	      <thead><tr><th></th><th>Player</th><th>Team</th><th>$lastYear Fantasy Pts</th>
+  	        <th>Rank</th><th>Is Placeholder</th><th>Saved In DB</th></tr></thead>";
   $ct = 0;
   foreach($stats as $stat) {
   	$ct++;
@@ -102,11 +111,13 @@
   	          <td>" . ($placeholderInDb ? "Y" : "") . "</td>
   	      </tr>";
   }
-  echo "</table><br/>";
-  echo "</form></div>";
+  echo "</table>";
+  echo "</form>";
+  echo "</div>"; // span12
+  echo "</div>"; // row-fluid
 
   // Footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayAdminFooter();
 ?>
 
 </body>

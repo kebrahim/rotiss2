@@ -57,7 +57,8 @@
   	  }
   	  $fantasyPts = ($rank->getPlayer()->getStatLine($lastYear) != null) ?
           $rank->getPlayer()->getStatLine($lastYear)->getFantasyPoints() : "--";
-  	  echo "><td>" . $rank->getPlayer()->getIdNewTabLink(true, $rank->getPlayer()->getFullName()) . "</td>
+  	  echo "><td>" . $rank->getPlayer()->getIdNewTabLink(true, $rank->getPlayer()->getFullName()) .
+  	        "</td>
   	         <td>" . $fantasyPts . "</td>";
   	  echo "<td>";
   	  if ($rank->isPlaceholder() || $isReadOnly) {
@@ -202,7 +203,8 @@
   	$fantasyPts = ($placeholderPlayer->getStatLine($lastYear) != null) ?
    	    $placeholderPlayer->getStatLine($lastYear)->getFantasyPoints() : "--";
   	echo "<tr class='placeholder_row'>
-  	        <td>" . $placeholderPlayer->getIdNewTabLink(true, $placeholderPlayer->getFullName()) . "</td>
+  	        <td>" . $placeholderPlayer->getIdNewTabLink(
+  	                  true, $placeholderPlayer->getFullName()) . "</td>
   	        <td>" . $fantasyPts . "</td>
   	        <td>0</td>
   	      </tr>";
@@ -216,7 +218,7 @@
   echo "<h4>Ranked Players</h4>";
 
   if (!$isReadOnly) {
-    echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save my changes</button>";
+    echo "<p><button class='btn btn-primary' name='save' type='submit'>Save my changes</button>";
     echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
     echo "<input type='hidden' name='team_id' value='" . $teamId . "'>";
   }
@@ -234,8 +236,8 @@
   }
 
   if (!$isReadOnly) {
-    echo "<p><button class=\"btn btn-primary\" name='save' type=\"submit\">Save my changes</button>";
-    echo "&nbsp&nbsp<button class=\"btn\" name='cancel' type=\"submit\">Reset</button></p>";
+    echo "<p><button class='btn btn-primary' name='save' type='submit'>Save my changes</button>";
+    echo "&nbsp&nbsp<button class='btn' name='cancel' type='submit'>Reset</button></p>";
   }
 
   echo "</FORM>";
