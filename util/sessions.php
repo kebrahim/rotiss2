@@ -5,7 +5,13 @@ CommonUtil::requireFileIn('/../dao/', 'teamDao.php');
 CommonUtil::requireFileIn('/../entity/', 'user.php');
 
 class SessionUtil {
-  // TODO add prefix to session vars so they do not conflict w/ topchef rotiss
+  const USER_KEY = "stpetesloggedinuserid";
+  const TEAM_KEY = "stpetesloggedinteamid";
+  const ADMIN_KEY = "stpetesloggedinadmin";
+  const SUPERADMIN_KEY = "stpetesloggedinsuperadmin";
+  const START_KEY = "stpetesstart";
+  const LOGGED_IN_PAGE = "teamPage.php";
+  const HOME_PAGE = "http://localhost/rotiss2/"; //"http://stpetes.rotiss.com";
 
   /**
    * Updates the _SESSION array with the value of the specified key within the
@@ -44,14 +50,14 @@ class SessionUtil {
       session_start();
     }
     session_unset();
-    $_SESSION["loggedinuserid"] = $user->getId();
-    $_SESSION["loggedinteamid"] = $user->getTeam()->getId();
-    $_SESSION["loggedinadmin"] = $user->isAdmin();
-    $_SESSION["loggedinsuperadmin"] = $user->isSuperAdmin();
+    $_SESSION[SessionUtil::USER_KEY] = $user->getId();
+    $_SESSION[SessionUtil::TEAM_KEY] = $user->getTeam()->getId();
+    $_SESSION[SessionUtil::ADMIN_KEY] = $user->isAdmin();
+    $_SESSION[SessionUtil::SUPERADMIN_KEY] = $user->isSuperAdmin();
 
 
     // redirect to URL if specified; otherwise teamPage
-    SessionUtil::redirectToUrl(($redirectUrl != null) ? $redirectUrl : "teamPage.php");
+    SessionUtil::redirectToUrl(($redirectUrl != null) ? $redirectUrl : SessionUtil::LOGGED_IN_PAGE);
   }
 
   /**
@@ -81,7 +87,7 @@ class SessionUtil {
       session_start();
     }
 
-    if (empty($_SESSION["loggedinuserid"])) {
+    if (empty($_SESSION[SessionUtil::USER_KEY])) {
       return false;
     }
     return true;
@@ -110,28 +116,30 @@ class SessionUtil {
    * Returns the logged-in user.
    */
   public static function getLoggedInUser() {
-    return SessionUtil::isLoggedIn() ? UserDao::getUserById($_SESSION["loggedinuserid"]) : null;
+    return SessionUtil::isLoggedIn() ?
+        UserDao::getUserById($_SESSION[SessionUtil::USER_KEY]) : null;
   }
 
   /**
    * Returns the fantasy team of the currently logged-in user.
    */
   public static function getLoggedInTeam() {
-    return SessionUtil::isLoggedIn() ? TeamDao::getTeamById($_SESSION["loggedinteamid"]) : null;
+    return SessionUtil::isLoggedIn() ?
+        TeamDao::getTeamById($_SESSION[SessionUtil::TEAM_KEY]) : null;
   }
 
   /**
    * Returns true if the logged-in user is an admin.
    */
   public static function isLoggedInAdmin() {
-    return SessionUtil::isLoggedIn() ? $_SESSION["loggedinadmin"] : false;
+    return SessionUtil::isLoggedIn() ? $_SESSION[SessionUtil::ADMIN_KEY] : false;
   }
 
   /**
    * Returns true if the logged-in user is a super-admin.
    */
   public static function isLoggedInSuperAdmin() {
-    return SessionUtil::isLoggedIn() ? $_SESSION["loggedinsuperadmin"] : false;
+    return SessionUtil::isLoggedIn() ? $_SESSION[SessionUtil::SUPERADMIN_KEY] : false;
   }
 
   /**
@@ -145,10 +153,10 @@ class SessionUtil {
     if (!isset($_SESSION)) {
       session_start();
     }
-    SessionUtil::unsetSessionVariable("loggedinuserid");
-    SessionUtil::unsetSessionVariable("loggedinteamid");
-    SessionUtil::unsetSessionVariable("loggedinadmin");
-    SessionUtil::unsetSessionVariable("loggedinsuperadmin");
+    SessionUtil::unsetSessionVariable(SessionUtil::USER_KEY);
+    SessionUtil::unsetSessionVariable(SessionUtil::TEAM_KEY);
+    SessionUtil::unsetSessionVariable(SessionUtil::ADMIN_KEY);
+    SessionUtil::unsetSessionVariable(SessionUtil::SUPERADMIN_KEY);
 
     // clear out the rest of the session.
     session_unset();
@@ -169,8 +177,7 @@ class SessionUtil {
    * Redirects to home page and adds redirect URL to query string if specified.
    */
   public static function redirectHome($continueUrl) {
-    // TODO Change to http://stpetes.rotiss.com
-  	$homePage = "http://localhost/rotiss2/";
+  	$homePage = SessionUtil::HOME_PAGE;
   	if ($continueUrl != null) {
   	  $homePage .= "?continue=$continueUrl";
   	}
@@ -186,13 +193,13 @@ class SessionUtil {
       session_start();
     }
     $inactive = 1200;
-    if (isset($_SESSION['start']) ) {
-      $session_life = time() - $_SESSION['start'];
+    if (isset($_SESSION[SessionUtil::START_KEY]) ) {
+      $session_life = time() - $_SESSION[SessionUtil::START_KEY];
       if ($session_life > $inactive) {
         return true;
       }
     }
-    $_SESSION['start'] = time();
+    $_SESSION[SessionUtil::START_KEY] = time();
     return false;
   }
 
