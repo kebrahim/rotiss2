@@ -142,10 +142,10 @@ table th {background-color: #faaf40; color:white;}
 .table-striped .selected_team_row td {
 	background-color:#E3F2F9 !important;
 }
-.table-striped .placeholder td {
+.table-striped .row_indb td {
     background-color:#DFF0D8 !important;
 }
-.table-striped .placeholder_missing td {
+.table-striped .row_missing td {
     background-color:#F2DEDE !important;
 }
 .table-striped td.warning {

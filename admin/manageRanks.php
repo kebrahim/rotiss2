@@ -1,12 +1,16 @@
 <?php
   require_once '../util/sessions.php';
+
   SessionUtil::checkUserIsLoggedInSuperAdmin();
+  SessionUtil::logoutUserIfNotLoggedIn("admin/manageRanks.php");
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>Rotiss.com - Manage Ranks</title>
-<link href='../css/style.css' rel='stylesheet' type='text/css'>
+<title>St Pete's Rotiss - Manage Ranks</title>
+<link href='../css/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='../css/stpetes.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
@@ -18,13 +22,14 @@
   require_once '../dao/statDao.php';
   require_once '../entity/rank.php';
   require_once '../entity/stat.php';
-  require_once '../util/navigation.php';
+  require_once '../util/layout.php';
   require_once '../util/time.php';
 
-  // Display header.
-  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_RANKS_BUTTON);
-  echo "<div class='bodycenter'>";
+  // Nav bar
+  LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_RANKS_BUTTON);
 
+  echo "<div class='row-fluid'>
+            <div class='span12 center'>";
   echo "<FORM ACTION='manageRanks.php' METHOD=POST>";
   $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
   $lastYear = $rankYear - 1;
@@ -52,10 +57,11 @@
 
   // show cumulative ranks for all players, including placeholders & whether the ranks have
   // been saved
-  echo "<h1>Ranks " . $rankYear . "</h1><hr/>";
+  echo "<h3>Ranks " . $rankYear . "</h3>";
   $ranks = RankDao::calculateCumulativeRanksByYear($rankYear);
 
-  echo "<input class='button' type=submit name='save' value='Save ranks'>&nbsp&nbsp";
+  echo "<p><button class='btn btn-primary' name='save' type='submit'>Save ranks</button>
+          &nbsp&nbsp";
   if (isset($_REQUEST["filter"])) {
   	echo "<a href='manageRanks.php'>Show placeholders</a>";
   	echo "<input type=hidden name='filter'>";
@@ -64,11 +70,14 @@
   	echo "<a href='manageRanks.php?filter'>Hide placeholders</a>";
   	$filter = false;
   }
-  echo "<br/><br/>";
+  echo "</p></div></div>"; // span12, row-fluid
+  echo "<div class='row-fluid'>
+            <div class='span12 center'>";
 
-  echo "<table class='center smallfonttable' border>
-  	          <th>Player</th><th>Team</th><th>Rank</th><th>Is Placeholder</th>
-              <th>Saved In DB</th></tr>";
+  echo "<br/><table class='center smallfonttable table vertmiddle table-striped table-condensed
+                           table-bordered'>
+  	          <thead><tr><th>Player</th><th>Team</th><th>Rank</th><th>Is Placeholder</th>
+              <th>Saved In DB</th></tr></thead>";
   foreach($ranks as $rank) {
   	if ($filter && $rank->isPlaceholder()) {
   	  continue;
@@ -80,7 +89,7 @@
   	// highlight rows based on placeholders/rank-in-db
   	echo "<tr class='";
   	if ($rank->isPlaceholder()) {
-      echo "placeholder";
+      echo "placeholder_row";
   	} else if ($hasCumulativeRank) {
   	  echo "row_indb";
   	} else {
@@ -120,11 +129,13 @@
   	    </tr>";
   }
 
-  echo "</table><br/>";
-  echo "</form></div>";
+  echo "</table>";
+  echo "</form>";
+  echo "</div>"; // span12
+  echo "</div>"; // row-fluid
 
   // Footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayAdminFooter();
 ?>
 
 </body>

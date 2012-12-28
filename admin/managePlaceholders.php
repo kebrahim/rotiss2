@@ -94,9 +94,11 @@
   	}
   	echo "<tr";
   	if ($isPlaceholder) {
-      echo " class='placeholder";
+      echo " class='row";
       if (!$placeholderInDb) {
       	echo "_missing";
+      } else {
+        echo "_indb";
       }
       echo "'";
   	}
