@@ -32,7 +32,7 @@
   echo "<div class='row-fluid'>
             <div class='span12 center'>";
   echo "<FORM ACTION='manageRanks.php' METHOD=POST>";
-  $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
+  $rankYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   $lastYear = $rankYear - 1;
 
   // Save ranks

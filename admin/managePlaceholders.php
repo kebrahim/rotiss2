@@ -31,7 +31,7 @@
   echo "<div class='row-fluid'>
           <div class='span12 center'>";
   echo "<FORM ACTION='managePlaceholders.php' METHOD=POST>";
-  $rankYear = TimeUtil::getYearByEvent(TimeUtil::SEASON_END_EVENT);
+  $rankYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   $lastYear = $rankYear - 1;
 
   // Save placeholders

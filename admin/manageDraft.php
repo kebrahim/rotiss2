@@ -9,7 +9,7 @@
   	$year = $_REQUEST["year"];
   	$redirectUrl .= "?year=$year";
   } else {
-  	$year = TimeUtil::getYearBasedOnEndOfSeason();
+  	$year = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   }
   if (isset($_REQUEST["round"])) {
   	$round = $_REQUEST["round"];
@@ -82,7 +82,7 @@ function getRedirectHTML(element, htmlString) {
 
   // If save button was pressed, save results
   if (isset($_POST['save'])) {
-  	$currentYear = TimeUtil::getYearBasedOnEndOfSeason();
+  	$currentYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   	if ($round == 0) {
   	  // update ping pong balls
   	  $balls = BallDao::getPingPongBallsByYear($year);

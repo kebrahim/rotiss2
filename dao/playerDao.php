@@ -185,7 +185,7 @@ class PlayerDao {
     	$player = new Player($playerDb["player_id"], $playerDb["first_name"],
     			$playerDb["last_name"], $playerDb["birth_date"], $playerDb["mlb_team_id"],
     			$playerDb["sportsline_id"]);
-    	$player->setStatLine(TimeUtil::getYearBasedOnEndOfSeason() - 1,
+    	$player->setStatLine(TimeUtil::getYearByEvent(Event::OFFSEASON_START) - 1,
     	    StatDao::populateStatLine($playerDb));
     	$playersDb[] = $player;
     }

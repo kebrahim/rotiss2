@@ -124,7 +124,7 @@
           <div class='span12 center'>";
   echo "<h3>My Ranks</h3>";
   echo "<FORM ACTION='rankPage.php' METHOD=POST>";
-  $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
+  $rankYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   $lastYear = $rankYear - 1;
 
   if (isset($_POST['save'])) {

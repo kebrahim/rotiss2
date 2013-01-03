@@ -9,7 +9,7 @@
   	$year = $_REQUEST["year"];
   	$redirectUrl .="?year=$year";
   } else {
-  	$year = TimeUtil::getYearBasedOnKeeperNight();
+  	$year = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT);
   }
   SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>

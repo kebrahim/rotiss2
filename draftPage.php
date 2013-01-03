@@ -8,7 +8,7 @@
   	$year = $_REQUEST["year"];
   	$redirectUrl .="?year=$year";
   } else {
-  	$year = TimeUtil::getYearBasedOnEndOfSeason();
+  	$year = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   }
   SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>

@@ -13,6 +13,8 @@
       // TODO handle 'remember me' checkbox
       SessionUtil::loginAndRedirect($user, $continueUrl);
     }
+  } else {
+  	$incorrectLogin = false;
   }
 ?>
 

@@ -51,7 +51,7 @@
    * Displays the cumulative rank for the specified player for the current ranking year.
    */
   function displayCumulativeRankForPlayer(Player $player) {
-  	$rankYear = TimeUtil::getYearBasedOnEndOfSeason();
+  	$rankYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   	$rank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
   	if ($rank != null) {
   	  echo $rank->getRank();

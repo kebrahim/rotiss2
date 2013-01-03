@@ -117,7 +117,7 @@ class Trade {
     if (isset($assocArray[$brognaStr])) {
       $brognaYear = $assocArray[$brognaStr];
       // Ensure year is next year
-      $nextYear = TimeUtil::getYearBasedOnKeeperNight() + 1;
+      $nextYear = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT) + 1;
       if ($brognaYear != $nextYear) {
         die("Invalid brogna year to trade " . $brognaYear);
       }
@@ -293,7 +293,7 @@ class TradePartner {
         return false;
       }
 
-      $nextYear = TimeUtil::getYearBasedOnKeeperNight() + 1;
+      $nextYear = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT) + 1;
       $myBrognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $nextYear);
 
       // do i have enough total points?
@@ -366,7 +366,7 @@ class TradePartner {
 
     // Trade brognas
     if ($this->brognas != null) {
-      $nextYear = TimeUtil::getYearBasedOnKeeperNight() + 1;
+      $nextYear = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT) + 1;
       $myBrognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $nextYear);
       // subtract brognas from total points, tradeable_points
       $myBrognas->setTotalPoints($myBrognas->getTotalPoints() - $this->brognas);

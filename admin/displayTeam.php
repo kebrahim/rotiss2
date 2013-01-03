@@ -31,15 +31,15 @@
   	echo "<hr/>";
 
     // Contracts
-    $contractSeason = TimeUtil::getYearBasedOnEndOfSeason();
+    $contractSeason = TimeUtil::getYearByEvent(Event::AUCTION);
     $team->displayContractsForTrade($contractSeason, 3000);
 
     // Brognas
-    $keeperSeason = TimeUtil::getYearBasedOnKeeperNight();
+    $keeperSeason = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT);
     $team->displayBrognasForTrade($keeperSeason + 1, $keeperSeason + 1, $position);
 
     // Picks
-    $draftSeason = TimeUtil::getYearBasedOnStartOfSeason();
+    $draftSeason = TimeUtil::getYearByEvent(Event::SEASON_START);
     $team->displayDraftPicksForTrade($draftSeason + 1, 3000);
 
     echo "<input type='hidden' name='trade_team". $position . "id' value='" . $team->getId() . "'>";
@@ -179,7 +179,7 @@
 
     // if upcoming year's brognas are negative, show warning.
     foreach ($team->getBrognas() as $brogna) {
-      if (($brogna->getYear() == (TimeUtil::getYearByEvent(TimeUtil::KEEPER_NIGHT_EVENT) + 1))
+      if (($brogna->getYear() == (TimeUtil::getYearByEvent(Event::KEEPER_NIGHT) + 1))
           && ($brogna->getTotalPoints() < 0)) {
         echo "<br/><div class='alert alert-error'>
                 <strong>Warning!</strong> Over-budget for the upcoming year!
@@ -207,7 +207,7 @@
             <div class='span12'>";
 
     // if team has too many extra draft picks for upcoming draft, then show warning.
-    $upcomingDraftYear = TimeUtil::getYearByEvent(TimeUtil::DRAFT_EVENT) + 1;
+    $upcomingDraftYear = TimeUtil::getYearByEvent(Event::DRAFT) + 1;
     $extraDraftPicks =
         DraftPickDao::getNumberPicksByTeamByRound(
             $upcomingDraftYear, $team->getId(), DraftPick::EXTRA_PICK_ROUND_CUTOFF)
@@ -344,7 +344,7 @@
   	$contracts = ContractDao::getContractsByTeamId($teamId);
 
   	// for ever brogna record,
-  	$currentYear = TimeUtil::getYearBasedOnKeeperNight();
+  	$currentYear = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT);
   	foreach ($brognas as $brogna) {
   	  if ($brogna->getYear() < $currentYear) {
   	    continue;

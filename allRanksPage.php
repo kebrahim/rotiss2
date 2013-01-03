@@ -27,7 +27,7 @@
 
   // if any cumulative ranks exist for the rank year, then display players with their cumulative
   // ranks; otherwise, display the list of teams with how many ranks they've made so far.
-  $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
+  $rankYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   $rankingOver = CumulativeRankDao::hasCumulativeRanks($rankYear);
 
   echo "<div class='row-fluid'>

@@ -157,12 +157,12 @@ class Team {
   public function hasContracts() {
     $contracts = $this->filterContractsByYear(
         ContractDao::getContractsByTeamId($this->teamId),
-        TimeUtil::getYearByEvent(TimeUtil::AUCTION_EVENT), 3000, true);
+        TimeUtil::getYearByEvent(Event::AUCTION), 3000, true);
     return (count($contracts) > 0);
   }
 
   public function displayAllContracts() {
-    $currentYear = TimeUtil::getYearByEvent(TimeUtil::AUCTION_EVENT);
+    $currentYear = TimeUtil::getYearByEvent(Event::AUCTION);
     $this->displayContracts($currentYear, 3000, false);
   }
 
@@ -301,7 +301,7 @@ class Team {
   }
 
   function displayAllDraftPicks() {
-    $currentYear = TimeUtil::getYearBasedOnStartOfSeason();
+    $currentYear = TimeUtil::getYearByEvent(Event::SEASON_START);
     $this->displayDraftPicks($currentYear + 1, 3000, false);
   }
 
@@ -434,7 +434,7 @@ class Team {
   }
 
   function displayAllBrognas() {
-    $currentYear = TimeUtil::getYearBasedOnKeeperNight();
+    $currentYear = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT);
     $this->displayBrognas($currentYear, 3000, false, 0);
   }
 
@@ -544,7 +544,7 @@ class Team {
       return;
     }
 
-    $rankYear = TimeUtil::getYearBasedOnEndOfSeason();
+    $rankYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
     $prevYear = $rankYear - 1;
     echo "<a id='roster'></a><h4>Roster</h4>";
     echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
@@ -573,7 +573,7 @@ class Team {
    */
   function getRankCell($rank) {
     if ($rank == null) {
-      return "<td>-<td>";
+      return "<td>-</td>";
     }
     return "<td>" . $rank->getRank() . ($rank->isPlaceholder() ? " (PH)" : "") . "</td>";
   }

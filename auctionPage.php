@@ -8,7 +8,7 @@
   	$year = $_REQUEST["year"];
   	$redirectUrl .="?year=$year";
   } else {
-  	$year = TimeUtil::getYearBasedOnEndOfSeason();
+  	$year = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   }
   SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
@@ -67,8 +67,8 @@ function getRedirectHTML(element, htmlString) {
   // allow user to choose year; include current year (based on end of season) even if auction hasn't
   // taken place yet.
   $maxYear = AuctionResultDao::getMaximumAuctionYear();
-  if ($maxYear < TimeUtil::getYearBasedOnEndOfSeason()) {
-    $maxYear = TimeUtil::getYearBasedOnEndOfSeason();
+  if ($maxYear < TimeUtil::getYearByEvent(Event::OFFSEASON_START)) {
+    $maxYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   }
   YearManager::displayYearChooser($year, AuctionResultDao::getMinimumAuctionYear(), $maxYear);
 
