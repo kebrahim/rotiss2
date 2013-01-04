@@ -46,9 +46,9 @@ class MlbTeam {
     return $this->division;
   }
   
-  public function getImageTag($width, $height) {
-  	return "<img src='" . MlbTeam::$IMAGE_URL_PREFIX . $this->abbreviation . ".png' width=$width 
-  	    height=$height title='" . $this->city . " " . $this->name . "'/>";
+  public function getImageTag($size) {
+  	return "<img class='img_" . $size . "' src='" . MlbTeam::$IMAGE_URL_PREFIX . 
+  	    $this->abbreviation . ".png' title='" . $this->city . " " . $this->name . "'/>";
   }
 }
 ?>

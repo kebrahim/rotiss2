@@ -15,12 +15,11 @@
 
 <!DOCTYPE html>
 <html>
-<head>
-<title>St Pete's Rotiss - Draft</title>
-<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
-<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
-<link rel="shortcut icon" href="img/background-tiles-01.png" />
-</head>
+
+<?php
+  require_once 'util/layout.php';
+  LayoutUtil::displayHeadTag("Draft", true);
+?>
 
 <script>
 // shows the draft page for the specified year
@@ -60,7 +59,6 @@ function getRedirectHTML(element, htmlString) {
 <?php
   require_once 'dao/draftPickDao.php';
   require_once 'util/yearManager.php';
-  require_once 'util/layout.php';
 
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::DRAFT_BUTTON);

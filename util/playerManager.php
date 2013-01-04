@@ -17,7 +17,7 @@ class PlayerManager {
 
   public static function getNameAndHeadshotRowAtLevel($player, $isTopLevel) {
   	if ($player != null) {
-	  return "<td>" . $player->getHeadshotImg(24,32) . "</td>
+	  return "<td>" . $player->getMiniHeadshotImg() . "</td>
 	      <td>" . $player->getNameLink($isTopLevel) . "</td>";
     } else {
 	  return "<td colspan=2>--</td>";

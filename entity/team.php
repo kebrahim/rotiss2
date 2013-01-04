@@ -8,6 +8,7 @@ CommonEntity::requireFileIn('/../dao/', 'cumulativeRankDao.php');
 CommonEntity::requireFileIn('/../dao/', 'draftPickDao.php');
 CommonEntity::requireFileIn('/../dao/', 'userDao.php');
 CommonEntity::requireFileIn('/../util/', 'playerManager.php');
+CommonEntity::requireFileIn('/../util/', 'teamManager.php');
 CommonEntity::requireFileIn('/../util/', 'time.php');
 
 /**
@@ -89,8 +90,9 @@ class Team {
     }
   }
 
-  public function getSportslineImg($width, $height) {
-  	return "<img src='" . $this->getSportslineImageUrl() . "' height=$height width=$width>";
+  public function getSportslineImg($size) {
+  	return "<img class='img_" . $size . "' src='" . 
+  	    $this->getSportslineImageUrl() . "'>";
   }
 
   public function getOwners() {
@@ -150,7 +152,7 @@ class Team {
 
   public function displayTeamInfo() {
     echo "<h4>" . $this->getName() . "</h4>";
-    echo "<img src='" . $this->getSportslineImageUrl() . "'>";
+    echo $this->getSportslineImg(72);
     echo "<br/><p class='ptop'>" . $this->getOwnersString() . "</p>";
   }
 
@@ -200,7 +202,7 @@ class Team {
       }
       echo PlayerManager::getNameAndHeadshotRow($player) . "
                   <td>" . $player->getPositionString() . "</td>
-                  <td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
+                  <td>" . $player->getMlbTeam()->getImageTag(32) . "</td>
                   <td>" . $player->getAge() . "</td>
                   <td>" . $contract->getTotalYears() . "</td>
                   <td>" . $contract->getPrice() . "</td>
@@ -365,7 +367,7 @@ class Team {
   	                    smallfonttable'>
   	      <thead><tr>";
   	echo "<th class='checkth'></th><th>Year</th><th>Round</th><th>Pick</th>
-  	      <th>Original Team</th></tr></thead>";
+  	      <th colspan=2>Original Team</th></tr></thead>";
   	foreach ($this->getPingPongBalls() as $pingPongBall) {
   	  if (($pingPongBall->getYear() < $minYear) || ($pingPongBall->getYear() > $maxYear)) {
   	    continue;
@@ -375,7 +377,7 @@ class Team {
   			</td>
   	        <td>" . $pingPongBall->getYear() . "</td><td>Ping Pong</td>
   		    <td>" . $pingPongBall->getCost() . "</td>" .
-  		   "<td>--</td></tr>";
+  		   "<td colspan=2>--</td></tr>";
   	}
   	foreach ($this->getDraftPicks() as $draftPick) {
   	  if (($draftPick->getYear() < $minYear) || ($draftPick->getYear() > $maxYear)) {
@@ -386,7 +388,8 @@ class Team {
   			               value='" . $draftPick->getId() . "'></td>
   	          <td>" . $draftPick->getYear() . "</td><td>" . $draftPick->getRound() . "</td>
   		      <td>" . $draftPick->getPick() . "</td>" .
-  		     "<td>" . $draftPick->getOriginalTeamName() . "</td></tr>";
+  		      TeamManager::getAbbreviationAndLogoRowAtLevel($draftPick->getOriginalTeam(), false) .
+  		   "</tr>";
   	}
   	echo "</table>";
   }
@@ -559,7 +562,7 @@ class Team {
       $rank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
       echo "<tr>" . PlayerManager::getNameAndHeadshotRow($player) .
                "<td>" . $player->getPositionString() . "</td>
-                <td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
+                <td>" . $player->getMlbTeam()->getImageTag(32) . "</td>
                 <td>" . $player->getAge() . "</td>
                 <td>" . $player->getStatLine($prevYear)->getFantasyPoints() . "</td>" .
                 $this->getRankCell($rank) .

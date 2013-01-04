@@ -52,6 +52,64 @@ class EventDao {
   	}
   	return $eventsDb;
   }
+  
+  /**
+   * Creates a new event in the 'event' table.
+   */
+  public static function createEvent(Event $event) {
+  	CommonDao::connectToDb();
+  	$query = "insert into event(year, event_type_id, date)
+  	          values (" .
+  	    $event->getYear() . ", " .
+  	    $event->getEventType() . ", '" .
+  	    $event->getEventDate() . "')";
+  	$result = mysql_query($query);
+  	if (!$result) {
+  	  echo "Event " . $event->toString() . " already exists in DB. Try again.";
+      return null;
+  	}
+  	
+  	$idQuery = "select event_id from event where year = " . $event->getYear() .
+  	    " and event_type_id = " . $event->getEventType();
+  	$result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
+  	$row = mysql_fetch_assoc($result);
+  	$event->setId($row["event_id"]);
+  	return $event;
+  }
+  
+  /**
+   * Updates the specified event in the 'event' table.
+   */
+  public static function updateEvent(Event $event) {
+  	CommonDao::connectToDb();
+  	$query = "update event set year = " . $event->getYear() . ",
+    	                       event_type_id = " . $event->getEventType() . ",
+    	                       date = '" . $event->getEventDate() . "'
+    	                   where event_id = " . $event->getId();
+  	$result = mysql_query($query) or die('Invalid query: ' . mysql_error());
+  }
+  
+  /**
+   * Returns the earliest event year.
+   */
+  public static function getMinimumYear() {
+  	CommonDao::connectToDb();
+  	$query = "select min(year) from event";
+  	$res = mysql_query($query);
+  	$row = mysql_fetch_row($res);
+  	return $row[0];
+  }
+  
+  /**
+   * Returns the latest event year.
+   */
+  public static function getMaximumYear() {
+  	CommonDao::connectToDb();
+  	$query = "select max(year) from event";
+  	$res = mysql_query($query);
+  	$row = mysql_fetch_row($res);
+  	return $row[0];
+  }
 }
 
 ?>

@@ -31,6 +31,10 @@ class Event {
   	return $this->eventId;
   }
   
+  public function setId($eventId) {
+  	$this->eventId = $eventId;
+  }
+  
   public function getYear() {
   	return $this->year;
   }
@@ -39,8 +43,39 @@ class Event {
   	return $this->eventType;
   }
   
+  public function getEventTypeName() {
+  	switch ($this->eventType) {
+  		case Event::AUCTION:
+  			return "Auction";
+  		case Event::DRAFT:
+  			return "Draft";
+  		case Event::KEEPER_NIGHT:
+  			return "Keeper Night";
+  		case Event::OFFSEASON_START:
+  			return "Start of Offseason";
+  		case Event::RANKINGS_CLOSE:
+  			return "Rankings Close";
+  		case Event::RANKINGS_OPEN:
+  			return "Rankings Open";
+  		case Event::SEASON_START:
+  			return "Start of Season";
+  		case Event::TRADE_DEADLINE:
+  			return "Trade Deadline";
+  		default:
+  			return "Error";
+  	}
+  }
+  
   public function getEventDate() {
   	return $this->eventDate;
+  }
+  
+  public function setEventDate($eventDate) {
+  	$this->eventDate = $eventDate;
+  }
+  
+  public function toString() {
+  	return $this->year . ", " . $this->eventType . ": " . $this->eventDate;
   }
 }
 

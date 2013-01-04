@@ -13,29 +13,18 @@
 
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>St Pete's Rotiss - Players</title>
-    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
-    <link href="css/stpetes.css" rel="stylesheet" media="screen">
-    <link rel="shortcut icon" href="img/background-tiles-01.png" />
-  </head>
-  <body>
+
+<?php
+  require_once 'util/layout.php';
+  LayoutUtil::displayHeadTag("Players", true);
+?>
+
+<body>
 
 <?php
   require_once 'dao/playerDao.php';
-  require_once 'util/layout.php';
-
-  /**
-   * Returns the fantasy team cell in the table of players for the specified player
-   */
-  function getFantasyTeamRow($player) {
-  	if ($player->getFantasyTeam() == null) {
-  		return "<td colspan=2>--</td>";
-  	}
-  	return "<td>" . $player->getFantasyTeam()->getNameLink(true) . "</td>
-  	<td>" . $player->getFantasyTeam()->getSportslineImg(32,32) . "</td>";
-  }
-
+  require_once 'util/teamManager.php';
+  
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::PLAYERS_BUTTON);
 
@@ -77,9 +66,9 @@
   foreach ($players as $player) {
   	echo "<tr><td>" . $player->getMiniHeadshotImg() . "</td>
   	          <td>" . $player->getNameLink(true) . "</td>
-  	          <td>" . $player->getMlbTeam()->getImageTag(32, 32) . "</td>
+  	          <td>" . $player->getMlbTeam()->getImageTag(32) . "</td>
   	          <td>" . $player->getPositionString() . "</td>" .
-  	          getFantasyTeamRow($player) . "</tr>";
+  	          TeamManager::getNameAndLogoRow($player->getFantasyTeam()) . "</tr>";
   }
   echo "</table>
         </div></div>"; // span12, row-fluid

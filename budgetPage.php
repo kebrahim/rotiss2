@@ -15,12 +15,11 @@
 
 <!DOCTYPE html>
 <html>
-<head>
-<title>St Pete's Rotiss - Budget</title>
-<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
-<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
-<link rel="shortcut icon" href="img/background-tiles-01.png" />
-</head>
+
+<?php
+  require_once 'util/layout.php';
+  LayoutUtil::displayHeadTag("Budget", true);
+?>
 
 <script>
 //shows the team with the specified id
@@ -58,7 +57,6 @@ function getRedirectHTML(element, htmlString) {
 <body>
   <?php
   require_once 'dao/teamDao.php';
-  require_once 'util/layout.php';
   require_once 'util/teamManager.php';
   require_once 'util/time.php';
 

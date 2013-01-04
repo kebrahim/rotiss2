@@ -5,19 +5,17 @@
 
 <!DOCTYPE html>
 <html>
-<head>
-<title>St Pete's Rotiss - All Ranks</title>
-<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
-<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
-<link rel="shortcut icon" href="img/background-tiles-01.png" />
-</head>
+
+<?php
+  require_once 'util/layout.php';
+  LayoutUtil::displayHeadTag("All Ranks", true);
+?>
 
 <body>
 <?php
   require_once 'dao/cumulativeRankDao.php';
   require_once 'dao/rankDao.php';
   require_once 'dao/teamDao.php';
-  require_once 'util/layout.php';
   require_once 'util/playerManager.php';
   require_once 'util/teamManager.php';
   require_once 'util/time.php';
@@ -57,7 +55,7 @@
       }
       echo ">" .
               PlayerManager::getNameAndHeadshotRow($cumulativeRank->getPlayer()) . "
-              <td>" . $cumulativeRank->getPlayer()->getMlbTeam()->getImageTag(30, 30) . "</td>
+              <td>" . $cumulativeRank->getPlayer()->getMlbTeam()->getImageTag(32) . "</td>
               <td>" . $cumulativeRank->getPlayer()->getAge() . "</td>
               <td>" . $cumulativeRank->getPlayer()->getPositionString() . "</td>" .
               TeamManager::getNameAndLogoRow($cumulativeRank->getPlayer()->getFantasyTeam()) .
@@ -77,8 +75,7 @@
     echo "<th>Total</th></tr></thead>";
     foreach ($teams as $team) {
   	  echo "<tr>";
-  	  echo "<td><img height=36 width=36 src='" . $team->getSportslineImageUrl() . "'></td>
-  	            <td>" . $team->getNameLink(true) . "</td>";
+  	  echo TeamManager::getNameAndLogoRowWithSize($team, 40);
 
       // individual ranks
       $rankCountArray = RankDao::getRankCount($team->getId(), $rankYear);

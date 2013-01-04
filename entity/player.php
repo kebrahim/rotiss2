@@ -149,7 +149,8 @@ class Player {
   }
   
   public function getHeadshotImg($width, $height) {
-  	return "<img src='" . $this->getHeadshotUrl() . "' width=$width height=$height />";
+  	return "<img class='img_" . $width . "_" . $height . "' src='" . $this->getHeadshotUrl() . "'
+  	         />";
   }
   
   public function getStPetesUrl() {
@@ -182,8 +183,8 @@ class Player {
   	
   	// Headshot
   	if ($this->hasSportslineId()) {
-  		echo "<a href='" . $this->getStPetesUrl() . "' target='_blank'>
-  		      <img src='" . $this->getHeadshotUrl() . "'></a>";
+  		echo "<a href='" . $this->getStPetesUrl() . "' target='_blank'>" .
+    		$this->getHeadshotImg(60,80). "</a>";
   	}
   }
   

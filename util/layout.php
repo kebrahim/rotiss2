@@ -21,7 +21,31 @@ class LayoutUtil {
   const MANAGE_PLACEHOLDERS_BUTTON = 17;
   const MANAGE_RANKS_BUTTON = 18;
   const MANAGE_PLAYER_BUTTON = 19;
-
+  const MANAGE_EVENTS_BUTTON = 20;
+  
+  /**
+   * Displays the <head> tag for a page, including the specified title.
+   */
+  public static function displayHeadTag($title, $isTopLevel) {
+  	echo "<head>
+            <title>St Pete's Rotiss";
+  	if ($title) {
+      echo " - " . $title;
+  	}
+    echo   "</title>
+            <link href='" . ($isTopLevel ? "" : "../") . "css/bootstrap.css' rel='stylesheet' 
+                  type='text/css'>
+            <link href='" . ($isTopLevel ? "" : "../") . "css/stpetes.css' rel='stylesheet' 
+                  type='text/css'>
+            <link href='" . ($isTopLevel ? "" : "../") . "css/browsers.css' rel='stylesheet' 
+                  type='text/css'>
+            <link href='" . ($isTopLevel ? "" : "../") . "img/background-tiles-01.png'
+                  rel='shortcut icon' />
+            <script src='" . ($isTopLevel ? "" : "../") . "js/css_browser_selector.js' 
+                  type='text/javascript'></script>
+         </head>";
+  }
+  
   public static function displayHeader() {
     echo "<div id='wrap'><div class='container'>";
   }
@@ -160,7 +184,7 @@ class LayoutUtil {
   	LayoutUtil::displayListItem("admin/manageDraft.php", "Draft", $isTopLevel,
   	$selectedButton, self::MANAGE_DRAFT_BUTTON);
 
-  	// If super-admin, show ranks & placeholders pages
+  	// If super-admin, show super-admin pages
   	if (SessionUtil::isLoggedInSuperAdmin()) {
   	  echo "<li class=\"divider\"></li>";
 
@@ -169,8 +193,12 @@ class LayoutUtil {
           $selectedButton, self::MANAGE_PLACEHOLDERS_BUTTON);
 
   	  // Ranks
-  	  LayoutUtil::displayListItem("admin/manageRanks.php", "Manage Ranks", $isTopLevel,
+  	  LayoutUtil::displayListItem("admin/manageRanks.php", "Ranks", $isTopLevel,
   	      $selectedButton, self::MANAGE_RANKS_BUTTON);
+
+  	  // Events
+  	  LayoutUtil::displayListItem("admin/manageEvents.php", "Events", $isTopLevel,
+  	  		$selectedButton, self::MANAGE_EVENTS_BUTTON);
   	}
   	echo "</ul></li>";
   }

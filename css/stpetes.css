@@ -275,3 +275,28 @@ label {
 .auctionsummary {
 	height:160px;
 }
+
+.img_24_32 {
+	width: 24px;
+	height: 32px;
+}
+.img_42_56 {
+	width: 42px;
+	height: 56px;
+}
+.img_60_80 {
+	width: 60px;
+	height: 80px;
+}
+.img_32 {
+	width: 32px;
+	height: 32px;
+}
+.img_40 {
+	width: 40px;
+	height: 40px;
+}
+.img_72 {
+	width: 72px;
+	height: 72px;
+}

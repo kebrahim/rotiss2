@@ -5,18 +5,16 @@
 
 <!DOCTYPE html>
 <html>
-<head>
-<title>St Pete's Rotiss - My Ranks</title>
-<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
-<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
-<link rel="shortcut icon" href="img/background-tiles-01.png" />
-</head>
+
+<?php
+  require_once 'util/layout.php';
+  LayoutUtil::displayHeadTag("My Ranks", true);
+?>
 
 <body>
 <?php
   require_once 'dao/rankDao.php';
   require_once 'dao/statDao.php';
-  require_once 'util/layout.php';
   require_once 'util/time.php';
 
   /**

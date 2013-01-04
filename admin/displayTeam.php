@@ -135,9 +135,9 @@
     echo "<div class='row-fluid'>";
 
     // team logo
-    echo "<div class='span2 center teamlogo'>
-            <img src='" . $team->getSportslineImageUrl() . "'>
-          </div>";
+    echo "<div class='span2 center teamlogo'>" .
+            $team->getSportslineImg(72) .
+         "</div>";
 
     // team name
     echo "<div class='span10 center'>
@@ -241,9 +241,9 @@
   	echo "<div class='row-fluid'>";
 
   	// team logo
-  	echo "<div class='span2 center teamlogo'>
-  	        <img src='" . $team->getSportslineImageUrl() . "'>
-  	      </div>";
+  	echo "<div class='span2 center teamlogo'>" .
+    	    $team->getSportslineImg(72) .
+  	     "</div>";
 
   	// team name
   	echo "  <div class='span10 center teamlogo'>
@@ -315,9 +315,9 @@
   	echo "<div class='row-fluid'>";
 
   	// team logo
-  	echo "<div class='span2 center teamlogo'>
-  	        <img src='" . $team->getSportslineImageUrl() . "'>
-  	      </div>";
+  	echo "<div class='span2 center teamlogo'>" .
+      	    $team->getSportslineImg(72) .
+  	     "</div>";
 
   	// team name w/ bookmarks for each year
   	echo "<div class='span10 center'>
@@ -386,7 +386,7 @@
   		echo "<tr><td>" . $player->getMiniHeadshotImg() . "</td>
   			      <td>" . $player->getNameLink(true) . "</td>
   			      <td>" . $player->getPositionString() . "</td>
-  			      <td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
+  			      <td>" . $player->getMlbTeam()->getImageTag(32) . "</td>
   			      <td>" . $player->getAge() . "</td>
   			      <td>" . ($contract->getEndYear() - $brogna->getYear() + 1) . "</td>
   			      <td>" . $contract->getPrice() . "</td></tr>";

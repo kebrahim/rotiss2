@@ -1,0 +1,30 @@
+@CHARSET "UTF-8";
+
+/*
+ * IE browsers < 9 cannot show opaque backgrounds properly.
+ */
+.ie8 .row-fluid [class*="span"]:before {
+  background: white;
+}
+.ie8 #loginbox:before {
+  background: white;
+}
+.ie7 .row-fluid [class*="span"]:before {
+  background: white;
+}
+.ie7 #loginbox:before {
+  background: white;
+}
+.ie6 .row-fluid [class*="span"]:before {
+  background: white;
+}
+.ie6 #loginbox:before {
+  background: white;
+}
+.ie5 .row-fluid [class*="span"]:before {
+  background: white;
+}
+.ie5 #loginbox:before {
+  background: white;
+}
+ 

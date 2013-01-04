@@ -20,12 +20,10 @@
 
 <!DOCTYPE html>
 <html>
-<head>
-<title>St Pete's Rotiss</title>
-<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
-<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
-<link rel="shortcut icon" href="img/background-tiles-01.png" />
-</head>
+<?php
+  require_once 'util/layout.php';
+  LayoutUtil::displayHeadTag(null, true);
+?>
 
 <body>
 

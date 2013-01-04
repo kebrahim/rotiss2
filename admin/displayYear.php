@@ -174,7 +174,7 @@
   	    echo " class='selected_team_row'";
   	  }
       echo   ">" . PlayerManager::getNameAndHeadshotRow($player) .
-                   "<td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
+                   "<td>" . $player->getMlbTeam()->getImageTag(32) . "</td>
                    <td>" . $player->getPositionString() . "</td>" .
                    TeamManager::getAbbreviationAndLogoRow($team) .
              "</tr>";
@@ -280,6 +280,27 @@
   	}
   }
 
+  /**
+   * Displays a table of events for the specified year, providing the ability to change the date.
+   */
+  function displayEventYear($year) {
+  	echo "<h3>$year Events</h3>";
+  
+  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
+  	      <thead><tr><th>Event Type</th><th>Event Date</th></tr></thead>";
+  
+  	$events = EventDao::getEventsByYear($year);
+  	foreach ($events as $event) {
+  	  echo "<tr class='tdselect'>
+  	          <td>" . $event->getEventTypeName() . "</td>
+  	          <td><input type=date name='eventDate" . $event->getEventType() .
+  	              "' required value='" . $event->getEventDate() . "'></td>
+    	    </tr>";
+  	}
+  	echo "</table>";
+  	echo "<input type=hidden name='year' value='$year'>";
+  }
+  
   // direct to corresponding function, depending on type of display
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
@@ -309,5 +330,7 @@
   	  $round = $_REQUEST["round"];
   	}
   	displayRoundDropdown($year, $round);
+  } else if ($displayType == "events") {
+  	displayEventYear($year);
   }
 ?>
