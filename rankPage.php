@@ -155,10 +155,21 @@
       }
     }
   }
-
+  
+  // if any cumulative ranks exist for the rank year or the ranking period is over, then display
+  // page in read-only mode.
+  $isReadOnly = CumulativeRankDao::hasCumulativeRanks($rankYear) ||
+      (TimeUtil::getCurrentYear() == TimeUtil::getYearByEvent(Event::RANKINGS_CLOSE));
+  
   // navigation links
   echo "<a href='rankPage.php'>My Ranks</a>&nbsp
         <a href='allRanksPage.php'>All Ranks</a>";
+  
+  if ($isReadOnly) {
+  	echo "<br/><br/>
+  	      <div class='alert alert-info'><strong>Attention!</strong> Rankings are closed!</div>";
+  }
+  
   echo "  </div>
         </div>
         <div class='row-fluid'>
@@ -168,9 +179,6 @@
   displayRankSummary($teamId, $rankYear);
   echo "</div>"; // span12
   echo "</div>"; // row-fluid
-
-  // if any cumulative ranks exist for the rank year, then display page in read-only mode.
-  $isReadOnly = CumulativeRankDao::hasCumulativeRanks($rankYear);
 
   echo "<div class='row-fluid'>
           <div class='span3 center'>";
