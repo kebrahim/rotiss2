@@ -71,7 +71,7 @@
   $mlbTeam = $player->getMlbTeam();
   echo "<tr><td><strong>Team:</strong></td>
             <td>" . $mlbTeam->getCity() . " " . $mlbTeam->getName() . "&nbsp&nbsp" .
-                    $mlbTeam->getImageTag(30, 30) . "</td>
+                    $mlbTeam->getImageTag(32) . "</td>
         </tr>";
 
   // Birth date & age
@@ -90,7 +90,7 @@
   if ($fantasyTeam == null) {
   	echo "--";
   } else {
-  	echo $fantasyTeam->getNameLink(true) . "&nbsp&nbsp" . $fantasyTeam->getSportslineImg(30, 30);
+  	echo $fantasyTeam->getNameLink(true) . "&nbsp&nbsp" . $fantasyTeam->getSportslineImg(32);
   }
   echo "</td></tr>";
 
