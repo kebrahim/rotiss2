@@ -5,17 +5,15 @@
 
 <!DOCTYPE html>
 <html>
-<head>
-<title>St Pete's Rotiss - Edit profile</title>
-<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
-<link href='css/stpetes.css' rel='stylesheet' type='text/css'>
-<link rel="shortcut icon" href="img/background-tiles-01.png" />
-</head>
 
-<body>
 <?php
   require_once 'util/layout.php';
+  LayoutUtil::displayHeadTag("Edit profile", true);
+?>
 
+<body>
+
+<?php
     // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::EDIT_PROFILE_BUTTON);
 
