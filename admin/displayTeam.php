@@ -1,10 +1,12 @@
 <?php
+  require_once '../dao/changelogDao.php';
   require_once '../dao/teamDao.php';
   require_once '../util/sessions.php';
+  require_once '../util/teamManager.php';
   require_once '../util/time.php';
 
   /**
-   * Returns a Team based on the ID specified in the GET/POST.
+   * Returns a Team based on the ID specified in the GET/POST, or null if none exist.
    */
   function getTeamByParam($param) {
   	if (isset($_REQUEST[$param])) {
@@ -12,11 +14,7 @@
   	} else {
   	  $teamId = 0;
   	}
-    $team = TeamDao::getTeamById($teamId);
-    if ($team == null) {
-      die("<h1>team id " . $teamId . " does not exist for param " . $param . "!</h1>");
-    }
-    return $team;
+    return TeamDao::getTeamById($teamId);
   }
 
   /**
@@ -409,6 +407,37 @@
   	}
   }
 
+  function displayTeamForChanges($team) {
+    echo "<div class='row-fluid'>
+            <div class='span12 center'>";
+
+    if ($team == null) {
+      // show all changes
+      echo "<h3>All Changes</h3>";
+      $changes = ChangelogDao::getAllChanges();
+    } else {
+      // show changes for team
+      echo "<h3>Changes for " . $team->getName() . "</h3>";
+      $changes = ChangelogDao::getChangesByTeam($team->getId());
+    }
+
+    echo "<table class='table center vertmiddle table-striped table-condensed table-bordered'>
+            <thead><tr>
+              <th>Date/Time</th><th>User</th><th>Type</th><th colspan=2>Team</th><th>Details</th>
+            </tr></thead>";
+    foreach ($changes as $change) {
+      echo "<tr><td>" . $change->getTimestamp() . "</td>
+                <td>" . $change->getUser()->getFullName() . "</td>
+                <td>" . $change->getType() . "</td>" .
+                TeamManager::getAbbreviationAndLogoRowAtLevel($change->getTeam(), false) .
+               "<td>" . $change->getDetails() . "</td>
+            </tr>";
+    }
+    echo "</table>
+          </div>
+          </div>";
+  }
+
   // direct to corresponding function, depending on type of display
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
@@ -437,5 +466,7 @@
     displayTeamForManagement($team);
   } else if ($displayType == "budget") {
     displayTeamForBudget($team);
+  } else if ($displayType == "changes") {
+    displayTeamForChanges($team);
   }
 ?>

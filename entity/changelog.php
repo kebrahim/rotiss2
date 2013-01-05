@@ -16,21 +16,21 @@ class Changelog {
   private $userId;
   private $userLoaded = false;
   private $user;
-  
+
   private $timestamp;
 
   private $changeId;
   private $changeLoaded = false;
   private $change;
-  
+
   private $teamId;
   private $teamLoaded = false;
   private $team;
-  
+
   const AUCTION_TYPE = 'Auction';
   const TRADE_TYPE = 'Trade';
   const KEEPER_TYPE = 'Keeper';
-	
+
   public function __construct($changelogId, $changeType, $userId, $timestamp, $changeId,
       $teamId) {
   	$this->changelogId = $changelogId;
@@ -40,23 +40,23 @@ class Changelog {
   	$this->changeId = $changeId;
   	$this->teamId = $teamId;
   }
-  
+
   public function getId() {
   	return $this->changelogId;
   }
-  
+
   public function setId($changelogId) {
   	$this->changelogId = $changelogId;
   }
-  
+
   public function getType() {
   	return $this->changeType;
   }
-  
+
   public function getUserId() {
   	return $this->userId;
   }
-  
+
   public function getUser() {
   	if ($this->userLoaded != true) {
   	  $this->user = UserDao::getUserById($this->userId);
@@ -64,20 +64,21 @@ class Changelog {
   	}
   	return $this->user;
   }
-  
+
   public function getTimestamp() {
   	return $this->timestamp;
   }
-  
+
   public function getChangeId() {
   	return $this->changeId;
   }
-  
+
   public function getChange() {
   	if ($this->changeLoaded != true) {
    	  switch($this->changeType) {
   	    case Changelog::AUCTION_TYPE: {
-  	  	  $this->change = AuctionResultDao::getAuctionResultById($this->changeId);
+  	      $this->change = AuctionResultDao::getAuctionResultById($this->changeId);
+  	      break;
   	    }
   	    // TODO add support for other change types
   	    default: {
@@ -88,11 +89,11 @@ class Changelog {
     }
     return $this->change;
   }
-  
+
   public function getTeamId() {
   	return $this->teamId;
   }
-  
+
   public function getTeam() {
   	if ($this->teamLoaded != true) {
   	  $this->team = TeamDao::getTeamById($this->teamId);
@@ -100,7 +101,20 @@ class Changelog {
   	}
   	return $this->team;
   }
-  
+
+  public function getDetails() {
+    $change = $this->getChange();
+    switch($this->changeType) {
+      case Changelog::AUCTION_TYPE: {
+        return $change->getPlayer()->getNameLink(false) . " - $" . $change->getCost();
+      }
+      // TODO add support for other change types
+      default: {
+        return null;
+      }
+    }
+  }
+
   public function toString() {
   	return $this->changeType . " by " . $this->getUser()->getUsername() . " at " .
   	    $this->timestamp . " - " . $this->getChange()->toString();

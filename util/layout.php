@@ -22,7 +22,8 @@ class LayoutUtil {
   const MANAGE_RANKS_BUTTON = 18;
   const MANAGE_PLAYER_BUTTON = 19;
   const MANAGE_EVENTS_BUTTON = 20;
-  
+  const MANAGE_CHANGES_BUTTON = 21;
+
   /**
    * Displays the <head> tag for a page, including the specified title.
    */
@@ -33,19 +34,19 @@ class LayoutUtil {
       echo " - " . $title;
   	}
     echo   "</title>
-            <link href='" . ($isTopLevel ? "" : "../") . "css/bootstrap.css' rel='stylesheet' 
+            <link href='" . ($isTopLevel ? "" : "../") . "css/bootstrap.css' rel='stylesheet'
                   type='text/css'>
-            <link href='" . ($isTopLevel ? "" : "../") . "css/stpetes.css' rel='stylesheet' 
+            <link href='" . ($isTopLevel ? "" : "../") . "css/stpetes.css' rel='stylesheet'
                   type='text/css'>
-            <link href='" . ($isTopLevel ? "" : "../") . "css/browsers.css' rel='stylesheet' 
+            <link href='" . ($isTopLevel ? "" : "../") . "css/browsers.css' rel='stylesheet'
                   type='text/css'>
             <link href='" . ($isTopLevel ? "" : "../") . "img/background-tiles-01.png'
                   rel='shortcut icon' />
-            <script src='" . ($isTopLevel ? "" : "../") . "js/css_browser_selector.js' 
+            <script src='" . ($isTopLevel ? "" : "../") . "js/css_browser_selector.js'
                   type='text/javascript'></script>
          </head>";
   }
-  
+
   public static function displayHeader() {
     echo "<div id='wrap'><div class='container'>";
   }
@@ -166,11 +167,15 @@ class LayoutUtil {
   	LayoutUtil::displayListItem("admin/manageTeams.php", "Roster Grid", $isTopLevel,
   	    $selectedButton, self::MANAGE_ROSTERS_BUTTON);
 
+  	// Roster Grid
+  	LayoutUtil::displayListItem("admin/manageChanges.php", "Change Log", $isTopLevel,
+  	    $selectedButton, self::MANAGE_CHANGES_BUTTON);
+
+  	echo "<li class=\"divider\"></li>";
+
   	// Trade
   	LayoutUtil::displayListItem("admin/manageTrade.php", "Trades", $isTopLevel, $selectedButton,
   		self::MANAGE_TRADE_BUTTON);
-
-  	echo "<li class=\"divider\"></li>";
 
   	// Auction
   	LayoutUtil::displayListItem("admin/manageAuction.php", "Auction", $isTopLevel,

@@ -7,7 +7,7 @@ CommonDao::requireFileIn('/../entity/', 'auctionResult.php');
  * DAO for handling auction data, specifically in the 'auction' table.
  */
 class AuctionResultDao {
-	
+
   /**
    * Returns the auction result associated with the specified id.
    */
@@ -17,7 +17,7 @@ class AuctionResultDao {
   	          where auction_id = $auctionId";
   	return AuctionResultDao::createAuctionResultFromQuery($query);
   }
-  
+
   /**
    * Returns all of the auction results belonging to the specified team.
    */
@@ -43,11 +43,11 @@ class AuctionResultDao {
   private static function createAuctionResultFromQuery($query) {
     $auctionArray = AuctionResultDao::createAuctionResultsFromQuery($query);
     if (count($auctionArray) == 1) {
-      return $auctionArray[1];
+      return $auctionArray[0];
     }
     return null;
   }
-   
+
   private static function createAuctionResultsFromQuery($query) {
     $res = mysql_query($query);
 
@@ -104,7 +104,7 @@ class AuctionResultDao {
   	$auctionResult->setId($row["auction_id"]);
   	return $auctionResult;
   }
-  
+
   /**
    * Deletes all of the auction results.
    */

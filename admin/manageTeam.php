@@ -1,8 +1,8 @@
 <?php
   require_once '../util/sessions.php';
-  
+
   SessionUtil::checkUserIsLoggedInAdmin();
-  
+
   // Get team from REQUEST; otherwise, use logged-in user's team.
   $redirectUrl = "admin/manageTeam.php";
   if (isset($_REQUEST["team_id"])) {
@@ -11,18 +11,17 @@
   } else if (SessionUtil::isLoggedIn()) {
   	$teamId = SessionUtil::getLoggedInTeam()->getId();
   }
-  
+
   SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
 <!DOCTYPE html>
 <html>
-<head>
-<title>St Pete's Rotiss - Manage Team</title>
-<link href='../css/bootstrap.css' rel='stylesheet' type='text/css'>
-<link href='../css/stpetes.css' rel='stylesheet' type='text/css'>
-<link rel="shortcut icon" href="../img/background-tiles-01.png" />
-</head>
+
+<?php
+  require_once '../util/layout.php';
+  LayoutUtil::displayHeadTag("Manage Team", false);
+?>
 
 <script>
 //shows the team with the specified id
@@ -62,12 +61,11 @@ function getRedirectHTML(element, htmlString) {
 <?php
   require_once '../dao/teamDao.php';
   require_once '../entity/team.php';
-  require_once '../util/layout.php';
   require_once '../util/teamManager.php';
-  
+
   // Nav bar
   LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_TEAM_BUTTON);
-  
+
   if (isset($_POST['update'])) {
     // Update team.
     $teamToUpdate = new Team($_POST['teamId'], $_POST['teamName'], $_POST['league'],
@@ -78,14 +76,14 @@ function getRedirectHTML(element, htmlString) {
             <strong>Team successfully updated!</strong>
           </div>";
   }
-  
+
   $team = TeamDao::getTeamById($teamId);
   if ($team == null) {
   	die("<h1>Team ID " . $teamId . " not found!</h1>");
   }
-  
+
   echo "<FORM ACTION='manageTeam.php' METHOD=POST>";
-  
+
   // Allow user to choose from list of teams to see corresponding team management page.
   TeamManager::displayTeamChooser($team);
 
