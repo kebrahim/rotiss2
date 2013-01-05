@@ -2,12 +2,12 @@
 class CommonDao {
   static function connectToDb() {
     CommonDao::requireFileIn("/../util/", "config.php");
-    if (!ConfigUtil::isProduction(false)) {
-      $dbUser = "root";
-      $dbPass = "karma";
-    } else {
+    if (ConfigUtil::isProduction()) {
       $dbUser = "rotiss_kebrahim";
       $dbPass = "timebomb";
+    } else {
+      $dbUser = "root";
+      $dbPass = "karma";
     }
 
     $dbh=mysql_connect ("localhost", $dbUser, $dbPass) or

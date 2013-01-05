@@ -183,7 +183,7 @@ class LayoutUtil {
   		$selectedButton, self::MANAGE_AUCTION_BUTTON);
 
   	// Keepers - only if feature is enabled
-  	if (ConfigUtil::isFeatureEnabled(ConfigUtil::KEEPER_FEATURE, $isTopLevel)) {
+  	if (ConfigUtil::isFeatureEnabled(ConfigUtil::KEEPER_FEATURE)) {
   	  LayoutUtil::displayListItem("admin/manageKeepers.php", "Keepers", $isTopLevel,
   	      $selectedButton, self::MANAGE_KEEPERS_BUTTON);
   	}
@@ -245,7 +245,7 @@ class LayoutUtil {
             <div class=\"container\">
               <div class=\"row\">
                 <div class=\"span4 center muted credit\">
-                  St. Pete's Rotiss " . ConfigUtil::getValue(ConfigUtil::VERSION, $isTopLevel) . "
+                  St. Pete's Rotiss " . ConfigUtil::getValue(ConfigUtil::VERSION) . "
                 </div>
                 <div class=\"span4 center\">
                   <img src='" . ($isTopLevel ? "" : "../") . "img/rotiss2.jpg' width='250' />

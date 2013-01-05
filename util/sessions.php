@@ -65,7 +65,7 @@ class SessionUtil {
    */
   public static function checkUserIsLoggedIn() {
     if (SessionUtil::hasUserTimedOut() || !SessionUtil::isLoggedIn()) {
-      SessionUtil::logOutFromLevel(true);
+      SessionUtil::logOut();
     }
   }
 
@@ -75,7 +75,7 @@ class SessionUtil {
    */
   public static function logoutUserIfNotLoggedIn($continueUrl) {
   	if (SessionUtil::hasUserTimedOut() || !SessionUtil::isLoggedIn()) {
-  	  SessionUtil::logOutAndRedirect($continueUrl, null);
+  	  SessionUtil::logOutAndRedirect($continueUrl);
   	}
   }
 
@@ -99,7 +99,7 @@ class SessionUtil {
   // TODO combine w/ continueURL method?
   public static function checkUserIsLoggedInAdmin() {
     if (!SessionUtil::isLoggedInAdmin()) {
-      SessionUtil::logOutFromLevel(false);
+      SessionUtil::logOut();
     }
   }
 
@@ -108,7 +108,7 @@ class SessionUtil {
    */
   public static function checkUserIsLoggedInSuperAdmin() {
     if (!SessionUtil::isLoggedInSuperAdmin()) {
-      SessionUtil::logOutFromLevel(false);
+      SessionUtil::logOut();
     }
   }
 
@@ -146,14 +146,10 @@ class SessionUtil {
    * Logs out the currently logged-in user.
    */
   public static function logOut() {
-  	SessionUtil::logOutAndRedirect(null, null);
+  	SessionUtil::logOutAndRedirect(null);
   }
 
-  public static function logOutFromLevel($isTopLevel) {
-    SessionUtil::logOutAndRedirect(null, $isTopLevel);
-  }
-
-  public static function logOutAndRedirect($continueUrl, $isTopLevel) {
+  public static function logOutAndRedirect($continueUrl) {
     if (!isset($_SESSION)) {
       session_start();
     }
@@ -166,7 +162,7 @@ class SessionUtil {
     session_unset();
 
     // redirect to home page.
-	SessionUtil::redirectHome($continueUrl, $isTopLevel);
+	SessionUtil::redirectHome($continueUrl);
   }
 
   /**
@@ -180,15 +176,9 @@ class SessionUtil {
   /**
    * Redirects to home page and adds redirect URL to query string if specified.
    */
-  public static function redirectHome($continueUrl, $isTopLevel) {
-    if ($isTopLevel === null) {
-      $topLevel = ($continueUrl == null) || (substr($continueUrl, 0, 6) != "admin/");
-    } else {
-      $topLevel = $isTopLevel;
-    }
-
-  	$homePage = (ConfigUtil::isProduction($topLevel) ?
-        "http://stpetes.rotiss.com/" : "http://localhost/rotiss2/");
+  public static function redirectHome($continueUrl) {
+  	$homePage = (ConfigUtil::isProduction() ?
+  	    "http://stpetes.rotiss.com/" : "http://localhost/rotiss2/");
   	if ($continueUrl != null) {
   	  $homePage .= "?continue=$continueUrl";
   	}
