@@ -1,6 +1,7 @@
 <?php
 
 require_once 'commonUtil.php';
+require_once 'config.php';
 CommonUtil::requireFileIn('/../dao/', 'teamDao.php');
 CommonUtil::requireFileIn('/../entity/', 'user.php');
 
@@ -11,7 +12,6 @@ class SessionUtil {
   const SUPERADMIN_KEY = "stpetesloggedinsuperadmin";
   const START_KEY = "stpetesstart";
   const LOGGED_IN_PAGE = "teamPage.php";
-  const HOME_PAGE = "http://localhost/rotiss2/"; //"http://stpetes.rotiss.com";
 
   /**
    * Updates the _SESSION array with the value of the specified key within the
@@ -65,7 +65,7 @@ class SessionUtil {
    */
   public static function checkUserIsLoggedIn() {
     if (SessionUtil::hasUserTimedOut() || !SessionUtil::isLoggedIn()) {
-      SessionUtil::logOut();
+      SessionUtil::logOutFromLevel(true);
     }
   }
 
@@ -75,7 +75,7 @@ class SessionUtil {
    */
   public static function logoutUserIfNotLoggedIn($continueUrl) {
   	if (SessionUtil::hasUserTimedOut() || !SessionUtil::isLoggedIn()) {
-  	  SessionUtil::logOutAndRedirect($continueUrl);
+  	  SessionUtil::logOutAndRedirect($continueUrl, null);
   	}
   }
 
@@ -99,7 +99,7 @@ class SessionUtil {
   // TODO combine w/ continueURL method?
   public static function checkUserIsLoggedInAdmin() {
     if (!SessionUtil::isLoggedInAdmin()) {
-      SessionUtil::logOut();
+      SessionUtil::logOutFromLevel(false);
     }
   }
 
@@ -108,7 +108,7 @@ class SessionUtil {
    */
   public static function checkUserIsLoggedInSuperAdmin() {
     if (!SessionUtil::isLoggedInSuperAdmin()) {
-      SessionUtil::logOut();
+      SessionUtil::logOutFromLevel(false);
     }
   }
 
@@ -146,10 +146,14 @@ class SessionUtil {
    * Logs out the currently logged-in user.
    */
   public static function logOut() {
-  	SessionUtil::logOutAndRedirect(null);
+  	SessionUtil::logOutAndRedirect(null, null);
   }
 
-  public static function logOutAndRedirect($continueUrl) {
+  public static function logOutFromLevel($isTopLevel) {
+    SessionUtil::logOutAndRedirect(null, $isTopLevel);
+  }
+
+  public static function logOutAndRedirect($continueUrl, $isTopLevel) {
     if (!isset($_SESSION)) {
       session_start();
     }
@@ -162,7 +166,7 @@ class SessionUtil {
     session_unset();
 
     // redirect to home page.
-	SessionUtil::redirectHome($continueUrl);
+	SessionUtil::redirectHome($continueUrl, $isTopLevel);
   }
 
   /**
@@ -176,8 +180,15 @@ class SessionUtil {
   /**
    * Redirects to home page and adds redirect URL to query string if specified.
    */
-  public static function redirectHome($continueUrl) {
-  	$homePage = SessionUtil::HOME_PAGE;
+  public static function redirectHome($continueUrl, $isTopLevel) {
+    if ($isTopLevel === null) {
+      $topLevel = ($continueUrl == null) || (substr($continueUrl, 0, 6) != "admin/");
+    } else {
+      $topLevel = $isTopLevel;
+    }
+
+  	$homePage = (ConfigUtil::isProduction($topLevel) ?
+        "http://stpetes.rotiss.com/" : "http://localhost/rotiss2/");
   	if ($continueUrl != null) {
   	  $homePage .= "?continue=$continueUrl";
   	}

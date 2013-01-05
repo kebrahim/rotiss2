@@ -1,7 +1,16 @@
 <?php
 class CommonDao {
   static function connectToDb() {
-    $dbh=mysql_connect ("localhost", "root", "karma") or
+    CommonDao::requireFileIn("/../util/", "config.php");
+    if (!ConfigUtil::isProduction(false)) {
+      $dbUser = "root";
+      $dbPass = "karma";
+    } else {
+      $dbUser = "rotiss_kebrahim";
+      $dbPass = "timebomb";
+    }
+
+    $dbh=mysql_connect ("localhost", $dbUser, $dbPass) or
         die ('I cannot connect to the database because: ' . mysql_error());
     mysql_select_db ("rotiss_baseball");
   }

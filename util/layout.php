@@ -1,4 +1,5 @@
 <?php
+require_once "config.php";
 require_once "sessions.php";
 
 class LayoutUtil {
@@ -181,9 +182,11 @@ class LayoutUtil {
   	LayoutUtil::displayListItem("admin/manageAuction.php", "Auction", $isTopLevel,
   		$selectedButton, self::MANAGE_AUCTION_BUTTON);
 
-  	// Keepers
-  	LayoutUtil::displayListItem("admin/manageKeepers.php", "Keepers", $isTopLevel,
-  		$selectedButton, self::MANAGE_KEEPERS_BUTTON);
+  	// Keepers - only if feature is enabled
+  	if (ConfigUtil::isFeatureEnabled(ConfigUtil::KEEPER_FEATURE, $isTopLevel)) {
+  	  LayoutUtil::displayListItem("admin/manageKeepers.php", "Keepers", $isTopLevel,
+  	      $selectedButton, self::MANAGE_KEEPERS_BUTTON);
+  	}
 
   	// Manage draft
   	LayoutUtil::displayListItem("admin/manageDraft.php", "Draft", $isTopLevel,
@@ -242,7 +245,7 @@ class LayoutUtil {
             <div class=\"container\">
               <div class=\"row\">
                 <div class=\"span4 center muted credit\">
-                  St. Pete's Rotiss 2.0
+                  St. Pete's Rotiss " . ConfigUtil::getValue(ConfigUtil::VERSION, $isTopLevel) . "
                 </div>
                 <div class=\"span4 center\">
                   <img src='" . ($isTopLevel ? "" : "../") . "img/rotiss2.jpg' width='250' />
