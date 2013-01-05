@@ -245,7 +245,7 @@ class LayoutUtil {
             <div class=\"container\">
               <div class=\"row\">
                 <div class=\"span4 center muted credit\">
-                  St. Pete's Rotiss " . ConfigUtil::getValue(ConfigUtil::VERSION) . "
+                  St. Pete's Rotiss " . ConfigUtil::getVersion() . "
                 </div>
                 <div class=\"span4 center\">
                   <img src='" . ($isTopLevel ? "" : "../") . "img/rotiss2.jpg' width='250' />

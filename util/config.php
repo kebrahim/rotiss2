@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Reads settings from the configuration file.
+ * Reads settings from configuration files.
  */
 class ConfigUtil {
 
   const CONFIG_FILE = 'config.ini';
+  const VERSION_FILE = 'version.ini';
 
   // config keys
-  // TODO move version to separate file
   const VERSION = 'version';
   const ENVIRONMENT = 'environment';
 
@@ -16,11 +16,11 @@ class ConfigUtil {
   const KEEPER_FEATURE = 'keeper_feature';
 
   /**
-   * Returns the config value with the specified key.
+   * Returns the version number.
    */
-  public static function getValue($key) {
-    $configs = ConfigUtil::parseConfigFile();
-    return $configs[$key];
+  public static function getVersion() {
+    $configs = ConfigUtil::parseConfigFile(ConfigUtil::VERSION_FILE);
+    return $configs[ConfigUtil::VERSION];
   }
 
   /**
@@ -37,16 +37,24 @@ class ConfigUtil {
     return (ConfigUtil::getValue($feature) == true);
   }
 
-  private static function parseConfigFile() {
-    if (file_exists("../" . ConfigUtil::CONFIG_FILE)) {
-      $configFile = "../" . ConfigUtil::CONFIG_FILE;
-    } else if (file_exists(ConfigUtil::CONFIG_FILE)) {
-      $configFile = ConfigUtil::CONFIG_FILE;
+  /**
+   * Returns the config value with the specified key.
+   */
+  private static function getValue($key) {
+    $configs = ConfigUtil::parseConfigFile(ConfigUtil::CONFIG_FILE);
+    return $configs[$key];
+  }
+
+  private static function parseConfigFile($configFile) {
+    if (file_exists("../" . $configFile)) {
+      $configPath = "../" . $configFile;
+    } else if (file_exists($configFile)) {
+      $configPath = $configFile;
     } else {
-      die("<h1>Cannot find config file!</h1>");
+      die("<h1>Cannot find config file $configFile!</h1>");
     }
 
-    return parse_ini_file($configFile);
+    return parse_ini_file($configPath);
   }
 }
 
