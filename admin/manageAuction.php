@@ -166,7 +166,7 @@ function showTeam(teamId) {
   	  $player = $auctionResult->getPlayer();
   	  echo "<tr>" .
   	            PlayerManager::getNameAndHeadshotRowAtLevel($player, false) .
-  	            "<td>" . $player->getMlbTeam()->getImageTag(30, 30) . "</td>
+  	            "<td>" . $player->getMlbTeam()->getImageTag(32) . "</td>
   	            <td>" . $player->getPositionString() . "</td>" .
   	            TeamManager::getAbbreviationAndLogoRowAtLevel($auctionResult->getTeam(), false) .
   	            "<td>" . $auctionResult->getCost() . "</td></tr>";

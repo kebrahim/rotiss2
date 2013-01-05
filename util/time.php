@@ -28,5 +28,13 @@ class TimeUtil {
   	date_default_timezone_set('America/New_York');
   	return date("Y-m-d");
   }
+  
+  /**
+   * Returns today's date/time in a YYYY-MM-DD HH:MM:SS format.
+   */
+  static function getTimestampString() {
+  	date_default_timezone_set('America/New_York');
+  	return date("Y-m-d H:i:s");
+  }
 }
 ?>

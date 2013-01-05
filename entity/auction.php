@@ -3,6 +3,7 @@
 require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'auctionDao.php');
 CommonEntity::requireFileIn('/../dao/', 'brognaDao.php');
+CommonEntity::requireFileIn('/../dao/', 'changelogDao.php');
 CommonEntity::requireFileIn('/../dao/', 'contractDao.php');
 CommonEntity::requireFileIn('/../entity/', 'auctionResult.php');
 CommonEntity::requireFileIn('/../entity/', 'contract.php');
@@ -85,14 +86,17 @@ class Auction {
   	          </div>";
   	echo "<hr class='bothr'/>";
 
-  	$this->saveAuctionResult();
+  	$auction = $this->saveAuctionResult();
   	$this->saveAuctionContract();
   	$this->updateBrognas();
 
   	echo "<br/></div>
   	      </div>";
 
-  	// TODO update changelog
+  	// Update changelog
+  	$change = new Changelog(-1, Changelog::AUCTION_TYPE, SessionUtil::getLoggedInUser()->getId(),
+        TimeUtil::getTimestampString(), $auction->getId(), $this->team->getId());
+  	ChangelogDao::createChange($change);
   }
 
   /**
@@ -102,9 +106,10 @@ class Auction {
     $currentYear = TimeUtil::getCurrentYear();
     $auctionResult = new AuctionResult(-1, $currentYear, $this->team->getId(),
         $this->player->getId(), $this->amount);
-    AuctionResultDao::createAuctionResult($auctionResult);
+    $auctionResult = AuctionResultDao::createAuctionResult($auctionResult);
     echo "<strong>Auctioned:</strong> " . $this->player->getFullName() . " for " .
         $this->amount . " brognas<br>";
+    return $auctionResult;
   }
 
   /**
