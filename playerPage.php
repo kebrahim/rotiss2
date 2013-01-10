@@ -42,17 +42,26 @@
 
   // Headshot
   if ($player->hasSportslineId()) {
-    echo "<a href='" . $player->getStPetesUrl() . "' target='_blank'>" .
-          $player->getHeadshotImg(42, 56) . "</a><br/><br/>";
+    echo $player->getHeadshotImg(42, 56);
   } else {
     // TODO show blank face
   }
   echo "</div>"; // span2
 
   // player name heading
-  echo "<div class='span10 center'>
+  echo "<div class='span7 center'>
             <h3>" . $player->getFullName() . "</h3>
           </div>";
+
+  // links to external sites
+  echo "<div class='span3 center headshotimg nexttoh1'>
+          <label>Other sites:</label>
+          <a href='" . $player->getStPetesUrl() . "' target='_blank'>
+            <img class='img_42' src='img/cbs.jpg' /></a>
+          <a href='" . $player->getBaseballReferenceUrl() . "' target='_blank'>
+            <img class='img_56_42' src='img/bbr.jpg' /></a>
+        </div>";
+
   echo "</div>"; // row-fluid
 
   // Summary

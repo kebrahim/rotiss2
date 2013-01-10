@@ -23,6 +23,7 @@ class Player {
 
   private static $HEADSHOT_URL = "http://sports.cbsimg.net/images/baseball/mlb/players/60x80/";
   private static $STPETES_URL = "http://stpetesorium.baseball.cbssports.com/players/playerpage/";
+  private static $BBR_SEARCH_URL = "http://www.baseball-reference.com/pl/player_search.cgi?search=";
 
   /**
    * Sets the specified fields loads the positions from the database.
@@ -59,13 +60,13 @@ class Player {
   public function getFullName() {
     return $this->firstName . " " . $this->lastName;
   }
-  
+
   public function getNameLink($isTopLevel) {
   	return $this->getIdLink($isTopLevel, $this->getFullName());
   }
-  	
+
   public function getIdLink($isTopLevel, $linkText) {
-  	return "<a href='" . ($isTopLevel ? "" : "../") . "playerPage.php?player_id=" . 
+  	return "<a href='" . ($isTopLevel ? "" : "../") . "playerPage.php?player_id=" .
   	    $this->playerId . "'>" . $linkText . "</a>";
   }
 
@@ -73,7 +74,7 @@ class Player {
   	return "<a href='" . ($isTopLevel ? "" : "../") . "playerPage.php?player_id=" .
   			$this->playerId . "' target='_blank'>" . $linkText . "</a>";
   }
-  
+
   public function getBirthDate() {
     return $this->birthDate;
   }
@@ -147,14 +148,18 @@ class Player {
   public function getMiniHeadshotImg() {
   	return $this->getHeadshotImg(24, 32);
   }
-  
+
   public function getHeadshotImg($width, $height) {
   	return "<img class='img_" . $width . "_" . $height . "' src='" . $this->getHeadshotUrl() . "'
   	         />";
   }
-  
+
   public function getStPetesUrl() {
     return Player::$STPETES_URL . $this->sportslineId;
+  }
+
+  public function getBaseballReferenceUrl() {
+    return Player::$BBR_SEARCH_URL . $this->lastName . "," . $this->firstName;
   }
 
   public function getFantasyTeam() {
@@ -171,23 +176,23 @@ class Player {
   public function setStatLine($year, $statLine) {
   	$this->statLines[$year] = $statLine;
   }
-  
+
   public function getAttributes() {
   	return $this->getLastName() . ", " . $this->getFirstName() .
   	    " (" . $this->getPositionString() . ") - " . $this->getMlbTeam()->getAbbreviation();
   }
-  
+
   public function displayPlayerInfo() {
   	// Name
   	echo "<h4>" . $this->getFullName() . "</h4>";
-  	
+
   	// Headshot
   	if ($this->hasSportslineId()) {
   		echo "<a href='" . $this->getStPetesUrl() . "' target='_blank'>" .
     		$this->getHeadshotImg(60,80). "</a>";
   	}
   }
-  
+
   public function toString() {
   	return $this->getAttributes() . ", " . $this->getAge() . ", " . $this->getSportslineId();
   }
