@@ -46,10 +46,12 @@ class ConfigUtil {
   }
 
   private static function parseConfigFile($configFile) {
-    if (file_exists("../" . $configFile)) {
-      $configPath = "../" . $configFile;
-    } else if (file_exists($configFile)) {
+    if (file_exists($configFile)) {
       $configPath = $configFile;
+    } else if (file_exists("../" . $configFile)) {
+      $configPath = "../" . $configFile;
+    } else if (file_exists("../../" . $configFile)) {
+      $configPath = "../../" . $configFile;
     } else {
       die("<h1>Cannot find config file $configFile!</h1>");
     }

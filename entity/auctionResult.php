@@ -29,11 +29,11 @@ class AuctionResult {
   public function getId() {
   	return $this->auctionResultId;
   }
-  
+
   public function setId($auctionResultId) {
   	$this->auctionResultId = $auctionResultId;
   }
-  
+
   public function getYear() {
     return $this->year;
   }
@@ -57,7 +57,11 @@ class AuctionResult {
   public function getCost() {
     return $this->cost;
   }
-  
+
+  public function __toString() {
+    return $this->toString();
+  }
+
   public function toString() {
   	return $this->player->getFullName() . " " . $this->team->getName() . " " . $this->cost;
   }

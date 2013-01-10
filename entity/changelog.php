@@ -3,6 +3,7 @@
 require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'auctionDao.php');
 CommonEntity::requireFileIn('/../dao/', 'teamDao.php');
+CommonEntity::requireFileIn('/../dao/', 'tradeDao.php');
 CommonEntity::requireFileIn('/../dao/', 'userDao.php');
 
 /**
@@ -27,18 +28,23 @@ class Changelog {
   private $teamLoaded = false;
   private $team;
 
+  private $secondaryTeamId;
+  private $secondaryTeamLoaded = false;
+  private $secondaryTeam;
+
   const AUCTION_TYPE = 'Auction';
   const TRADE_TYPE = 'Trade';
   const KEEPER_TYPE = 'Keeper';
 
   public function __construct($changelogId, $changeType, $userId, $timestamp, $changeId,
-      $teamId) {
+      $teamId, $secondaryTeamId) {
   	$this->changelogId = $changelogId;
   	$this->changeType = $changeType;
   	$this->userId = $userId;
   	$this->timestamp = $timestamp;
   	$this->changeId = $changeId;
   	$this->teamId = $teamId;
+  	$this->secondaryTeamId = $secondaryTeamId;
   }
 
   public function getId() {
@@ -80,6 +86,10 @@ class Changelog {
   	      $this->change = AuctionResultDao::getAuctionResultById($this->changeId);
   	      break;
   	    }
+  	    case Changelog::TRADE_TYPE: {
+  	      $this->change = TradeDao::getTradeById($this->changeId);
+  	      break;
+  	    }
   	    // TODO add support for other change types
   	    default: {
   	      return null;
@@ -102,11 +112,39 @@ class Changelog {
   	return $this->team;
   }
 
+  public function getSecondaryTeamId() {
+    return $this->secondaryTeamId;
+  }
+
+  public function getSecondaryTeam() {
+    if ($this->secondaryTeamId == null) {
+      return null;
+    } else if ($this->secondaryTeamLoaded != true) {
+      $this->secondaryTeam = TeamDao::getTeamById($this->secondaryTeamId);
+      $this->secondaryTeamLoaded = true;
+    }
+    return $this->secondaryTeam;
+  }
+
   public function getDetails() {
     $change = $this->getChange();
     switch($this->changeType) {
       case Changelog::AUCTION_TYPE: {
         return $change->getPlayer()->getNameLink(false) . " - $" . $change->getCost();
+      }
+      case Changelog::TRADE_TYPE: {
+        $assets = TradeDao::getTradedAssetsByTradeAndTeam($change->getId(), $this->teamId);
+        $tradeDetails = "<strong>Trades: </strong>";
+        $firstAsset = true;
+        foreach ($assets as $asset) {
+          if ($firstAsset) {
+            $firstAsset = false;
+          } else {
+            $tradeDetails .= ", ";
+          }
+          $tradeDetails .= $asset;
+        }
+        return $tradeDetails;
       }
       // TODO add support for other change types
       default: {

@@ -95,7 +95,7 @@ class Auction {
 
   	// Update changelog
   	$change = new Changelog(-1, Changelog::AUCTION_TYPE, SessionUtil::getLoggedInUser()->getId(),
-        TimeUtil::getTimestampString(), $auction->getId(), $this->team->getId());
+        TimeUtil::getTimestampString(), $auction->getId(), $this->team->getId(), null);
   	ChangelogDao::createChange($change);
   }
 

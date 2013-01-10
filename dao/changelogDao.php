@@ -26,7 +26,7 @@ class ChangelogDao {
   	CommonDao::connectToDb();
   	$query = "select c.*
   	          from changelog c
-  	          where c.team_id = $teamId
+  	          where c.team_id = $teamId or c.secondary_team_id = $teamId
   	          order by c.timestamp";
   	return ChangelogDao::createChangesFromQuery($query);
   }
@@ -45,7 +45,7 @@ class ChangelogDao {
 	while($changeDb = mysql_fetch_assoc($res)) {
 	  $changesDb[] = new Changelog($changeDb["changelog_id"], $changeDb["change_type"],
 	      $changeDb["user_id"], $changeDb["timestamp"], $changeDb["change_id"],
-	  	  $changeDb["team_id"]);
+	  	  $changeDb["team_id"], $changeDb["secondary_team_id"]);
 	}
 	return $changesDb;
   }
@@ -55,14 +55,15 @@ class ChangelogDao {
    */
   public static function createChange(Changelog $change) {
   	CommonDao::connectToDb();
-  	$query = "insert into changelog(change_type, user_id, timestamp, change_id, team_id)
-  	          values ('" .
+  	$query = "insert into changelog(change_type, user_id, timestamp, change_id, team_id,
+  	              secondary_team_id) values ('" .
   	          $change->getType() . "', " .
   	          $change->getUserId() . ", '" .
   	          $change->getTimestamp() . "', " .
   	          $change->getChangeId() . ", " .
-  	          $change->getTeamId() . ")";
-
+  	          $change->getTeamId() . ", " .
+  	          ($change->getSecondaryTeamId() == null ? "null" : $change->getSecondaryTeamId()) .
+  	     ")";
   	$result = mysql_query($query);
   	if (!$result) {
   	  echo "Error creating change in DB: " . $change->toString();
@@ -70,7 +71,8 @@ class ChangelogDao {
   	}
 
   	$idQuery = "select changelog_id from changelog where change_type = '" .
-  	     $change->getType() . "' and change_id = " . $change->getChangeId();
+  	     $change->getType() . "' and change_id = " . $change->getChangeId() . " and team_id = "
+  	     . $change->getTeamId();
   	$result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
   	$row = mysql_fetch_assoc($result);
   	$change->setId($row["changelog_id"]);

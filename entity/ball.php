@@ -52,7 +52,7 @@ class PingPongBall {
     }
     return $this->team;
   }
-  
+
   public function getTeamId() {
   	return $this->teamId;
   }
@@ -99,9 +99,13 @@ class PingPongBall {
   	$this->playerLoaded = false;
   	$this->player = null;
   }
-  
-  public function toString() {
+
+  public function __toString() {
     return $this->year . ":" . $this->cost;
+  }
+
+  public function toString() {
+    return $this->__toString();
   }
 }
 ?>

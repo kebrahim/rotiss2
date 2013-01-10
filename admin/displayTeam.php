@@ -425,13 +425,35 @@
             <thead><tr>
               <th>Date/Time</th><th>User</th><th>Type</th><th colspan=2>Team</th><th>Details</th>
             </tr></thead>";
-    foreach ($changes as $change) {
-      echo "<tr><td>" . $change->getTimestamp() . "</td>
-                <td>" . $change->getUser()->getFullName() . "</td>
-                <td>" . $change->getType() . "</td>" .
-                TeamManager::getAbbreviationAndLogoRowAtLevel($change->getTeam(), false) .
-               "<td>" . $change->getDetails() . "</td>
-            </tr>";
+    $tradeSecond = false;
+    for ($i = 0; $i < count($changes); $i++) {
+      $change = $changes[$i];
+      $tradeFirst = ($change->getType() == Changelog::TRADE_TYPE) &&
+          ($i != (count($changes) - 1)) &&
+          ($changes[$i + 1]->getType() == Changelog::TRADE_TYPE) &&
+          ($change->getChangeId() == $changes[$i + 1]->getChangeId());
+      if ($tradeFirst) {
+        echo "<tr><td rowspan=2>" . $change->getTimestamp() . "</td>
+                  <td rowspan=2>" . $change->getUser()->getFullName() . "</td>
+                  <td rowspan=2>" . $change->getType() . "</td>" .
+                  TeamManager::getAbbreviationAndLogoRowAtLevel($change->getTeam(), false) .
+                 "<td>" . $change->getDetails() . "</td>
+              </tr>";
+        $tradeSecond = true;
+      } else if ($tradeSecond) {
+        echo "<tr>" .
+                  TeamManager::getAbbreviationAndLogoRowAtLevel($change->getTeam(), false) .
+                 "<td>" . $change->getDetails() . "</td>
+              </tr>";
+        $tradeSecond = false;
+      } else {
+        echo "<tr><td>" . $change->getTimestamp() . "</td>
+                  <td>" . $change->getUser()->getFullName() . "</td>
+                  <td>" . $change->getType() . "</td>" .
+                  TeamManager::getAbbreviationAndLogoRowAtLevel($change->getTeam(), false) .
+                 "<td>" . $change->getDetails() . "</td>
+              </tr>";
+      }
     }
     echo "</table>
           </div>

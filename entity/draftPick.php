@@ -149,8 +149,12 @@ class DraftPick {
     return $this->getPlayer()->getNameLink(true);
   }
 
-  public function toString() {
+  public function __toString() {
     return $this->year . ":" . $this->round . ":" . $this->pick;
+  }
+
+  public function toString() {
+    return $this->__toString();
   }
 }
 ?>

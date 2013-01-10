@@ -3,8 +3,10 @@
 require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'ballDao.php');
 CommonEntity::requireFileIn('/../dao/', 'brognaDao.php');
+CommonEntity::requireFileIn('/../dao/', 'changelogDao.php');
 CommonEntity::requireFileIn('/../dao/', 'contractDao.php');
 CommonEntity::requireFileIn('/../dao/', 'draftPickDao.php');
+CommonEntity::requireFileIn('/../dao/', 'tradeDao.php');
 CommonEntity::requireFileIn('/../util/', 'time.php');
 
 /**
@@ -52,10 +54,17 @@ class Trade {
     echo "<h3 class='conf_msg'>Trade completed!</h3>";
     echo "<div class='row-fluid'>
             <div class='span6 center'>";
-    $this->tradePartner1->trade($this->tradePartner2->getTeam());
+
+    // first save trade result object.
+    $tradeResult = new TradeResult(-1, $this->tradePartner1->getTeam()->getId(),
+        $this->tradePartner2->getTeam()->getId(), TimeUtil::getTimestampString());
+    $tradeResult = TradeDao::createTradeResult($tradeResult);
+
+    // initiate trade between each team.
+    $this->tradePartner1->trade($this->tradePartner2->getTeam(), $tradeResult);
     echo "  </div>
           <div class='span6 center'>";
-    $this->tradePartner2->trade($this->tradePartner1->getTeam());
+    $this->tradePartner2->trade($this->tradePartner1->getTeam(), $tradeResult);
     echo "  </div>
           </div>";
   }
@@ -287,7 +296,7 @@ class TradePartner {
     if ($this->brognas != null) {
       // is brognas value numeric and > 0?
       if (!is_numeric($this->brognas) || $this->brognas <= 0) {
-        $this->printError($this->team->getName() . 
+        $this->printError($this->team->getName() .
              " cannot trade an invalid number of brognas: "
              . $this->brognas);
         return false;
@@ -298,15 +307,15 @@ class TradePartner {
 
       // do i have enough total points?
       if ($myBrognas->getTotalPoints() < $this->brognas) {
-        $this->printError($this->team->getName() . " cannot trade " . 
-            $this->brognas . " brognas; only has " . $myBrognas->getTotalPoints() . 
+        $this->printError($this->team->getName() . " cannot trade " .
+            $this->brognas . " brognas; only has " . $myBrognas->getTotalPoints() .
         	" total brognas.");
         return false;
       }
       // do i have enough tradeable points?
       if ($myBrognas->getTradeablePoints() < $this->brognas) {
-        $this->printError($this->team->getName() . " cannot trade " . 
-            $this->brognas . " brognas; only has " . $myBrognas->getTradeablePoints() . 
+        $this->printError($this->team->getName() . " cannot trade " .
+            $this->brognas . " brognas; only has " . $myBrognas->getTradeablePoints() .
         	" tradeable brognas.");
         return false;
       }
@@ -318,7 +327,7 @@ class TradePartner {
       foreach ($this->draftPicks as $draftPick) {
         $draftPickFromDb = DraftPickDao::getDraftPickById($draftPick->getId());
         if ($draftPickFromDb->getTeam()->getId() != $this->team->getId()) {
-          $this->printError($this->team->getName() . 
+          $this->printError($this->team->getName() .
               " cannot trade draft pick " . $draftPick->toString() . "; pick now belongs to " .
               $draftPickFromDb->getTeam()->getName());
           return false;
@@ -332,8 +341,8 @@ class TradePartner {
       foreach ($this->pingPongBalls as $pingPongBall) {
         $pingPongBallFromDb = BallDao::getPingPongBallById($pingPongBall->getId());
         if ($pingPongBallFromDb->getTeam()->getId() != $this->team->getId()) {
-          $this->printError($this->team->getName() . 
-              " cannot trade pingpong ball " . $pingPongBall->toString() . 
+          $this->printError($this->team->getName() .
+              " cannot trade pingpong ball " . $pingPongBall->toString() .
           	  "; ball now belongs to " . $pingPongBallFromDb->getTeam()->getName());
           return false;
         }
@@ -346,7 +355,7 @@ class TradePartner {
   /**
    * Executes trade with specified team.
    */
-  public function trade(Team $otherTeam) {
+  public function trade(Team $otherTeam, TradeResult $tradeResult) {
     $this->team->displayTeamInfo();
     echo "<hr class='bothr'/><h5>traded:</h5>";
 
@@ -359,6 +368,11 @@ class TradePartner {
 
         // move player to new team
         TeamDao::assignPlayerToTeam($contract->getPlayer(), $otherTeam->getId());
+
+        // save traded contract asset
+        $asset = new TradedAsset(-1, $tradeResult->getId(), $this->team->getId(),
+            TradedAsset::CONTRACT, $contract->getId());
+        TradeDao::createTradedAsset($asset);
 
         echo "<strong>Contract: </strong>" . $contract->toString() . "<br>";
       }
@@ -384,6 +398,11 @@ class TradePartner {
       // save otherBrognas
       BrognaDao::updateBrognas($otherBrognas);
 
+      // save traded brogna asset
+      $asset = new TradedAsset(-1, $tradeResult->getId(), $this->team->getId(),
+          TradedAsset::BROGNAS, $this->brognas);
+      TradeDao::createTradedAsset($asset);
+
       echo "<strong>Brognas:</strong> $" . $this->brognas . "<br>";
     }
 
@@ -393,6 +412,12 @@ class TradePartner {
         $draftPick->setTeam($otherTeam);
         $draftPick->setOriginalTeam($this->team);
         DraftPickDao::updateDraftPick($draftPick);
+
+        // save traded draft pick asset
+        $asset = new TradedAsset(-1, $tradeResult->getId(), $this->team->getId(),
+            TradedAsset::DRAFT_PICK, $draftPick->getId());
+        TradeDao::createTradedAsset($asset);
+
         echo "<strong>Draft pick:</strong> " . $draftPick->toString() . "<br>";
       }
     }
@@ -402,16 +427,26 @@ class TradePartner {
       foreach ($this->pingPongBalls as $pingPongBall) {
         $pingPongBall->setTeam($otherTeam);
         BallDao::updatePingPongBall($pingPongBall);
+
+        // save traded ping pong ball asset
+        $asset = new TradedAsset(-1, $tradeResult->getId(), $this->team->getId(),
+            TradedAsset::PING_PONG_BALL, $pingPongBall->getId());
+        TradeDao::createTradedAsset($asset);
+
         echo "<strong>Ping pong ball:</strong> " . $pingPongBall->toString() . "<br>";
       }
     }
     echo "<br/>";
-    // TODO update changelog
+
+    // update changelog
+    ChangelogDao::createChange(new Changelog(-1, Changelog::TRADE_TYPE,
+        SessionUtil::getLoggedInUser()->getId(), $tradeResult->getTimestamp(),
+        $tradeResult->getId(), $this->team->getId(), $otherTeam->getId()));
   }
-  
+
   private function printError($errorMsg) {
     echo "<br/><div class='alert alert-error'>
-            <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button> . 
+            <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button> .
             <strong>Error: </strong>" . $errorMsg .
          "</div>";
   }
