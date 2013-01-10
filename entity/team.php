@@ -91,7 +91,7 @@ class Team {
   }
 
   public function getSportslineImg($size) {
-  	return "<img class='img_" . $size . "' src='" . 
+  	return "<img class='img_" . $size . "' src='" .
   	    $this->getSportslineImageUrl() . "'>";
   }
 
@@ -369,7 +369,9 @@ class Team {
   	echo "<th class='checkth'></th><th>Year</th><th>Round</th><th>Pick</th>
   	      <th colspan=2>Original Team</th></tr></thead>";
   	foreach ($this->getPingPongBalls() as $pingPongBall) {
-  	  if (($pingPongBall->getYear() < $minYear) || ($pingPongBall->getYear() > $maxYear)) {
+  	  // only show ping pong balls which have not been used yet, in the specified range of years
+  	  if (($pingPongBall->getYear() < $minYear) || ($pingPongBall->getYear() > $maxYear) ||
+  	      ($pingPongBall->getPlayer() != null)) {
   	    continue;
   	  }
   	  echo "<tr><td><input type=checkbox name='trade_t" . $this->getId() . "dpb[]'
@@ -380,7 +382,9 @@ class Team {
   		   "<td colspan=2>--</td></tr>";
   	}
   	foreach ($this->getDraftPicks() as $draftPick) {
-  	  if (($draftPick->getYear() < $minYear) || ($draftPick->getYear() > $maxYear)) {
+  	  // only show draft picks which have not been used yet, in the specified range of years
+  	  if (($draftPick->getYear() < $minYear) || ($draftPick->getYear() > $maxYear) ||
+  	      ($draftPick->getPlayer() != null)) {
   	    continue;
   	  }
   	  echo "<tr>

@@ -410,7 +410,10 @@ class TradePartner {
     if ($this->draftPicks) {
       foreach ($this->draftPicks as $draftPick) {
         $draftPick->setTeam($otherTeam);
-        $draftPick->setOriginalTeam($this->team);
+        // only set original team if it has not already been set.
+        if ($draftPick->getOriginalTeam() == null) {
+          $draftPick->setOriginalTeam($this->team);
+        }
         DraftPickDao::updateDraftPick($draftPick);
 
         // save traded draft pick asset
