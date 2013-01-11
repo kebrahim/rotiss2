@@ -158,10 +158,11 @@ class PlayerDao {
   	// first, get all players on specified team
   	$allPlayers = PlayerDao::getPlayersByTeam($team);
 
-  	// filter out players who currently have a contract.
+  	// filter out players who currently have a contract [auction/seltzer/keeper].
   	$playersToBeDropped = array();
   	foreach ($allPlayers as $player) {
-  	  if (!PlayerDao::hasContractForPlaceholders($player->getId(), $year)) {
+  	  if (!PlayerDao::hasContractForPlaceholders($player->getId(), $year) &&
+  	      !PlayerDao::hasAuctionContract($player->getId(), $year)) {
   	    $playersToBeDropped[] = $player;
   	  }
   	}
