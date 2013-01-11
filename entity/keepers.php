@@ -96,9 +96,16 @@ class Keepers {
   }
 
   public function showKeepersSummary() {
-    echo "<h2>Keepers Summary</h2>";
-    $this->team->displayTeamInfo();
+    echo "<h4>Keepers Summary for " . $this->team->getName() . "</h4><hr class='bothr'/>";
 
+    // Team info
+    echo "<div class='row-fluid'>
+            <div class='span4 center'>";
+    echo "<br/>" . $this->team->getSportslineImg(72);
+    echo "<br/><p class='ptop'>" . $this->team->getOwnersString() . "</p>";
+    echo "  </div>"; // span4
+
+    echo " <div class='span8 center'>";
     // display buyout contracts
     $buyoutBrognas = 0;
     if ($this->buyoutContracts) {
@@ -128,12 +135,17 @@ class Keepers {
     	$pingPongBrognas += $pingPongBall->getCost();
       }
     }
+    echo "<br/></div>"; // span8
+    echo "</div>"; // row-fluid
 
     // display summary
+    echo "<div class='row-fluid'>
+            <div class='span12 center'>";
     $currentYear = TimeUtil::getCurrentYear();
     $brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
-    echo "<h4>Brognas</h4>";
-    echo "<table class='center' border><tr><th></th><th>Price</th></tr>";
+    echo "<h4>Brognas Breakdown</h4>";
+    echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
+          <thead><tr><th></th><th>Price</th></tr></thead>";
     echo "<tr><td><strong>" . $currentYear . " Brognas</strong></td>
               <td><strong>" . $brognas->getTotalPoints() . "</strong></td></tr>";
     echo "<tr><td>Buyout Contracts</td><td>" . $buyoutBrognas . "</td></tr>";
@@ -143,7 +155,9 @@ class Keepers {
     $totalBrognas = $brognas->getTotalPoints() -
         ($buyoutBrognas + $newContractBrognas + $pingPongBrognas);
     echo "<tr><td><strong>Leftover Brognas</strong></td><td><strong>" . $totalBrognas .
-        "</strong></td></tr></table><br/>";
+        "</strong></td></tr></table>";
+    echo "  </div>"; // span12
+    echo "</div>";   // row-fluid
   }
 
   public function validateKeepers() {
@@ -153,8 +167,7 @@ class Keepers {
   	if ($this->buyoutContracts) {
 	  foreach ($this->buyoutContracts as $contract) {
 	  	if (($contract->getType() == Contract::AUCTION_TYPE) || $contract->isBoughtOut()) {
-		  $this->printError("Error: cannot buy out contract: " .
-		      $contract->getBuyoutContractString());
+		  $this->printError("Cannot buy out contract: " . $contract->getBuyoutContractString());
 	  	  return false;
 	  	}
 	  	$totalBrognasSpent += $contract->getBuyoutPrice();
@@ -165,15 +178,15 @@ class Keepers {
   	if ($this->newContracts) {
 	  foreach ($this->newContracts as $contract) {
 	  	if ($contract->getPlayer() == null) {
-		  $this->printError("Error: Invalid player id for contract: " . $contract->getPlayerId());
+		  $this->printError("Invalid player id for contract: " . $contract->getPlayerId());
 	  	  return false;
 	  	} else if (!is_numeric($contract->getTotalYears()) || $contract->getTotalYears() < 1
 	  	    || $contract->getTotalYears() > 2) {
 		  $this->printError(
-		      "Error: Invalid length of contract: " . $contract->getTotalYears() . " years");
+		      "Invalid length of contract: " . $contract->getTotalYears() . " years");
 	  	  return false;
 	  	} else if (!is_numeric($contract->getPrice()) || $contract->getPrice() < 30) {
-	  	  $this->printError("Error: Invalid price for contract: $" . $contract->getPrice());
+	  	  $this->printError("Invalid price for contract: $" . $contract->getPrice());
 	  	  return false;
 	  	}
 	  	$totalBrognasSpent += $contract->getPrice();
@@ -185,7 +198,7 @@ class Keepers {
   	  foreach ($this->pingPongBalls as $pingPongBall) {
   	  	$cost = $pingPongBall->getCost();
   	  	if (!is_numeric($cost) || $cost < 100) {
-    	  $this->printError("Error: cannot spend an invalid number of brognas on a ball: " .
+    	  $this->printError("Cannot spend an invalid number of brognas on a ball: " .
     	      $cost);
   	  	  return false;
   	  	}
@@ -197,7 +210,7 @@ class Keepers {
   	$currentYear = TimeUtil::getCurrentYear();
   	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
   	if ($brognas->getTotalPoints() < $totalBrognasSpent) {
-  	  $this->printError("Error: " . $this->team->getName() . " cannot spend " . $totalBrognasSpent .
+  	  $this->printError($this->team->getName() . " cannot spend " . $totalBrognasSpent .
   	      " brognas on contracts & balls; only has " . $brognas->getTotalPoints() .
   		  " total brognas");
   	  return false;
@@ -206,9 +219,17 @@ class Keepers {
   }
 
   public function saveKeepers() {
-  	echo "<h2 class='alert_msg'>Keepers Saved!</h2>";
-  	$this->team->displayTeamInfo();
-    echo "<br/>";
+    echo "<h4>Keepers Saved for " . $this->team->getName() . "</h4><hr class='bothr'/>";
+
+    // Team info
+    echo "<div class='row-fluid'>
+            <div class='span4 center'>";
+    echo "<br/>" . $this->team->getSportslineImg(72);
+    echo "<br/><p class='ptop'>" . $this->team->getOwnersString() . "</p>";
+    echo "  </div>"; // span4
+
+    echo " <div class='span8 center'>
+           <h4>Summary</h4>";
   	$totalBrognasSpent = 0;
 
   	// buyout contracts
@@ -247,13 +268,16 @@ class Keepers {
   	$brognas->setTotalPoints($originalTotalPoints - $totalBrognasSpent);
   	BrognaDao::updateBrognas($brognas);
 	echo "<strong>" . $currentYear . " Brognas:</strong> reduced by " . $totalBrognasSpent .
-	    ", from " . $originalTotalPoints . " to " . $brognas->getTotalPoints() . "<br>";
+	    ", from " . $originalTotalPoints . " to " . $brognas->getTotalPoints() . "<br/><br/>";
+
+	echo "</div>"; // span8
+    echo "</div>"; // row-fluid
 
 	// TODO update changelog
   }
 
   private function printError($errorString) {
-    echo "<div class='error_msg'>" . $errorString . "</div>";
+    echo "<br/><div class='alert alert-error'><strong>Error: </strong>" . $errorString . "</div>";
   }
 }
 ?>

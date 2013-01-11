@@ -247,7 +247,7 @@ class Team {
   /**
    * Display non-auction contracts for the keeper page, filtered by year.
    */
-  function displayContractsForKeepers($minYear, $maxYear) {
+  function displayContractsForKeepers($minYear, $maxYear, $readOnly) {
   	echo "<h4>Contracts</h4>";
 
   	$contracts = $this->filterContractsByYear(
@@ -260,13 +260,18 @@ class Team {
   	  echo ">";
   	}
 
-  	echo "<table id='keepertable' class='center smallfonttable' border><tr>";
+  	echo "<table id='keepertable' class='table vertmiddle table-striped
+  	                                     table-condensed table-bordered center'><thead><tr>";
   	echo "  <th colspan=2>Player</th>
         	<th>Years Left</th>
   	        <th>Price</th>
   	        <th colspan=2>Years</th>
-  	        <th>Buy Out</th>
-  	        <th id='keeperRemoveColumn' style='display:none'>Remove</th></tr>";
+  	        <th";
+  	if ($readOnly) {
+  	  echo " style='display:none'";
+  	}
+  	echo      ">Buy Out</th>
+  	        <th id='keeperRemoveColumn' style='display:none'>Actions</th></tr></thead>";
   	$keeperCount = 0;
   	foreach ($contracts as $contract) {
   	  $player = $contract->getPlayer();
@@ -277,12 +282,15 @@ class Team {
   			<td>" . $contract->getYearsLeft() . "</td>
   			<td>" . $contract->getPrice() . "</td>
   			<td>" . $contract->getStartYear() . "</td>
-  			<td>" . $contract->getEndYear() . "</td>
-	        <td><input type=checkbox name='keeper_buyout[]'
-	             value='" . $contract->getId() . "'></td></tr>";
+  			<td>" . $contract->getEndYear() . "</td>";
+      if (!$readOnly) {
+  	    echo "<td><input type=checkbox name='keeper_buyout[]'
+	             value='" . $contract->getId() . "'></td>";
+      }
+	  echo "</tr>";
 	  $keeperCount++;
   	}
-  	echo "</table><br/></div>";
+  	echo "</table></div>";
   	echo "<input type='hidden' name='keeper_savedkeepercount' value='" . $keeperCount . "'>";
   	echo "<input type='hidden' name='keeper_newkeepercount' value='0'>";
   }
@@ -413,16 +421,17 @@ class Team {
       echo ">";
     }
 
-    echo "<table id='ppballtable' class='center smallfonttable' border>
-            <tr><th>Number</th><th>Price</th>
-                <th id='ppRemoveColumn' style='display:none'>Remove</th></tr>";
+    echo "<table id='ppballtable' class='table vertmiddle table-striped
+  	                                     table-condensed table-bordered center'>
+            <thead><tr><th>#</th><th>Price</th>
+                <th id='ppRemoveColumn' style='display:none'>Actions</th></tr></thead>";
     $ballCount = 0;
     foreach ($pingPongBalls as $pingPongBall) {
       $ballCount++;
       echo "<tr><td>" . $ballCount . "</td>
                 <td>" . $pingPongBall->getCost() . "</td></tr>";
     }
-    echo "</table><br/></div>";
+    echo "</table></div>";
     echo "<input type='hidden' name='keeper_savedppballcount' value='" . $ballCount . "'>";
     echo "<input type='hidden' name='keeper_newppballcount' value='0'>";
   }

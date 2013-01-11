@@ -1,14 +1,16 @@
 <?php
   require_once '../util/sessions.php';
   SessionUtil::checkUserIsLoggedInAdmin();
+  SessionUtil::logoutUserIfNotLoggedIn("admin/manageKeepers.php");
 ?>
 
+<!DOCTYPE html>
 <html>
-<head>
-<title>Rotiss.com - Manage Keepers</title>
-<link href='../css/style.css' rel='stylesheet' type='text/css'>
-<link rel="shortcut icon" href="../img/background-tiles-01.png" />
-</head>
+
+<?php
+  require_once '../util/layout.php';
+  LayoutUtil::displayHeadTag("Manage Keepers", false);
+?>
 
 <script>
 // sets the display of the div with the specified id
@@ -87,14 +89,14 @@ function addContract(team_id) {
 
     // years column gets dropdown of 1 or 2-year contract
     var yearsCell = newRow.insertCell(2);
-    yearsCell.innerHTML = "<select name='keeper_year" + nextRowNumber +
-        "'><option value='0'></option>" +
+    yearsCell.innerHTML = "<select class='input-small' name='keeper_year" + nextRowNumber +
+        "'><option value='0'>-- Type --</option>" +
         "<option value='1'>1-year</option><option value='2'>2-year</option></select>";
 
     // price column gets a read-only textbox, which is updated automatically when a player is
     // selected
     var priceCell = newRow.insertCell(3);
-    priceCell.innerHTML = "<input type='text' name='keeper_price" + nextRowNumber +
+    priceCell.innerHTML = "<input type='text' class='input-mini' name='keeper_price" + nextRowNumber +
         "' style='text-align:center' size=10 placeholder='Rank' readonly='true'/>";
 
     // start year, end year, buyout are blank
@@ -104,8 +106,9 @@ function addContract(team_id) {
 
     // remove column is activated
     var removeCell = newRow.insertCell(7);
-    removeCell.innerHTML = "<input type='button' name='removeKeeperButton' value='remove'"
-        + " onclick='removeContract(" + nextRowNumber + ")'>";
+    removeCell.innerHTML = "<button type='button' name='removeKeeperButton' "
+        + " onclick='removeContract(" + nextRowNumber + ")' class='btn'><i class='icon-remove'></i>"
+        + "</button>";
 
     // update count of new keepers
     var oldCount = Number(document.getElementsByName("keeper_newkeepercount").item(0).value);
@@ -202,11 +205,12 @@ function addBall() {
     var numCell = newRow.insertCell(0);
     numCell.innerHTML = nextRowNumber;
     var costCell = newRow.insertCell(1);
-    costCell.innerHTML = "<input type='number' name='keeper_pp" + nextRowNumber
-        + "' style='text-align:center' placeholder='Enter value >= 100'/>";
+    costCell.innerHTML = "<input type='number' class='input-small' name='keeper_pp" + nextRowNumber
+        + "' style='text-align:center' placeholder='>= 100'/>";
     var removeCell = newRow.insertCell(2);
-    removeCell.innerHTML = "<input type='button' name='removeBallButton' value='remove'"
-        + " onclick='removeBall(" + nextRowNumber + ")'>";
+    removeCell.innerHTML = "<button type='button' name='removeBallButton' "
+        + " onclick='removeBall(" + nextRowNumber + ")' class='btn'><i class='icon-remove'></i>"
+        + "</button>";
 
     // update count of new pp balls
     var oldCount = Number(document.getElementsByName("keeper_newppballcount").item(0).value);
@@ -232,11 +236,12 @@ function removeBall(rowNumber) {
         	row.cells[0].innerHTML = r;
         	var priceBoxName = "keeper_pp" + (r + 1);
         	var oldValue = document.getElementsByName(priceBoxName).item(0).value;
-            row.cells[1].innerHTML = "<input type='text' name='keeper_pp" + r
-                + "' style='text-align:center' placeholder='Enter value >= 100'/>";
+            row.cells[1].innerHTML = "<input type='number' class='input-small' name='keeper_pp" + r
+                + "' style='text-align:center' placeholder='>= 100'/>";
             document.getElementsByName("keeper_pp" + r).item(0).value = oldValue;
-        	row.cells[2].innerHTML = "<input type='button' name='removeBallButton' value='remove'"
-                + " onclick='removeBall(" + r + ")'>";
+            row.cells[2].innerHTML = "<button type='button' name='removeBallButton' "
+                + " onclick='removeBall(" + r + ")' class='btn'><i class='icon-remove'></i>"
+                + "</button>";
 		}
 	} else if (totalRows == 2) {
 	    // there are zero non-header rows remaining, so hide the table
@@ -259,19 +264,24 @@ function removeBall(rowNumber) {
 <body>
 
 <?php
-require_once '../dao/teamDao.php';
-require_once '../entity/keepers.php';
-require_once '../util/navigation.php';
+  require_once '../dao/teamDao.php';
+  require_once '../entity/keepers.php';
 
-  // Display header.
-  NavigationUtil::printHeader(true, false, NavigationUtil::MANAGE_KEEPERS_BUTTON);
-  echo "<div class='bodycenter'>";
-
+  // Display nav bar.
+  LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_KEEPERS_BUTTON);
   $currentYear = TimeUtil::getCurrentYear();
-  echo "<h1>Jeepers keepers $currentYear</h1><hr/>";
-  echo "<FORM ACTION='manageKeepers.php' METHOD=POST>";
 
-  if(isset($_POST['save'])) {
+  echo "<div class='row-fluid'>
+          <div class='span8 center offset2'>
+            <h3>Jeepers keepers $currentYear</h3>
+          </div>
+        </div>";
+
+  echo "<form action='manageKeepers.php' method='post'>";
+  echo "  <div class='row-fluid'>
+            <div class='span12 center'>";
+
+  if (isset($_POST['save'])) {
   	// Create keeper scenario.
   	$keepers = new Keepers();
   	$keepers->parseKeepersFromPost();
@@ -282,10 +292,13 @@ require_once '../util/navigation.php';
   		$keepers->showKeepersSummary();
 
   		// request final confirmation of keepers before execution
-  		echo "<br/><input class='button' type=submit name='confirmSave' value='Confirm'>&nbsp";
-  		echo "<input class='button' type=submit name='cancelSave' value='Cancel'><br>";
+  		echo "<p><button class=\"btn btn-primary\" name='confirmSave'
+  		                 type=\"submit\">Confirm</button>&nbsp&nbsp
+  		         <button class=\"btn\" name='cancelAuction' type=\"submit\">Cancel</button>
+  		</p>";
   	} else {
-  		echo "<h3>Cannot save keepers! Please <a href='manageKeepers.php'>try again</a>.</h3>";
+  		echo "<h4>Cannot save keepers! Please <a href='manageKeepers.php' class='btn btn-primary'>
+  		      try again</a></h4>";
   	}
   } elseif(isset($_POST['confirmSave'])) {
   	// Re-create keeper scenario from session.
@@ -294,36 +307,53 @@ require_once '../util/navigation.php';
 
   	// Validate keepers.
   	if ($keepers->validateKeepers()) {
-  	  	// Save keepers & report results.
-  		$keepers->saveKeepers();
-  		echo "<br><a href='manageKeepers.php'>Let's do it again!</a><br>";
+  	  // Save keepers & report results.
+  	  $keepers->saveKeepers();
+  	  echo "<a href='manageKeepers.php' class='btn btn-primary'>Let's do it again!</a><br/><br/>";
   	} else {
-  		echo "<h3>Cannot save keepers! Please <a href='manageKeepers.php'>try again</a>.</h3>";
+  	  echo "<h3>Cannot save keepers! Please <a href='manageKeepers.php'
+  		    class='btn btn-primary'>try again</a></h3>";
   	}
   } elseif(isset($_POST['bank'])) {
     // If bank button was pressed, display brogna information that will be updated.
     $team = TeamDao::getTeamById($_POST['keeper_teamid']);
-    echo "<h2>" . $team->getName() . "</h2>";
-    echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
-    echo $team->getOwnersString() . "<br/>";
-
   	$currentYear = TimeUtil::getCurrentYear();
   	$nextYear = $currentYear + 1;
   	$currentYearBrognas = BrognaDao::getBrognasByTeamAndYear($team->getId(), $currentYear);
 
-  	echo "<h3>Bank it up!</h3>";
+    echo "<h4>" . $team->getName() . " - Bank it up!</h4>";
+
+    // Team info
+  	echo "<div class='row-fluid'>
+  	        <div class='span4 center'>";
+  	echo "<br/>" . $team->getSportslineImg(72);
+  	echo "<br/><p class='ptop'>" . $team->getOwnersString() . "</p>";
+  	echo "  </div>"; // span4
+
+  	// Brognas
+  	// TODO validate that < 150 brognas are being banked
+    echo "<div class='span8'>
+          <h4>Banking Summary</h4>";
   	echo "<strong>" . $currentYear . " Bank:</strong> $" . $currentYearBrognas->getTotalPoints() .
-    	" for " . $nextYear . " season<br/><br/>";
+    	" for " . $nextYear . " season<br/>";
   	echo "<strong>Allocate " . $nextYear . " budget:</strong> $450 + $" .
     	$currentYearBrognas->getTotalPoints() . " = $" .
-  	    (450 + $currentYearBrognas->getTotalPoints());
+  	    (450 + $currentYearBrognas->getTotalPoints()) . "<br/><br/>";
+    echo "</div>"; // span8
+    echo "</div>"; // row-fluid
+
+    // request final confirmation of banking before execution
+    echo "<div class='alert alert-info'><strong>Once you confirm, this team
+        will not be able to make any more keeper selections for " . $currentYear . "!</strong></div>";
+    echo "<p><button class='btn btn-primary' name='confirmBank' type='submit'>Confirm</button>
+             &nbsp<button class='btn' name='cancelBank' type='submit'>Cancel</button></p><br/>";
 
   	// show all non-contracted players which will be dropped from team
   	$playersToBeDropped = PlayerDao::getPlayersToBeDroppedForKeepers($team, $currentYear);
   	if (count($playersToBeDropped) > 0) {
    	  echo "<h4>Players to be Dropped</h4>
-  	        <table border class='center'>
-  	          <tr><th colspan=2>Player</th><th>Team</th><th>Position</th></tr>";
+  	        <table class='table vertmiddle table-striped table-condensed table-bordered center'>
+  	          <thead><tr><th colspan=2>Player</th><th>Team</th><th>Position</th></tr></thead>";
    	  foreach ($playersToBeDropped as $player) {
    	  	echo "<tr><td>" . $player->getHeadshotImg(24, 32) . "</td>
    	  	          <td>" . $player->getNameLink(false) . "</td>
@@ -332,33 +362,23 @@ require_once '../util/navigation.php';
    	  }
    	  echo "</table>";
   	}
-
-  	// request final confirmation of keepers before execution
-  	echo "<br/><br/><div style='color:red; font-weight:bold'>Note that once you confirm, this team
-  	    will not be able to make any more selections for " . $currentYear . "!</div><br/>";
-  	echo "<input class='button' type=submit name='confirmBank' value='Confirm'>&nbsp";
-  	echo "<input class='button' type=submit name='cancelBank' value='Cancel'><br>";
-    echo "<input type='hidden' name='keeper_teamid' value='" . $team->getId() . "'>";
+  	echo "<input type='hidden' name='keeper_teamid' value='" . $team->getId() . "'>";
   } elseif(isset($_POST['confirmBank'])) {
     // If confirmBank button was pressed, save brogna info.
   	$team = TeamDao::getTeamById($_POST['keeper_teamid']);
-  	echo "<h2>" . $team->getName() . "</h2>";
-  	echo "<img src='" . $team->getSportslineImageUrl() . "'><br/><br/>";
-  	echo $team->getOwnersString() . "<br/>";
+    echo "<h4>" . $team->getName() . " - Banking confirmed!</h4>";
 
-  	echo "<h3 class='alert_msg'>Banking confirmed!</h3>";
+    // Team info
+    echo "<div class='row-fluid'>
+    <div class='span4 center'>";
+    echo "<br/>" . $team->getSportslineImg(72);
+    echo "<br/><p class='ptop'>" . $team->getOwnersString() . "</p>";
+    echo "  </div>"; // span4
+
+    // Brognas
+    echo "<div class='span8'>";
   	$currentYear = TimeUtil::getCurrentYear();
   	$nextYear = $currentYear + 1;
-
-  	// drop all non-contracted players from team
-  	$playersToBeDropped = PlayerDao::getPlayersToBeDroppedForKeepers($team, $currentYear);
-  	if (count($playersToBeDropped) > 0) {
-  	  echo "<h4>Dropped Players</h4>";
-  	  foreach ($playersToBeDropped as $player) {
-  	  	TeamDao::assignPlayerToTeam($player, 0);
-  	    echo $player->getNameLink(false) . "</br>";
-  	  }
-  	}
 
   	// Show brognas banked from previous season.
   	$currentYearBrognas = BrognaDao::getBrognasByTeamAndYear($team->getId(), $currentYear);
@@ -372,27 +392,47 @@ require_once '../util/navigation.php';
   	    0, 0, 50 + $bankedPoints);
   	BrognaDao::createBrognas($nextYearBrognas);
   	$team->displayBrognas($nextYear, $nextYear, false, 0, 'center');
+    echo "</div>"; // span8
+    echo "</div>"; // row-fluid
 
-  	echo "<br><a href='manageKeepers.php'>Let's do it again!</a><br>";
+    // drop all non-contracted players from team
+    $playersToBeDropped = PlayerDao::getPlayersToBeDroppedForKeepers($team, $currentYear);
+    if (count($playersToBeDropped) > 0) {
+      echo "<h4>Dropped Players</h4>
+        	<table class='table vertmiddle table-striped table-condensed table-bordered center'>
+  	          <thead><tr><th colspan=2>Player</th><th>Team</th><th>Position</th></tr></thead>";
+   	  foreach ($playersToBeDropped as $player) {
+   	  	echo "<tr><td>" . $player->getHeadshotImg(24, 32) . "</td>
+   	  	          <td>" . $player->getNameLink(false) . "</td>
+   	  	          <td>" . $player->getMlbTeam()->getImageTag(32, 32) . "</td>
+   	  	          <td>" . $player->getPositionString() . "</td></tr>";
+        TeamDao::assignPlayerToTeam($player, 0);
+   	  }
+   	  echo "</table>";
+    }
+
+    echo "<a href='manageKeepers.php' class='btn btn-primary'>Let's do it again!</a><br/><br/>";
   } else {
   	// clear out keeper session variables from previous keeper scenarios.
   	SessionUtil::clearSessionVarsWithPrefix("keeper_");
 
     $teams = TeamDao::getAllTeams();
-    echo "<label for='team'>Select Team:</label>&nbsp
-          <select id='team' name='team' onchange='showTeam(this.value)'>
+    echo "<div class='chooser'><label for='team'>Select Team:</label>&nbsp
+          <select id='team' name='team' class='span6' onchange='showTeam(this.value)'>
             <option value='0'></option>";
     foreach ($teams as $team) {
       echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
           . " (" . $team->getAbbreviation() . ")</option>";
     }
-    echo "</select><br>";
-    echo "<div id='teamDisplay'></div><br/>";
+    echo "</select></div>";
+
+    echo "<div id='teamDisplay'></div>";
   }
-  echo "</form></div>";
+  echo "</div></div>
+        </form>";
 
   // Footer
-  NavigationUtil::printFooter();
+  LayoutUtil::displayAdminFooter();
 ?>
 
 </body>

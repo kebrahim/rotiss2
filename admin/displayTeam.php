@@ -65,48 +65,63 @@
    * in read-only mode.
    */
   function displayTeamForKeepers(Team $team) {
+    echo "<hr class='bothr'/>
+          <h4>Keepers for " . $team->getName() . "</h4>";
+
     // Team info
-    $team->displayTeamInfo();
+    echo "<div class='row-fluid'>
+            <div class='span4'>";
+    echo "<br/>" . $team->getSportslineImg(72);
+    echo "<br/><p class='ptop'>" . $team->getOwnersString() . "</p>";
+    echo "  </div>"; // span4
 
     // Brognas - keepers always happen in march, so current year is sufficient.
+    echo "  <div class='span8'>";
     $currentYear = TimeUtil::getCurrentYear();
     $team->displayBrognas($currentYear, $currentYear + 1, false, 0, 'center smallfonttable');
+    echo "  </div>"; // span8
+    echo "</div>";   // row-fluid
 
     // Provide ability to add contracts and balls if brognas exist and have not been banked for the
     // current year.
     $readOnly = count(BrognaDao::getBrognasByTeamFilteredByYears(
         $team->getId(), $currentYear, $currentYear + 1)) != 1;
 
-    if ($readOnly) {
-      echo "<br/>
-            <div id='bankMessageDiv' style='color:red; font-weight:bold'>
-              Cannot add keepers as this team has already banked!
-    	    </div>";
-    } else {
-      echo "<br/>
-            <input class='button' type=submit name='save' value='Save changes'>
-    	    <input class='button' type=submit name='bank' value='Bank money'>
-    	    <input class='button' type=submit name='cancel' value='Cancel'>";
-    }
-
     // Contracts (with ability to add a keeper & buy out a contract)
-    echo "<div id='column_container'>";
-    echo "<div id='left_col'><div id='left_col_inner'>";
-    $team->displayContractsForKeepers($currentYear, $currentYear);
+    echo "<div class='row-fluid'>
+            <div class='span9 center'>";
+    $team->displayContractsForKeepers($currentYear, $currentYear, $readOnly);
     if (!$readOnly) {
-      echo "<input id='addContractButton' class='button' type='button' name='addcontract'
-             value='Add keeper' onclick='addContract(". $team->getId() . ")'><br/>";
+      echo "<p><button id='addContractButton' class='btn' name='addcontract'
+                       type='button' onclick='addContract(". $team->getId() . ")'>
+                 Add Keeper Contract
+               </button></p>";
     }
-    echo "</div></div>";
+    echo "  </div>"; // span9
 
     // Ping pong balls (with ability to add more)
-    echo "<div id='right_col'><div id='right_col_inner'>";
+    echo "  <div class='span3 center'>";
     $team->displayPingPongBalls($currentYear, $currentYear);
     if (!$readOnly) {
-      echo "<input class='button' type='button' name='addpp' value='Add ball' onclick='addBall()'>
-            <br/>";
+      echo "<p><button id='addpp' class='btn' name='addpp'
+                       type='button' onclick='addBall()'>
+                 Add Ball
+               </button></p>";
     }
-    echo "</div></div></div>";
+    echo "  </div>"; // span3
+    echo "</div>"; // row-fluid
+
+    if ($readOnly) {
+      echo "<div id='bankMessageDiv' class='alert alert-error'>
+              <strong>Cannot add keepers as this team has already banked!</strong>
+            </div>";
+    } else {
+      echo "<p>
+              <button class='btn btn-primary' name='save' type='submit'>Save Changes</button>&nbsp
+              <button class='btn btn-inverse' name='bank' type='submit'>Bank Money</button>&nbsp
+              <button class='btn' name='cancel' type='submit'>Cancel</button>
+            </p>";
+    }
     echo "<input type='hidden' name='keeper_teamid' value='" . $team->getId() . "'>";
   }
 
@@ -116,8 +131,8 @@
   function displayEligibleKeeperPlayers(Team $team, $rowNumber) {
     $currentYear = TimeUtil::getCurrentYear();
     $eligiblePlayers = PlayerDao::getEligibleKeepers($team, $currentYear);
-    echo "<select name='keeper_player" . $rowNumber . "' onchange='selectPlayer(this.value, "
-        . $rowNumber . ")'><option value='0'></option>";
+    echo "<select class='input-large' name='keeper_player" . $rowNumber . "' onchange='selectPlayer(this.value, "
+        . $rowNumber . ")'><option value='0'>-- Select Player --</option>";
     foreach ($eligiblePlayers as $player) {
       echo "<option value='" . $player->getId() . "'" . ">" . $player->getFullName() .
           " (" . $player->getPositionString() . ") - " . $player->getMlbTeam()->getAbbreviation() .

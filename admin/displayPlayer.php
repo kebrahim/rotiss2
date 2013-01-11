@@ -11,11 +11,7 @@
   	} else {
   	  $playerId = 0;
   	}
-    $player = PlayerDao::getPlayerById($playerId);
-    if ($player == null) {
-      die("<h1>player id " . $playerId . " does not exist for param " . $param . "!</h1>");
-    }
-    return $player;
+    return PlayerDao::getPlayerById($playerId);
   }
 
   /**
@@ -26,7 +22,7 @@
   	echo "<hr class='bothr'/>";
     $player->displayPlayerInfo();
   	echo "<hr/>";
-  	 
+
   	// MLB Team
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>";
   	$mlbTeam = $player->getMlbTeam();
@@ -50,23 +46,31 @@
   /**
    * Displays the cumulative rank for the specified player for the current ranking year.
    */
-  function displayCumulativeRankForPlayer(Player $player) {
-  	$rankYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
-  	$rank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
-  	if ($rank != null) {
-  	  echo $rank->getRank();
-  	} else {
-      echo "error";
-  	}
+  function displayCumulativeRankForPlayer($player) {
+    if ($player == null) {
+      echo "";
+    } else {
+      $rankYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
+  	  $rank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
+  	  if ($rank != null) {
+  	    echo $rank->getRank();
+  	  } else {
+        echo "error";
+  	  }
+    }
   }
-  
+
   /**
    * Displays an IMG link with the headshot of the specified player.
    */
-  function displayHeadShotForPlayer(Player $player) {
-  	echo $player->getMiniHeadshotImg();
+  function displayHeadShotForPlayer($player) {
+    if ($player == null) {
+      echo "";
+    } else {
+      echo $player->getMiniHeadshotImg();
+    }
   }
-  
+
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
   } else {
