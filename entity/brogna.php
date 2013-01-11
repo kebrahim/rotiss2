@@ -19,6 +19,10 @@ class Brogna {
   private $tradedOutPoints;
   private $tradeablePoints;
 
+  const ANNUAL_ALLOCATION = 450;
+  const MAX_BANK = 150;
+  const TRADEABLE = 50;
+
   public function __construct($teamId, $year, $totalPoints, $bankedPoints, $tradedInPoints,
       $tradedOutPoints, $tradeablePoints) {
     $this->teamId = $teamId;

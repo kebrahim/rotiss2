@@ -331,37 +331,50 @@ function removeBall(rowNumber) {
   	echo "  </div>"; // span4
 
   	// Brognas
-  	// TODO validate that < 150 brognas are being banked
     echo "<div class='span8'>
           <h4>Banking Summary</h4>";
   	echo "<strong>" . $currentYear . " Bank:</strong> $" . $currentYearBrognas->getTotalPoints() .
     	" for " . $nextYear . " season<br/>";
-  	echo "<strong>Allocate " . $nextYear . " budget:</strong> $450 + $" .
-    	$currentYearBrognas->getTotalPoints() . " = $" .
-  	    (450 + $currentYearBrognas->getTotalPoints()) . "<br/><br/>";
+  	echo "<strong>Allocate " . $nextYear . " budget:</strong> $" . Brogna::ANNUAL_ALLOCATION .
+  	   	" + $" . $currentYearBrognas->getTotalPoints() . " = $" .
+  	    (Brogna::ANNUAL_ALLOCATION + $currentYearBrognas->getTotalPoints()) . "<br/><br/>";
+
+  	// Validate that banked brognas are <= max
+  	$bankable = true;
+  	if ($currentYearBrognas->getTotalPoints() > Brogna::MAX_BANK) {
+  	  echo "<div class='alert alert-error'><strong>Error:</strong> Cannot bank more than " .
+  	      Brogna::MAX_BANK . " brognas</div>";
+  	  $bankable = false;
+  	}
+
     echo "</div>"; // span8
     echo "</div>"; // row-fluid
 
     // request final confirmation of banking before execution
-    echo "<div class='alert alert-info'><strong>Once you confirm, this team
-        will not be able to make any more keeper selections for " . $currentYear . "!</strong></div>";
-    echo "<p><button class='btn btn-primary' name='confirmBank' type='submit'>Confirm</button>
-             &nbsp<button class='btn' name='cancelBank' type='submit'>Cancel</button></p><br/>";
+    if ($bankable) {
+      echo "<div class='alert alert-info'><strong>Once you confirm, this team
+          will not be able to make any more keeper selections for " . $currentYear . "!</strong></div>";
+      echo "<p><button class='btn btn-primary' name='confirmBank' type='submit'>Confirm</button>
+            &nbsp<button class='btn' name='cancelBank' type='submit'>Cancel</button></p><br/>";
 
-  	// show all non-contracted players which will be dropped from team
-  	$playersToBeDropped = PlayerDao::getPlayersToBeDroppedForKeepers($team, $currentYear);
-  	if (count($playersToBeDropped) > 0) {
-   	  echo "<h4>Players to be Dropped</h4>
-  	        <table class='table vertmiddle table-striped table-condensed table-bordered center'>
-  	          <thead><tr><th colspan=2>Player</th><th>Team</th><th>Position</th></tr></thead>";
-   	  foreach ($playersToBeDropped as $player) {
-   	  	echo "<tr><td>" . $player->getHeadshotImg(24, 32) . "</td>
-   	  	          <td>" . $player->getNameLink(false) . "</td>
-   	  	          <td>" . $player->getMlbTeam()->getImageTag(32, 32) . "</td>
-   	  	          <td>" . $player->getPositionString() . "</td></tr>";
-   	  }
-   	  echo "</table>";
-  	}
+      // show all non-contracted players which will be dropped from team
+  	  $playersToBeDropped = PlayerDao::getPlayersToBeDroppedForKeepers($team, $currentYear);
+  	  if (count($playersToBeDropped) > 0) {
+   	    echo "<h4>Players to be Dropped</h4>
+  	          <table class='table vertmiddle table-striped table-condensed table-bordered center'>
+  	            <thead><tr><th colspan=2>Player</th><th>Team</th><th>Position</th></tr></thead>";
+   	    foreach ($playersToBeDropped as $player) {
+   	  	  echo "<tr><td>" . $player->getHeadshotImg(24, 32) . "</td>
+   	  	            <td>" . $player->getNameLink(false) . "</td>
+   	  	            <td>" . $player->getMlbTeam()->getImageTag(32, 32) . "</td>
+   	  	            <td>" . $player->getPositionString() . "</td></tr>";
+   	    }
+        echo "</table>";
+  	  }
+    } else {
+      echo "<h4>Cannot bank money! Please <a href='manageKeepers.php'
+            class='btn btn-primary'>try again</a></h4>";
+    }
   	echo "<input type='hidden' name='keeper_teamid' value='" . $team->getId() . "'>";
   } elseif(isset($_POST['confirmBank'])) {
     // If confirmBank button was pressed, save brogna info.
@@ -387,9 +400,9 @@ function removeBall(rowNumber) {
   	    " for " . $nextYear . " season";
 
   	// Save & display brogna info for next year
-  	$nextYearTotalPoints = $bankedPoints + 450;
+  	$nextYearTotalPoints = $bankedPoints + Brogna::ANNUAL_ALLOCATION;
   	$nextYearBrognas = new Brogna($team->getId(), $nextYear, $nextYearTotalPoints, $bankedPoints,
-  	    0, 0, 50 + $bankedPoints);
+  	    0, 0, Brogna::TRADEABLE + $bankedPoints);
   	BrognaDao::createBrognas($nextYearBrognas);
   	$team->displayBrognas($nextYear, $nextYear, false, 0, 'center');
     echo "</div>"; // span8
