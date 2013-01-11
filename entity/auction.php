@@ -113,7 +113,8 @@ class Auction {
   }
 
   /**
-   * Creates and inserts a 1-year auction contract for team/player/amount.
+   * Creates and inserts a 1-year auction contract for team/player/amount and assigns the player to
+   * the team.
    */
   private function saveAuctionContract() {
   	$currentYear = TimeUtil::getCurrentYear();
@@ -124,6 +125,9 @@ class Auction {
 	echo "<strong>Signed:</strong> a 1-year auction " .
 		 "contract [" . $contract->getStartYear() . ":" . $contract->getEndYear() . "] for " .
 		 $this->amount . " brognas<br>";
+
+	// Assign player to team.
+	TeamDao::assignPlayerToTeam($this->player, $this->team->getId());
   }
 
   /**
