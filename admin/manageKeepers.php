@@ -414,7 +414,13 @@ function removeBall(rowNumber) {
   	    0, 0, Brogna::TRADEABLE + $bankedPoints);
   	BrognaDao::createBrognas($nextYearBrognas);
   	$team->displayBrognas($nextYear, $nextYear, false, 0, 'center');
-    echo "</div>"; // span8
+
+  	// update changelog
+  	ChangelogDao::createChange(new Changelog(-1, Changelog::BANK_TYPE,
+  	    SessionUtil::getLoggedInUser()->getId(), TimeUtil::getTimestampString(), $nextYear,
+  	    $team->getId(), null));
+
+  	echo "</div>"; // span8
     echo "</div>"; // row-fluid
 
     // drop all non-contracted players from team

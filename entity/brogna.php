@@ -92,5 +92,10 @@ class Brogna {
            ", b: " . $this->bankedPoints . ", tip: " . $this->tradedInPoints .
            ", top: " . $this->tradedOutPoints . ", trp: " . $this->tradeablePoints;
   }
+
+  public function getBankedDetails() {
+    return "<strong>" . $this->year . ": </strong> Banked $" . $this->bankedPoints . ", Total $" .
+        $this->totalPoints;
+  }
 }
 ?>
