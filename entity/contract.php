@@ -115,9 +115,9 @@ class Contract {
   /**
    * Return a string representation of a bought out contract.
    */
-  public function getBuyoutContractString() {
+  public function getBuyoutDetails() {
   	return $this->getPlayer()->getNameLink(false) . ": " . $this->getYearsLeft() .
-  	    " year(s) remaining at $" . $this->getPrice() . " - Buyout price: $" .
+  	    " year(s) remaining @ $" . $this->getPrice() . " - Buyout price: $" .
   	    $this->getBuyoutPrice();
   }
 
@@ -134,18 +134,20 @@ class Contract {
     $this->teamLoaded = true;
   }
 
-  public function getKeeperString() {
-    return "<strong>" . $this->getType() . ": </strong>" . $this->getPlayer()->getFullName() .
-        " (" . $this->getPlayer()->getPositionString() . ") " .
-        $this->getPlayer()->getMlbTeam()->getAbbreviation() . ": " . $this->getYearsLeft() .
+  public function getDetails() {
+    return "<strong>" . $this->getType() . ": </strong>" . $this->getPlayer()->getNameLink(false) .
+        " - " . $this->getYearsLeft() . " year(s) @ $" . $this->getPrice() . " [" .
+        $this->getStartYear() . " - " . $this->getEndYear() . "]";
+  }
+
+  public function __toString() {
+    return $this->getPlayer()->getFullName() . ": " . $this->getYearsLeft() .
         " year(s) at $" . $this->getPrice() . " [" . $this->getStartYear() . " - " .
         $this->getEndYear() . "]";
   }
 
   public function toString() {
-  	return $this->getPlayer()->getFullName() . ": " . $this->getYearsLeft() .
-        " year(s) at $" . $this->getPrice() . " [" . $this->getStartYear() . " - " .
-        $this->getEndYear() . "]";
+    return $this->__toString();
   }
 }
 ?>

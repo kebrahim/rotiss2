@@ -94,7 +94,8 @@ class Changelog {
   	      $this->change = TradeDao::getTradeById($this->changeId);
   	      break;
   	    }
-  	    case Changelog::BUYOUT_CONTRACT_TYPE: {
+  	    case Changelog::BUYOUT_CONTRACT_TYPE:
+  	    case Changelog::CONTRACT_TYPE: {
   	      $this->change = ContractDao::getContractById($this->changeId);
   	      break;
   	    }
@@ -156,7 +157,10 @@ class Changelog {
         return $tradeDetails;
       }
       case Changelog::BUYOUT_CONTRACT_TYPE: {
-        return $change->getBuyoutContractString();
+        return $change->getBuyoutDetails();
+      }
+      case Changelog::CONTRACT_TYPE: {
+        return $change->getDetails();
       }
       // TODO add support for other change types
       default: {

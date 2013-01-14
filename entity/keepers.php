@@ -118,7 +118,7 @@ class Keepers {
     if ($this->buyoutContracts) {
       echo "<h4>Buyout Contract(s):</h4>";
       foreach ($this->buyoutContracts as $contract) {
-      	echo $contract->getBuyoutContractString() . "<br/>";
+      	echo $contract->getBuyoutDetails() . "<br/>";
       	$buyoutBrognas += $contract->getBuyoutPrice();
       }
     }
@@ -128,7 +128,7 @@ class Keepers {
     if ($this->newContracts) {
       echo "<h4>New Contract(s):</h4>";
       foreach ($this->newContracts as $contract) {
-        echo $contract->getKeeperString() . "<br/>";
+        echo $contract->getDetails() . "<br/>";
         $newContractBrognas += $contract->getPrice();
       }
     }
@@ -174,7 +174,7 @@ class Keepers {
   	if ($this->buyoutContracts) {
 	  foreach ($this->buyoutContracts as $contract) {
 	  	if (($contract->getType() == Contract::AUCTION_TYPE) || $contract->isBoughtOut()) {
-		  $this->printError("Cannot buy out contract: " . $contract->getBuyoutContractString());
+		  $this->printError("Cannot buy out contract: " . $contract->getBuyoutDetails());
 	  	  return false;
 	  	}
 	  	$totalBrognasSpent += $contract->getBuyoutPrice();
@@ -247,7 +247,7 @@ class Keepers {
   	  foreach ($this->buyoutContracts as $contract) {
   	    $contract->buyOut();
   	    ContractDao::updateContract($contract);
-  	    echo "<strong>Bought out:</strong> " . $contract->getBuyoutContractString() . "<br/>";
+  	    echo "<strong>Bought out:</strong> " . $contract->getBuyoutDetails() . "<br/>";
   	  	$totalBrognasSpent += $contract->getBuyoutPrice();
 
   	  	// update changelog
@@ -261,8 +261,13 @@ class Keepers {
   	if ($this->newContracts) {
   	  foreach ($this->newContracts as $contract) {
   	    if (ContractDao::createContract($contract) != null) {
-     	  echo "<strong>Signed:</strong> " . $contract->getKeeperString() . "<br/>";
+     	  echo "<strong>Signed:</strong> " . $contract->getDetails() . "<br/>";
   	      $totalBrognasSpent += $contract->getPrice();
+
+  	      // update changelog
+  	      ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_TYPE,
+  	          SessionUtil::getLoggedInUser()->getId(), TimeUtil::getTimestampString(),
+  	          $contract->getId(), $this->team->getId(), null));
   	    }
   	  }
   	}
