@@ -170,6 +170,25 @@ class PlayerDao {
   }
 
   /**
+   * Returns an array of players, belonging to the specified team who will be kept when money
+   * is banked for the specified keeper year.
+   */
+  public static function getPlayersToBeKeptForKeepers(Team $team, $year) {
+    // first, get all players on specified team
+    $allPlayers = PlayerDao::getPlayersByTeam($team);
+
+    // filter out players who do not have a contract [auction/seltzer/keeper].
+    $playersToBeKept = array();
+    foreach ($allPlayers as $player) {
+      if (PlayerDao::hasContractForPlaceholders($player->getId(), $year) ||
+          PlayerDao::hasAuctionContract($player->getId(), $year)) {
+        $playersToBeKept[] = $player;
+      }
+    }
+    return $playersToBeKept;
+  }
+
+  /**
    * Returns an array of players belonging to the specified fantasy team.
    */
   public static function getPlayersByTeam(Team $team) {

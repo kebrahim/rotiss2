@@ -15,7 +15,7 @@ class ChangelogDao {
     CommonDao::connectToDb();
     $query = "select c.*
     	      from changelog c
-              order by c.timestamp";
+              order by c.timestamp desc";
     return ChangelogDao::createChangesFromQuery($query);
   }
 
@@ -27,7 +27,7 @@ class ChangelogDao {
   	$query = "select c.*
   	          from changelog c
   	          where c.team_id = $teamId or c.secondary_team_id = $teamId
-  	          order by c.timestamp";
+  	          order by c.timestamp desc";
   	return ChangelogDao::createChangesFromQuery($query);
   }
 

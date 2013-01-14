@@ -290,6 +290,21 @@ function removeBall(rowNumber) {
   echo "  <div class='row-fluid'>
             <div class='span12 center'>";
 
+  function displayPlayerTable($players, $title) {
+    echo "<h4>$title</h4>";
+    if (count($players) > 0) {
+      echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
+              <thead><tr><th colspan=2>Player</th><th>Team</th><th>Position</th></tr></thead>";
+      foreach ($players as $player) {
+        echo "<tr><td>" . $player->getHeadshotImg(24, 32) . "</td>
+                  <td>" . $player->getNameLink(false) . "</td>
+                  <td>" . $player->getMlbTeam()->getImageTag(32, 32) . "</td>
+                  <td>" . $player->getPositionString() . "</td></tr>";
+      }
+      echo "</table>";
+    }
+  }
+
   if (isset($_POST['save'])) {
   	// Create keeper scenario.
   	$keepers = new Keepers();
@@ -366,20 +381,19 @@ function removeBall(rowNumber) {
       echo "<p><button class='btn btn-primary' name='confirmBank' type='submit'>Confirm</button>
             &nbsp<button class='btn' name='cancelBank' type='submit'>Cancel</button></p><br/>";
 
+      // show all contracted players to remain on team
+      echo "<div class='row-fluid'>
+              <div class='span6'>";
+      displayPlayerTable(PlayerDao::getPlayersToBeKeptForKeepers($team, $currentYear),
+          "Players to be Kept");
+      echo "  </div>
+              <div class='span6'>";
+
       // show all non-contracted players which will be dropped from team
-  	  $playersToBeDropped = PlayerDao::getPlayersToBeDroppedForKeepers($team, $currentYear);
-  	  if (count($playersToBeDropped) > 0) {
-   	    echo "<h4>Players to be Dropped</h4>
-  	          <table class='table vertmiddle table-striped table-condensed table-bordered center'>
-  	            <thead><tr><th colspan=2>Player</th><th>Team</th><th>Position</th></tr></thead>";
-   	    foreach ($playersToBeDropped as $player) {
-   	  	  echo "<tr><td>" . $player->getHeadshotImg(24, 32) . "</td>
-   	  	            <td>" . $player->getNameLink(false) . "</td>
-   	  	            <td>" . $player->getMlbTeam()->getImageTag(32, 32) . "</td>
-   	  	            <td>" . $player->getPositionString() . "</td></tr>";
-   	    }
-        echo "</table>";
-  	  }
+  	  displayPlayerTable(PlayerDao::getPlayersToBeDroppedForKeepers($team, $currentYear),
+  	      "Players to be Dropped");
+  	  echo "  </div>
+  	        </div>"; // span6, row-fluid
     } else {
       echo "<h4>Cannot bank money! Please <a href='manageKeepers.php'
             class='btn btn-primary'>try again</a></h4>";
@@ -423,21 +437,22 @@ function removeBall(rowNumber) {
   	echo "</div>"; // span8
     echo "</div>"; // row-fluid
 
+    // show all contracted players remaining on team
+    echo "<div class='row-fluid'>
+            <div class='span6'>";
+    displayPlayerTable(PlayerDao::getPlayersToBeKeptForKeepers($team, $currentYear),
+        "Kept Players");
+    echo "  </div>
+            <div class='span6'>";
+
     // drop all non-contracted players from team
     $playersToBeDropped = PlayerDao::getPlayersToBeDroppedForKeepers($team, $currentYear);
-    if (count($playersToBeDropped) > 0) {
-      echo "<h4>Dropped Players</h4>
-        	<table class='table vertmiddle table-striped table-condensed table-bordered center'>
-  	          <thead><tr><th colspan=2>Player</th><th>Team</th><th>Position</th></tr></thead>";
-   	  foreach ($playersToBeDropped as $player) {
-   	  	echo "<tr><td>" . $player->getHeadshotImg(24, 32) . "</td>
-   	  	          <td>" . $player->getNameLink(false) . "</td>
-   	  	          <td>" . $player->getMlbTeam()->getImageTag(32, 32) . "</td>
-   	  	          <td>" . $player->getPositionString() . "</td></tr>";
-        TeamDao::assignPlayerToTeam($player, 0);
-   	  }
-   	  echo "</table>";
+    foreach ($playersToBeDropped as $player) {
+      TeamDao::assignPlayerToTeam($player, 0);
     }
+    displayPlayerTable($playersToBeDropped, "Dropped Players");
+    echo "  </div>
+          </div>"; // span6, row-fluid
 
     echo "<a href='manageKeepers.php' class='btn btn-primary'>Let's do it again!</a><br/><br/>";
   } else {
