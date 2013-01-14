@@ -244,8 +244,9 @@ class LayoutUtil {
     echo "<div id=\"footer\">
             <div class=\"container\">
               <div class=\"row\">
-                <div class=\"span4 center muted credit\">
-                  St. Pete's Rotiss " . ConfigUtil::getVersion() . "
+                <div class=\"span4 center muted credit\"
+                     title='Released: " . ConfigUtil::getReleaseDate() . "'>
+                  St. Pete's Rotiss v" . ConfigUtil::getVersion() . "
                 </div>
                 <div class=\"span4 center\">
                   <img src='" . ($isTopLevel ? "" : "../") . "img/rotiss2.jpg' width='250' />

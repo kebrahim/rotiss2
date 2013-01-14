@@ -1,5 +1,7 @@
 <?php
 class CommonDao {
+
+  // TODO remove passwords from file
   static function connectToDb() {
     CommonDao::requireFileIn("/../util/", "config.php");
     if (ConfigUtil::isProduction()) {
