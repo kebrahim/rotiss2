@@ -44,11 +44,16 @@
   }
 
   /**
-   * Displays the cumulative rank for the specified player for the current ranking year.
+   * Displays the cumulative rank for the specified player for the current ranking year, and the
+   * type of contract. If either player or contract type are not selected, then an empty ranking
+   * is returned. If the contract type is a minor league contract, then the cumulative rank/price
+   * is always zero.
    */
-  function displayCumulativeRankForPlayer($player) {
-    if ($player == null) {
+  function displayCumulativeRankForPlayer($player, $contractType) {
+    if (($player == null) || ($contractType == -1)) {
       echo "";
+    } else if ($contractType == 0) {
+      echo "0";
     } else {
       $rankYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   	  $rank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
@@ -81,7 +86,10 @@
   if ($displayType == "auction") {
   	displayPlayerForAuction($player);
   } else if ($displayType == "cumulativerank") {
-  	displayCumulativeRankForPlayer($player);
+    if (isset($_REQUEST["contracttype"])) {
+      $contractType = $_REQUEST["contracttype"];
+    }
+  	displayCumulativeRankForPlayer($player, $contractType);
   } else if ($displayType == "headshot") {
   	displayHeadShotForPlayer($player);
   }

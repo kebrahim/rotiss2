@@ -28,7 +28,8 @@ class Contract {
   const KEEPER_TYPE = 'Keeper';
   const AUCTION_TYPE = 'Auction';
   const SELTZER_TYPE = 'Seltzer';
-  const MINOR_TYPE = 'Minor';
+  const MINOR_KEEPER_TYPE = 'Minor Keeper';
+  const MINOR_SELTZER_TYPE = 'Minor Seltzer';
 
   public function __construct($contractId, $playerId, $teamId, $totalYears, $price, $signDate,
       $startYear, $endYear, $isBoughtOut, $contractType) {
@@ -134,8 +135,9 @@ class Contract {
   }
 
   public function getKeeperString() {
-    return $this->getPlayer()->getFullName() . " (" . $this->getPlayer()->getPositionString() .
-        ") " . $this->getPlayer()->getMlbTeam()->getAbbreviation() . ": " . $this->getYearsLeft() .
+    return "<strong>" . $this->getType() . ": </strong>" . $this->getPlayer()->getFullName() .
+        " (" . $this->getPlayer()->getPositionString() . ") " .
+        $this->getPlayer()->getMlbTeam()->getAbbreviation() . ": " . $this->getYearsLeft() .
         " year(s) at $" . $this->getPrice() . " [" . $this->getStartYear() . " - " .
         $this->getEndYear() . "]";
   }

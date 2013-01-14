@@ -131,8 +131,10 @@
   function displayEligibleKeeperPlayers(Team $team, $rowNumber) {
     $currentYear = TimeUtil::getCurrentYear();
     $eligiblePlayers = PlayerDao::getEligibleKeepers($team, $currentYear);
-    echo "<select class='input-large' name='keeper_player" . $rowNumber . "' onchange='selectPlayer(this.value, "
-        . $rowNumber . ")'><option value='0'>-- Select Player --</option>";
+    echo "<select class='input-large' id='keeper_player" . $rowNumber . "'
+                  name='keeper_player" . $rowNumber . "' onchange='selectPlayer(this.value, " .
+                 "document.getElementById(\"keeper_year" . $rowNumber . "\").value, " .
+                  $rowNumber . ")'><option value='0'>-- Select Player --</option>";
     foreach ($eligiblePlayers as $player) {
       echo "<option value='" . $player->getId() . "'" . ">" . $player->getFullName() .
           " (" . $player->getPositionString() . ") - " . $player->getMlbTeam()->getAbbreviation() .

@@ -79,11 +79,17 @@ class Keepers {
       $yearKey = 'keeper_year' . $i;
       $priceKey = 'keeper_price' . $i;
 
-      $numYears = intval($assocArray[$yearKey]);
-      // TODO parse free minor contracts
+      // If length of contract is "0", then use free 1-year minor league contract.
+      if (intval($assocArray[$yearKey]) == 0) {
+        $numYears = 1;
+        $contractType = Contract::MINOR_KEEPER_TYPE;
+      } else {
+        $numYears = intval($assocArray[$yearKey]);
+        $contractType = Contract::KEEPER_TYPE;
+      }
       $newContracts[] = new Contract(-1, $assocArray[$playerKey], $this->team->getId(), $numYears,
-          $assocArray[$priceKey], TimeUtil::getTodayString(), $currentYear,
-          ($currentYear + $numYears) - 1, false, Contract::KEEPER_TYPE);
+          $assocArray[$priceKey], TimeUtil::getTodayString(), $currentYear, ($currentYear + $numYears) - 1, false,
+          $contractType);
 
       SessionUtil::updateSession($playerKey, $assocArray, $isPost);
       SessionUtil::updateSession($yearKey, $assocArray, $isPost);
@@ -185,8 +191,11 @@ class Keepers {
 		  $this->printError(
 		      "Invalid length of contract: " . $contract->getTotalYears() . " years");
 	  	  return false;
-	  	} else if (!is_numeric($contract->getPrice()) || $contract->getPrice() < 30) {
-	  	  $this->printError("Invalid price for contract: $" . $contract->getPrice());
+	  	} else if (!is_numeric($contract->getPrice()) ||
+	  	    ($contract->getPrice() < 30 && $contract->getType() == Contract::KEEPER_TYPE) ||
+	  	    ($contract->getPrice() != 0 && $contract->getType() == Contract::MINOR_KEEPER_TYPE)) {
+	  	  $this->printError("Invalid price for " . $contract->getType() . " contract: $" .
+	  	      $contract->getPrice());
 	  	  return false;
 	  	}
 	  	$totalBrognasSpent += $contract->getPrice();
