@@ -83,12 +83,13 @@ class BallDao {
   	  return null;
   	}
 
-  	$idQuery = "select ping_pong_id from ping_pong where year = " . $pingPongBall->getYear() .
-  	    " and team_id = " . $pingPongBall->getTeam()->getId() . " and cost = " .
+  	$idQuery = "select max(ping_pong_id) as new_ping_pong_id from ping_pong
+  	            where year = " . $pingPongBall->getYear() .
+  	          " and team_id = " . $pingPongBall->getTeam()->getId() . " and cost = " .
   	    $pingPongBall->getCost();
   	$result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
   	$row = mysql_fetch_assoc($result);
-  	$pingPongBall->setId($row["ping_pong_id"]);
+  	$pingPongBall->setId($row["new_ping_pong_id"]);
   	return $pingPongBall;
   }
 
