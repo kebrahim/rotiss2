@@ -1,0 +1,28 @@
+Release Notes
+-------------
+
+v2.1.0 (1/14/13)
+- visible
+ - links to CBS and baseball-reference on player page
+ - added admin page to save keeper contracts [including free minor league contract], buy balls,
+   buyout contracts & bank money
+ - added changelog functionality for auctions, keepers, trades, including page to view changes by
+   team
+ - trades - only future picks can be traded
+ - draft pick trades - original team is only set the first time a pick is traded
+ - shows info message on rank page when rankings are closed
+ - small fixes for auctions, keepers and trades
+ 
+- b.t.s.
+ - event framework making site aware of what events have occurred so far this season
+ - config framework allowing site to read settings from config files
+ 
+- db
+ - new tables:
+   	- changelog
+   	- event
+   	- trade
+   	- traded_asset
+ - updated tables:
+    - contract
+        - more options for contract_type column
