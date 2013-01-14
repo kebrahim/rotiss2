@@ -2,6 +2,7 @@
 
 require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'ballDao.php');
+CommonEntity::requireFileIn('/../dao/', 'changelogDao.php');
 CommonEntity::requireFileIn('/../dao/', 'teamDao.php');
 CommonEntity::requireFileIn('/../entity/', 'ball.php');
 CommonEntity::requireFileIn('/../util/', 'sessions.php');
@@ -248,6 +249,11 @@ class Keepers {
   	    ContractDao::updateContract($contract);
   	    echo "<strong>Bought out:</strong> " . $contract->getBuyoutContractString() . "<br/>";
   	  	$totalBrognasSpent += $contract->getBuyoutPrice();
+
+  	  	// update changelog
+  	  	ChangelogDao::createChange(new Changelog(-1, Changelog::BUYOUT_CONTRACT_TYPE,
+  	  	    SessionUtil::getLoggedInUser()->getId(), TimeUtil::getTimestampString(),
+  	  	    $contract->getId(), $this->team->getId(), null));
   	  }
   	}
 

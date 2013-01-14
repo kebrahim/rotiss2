@@ -2,6 +2,7 @@
 
 require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'auctionDao.php');
+CommonEntity::requireFileIn('/../dao/', 'contractDao.php');
 CommonEntity::requireFileIn('/../dao/', 'teamDao.php');
 CommonEntity::requireFileIn('/../dao/', 'tradeDao.php');
 CommonEntity::requireFileIn('/../dao/', 'userDao.php');
@@ -34,7 +35,10 @@ class Changelog {
 
   const AUCTION_TYPE = 'Auction';
   const TRADE_TYPE = 'Trade';
-  const KEEPER_TYPE = 'Keeper';
+  const CONTRACT_TYPE = 'Contract';
+  const BUYOUT_CONTRACT_TYPE = 'Buyout Contract';
+  const PING_PONG_BALL_TYPE = 'Ping Pong Ball';
+  const BANK_TYPE = 'Bank Money';
 
   public function __construct($changelogId, $changeType, $userId, $timestamp, $changeId,
       $teamId, $secondaryTeamId) {
@@ -90,6 +94,11 @@ class Changelog {
   	      $this->change = TradeDao::getTradeById($this->changeId);
   	      break;
   	    }
+  	    case Changelog::BUYOUT_CONTRACT_TYPE: {
+  	      $this->change = ContractDao::getContractById($this->changeId);
+  	      break;
+  	    }
+
   	    // TODO add support for other change types
   	    default: {
   	      return null;
@@ -145,6 +154,9 @@ class Changelog {
           $tradeDetails .= $asset;
         }
         return $tradeDetails;
+      }
+      case Changelog::BUYOUT_CONTRACT_TYPE: {
+        return $change->getBuyoutContractString();
       }
       // TODO add support for other change types
       default: {

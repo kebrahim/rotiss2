@@ -116,7 +116,7 @@ class Contract {
    * Return a string representation of a bought out contract.
    */
   public function getBuyoutContractString() {
-  	return $this->getPlayer()->getFullName() . ": " . $this->getYearsLeft() .
+  	return $this->getPlayer()->getNameLink(false) . ": " . $this->getYearsLeft() .
   	    " year(s) remaining at $" . $this->getPrice() . " - Buyout price: $" .
   	    $this->getBuyoutPrice();
   }

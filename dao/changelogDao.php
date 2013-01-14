@@ -72,7 +72,7 @@ class ChangelogDao {
 
   	$idQuery = "select changelog_id from changelog where change_type = '" .
   	     $change->getType() . "' and change_id = " . $change->getChangeId() . " and team_id = "
-  	     . $change->getTeamId();
+  	     . $change->getTeamId() . " and timestamp = '" . $change->getTimestamp() . "'";
   	$result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
   	$row = mysql_fetch_assoc($result);
   	$change->setId($row["changelog_id"]);
