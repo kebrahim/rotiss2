@@ -241,6 +241,7 @@ class Keepers {
     echo " <div class='span8 center'>
            <h4>Summary</h4>";
   	$totalBrognasSpent = 0;
+  	$timestamp = TimeUtil::getTimestampString();
 
   	// buyout contracts
   	if ($this->buyoutContracts) {
@@ -252,8 +253,8 @@ class Keepers {
 
   	  	// update changelog
   	  	ChangelogDao::createChange(new Changelog(-1, Changelog::BUYOUT_CONTRACT_TYPE,
-  	  	    SessionUtil::getLoggedInUser()->getId(), TimeUtil::getTimestampString(),
-  	  	    $contract->getId(), $this->team->getId(), null));
+  	  	    SessionUtil::getLoggedInUser()->getId(), $timestamp, $contract->getId(),
+  	  	    $this->team->getId(), null));
   	  }
   	}
 
@@ -266,8 +267,8 @@ class Keepers {
 
   	      // update changelog
   	      ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_TYPE,
-  	          SessionUtil::getLoggedInUser()->getId(), TimeUtil::getTimestampString(),
-  	          $contract->getId(), $this->team->getId(), null));
+  	          SessionUtil::getLoggedInUser()->getId(), $timestamp, $contract->getId(),
+  	          $this->team->getId(), null));
   	    }
   	  }
   	}
@@ -278,6 +279,11 @@ class Keepers {
       	BallDao::createPingPongBall($pingPongBall);
       	echo "<strong>Purchased ball:</strong> " . $pingPongBall->toString() . "<br>";
         $totalBrognasSpent += $pingPongBall->getCost();
+
+        // update changelog
+        ChangelogDao::createChange(new Changelog(-1, Changelog::PING_PONG_BALL_TYPE,
+            SessionUtil::getLoggedInUser()->getId(), $timestamp, $pingPongBall->getId(),
+            $this->team->getId(), null));
       }
     }
 
@@ -292,8 +298,6 @@ class Keepers {
 
 	echo "</div>"; // span8
     echo "</div>"; // row-fluid
-
-	// TODO update changelog
   }
 
   private function printError($errorString) {

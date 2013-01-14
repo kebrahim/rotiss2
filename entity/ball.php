@@ -101,11 +101,16 @@ class PingPongBall {
   }
 
   public function __toString() {
-    return $this->year . ":" . $this->cost;
+    return $this->year . ": $" . $this->cost;
   }
 
   public function toString() {
     return $this->__toString();
+  }
+
+  public function getDetails() {
+    return "<strong>Draft Year: </strong>" . $this->getYear() . ", <strong>Cost: </strong>$" .
+        $this->getCost();
   }
 }
 ?>

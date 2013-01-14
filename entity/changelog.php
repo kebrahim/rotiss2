@@ -2,6 +2,7 @@
 
 require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'auctionDao.php');
+CommonEntity::requireFileIn('/../dao/', 'ballDao.php');
 CommonEntity::requireFileIn('/../dao/', 'contractDao.php');
 CommonEntity::requireFileIn('/../dao/', 'teamDao.php');
 CommonEntity::requireFileIn('/../dao/', 'tradeDao.php');
@@ -99,6 +100,10 @@ class Changelog {
   	      $this->change = ContractDao::getContractById($this->changeId);
   	      break;
   	    }
+  	    case Changelog::PING_PONG_BALL_TYPE: {
+  	      $this->change = BallDao::getPingPongBallById($this->changeId);
+  	      break;
+  	    }
 
   	    // TODO add support for other change types
   	    default: {
@@ -160,6 +165,9 @@ class Changelog {
         return $change->getBuyoutDetails();
       }
       case Changelog::CONTRACT_TYPE: {
+        return $change->getDetails();
+      }
+      case Changelog::PING_PONG_BALL_TYPE: {
         return $change->getDetails();
       }
       // TODO add support for other change types
