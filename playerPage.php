@@ -108,7 +108,8 @@
   // if admin user, show edit link
   if (SessionUtil::isLoggedInAdmin()) {
     echo "<div class='managelink'>
-            <a href='admin/managePlayer.php?player_id=" . $player->getId() . "'>Manage player</a>
+            <a class='btn btn-primary' href='admin/managePlayer.php?player_id=" . $player->getId() .
+                "'>Manage player</a>
           </div>";
   }
 

@@ -24,6 +24,7 @@ class LayoutUtil {
   const MANAGE_PLAYER_BUTTON = 19;
   const MANAGE_EVENTS_BUTTON = 20;
   const MANAGE_CHANGES_BUTTON = 21;
+  const MANAGE_CONTRACTS_BUTTON = 22;
 
   /**
    * Displays the <head> tag for a page, including the specified title.
@@ -159,6 +160,10 @@ class LayoutUtil {
   	// Manage individual team
   	LayoutUtil::displayListItem("admin/manageTeam.php", "Team Mgmt", $isTopLevel,
   	    $selectedButton, self::MANAGE_TEAM_BUTTON);
+
+  	// Manage contracts for a team
+  	LayoutUtil::displayListItem("admin/manageContracts.php", "Contracts", $isTopLevel,
+  	    $selectedButton, self::MANAGE_CONTRACTS_BUTTON);
 
   	// Manage individual player
   	LayoutUtil::displayListItem("admin/managePlayer.php", "Player Mgmt", $isTopLevel,

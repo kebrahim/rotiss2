@@ -4,7 +4,7 @@
   SessionUtil::checkUserIsLoggedInAdmin();
 
   // Get team from REQUEST; otherwise, use logged-in user's team.
-  $redirectUrl = "admin/manageTeam.php";
+  $redirectUrl = "admin/manageContracts.php";
   if (isset($_REQUEST["team_id"])) {
   	$teamId = $_REQUEST["team_id"];
   	$redirectUrl .= "?team_id=$teamId";
@@ -20,7 +20,7 @@
 
 <?php
   require_once '../util/layout.php';
-  LayoutUtil::displayHeadTag("Manage Team", false);
+  LayoutUtil::displayHeadTag("Contracts", false);
 ?>
 
 <script>
@@ -34,7 +34,7 @@ function showTeam(teamId) {
 
 	// Display team information.
 	getRedirectHTML(document.getElementById("teamDisplay"),
-	    "displayTeam.php?type=manage&team_id="+teamId);
+	    "displayTeam.php?type=contracts&team_id="+teamId);
 }
 
 //populates the innerHTML of the specified elementId with the HTML returned by the specified
@@ -64,17 +64,10 @@ function getRedirectHTML(element, htmlString) {
   require_once '../util/teamManager.php';
 
   // Nav bar
-  LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_TEAM_BUTTON);
+  LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_CONTRACTS_BUTTON);
 
   if (isset($_POST['update'])) {
-    // Update team.
-    $teamToUpdate = new Team($_POST['teamId'], $_POST['teamName'], $_POST['league'],
-        $_POST['division'], $_POST['abbreviation'], $_POST['sportslineImage']);
-    TeamDao::updateTeam($teamToUpdate);
-    echo "<div class='alert alert-success center'>
-            <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
-            <strong>Team successfully updated!</strong>
-          </div>";
+    // TODO update contracts
   }
 
   $team = TeamDao::getTeamById($teamId);
@@ -82,9 +75,9 @@ function getRedirectHTML(element, htmlString) {
   	die("<h1>Team ID " . $teamId . " not found!</h1>");
   }
 
-  echo "<FORM ACTION='manageTeam.php' METHOD=POST>";
+  echo "<FORM ACTION='manageContracts.php' METHOD=POST>";
 
-  // Allow user to choose from list of teams to see corresponding team management page.
+  // Allow user to choose from list of teams to see corresponding contract management page.
   TeamManager::displayTeamChooser($team);
 
   echo "<div id='teamDisplay'></div><br/>";
@@ -96,6 +89,9 @@ function getRedirectHTML(element, htmlString) {
 </script>
 
 <?php
+
+  // TODO add/delete contracts
+  // TODO seltzer player
 
   // Footer
   LayoutUtil::displayAdminFooter();

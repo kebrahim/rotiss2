@@ -382,6 +382,7 @@ function removeBall(rowNumber) {
             &nbsp<button class='btn' name='cancelBank' type='submit'>Cancel</button></p><br/>";
 
       // show all contracted players to remain on team
+      // TODO show how much money from old contracts will be subtracted
       echo "<div class='row-fluid'>
               <div class='span6'>";
       displayPlayerTable(PlayerDao::getPlayersToBeKeptForKeepers($team, $currentYear),
@@ -417,6 +418,7 @@ function removeBall(rowNumber) {
   	$nextYear = $currentYear + 1;
 
   	// Show brognas banked from previous season.
+  	// TODO remove brognas from old contracts
   	$currentYearBrognas = BrognaDao::getBrognasByTeamAndYear($team->getId(), $currentYear);
   	$bankedPoints = $currentYearBrognas->getTotalPoints();
   	echo "<br/><strong>" . $currentYear . " Bank:</strong> $" . $bankedPoints .

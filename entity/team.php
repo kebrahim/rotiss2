@@ -295,6 +295,70 @@ class Team {
   	echo "<input type='hidden' name='keeper_newkeepercount' value='0'>";
   }
 
+  public function displayContractsForManagement($minYear, $maxYear) {
+    $allContracts = ContractDao::getContractsByTeamId($this->teamId);
+    $contracts = $this->filterContractsByYearAndOwnership($allContracts, $minYear, $maxYear, true);
+    $this->displayContractTable($contracts, "Contracts", true);
+
+    // show dropped contracts
+    $droppedContracts = $this->filterContractsByYearAndOwnership(
+        $allContracts, $minYear, $maxYear, false);
+    $this->displayContractTable($droppedContracts, "Dropped Contracts", false);
+  }
+
+  function displayContractTable($contracts, $title, $ownsContracts) {
+    echo "<div id='" . ($ownsContracts ?  "contractdiv" : "droppeddiv") . "'";
+    if (count($contracts) == 0) {
+      echo " style='display:none'>";
+    } else {
+      echo ">";
+    }
+
+    echo "<h4>$title</h4>";
+    echo "<table ";
+    if ($ownsContracts) {
+      echo "id='contracttable' ";
+    }
+    echo "class='table vertmiddle table-striped table-condensed table-bordered center'><thead><tr>";
+    echo "  <th colspan=2>Player</th>
+            <th>Years</th>
+            <th>Price</th>
+            <th>Start Year</th>
+            <th>End Year</th>
+            <th>Type</th>";
+    if ($ownsContracts) {
+      echo "<th>Drop</th>
+       <th id='contractRemoveColumn' style='display:none'>Actions</th>";
+    }
+    echo "</tr></thead>";
+
+    $contractCount = 0;
+    foreach ($contracts as $contract) {
+      $player = $contract->getPlayer();
+      echo "<tr>
+              <td>" . $player->getMiniHeadshotImg() . "</td>
+              <td>" . $player->getFullName() . " (" . $player->getPositionString() . ") - " .
+                      $player->getMlbTeam()->getAbbreviation() . "</td>
+              <td>" . $contract->getTotalYears() . "</td>
+              <td>" . $contract->getPrice() . "</td>
+              <td>" . $contract->getStartYear() . "</td>
+              <td>" . $contract->getEndYear() . "</td>
+              <td>" . $contract->getType() . "</td>";
+      if ($ownsContracts) {
+        echo "<td><input type=checkbox name='contract_drop[]'
+                         value='" . $contract->getId() . "'></td>";
+        $contractCount++;
+      }
+      echo "</tr>";
+    }
+    echo "</table></div>";
+    if ($ownsContracts) {
+      echo "<input type='hidden' name='contract_savedcontractcount'
+                   value='" . $contractCount . "'>";
+      echo "<input type='hidden' name='contract_newcontractcount' value='0'>";
+    }
+  }
+
   /**
    * Filters the specified array of contracts by min/max years; if includeAuction is false, then
    * auction contracts are also filtered out.
@@ -308,6 +372,28 @@ class Team {
   	  }
   	}
   	return $filteredContracts;
+  }
+
+  /**
+   * Filters the specified array of contracts by min/max years and whether they belong to this team.
+   */
+  function filterContractsByYearAndOwnership($contracts, $minYear, $maxYear, $isOwned) {
+    $filteredContracts = array();
+    foreach ($contracts as $contract) {
+      if (($contract->getEndYear() >= $minYear) && ($contract->getStartYear() <= $maxYear)
+          && ($isOwned == $this->hasPlayer($contract->getPlayer()))) {
+        $filteredContracts[] = $contract;
+      }
+    }
+    return $filteredContracts;
+  }
+
+  /**
+   * Returns true if this team has the specified player on its roster.
+   */
+  function hasPlayer(Player $player) {
+    return ($player->getFantasyTeam() != null) &&
+        ($player->getFantasyTeam()->getId() == $this->getId());
   }
 
   function displayAllDraftPicks() {

@@ -31,6 +31,8 @@ class Contract {
   const MINOR_KEEPER_TYPE = 'Minor Keeper';
   const MINOR_SELTZER_TYPE = 'Minor Seltzer';
 
+  const MAX_YEAR = 3000;
+
   public function __construct($contractId, $playerId, $teamId, $totalYears, $price, $signDate,
       $startYear, $endYear, $isBoughtOut, $contractType) {
     $this->contractId = $contractId;

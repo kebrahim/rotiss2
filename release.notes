@@ -1,6 +1,9 @@
 Release Notes
 -------------
 
+v2.1.1
+
+
 v2.1.0 (1/14/13)
 - visible
  - links to CBS and baseball-reference on player page
@@ -20,7 +23,6 @@ v2.1.0 (1/14/13)
 - db
  - new tables:
    	- changelog
-   	- event
    	- trade
    	- traded_asset
  - updated tables:

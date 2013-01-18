@@ -88,6 +88,7 @@
         $team->getId(), $currentYear, $currentYear + 1)) != 1;
 
     // Contracts (with ability to add a keeper & buy out a contract)
+    // TODO show old contracts and new contracts
     echo "<div class='row-fluid'>
             <div class='span9 center'>";
     $team->displayContractsForKeepers($currentYear, $currentYear, $readOnly);
@@ -181,10 +182,13 @@
                   <td>" . $team->getLeague() . " " . $team->getDivision() . "</td></tr>
           </table>";
 
-    // if admin user, show edit link
+    // if admin user, show management links
     if ($isLoggedInAdmin) {
       echo "<div class='managelink'>
-              <a href='admin/manageTeam.php?team_id=" . $team->getId() . "'>Manage team</a>
+              <a class='btn btn-primary' href='admin/manageTeam.php?team_id=" . $team->getId() .
+                  "'>Manage team</a>&nbsp
+              <a class='btn btn-primary' href='admin/manageContracts.php?team_id=" .
+                  $team->getId() . "'>Manage contracts</a>
             </div>";
     }
     echo "</div>"; // span6
@@ -306,7 +310,7 @@
     // Sportsline Image Name
     echo "<tr><td><label for='sportslineImage'>Sportsline Image Name:</label></td><td>
              <input type=text name='sportslineImage' id='sportslineImage'" .
-           " maxLength=65 class='input-xxlarge' value='" . $team->getSportslineImageName() . "'
+           " maxLength=100 class='input-xxlarge' value='" . $team->getSportslineImageName() . "'
              required>
               </td></tr>";
 
@@ -477,6 +481,35 @@
           </div>";
   }
 
+  function displayTeamForContracts(Team $team) {
+    echo "<div class='row-fluid'>";
+
+    // team logo
+    echo "<div class='span2 center teamlogo'>" .
+        $team->getSportslineImg(72) .
+        "</div>";
+
+    // team name
+    echo "  <div class='span10 center teamlogo'>
+              <h3 class='nexttologo'>Contracts: " . $team->getName() . "</h3>
+            </div>
+          </div>"; // row-fluid
+
+    echo "<div class='row-fluid'>
+            <div class='span12 center'>";
+
+    // show all existing contracts
+    $currentYear = TimeUtil::getYearByEvent(Event::AUCTION);
+    $team->displayContractsForManagement($currentYear, Contract::MAX_YEAR);
+
+    // Buttons
+    echo "<p><button class=\"btn btn-primary\" name='update' type=\"submit\">Update Team</button>";
+    echo "&nbsp&nbsp" . $team->getIdLink(false, "Return to Team");
+
+    echo "  </div>"; // span12
+    echo "</div>";   // row-fluid
+  }
+
   // direct to corresponding function, depending on type of display
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
@@ -507,5 +540,7 @@
     displayTeamForBudget($team);
   } else if ($displayType == "changes") {
     displayTeamForChanges($team);
+  } else if ($displayType == "contracts") {
+    displayTeamForContracts($team);
   }
 ?>
