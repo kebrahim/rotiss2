@@ -14,13 +14,13 @@ class RankDao {
    */
   public static function getRanksByTeamYear($teamId, $year) {
     CommonDao::connectToDb();
-    $query = "select r.* 
+    $query = "select r.*
               from rank r
               where r.team_id = " . $teamId . " and r.year = " . $year .
             " order by r.rank DESC";
     return RankDao::createRanksByQuery($query);
   }
-		
+
   /**
    * Returns all of the ranks belonging to the specified team for the specified year with the
    * specified rank, sorted by fantasy points from the previous year.
@@ -29,14 +29,14 @@ class RankDao {
     CommonDao::connectToDb();
     $query = "select r.*, p.*, s.*
               from rank r, player p, stat s
-              where r.team_id = " . $teamId . 
+              where r.team_id = " . $teamId .
             " and r.year = " . $year .
             " and r.rank = " . $rank .
             " and r.player_id = p.player_id
               and p.player_id = s.player_id
               and s.year = " . ($year - 1) .
             " order by r.is_placeholder DESC, s.fantasy_pts DESC";
-    
+
     $res = mysql_query($query);
     $ranksDb = array();
     if (mysql_num_rows($res) > 0) {
@@ -51,17 +51,44 @@ class RankDao {
     }
     return $ranksDb;
   }
-  
+
+  /**
+   * Returns all ranks for the specified player during the specified year.
+   */
+  public static function getRanksByPlayerYear($playerId, $year) {
+    CommonDao::connectToDb();
+    $query = "select r.*, p.*
+              from rank r, player p
+              where r.player_id = " . $playerId .
+            " and r.year = " . $year .
+            " and r.player_id = p.player_id
+              order by r.rank DESC";
+
+    $res = mysql_query($query);
+    $ranksDb = array();
+    if (mysql_num_rows($res) > 0) {
+      while($rankDb = mysql_fetch_assoc($res)) {
+        $rank = new Rank($rankDb["rank_id"], $rankDb["year"], $rankDb["team_id"],
+            $rankDb["player_id"], $rankDb["rank"], $rankDb["is_placeholder"]);
+        $player = PlayerDao::populatePlayer($rankDb);
+        $rank->setPlayer($player);
+        $ranksDb[] = $rank;
+      }
+    }
+    return $ranksDb;
+  }
+
   /**
    * Returns a set of CumulativeRanks [sums of ranks per player] for the specified year, ordered by
    * cumulative rank total.
    */
   public static function calculateCumulativeRanksByYear($year) {
   	CommonDao::connectToDb();
-  	$query = "select r.year, r.player_id, sum(r.rank) as totalRank, r.is_placeholder, p.*
+  	$query = "select r.year, r.player_id, sum(r.rank) as totalRank,
+  	          count(r.rank) as rankCount, r.is_placeholder, p.*
   	          from rank r, player p
   	          where r.player_id = p.player_id
-  	          and r.year = " . $year . 
+  	          and r.year = " . $year .
   	        " group by r.player_id
   	          order by sum(r.rank) DESC";
   	$res = mysql_query($query);
@@ -71,6 +98,7 @@ class RankDao {
   	    $rank = new CumulativeRank(-1, $rankDb["year"], $rankDb["player_id"], $rankDb["totalRank"],
   	        $rankDb["is_placeholder"]);
   		$rank->setPlayer(PlayerDao::populatePlayer($rankDb));
+  		$rank->setRankCount($rankDb["rankCount"]);
   		$ranksDb[] = $rank;
   	  }
   	}
@@ -88,9 +116,9 @@ class RankDao {
     }
     return $ranksDb;
   }
-  
+
   /**
-   * Returns true if the player with the specified id has placeholder ranks stored for the 
+   * Returns true if the player with the specified id has placeholder ranks stored for the
    * specified year.
    */
   public static function hasAllPlaceholderRanks($playerId, $year) {
@@ -103,7 +131,7 @@ class RankDao {
   	$res = mysql_query($query);
   	return (mysql_num_rows($res) == 15);
   }
-  
+
   /**
    * Returns an array of rank values to corresponding number of ranks for the specified team during
    * the specified year.
@@ -137,7 +165,7 @@ class RankDao {
   	$row = mysql_fetch_row($res);
   	return $row[0];
   }
-  
+
   /**
    * Inserts the specified Rank in the 'rank' table and returns the same Rank
    * with its id set.
@@ -146,7 +174,7 @@ class RankDao {
     CommonDao::connectToDb();
   	$query = "insert into rank(year, team_id, player_id, rank, is_placeholder)
   	    values (" . $rank->getYear() . ", " . $rank->getTeam()->getId() .
-  	    ", " . $rank->getPlayer()->getId() . ", " . $rank->getRank() . 
+  	    ", " . $rank->getPlayer()->getId() . ", " . $rank->getRank() .
   	    ", " . ($rank->isPlaceholder() ? "1" : "0") . ")";
   	$result = mysql_query($query);
   	if (!$result) {
@@ -185,7 +213,7 @@ class RankDao {
   	$query = "delete from rank where rank_id = " . $rank->getId();
   	$result = mysql_query($query) or die('Invalid query: ' . mysql_error());
   }
-  
+
   /**
    * Deletes all of the ranks.
    */

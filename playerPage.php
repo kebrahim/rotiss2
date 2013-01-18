@@ -23,7 +23,9 @@
 <body>
 
 <?php
+  require_once 'dao/cumulativeRankDao.php';
   require_once 'dao/playerDao.php';
+  require_once 'dao/rankDao.php';
   require_once 'util/layout.php';
 
   // Display header.
@@ -104,6 +106,34 @@
   echo "</td></tr>";
 
   echo "</table>";
+
+  // show ranks if cumulative rank is saved
+  // TODO show all years of ranks
+  $rankYear = TimeUtil::getYearByEvent(Event::RANKINGS_OPEN);
+  if (CumulativeRankDao::hasCumulativeRank($player->getId(), $rankYear)) {
+    echo "<h4>Ranks</h4>";
+    $ranks = RankDao::getRanksByPlayerYear($player->getId(), $rankYear);
+    echo "<table class='table center vertmiddle table-striped table-condensed table-bordered'>
+            <thead><tr><th>Year</th><th colspan=15>Team Ranks</th><th>Actual Rank</th></tr></thead>
+                   <tr><td><strong>$rankYear</strong></td>";
+    foreach ($ranks as $rank) {
+      echo "<td>" . $rank->getRank() . "</td>";
+    }
+    // show 0s
+    if (count($ranks) < 15) {
+      for ($i = count($ranks); $i < 15; $i++) {
+        echo "<td>0</td>";
+      }
+    }
+    // show actual rank
+    $cumulativeRank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
+    echo "<td><strong>" . $cumulativeRank->getRank();
+    if ($cumulativeRank->isPlaceholder()) {
+      echo " (PH)";
+    }
+    echo "</strong></td>";
+    echo "</tr></table>";
+  }
 
   // if admin user, show edit link
   if (SessionUtil::isLoggedInAdmin()) {

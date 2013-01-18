@@ -41,6 +41,8 @@
   	$ranks = RankDao::calculateCumulativeRanksByYear($rankYear);
   	foreach ($ranks as $rank) {
   	  if (!CumulativeRankDao::hasCumulativeRank($rank->getPlayerId(), $rankYear)) {
+  	    // The minimum rank is 1, so any 0s should be converted to 1s.
+  	    $rank->setRank($rank->getRank() + (15 - $rank->getRankCount()));
   	  	CumulativeRankDao::createCumulativeRank($rank);
   	  }
   	}
@@ -77,8 +79,8 @@
 
   echo "<br/><table class='center smallfonttable table vertmiddle table-striped table-condensed
                            table-bordered'>
-  	          <thead><tr><th>Player</th><th>Team</th><th>Rank</th><th>Is Placeholder</th>
-              <th>Saved In DB</th></tr></thead>";
+  	          <thead><tr><th>Player</th><th>Team</th><th>Sum of Ranks</th><th>Zeros</th>
+  	          <th>Actual Rank</th><th>Is Placeholder</th><th>Saved In DB</th></tr></thead>";
   foreach($ranks as $rank) {
   	if ($filter && $rank->isPlaceholder()) {
   	  continue;
@@ -101,9 +103,15 @@
   	$fantasyTeam = $rank->getPlayer()->getFantasyTeam();
   	$teamLink = ($fantasyTeam == null) ?
   	    "" : $fantasyTeam->getIdLink(false, $fantasyTeam->getAbbreviation());
+  	$actualRank = $rank->getRank() + (15 - $rank->getRankCount());
+  	if ($actualRank < CumulativeRank::MINIMUM_RANK) {
+  	  $actualRank = CumulativeRank::MINIMUM_RANK;
+  	}
   	echo "    <td>" . $rank->getPlayer()->getNameLink(false) . "</td>
   	          <td>" . $teamLink . "</td>
   	          <td>" . $rank->getRank() . "</td>
+  	          <td>" . (15 - $rank->getRankCount()) . "</td>
+  	          <td>" . $actualRank . "</td>
   	          <td>" . ($rank->isPlaceholder() ? "Y" : "") . "</td>
   	          <td>" . ($hasCumulativeRank ? "Y" : "") . "</td>
   	      </tr>";
@@ -125,6 +133,8 @@
     echo "<td>" . $unrankedPlayer->getNameLink(false) . "</td>
           <td>" . $fantasyTeam->getIdLink(false, $fantasyTeam->getAbbreviation()) . "</td>
   	      <td>0</td>
+  	      <td>15</td>
+  	      <td>" . CumulativeRank::MINIMUM_RANK . "</td>
   	      <td></td>
   	      <td>" . ($hasCumulativeRank ? "Y" : "") . "</td>
   	    </tr>";

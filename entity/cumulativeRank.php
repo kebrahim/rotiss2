@@ -17,6 +17,7 @@ class CumulativeRank {
   private $player;
   private $rank;
   private $isPlaceholder;
+  private $rankCount;
 
   public function __construct($rankId, $year, $playerId, $rank, $isPlaceholder) {
     $this->rankId = $rankId;
@@ -67,6 +68,14 @@ class CumulativeRank {
 
   public function isPlaceholder() {
   	return $this->isPlaceholder;
+  }
+
+  public function setRankCount($rankCount) {
+    $this->rankCount = $rankCount;
+  }
+
+  public function getRankCount() {
+    return $this->rankCount;
   }
 
   public function toString() {

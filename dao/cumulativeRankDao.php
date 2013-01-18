@@ -29,7 +29,8 @@ class CumulativeRankDao {
     CommonDao::connectToDb();
     $query = "select cr.*
     	      from cumulative_rank cr
-    	      where cr.year = " . $year;
+    	      where cr.year = " . $year .
+            " order by rank desc";
     return CumulativeRankDao::createCumulativeRanksByQuery($query);
   }
 
