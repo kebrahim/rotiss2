@@ -1,9 +1,21 @@
 <?php
 
 require_once 'commonDao.php';
+require_once 'playerDao.php';
 CommonDao::requireFileIn('/../entity/', 'contract.php');
 
 class ContractDao {
+
+  /**
+   * Returns the contract by the specified id.
+   */
+  public static function getContractById($contractId) {
+    CommonDao::connectToDb();
+    $query = "select * from contract
+              where contract_id = " . $contractId;
+    return ContractDao::createContractFromQuery($query);
+  }
+
   /**
    * Returns all of the non-bought-out contracts for the specified team ID.
    */
@@ -16,26 +28,49 @@ class ContractDao {
   }
 
   /**
-   * Returns the contract by the specified id.
+   * Returns a list of contracts for players currently not on a fantasy team.
    */
-  public static function getContractById($contractId) {
+  public static function getAvailableContracts($year) {
     CommonDao::connectToDb();
-    $query = "select * from contract
-              where contract_id = " . $contractId;
+    $query = "select c.*, p.*
+              from contract c, player p
+              where c.player_id not in
+                (select tp.player_id from team_player tp)
+              and c.player_id = p.player_id
+              and c.is_bought_out = 0
+              and c.end_year >= " . $year;
+    $res = mysql_query($query);
+    $contractsDb = array();
+    while ($contractDb = mysql_fetch_assoc($res)) {
+      $contract = ContractDao::populateContract($contractDb);
+      $contract->setPlayer(PlayerDao::populatePlayer($contractDb));
+      $contractsDb[] = $contract;
+    }
+    return $contractsDb;
+  }
+
+  private static function createContractFromQuery($query) {
     $contracts = ContractDao::createContractsFromQuery($query);
-    return $contracts[0];
+    if (count($contracts) == 1) {
+      return $contracts[0];
+    }
+    return null;
   }
 
   private static function createContractsFromQuery($query) {
   	$res = mysql_query($query);
     $contracts = array();
     while ($contractDb = mysql_fetch_assoc($res)) {
-      $contracts[] = new Contract($contractDb["contract_id"], $contractDb["player_id"],
-          $contractDb["team_id"], $contractDb["num_years"], $contractDb["price"],
-          $contractDb["sign_date"], $contractDb["start_year"], $contractDb["end_year"],
-          $contractDb["is_bought_out"], $contractDb["contract_type"]);
+      $contracts[] = ContractDao::populateContract($contractDb);
     }
     return $contracts;
+  }
+
+  private static function populateContract($contractDb) {
+    return new Contract($contractDb["contract_id"], $contractDb["player_id"],
+        $contractDb["team_id"], $contractDb["num_years"], $contractDb["price"],
+        $contractDb["sign_date"], $contractDb["start_year"], $contractDb["end_year"],
+        $contractDb["is_bought_out"], $contractDb["contract_type"]);
   }
 
   /**

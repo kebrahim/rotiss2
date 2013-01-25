@@ -297,8 +297,16 @@ class Team {
 
   public function displayContractsForManagement($minYear, $maxYear) {
     $allContracts = ContractDao::getContractsByTeamId($this->teamId);
+
+    // show contracts of players currently on team
     $contracts = $this->filterContractsByYearAndOwnership($allContracts, $minYear, $maxYear, true);
     $this->displayContractTable($contracts, "Contracts", true);
+
+    // button to pickup existing contract
+    echo "<p><button class='btn' name='addcontract' type='button'
+                     onclick='addContract(". $this->getId() . ")'>
+               Pick Up Existing Contract</button>
+          </p><br/>";
 
     // show dropped contracts
     $droppedContracts = $this->filterContractsByYearAndOwnership(
@@ -328,17 +336,17 @@ class Team {
             <th>Type</th>";
     if ($ownsContracts) {
       echo "<th>Drop</th>
-       <th id='contractRemoveColumn' style='display:none'>Actions</th>";
+            <th id='contractRemoveColumn' style='display:none'>Actions</th>";
     }
     echo "</tr></thead>";
 
     $contractCount = 0;
     foreach ($contracts as $contract) {
       $player = $contract->getPlayer();
-      echo "<tr>
-              <td>" . $player->getMiniHeadshotImg() . "</td>
-              <td>" . $player->getFullName() . " (" . $player->getPositionString() . ") - " .
-                      $player->getMlbTeam()->getAbbreviation() . "</td>
+      echo "<tr>" .
+              PlayerManager::getPlayerDetailsAndHeadshotRowAtLevel($player,
+                  $player->getFullName() . " (" . $player->getPositionString() . ") - " .
+                      $player->getMlbTeam()->getAbbreviation(), false) . "
               <td>" . $contract->getTotalYears() . "</td>
               <td>" . $contract->getPrice() . "</td>
               <td>" . $contract->getStartYear() . "</td>

@@ -23,6 +23,15 @@ class PlayerManager {
 	  return "<td colspan=2>--</td>";
 	}
   }
+
+  public static function getPlayerDetailsAndHeadshotRowAtLevel($player, $linkText, $isTopLevel) {
+    if ($player != null) {
+      return "<td>" . $player->getMiniHeadshotImg() . "</td>
+              <td>" . $player->getIdLink($isTopLevel, $linkText) . "</td>";
+    } else {
+      return "<td colspan=2>--</td>";
+    }
+  }
 }
 
 ?>

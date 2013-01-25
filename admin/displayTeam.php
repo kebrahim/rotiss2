@@ -504,6 +504,9 @@
 
     // Buttons
     echo "<p><button class=\"btn btn-primary\" name='update' type=\"submit\">Update Team</button>";
+    // TODO seltzer player
+    //echo "&nbsp&nbsp<a href='manageSeltzer.php' class='btn btn-inverse'>
+    //      Offer Seltzer Contract</a>";
     echo "&nbsp&nbsp" . $team->getIdLink(false, "Return to Team");
 
     echo "  </div>"; // span12

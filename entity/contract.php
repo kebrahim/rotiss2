@@ -87,6 +87,12 @@ class Contract {
     return $this->player;
   }
 
+  public function setPlayer(Player $player) {
+    $this->player = $player;
+    $this->playerId = $player->getId();
+    $this->playerLoaded = true;
+  }
+
   public function getStartYear() {
     return $this->startYear;
   }
