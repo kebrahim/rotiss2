@@ -55,7 +55,7 @@
 
   	// Brognas - auctions always happen in january, so current year is sufficient.
   	$currentYear = TimeUtil::getCurrentYear();
-  	$team->displayBrognas($currentYear, $currentYear, false, 0);
+  	$team->displayBrognasForAuction($currentYear);
 
   	echo "<input type='hidden' name='auction_teamid' value='" . $team->getId() . "'>";
   }
@@ -171,7 +171,7 @@
     echo "<div class='row-fluid'>";
 
     // Team Summary - Owners, Abbreviation, Division
-    echo "<div class='span6'>
+    echo "<div class='span5'>
           <a id='summary'></a><h4>Team Summary</h4>
           <table class='table vertmiddle table-striped table-condensed table-bordered'>
             <tr><td><strong>Owner(s):</strong></td>
@@ -194,7 +194,7 @@
     echo "</div>"; // span6
 
     // brognas
-    echo "<div class='span6'>";
+    echo "<div class='span7'>";
 
     // if upcoming year's brognas are negative, show warning.
     foreach ($team->getBrognas() as $brogna) {

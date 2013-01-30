@@ -544,8 +544,8 @@ class Team {
   }
 
   function displayAllBrognas() {
-    $currentYear = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT);
-    $this->displayBrognas($currentYear, 3000, false, 0);
+    $currentYear = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT) + 1;
+    $this->displayBrognas($currentYear, $currentYear, false, 0);
   }
 
   /**
@@ -564,8 +564,14 @@ class Team {
     if ($isSelectable) {
       echo "<th></th>";
     }
-    echo "<th>Year</th><th>Total</th><th>Banked</th><th>Traded In</th>
-            <th>Traded Out</th><th>Tradeable</th>";
+    echo "<th>Year</th>
+          <th><abbr title='Total brognas owned'>Total</abbr></th>
+          <th><abbr title='Amount committed to contracts'>Contracts</abbr></th>
+          <th><abbr title='Amount not committed to contracts'>Available</abbr></th>
+          <th><abbr title='Banked from previous season'>Banked</abbr></th>
+          <th>Traded In</th>
+          <th>Traded Out</th>
+          <th>Tradeable</th>";
     if ($isSelectable) {
       echo "<th id='headerbox" . $tradePosition . "' style='display:none'>To Trade</th>";
     }
@@ -591,7 +597,13 @@ class Team {
       if ($brogna->getTotalPoints() < 0) {
         echo " class='warning'";
       }
+      $contractBrognas = ContractDao::getTotalPriceByTeamYear($this->getId(), $brogna->getYear());
+      if (!$contractBrognas) {
+        $contractBrognas = 0;
+      }
       echo          "><strong>" . $brogna->getTotalPoints() . "</strong></td>
+                  <td>" . $contractBrognas . "</td>
+                  <td class='conf_msg'><strong>" . ($brogna->getTotalPoints() - $contractBrognas) . "</strong></td>
                   <td>" . $brogna->getBankedPoints() . "</td>
                   <td>" . $brogna->getTradedInPoints() . "</td>
                   <td>" . $brogna->getTradedOutPoints() . "</td>
@@ -643,6 +655,39 @@ class Team {
         </tr>";
     }
   	echo "</table>";
+  }
+
+  function displayBrognasForAuction($year) {
+    if (count($this->getBrognas()) == 0) {
+      return;
+    }
+
+    echo "<h4>Brognas</h4>";
+    echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'
+                 id='brognaTable'><thead><tr>";
+    echo "  <th>Year</th>
+            <th><abbr title='Total brognas owned'>Total</abbr></th>
+            <th><abbr title='Amount committed to contracts'>Contracts</abbr></th>
+            <th><abbr title='Amount not committed to contracts'>Available</abbr></th>
+          </tr></thead>";
+    foreach ($this->getBrognas() as $brogna) {
+      // Only show brogna info between the min and max years.
+      if ($brogna->getYear() != $year) {
+        continue;
+      }
+      $contractBrognas = ContractDao::getTotalPriceByTeamYear($this->getId(), $year);
+      if (!$contractBrognas) {
+        $contractBrognas = 0;
+      }
+      echo "<tr>
+              <td>" . $brogna->getYear() . "</td>
+              <td><strong>" . $brogna->getTotalPoints() . "</strong></td>
+              <td>" . $contractBrognas . "</td>
+              <td class='conf_msg'><strong>" . ($brogna->getTotalPoints() - $contractBrognas) .
+                  "</strong></td>
+            </tr>";
+    }
+    echo "</table>";
   }
 
   /**

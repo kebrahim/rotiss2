@@ -19,12 +19,30 @@ class ContractDao {
   /**
    * Returns all of the non-bought-out contracts for the specified team ID.
    */
-  static function getContractsByTeamId($teamId) {
+  public static function getContractsByTeamId($teamId) {
     CommonDao::connectToDb();
     $query = "select * from contract
               where team_id = " . $teamId . " and is_bought_out = 0" .
               " order by end_year, start_year, price DESC";
     return ContractDao::createContractsFromQuery($query);
+  }
+
+  /**
+   * Returns the total cost of non-bought-out contracts for the specified team in the specified
+   * year.
+   */
+  public static function getTotalPriceByTeamYear($teamId, $year) {
+    CommonDao::connectToDb();
+    $query = "select sum(price)
+              from contract
+              where team_id = " . $teamId . "
+              and is_bought_out = 0
+              and start_year <= $year
+              and end_year >= $year
+              order by end_year, start_year, price DESC";
+    $res = mysql_query($query);
+    $row = mysql_fetch_row($res);
+    return $row[0];
   }
 
   /**

@@ -62,7 +62,6 @@
     }
   }
 
-
   if (isset($_REQUEST["type"])) {
     $displayType = $_REQUEST["type"];
   } else {

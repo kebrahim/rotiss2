@@ -2,6 +2,7 @@
   require_once '../dao/auctionDao.php';
   require_once '../dao/ballDao.php';
   require_once '../dao/brognaDao.php';
+  require_once '../dao/contractDao.php';
   require_once '../dao/draftPickDao.php';
   require_once '../dao/playerDao.php';
   require_once '../util/playerManager.php';
@@ -219,12 +220,12 @@
   	        <div class='span12 center'><br/>";
     echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
             <thead><tr><th rowspan=2 colspan=2>Team</th>
-                       <th colspan=5>Brognas</th><th colspan=3>Draft Picks</th></tr>
-                   <tr><th>Total</th><th>Banked</th><th>Traded In</th>
-  		        <th>Traded Out</th><th>Tradeable</th>
-                <th><abbr title='In first 5 rounds'>Extra Draft Picks</abbr></th>
-                <th>Ping Pong Balls</th>
-                <th><abbr title='Cannot be more than 3'>Extra Picks</abbr></th>
+                       <th colspan=7>Brognas</th><th colspan=3>Draft Picks</th></tr>
+                   <tr><th>Total</th><th>Contracts</th><th>Available</th><th>Banked</th>
+                   <th>Traded In</th><th>Traded Out</th><th>Tradeable</th>
+                   <th><abbr title='In first 5 rounds'>Extra Draft Picks</abbr></th>
+                   <th>Ping Pong Balls</th>
+                   <th><abbr title='Cannot be more than 3'>Extra Picks</abbr></th>
             </tr></thead>";
 
     $brognas = BrognaDao::getBrognasByYear($year, $year);
@@ -244,7 +245,15 @@
       if ($brogna->getTotalPoints() < 0) {
         echo " class ='warning'";
       }
-      echo      "><strong>" . $brogna->getTotalPoints() . "</strong></td>
+      $contractBrognas =
+          ContractDao::getTotalPriceByTeamYear($brogna->getTeam()->getId(), $brogna->getYear());
+      if (!$contractBrognas) {
+        $contractBrognas = 0;
+      }
+      echo          "><strong>" . $brogna->getTotalPoints() . "</strong></td>
+                <td>" . $contractBrognas . "</td>
+                <td class='conf_msg'><strong>" . ($brogna->getTotalPoints() - $contractBrognas) .
+                    "</strong></td>
        	        <td>" . $brogna->getBankedPoints() . "</td>
            	    <td>" . $brogna->getTradedInPoints() . "</td>
                	<td>" . $brogna->getTradedOutPoints() . "</td>
@@ -285,10 +294,10 @@
    */
   function displayEventYear($year) {
   	echo "<h3>$year Events</h3>";
-  
+
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
   	      <thead><tr><th>Event Type</th><th>Event Date</th></tr></thead>";
-  
+
   	$events = EventDao::getEventsByYear($year);
   	foreach ($events as $event) {
   	  echo "<tr class='tdselect'>
@@ -300,7 +309,7 @@
   	echo "</table>";
   	echo "<input type=hidden name='year' value='$year'>";
   }
-  
+
   // direct to corresponding function, depending on type of display
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
