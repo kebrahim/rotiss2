@@ -2,7 +2,14 @@ Release Notes
 -------------
 
 v2.1.1
-
+- visible
+ - brognas committed to contracts and available for spending shown on team page
+ - admins can pickup, drop contracts
+ 
+- db
+ - updated tables:
+   - changelog
+     - added 'Contract Pickup', 'Contract Drop' change types
 
 v2.1.0 (1/14/13)
 - visible

@@ -41,6 +41,8 @@ class Changelog {
   const BUYOUT_CONTRACT_TYPE = 'Buyout Contract';
   const PING_PONG_BALL_TYPE = 'Ping Pong Ball';
   const BANK_TYPE = 'Bank Money';
+  const CONTRACT_PICKUP_TYPE = 'Contract Pickup';
+  const CONTRACT_DROP_TYPE = 'Contract Drop';
 
   public function __construct($changelogId, $changeType, $userId, $timestamp, $changeId,
       $teamId, $secondaryTeamId) {
@@ -97,7 +99,9 @@ class Changelog {
   	      break;
   	    }
   	    case Changelog::BUYOUT_CONTRACT_TYPE:
-  	    case Changelog::CONTRACT_TYPE: {
+  	    case Changelog::CONTRACT_TYPE:
+  	    case Changelog::CONTRACT_PICKUP_TYPE:
+  	    case Changelog::CONTRACT_DROP_TYPE: {
   	      $this->change = ContractDao::getContractById($this->changeId);
   	      break;
   	    }
@@ -169,7 +173,9 @@ class Changelog {
       case Changelog::BUYOUT_CONTRACT_TYPE: {
         return $change->getBuyoutDetails();
       }
-      case Changelog::CONTRACT_TYPE: {
+      case Changelog::CONTRACT_TYPE:
+      case Changelog::CONTRACT_PICKUP_TYPE:
+      case Changelog::CONTRACT_DROP_TYPE: {
         return $change->getDetails();
       }
       case Changelog::PING_PONG_BALL_TYPE: {

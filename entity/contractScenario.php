@@ -1,6 +1,7 @@
 <?php
 
 require_once 'commonEntity.php';
+CommonEntity::requireFileIn('/../dao/', 'changelogDao.php');
 CommonEntity::requireFileIn('/../dao/', 'teamDao.php');
 
 /**
@@ -142,7 +143,10 @@ class ContractScenario {
         TeamDao::dropPlayer($contract->getPlayer());
         echo "<strong>Dropped:</strong> " . $contract->getDetails() . "<br/>";
 
-        // TODO update changelog
+        // update changelog
+        ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_DROP_TYPE,
+            SessionUtil::getLoggedInUser()->getId(), $timestamp, $contract->getId(),
+            $this->team->getId(), null));
       }
     }
 
@@ -150,6 +154,7 @@ class ContractScenario {
     if ($this->pickedUpContracts) {
       foreach ($this->pickedUpContracts as $contract) {
         // set new team on contract
+        $oldTeam = $contract->getTeam();
         $contract->setTeam($this->team);
         ContractDao::updateContract($contract);
 
@@ -157,7 +162,10 @@ class ContractScenario {
         TeamDao::assignPlayerToTeam($contract->getPlayer(), $this->team->getId());
         echo "<strong>Picked up:</strong> " . $contract->getDetails() . "<br/>";
 
-        // TODO update changelog
+        // update changelog
+        ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_PICKUP_TYPE,
+            SessionUtil::getLoggedInUser()->getId(), $timestamp, $contract->getId(),
+            $this->team->getId(), $oldTeam->getId()));
       }
     }
     echo "<input type='hidden' name='team_id' value='" . $this->team->getId() . "'>";
