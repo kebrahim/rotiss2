@@ -124,7 +124,7 @@ class Contract {
    * Return a string representation of a bought out contract.
    */
   public function getBuyoutDetails() {
-  	return $this->getPlayer()->getNameLink(false) . ": " . $this->getYearsLeft() .
+  	return $this->getPlayer()->getNameNewTabLink(false) . ": " . $this->getYearsLeft() .
   	    " year(s) remaining @ $" . $this->getPrice() . " - Buyout price: $" .
   	    $this->getBuyoutPrice();
   }
@@ -143,7 +143,8 @@ class Contract {
   }
 
   public function getDetails() {
-    return "<strong>" . $this->getType() . ": </strong>" . $this->getPlayer()->getNameLink(false) .
+    return "<strong>" . $this->getType() . ": </strong>" .
+        $this->getPlayer()->getNameNewTabLink(false) .
         " - " . $this->getYearsLeft() . " year(s) @ $" . $this->getPrice() . " [" .
         $this->getStartYear() . " - " . $this->getEndYear() . "]";
   }

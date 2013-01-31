@@ -48,7 +48,7 @@ class TeamDao {
   	          where t.team_name = \"" . $teamName . "\"";
   	return TeamDao::createTeamFromQuery($query);
   }
-  
+
   private static function createTeamFromQuery($query) {
   	$teamArray = TeamDao::createTeamsFromQuery($query);
   	if (count($teamArray) == 1) {
@@ -84,6 +84,13 @@ class TeamDao {
   }
 
   /**
+   * Drops player from whatever team he's on.
+   */
+  public static function dropPlayer(Player $player) {
+    TeamDao::assignPlayerToTeam($player, 0);
+  }
+
+  /**
    * Assigns the specified player to the specified team; if teamId = 0, then unassigns player from
    * current team.
    */
@@ -112,7 +119,7 @@ class TeamDao {
   	}
   	$result = mysql_query($query) or die(mysql_error());
   }
-  
+
   /**
    * Deletes all of the team-player associations.
    */

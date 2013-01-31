@@ -503,11 +503,14 @@
     $team->displayContractsForManagement($currentYear, Contract::MAX_YEAR);
 
     // Buttons
-    echo "<p><button class=\"btn btn-primary\" name='update' type=\"submit\">Update Team</button>";
+    echo "<p><button class=\"btn btn-primary\" name='update'
+                     type=\"submit\">Update Contracts</button>";
     // TODO seltzer player
     //echo "&nbsp&nbsp<a href='manageSeltzer.php' class='btn btn-inverse'>
     //      Offer Seltzer Contract</a>";
     echo "&nbsp&nbsp" . $team->getIdLink(false, "Return to Team");
+
+    echo "<input type='hidden' name='contract_teamid' value='" . $team->getId() . "'>";
 
     echo "  </div>"; // span12
     echo "</div>";   // row-fluid

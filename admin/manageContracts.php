@@ -177,30 +177,69 @@ function selectContract(contractId, rowNumber) {
 
 <?php
   require_once '../dao/teamDao.php';
+  require_once '../entity/contractScenario.php';
   require_once '../entity/team.php';
   require_once '../util/teamManager.php';
 
   // Nav bar
   LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_CONTRACTS_BUTTON);
-
-  if (isset($_POST['update'])) {
-    // TODO update contracts
-  } else {
-    // clear out keeper contract variables from previous contract scenarios.
-    SessionUtil::clearSessionVarsWithPrefix("contract_");
-  }
-
-  $team = TeamDao::getTeamById($teamId);
-  if ($team == null) {
-  	die("<h1>Team ID " . $teamId . " not found!</h1>");
-  }
-
   echo "<FORM ACTION='manageContracts.php' METHOD=POST>";
 
-  // Allow user to choose from list of teams to see corresponding contract management page.
-  TeamManager::displayTeamChooser($team);
+  if (isset($_POST['update'])) {
+    echo "<div class='row-fluid'>
+            <div class='span12 center'>";
 
-  echo "<div id='teamDisplay'></div><br/>";
+    // create contract scenario
+    $contractScenario = new ContractScenario();
+    $contractScenario->parseContractsFromPost();
+
+    // if valid, show summary and request final confirmation.
+    if ($contractScenario->validateContracts()) {
+      $contractScenario->showContractSummary();
+  	  echo "<p><button class=\"btn btn-primary\" name='confirmUpdate'
+                       type=\"submit\">Confirm</button>&nbsp&nbsp
+               <button class=\"btn\" name='cancelUpdate' type=\"submit\">Cancel</button>
+  	        </p>";
+  	} else {
+  	  echo "<h4>
+  	          Cannot execute contract transaction! Please <a href='manageContracts.php?team_id=" .
+  	          $_POST['team_id'] . "'
+  	          class=\"btn btn-primary\">try again</a>
+  	        </h4>";
+  	}
+  	echo "</div>"; // span12
+  	echo "</div>"; // row-fluid
+  } else if (isset($_POST['confirmUpdate'])) {
+    echo "<div class='row-fluid'>
+            <div class='span12 center'>";
+
+    // re-create contract scenario from session
+    $contractScenario = new ContractScenario();
+    $contractScenario->parseContractsFromSession();
+
+    // if valid, initiate transaction.
+    if ($contractScenario->validateContracts()) {
+      $contractScenario->initiateTransaction();
+      echo "<a href='manageContracts.php?team_id=" .
+  	          $_POST['team_id'] . "' class='btn btn-primary'>Back to Contracts</a><br/><br/>";
+  	} else {
+  	  echo "<h3>Cannot execute contract transaction! Please <a href='manageContracts.php?team_id=" .
+  	          $_POST['team_id'] . "' class='btn btn-primary'>try again</a></h3>";
+  	}
+  	echo "</div>"; // span12
+  	echo "</div>"; // row-fluid
+  } else {
+    // clear out contract variables from previous contract scenarios.
+    SessionUtil::clearSessionVarsWithPrefix("contract_");
+    $team = TeamDao::getTeamById($teamId);
+    if ($team == null) {
+      die("<h1>Team ID " . $teamId . " not found!</h1>");
+    }
+
+    // Allow user to choose from list of teams to see corresponding contract management page.
+    TeamManager::displayTeamChooser($team);
+
+    echo "<div id='teamDisplay'></div><br/>";
 ?>
 
 <script>
@@ -209,6 +248,9 @@ function selectContract(contractId, rowNumber) {
 </script>
 
 <?php
+  }
+
+  echo "</form>";
 
   // Footer
   LayoutUtil::displayAdminFooter();

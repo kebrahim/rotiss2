@@ -70,6 +70,10 @@ class Player {
   	    $this->playerId . "'>" . $linkText . "</a>";
   }
 
+  public function getNameNewTabLink($isTopLevel) {
+    return $this->getIdNewTabLink($isTopLevel, $this->getFullName());
+  }
+
   public function getIdNewTabLink($isTopLevel, $linkText) {
   	return "<a href='" . ($isTopLevel ? "" : "../") . "playerPage.php?player_id=" .
   			$this->playerId . "' target='_blank'>" . $linkText . "</a>";
