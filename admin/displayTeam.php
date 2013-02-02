@@ -120,7 +120,7 @@
       echo "<p>
               <button class='btn btn-primary' name='save' type='submit'>Save Changes</button>&nbsp
               <button class='btn btn-inverse' name='bank' type='submit'>Bank Money</button>&nbsp
-              <button class='btn' name='cancel' type='submit'>Cancel</button>
+              <a href='manageKeepers.php' class='btn' name='cancel'>Cancel</a>
             </p>";
     }
     echo "<input type='hidden' name='keeper_teamid' value='" . $team->getId() . "'>";

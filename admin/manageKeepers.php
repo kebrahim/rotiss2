@@ -1,7 +1,16 @@
 <?php
   require_once '../util/sessions.php';
   SessionUtil::checkUserIsLoggedInAdmin();
-  SessionUtil::logoutUserIfNotLoggedIn("admin/manageKeepers.php");
+
+  // Get team from REQUEST.
+  $redirectUrl = "admin/manageKeepers.php";
+  if (isset($_REQUEST["team_id"])) {
+    $teamId = $_REQUEST["team_id"];
+    $redirectUrl .= "?team_id=$teamId";
+  } else {
+    $teamId = 0;
+  }
+  SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
 <!DOCTYPE html>
@@ -273,8 +282,10 @@ function removeBall(rowNumber) {
 <body>
 
 <?php
+  require_once '../dao/contractDao.php';
   require_once '../dao/teamDao.php';
   require_once '../entity/keepers.php';
+  require_once '../util/teamManager.php';
 
   // Display nav bar.
   LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_KEEPERS_BUTTON);
@@ -318,11 +329,12 @@ function removeBall(rowNumber) {
   		// request final confirmation of keepers before execution
   		echo "<p><button class=\"btn btn-primary\" name='confirmSave'
   		                 type=\"submit\">Confirm</button>&nbsp&nbsp
-  		         <button class=\"btn\" name='cancelAuction' type=\"submit\">Cancel</button>
-  		</p>";
+  		         <a href='manageKeepers.php?team_id=" . $_POST['keeper_teamid'] .
+  		                "' class='btn'>Cancel</a>
+              </p>";
   	} else {
-  		echo "<h4>Cannot save keepers! Please <a href='manageKeepers.php' class='btn btn-primary'>
-  		      try again</a></h4>";
+  		echo "<h4>Cannot save keepers! Please <a href='manageKeepers.php?team_id=" .
+  		    $_POST['keeper_teamid'] . "' class='btn btn-primary'>try again</a></h4>";
   	}
   } elseif(isset($_POST['confirmSave'])) {
   	// Re-create keeper scenario from session.
@@ -333,7 +345,8 @@ function removeBall(rowNumber) {
   	if ($keepers->validateKeepers()) {
   	  // Save keepers & report results.
   	  $keepers->saveKeepers();
-  	  echo "<a href='manageKeepers.php' class='btn btn-primary'>Let's do it again!</a><br/><br/>";
+  	  echo "<a href='manageKeepers.php?team_id=" . $_REQUEST['team_id'] . "'
+  	           class='btn btn-primary'>Let's do it again!</a><br/><br/>";
   	} else {
   	  echo "<h3>Cannot save keepers! Please <a href='manageKeepers.php'
   		    class='btn btn-primary'>try again</a></h3>";
@@ -354,20 +367,35 @@ function removeBall(rowNumber) {
   	echo "<br/><p class='ptop'>" . $team->getOwnersString() . "</p>";
   	echo "  </div>"; // span4
 
-  	// Brognas
+  	// Banking summary
     echo "<div class='span8'>
           <h4>Banking Summary</h4>";
-  	echo "<strong>" . $currentYear . " Bank:</strong> $" . $currentYearBrognas->getTotalPoints() .
+
+    // contracts to pay
+    echo "<h5>Contracts to Pay</h5>";
+    $contractsToPay = ContractDao::getContractsByTeamYear($team->getId(), $currentYear);
+    foreach ($contractsToPay as $contract) {
+      echo $contract->getDetails() . "<br/>";
+    }
+
+    // brognas
+    echo "<h5>Brognas to Bank</h5>";
+    $underContract = ContractDao::getTotalPriceByTeamYear($team->getId(), $currentYear);
+    echo "<strong>" . $currentYear . " Total Brognas:</strong> $" .
+        $currentYearBrognas->getTotalPoints() . "<br/>";
+    echo "<strong>Brognas Used for Contracts:</strong> $" . $underContract . "<br/>";
+    $bankedBrognas = ($currentYearBrognas->getTotalPoints() - $underContract);
+  	echo "<strong>" . $currentYear . " Bank:</strong> $" . $bankedBrognas .
     	" for " . $nextYear . " season<br/>";
   	echo "<strong>Allocate " . $nextYear . " budget:</strong> $" . Brogna::ANNUAL_ALLOCATION .
-  	   	" + $" . $currentYearBrognas->getTotalPoints() . " = $" .
-  	    (Brogna::ANNUAL_ALLOCATION + $currentYearBrognas->getTotalPoints()) . "<br/><br/>";
+  	   	" + $" . $bankedBrognas . " = $" .
+  	    (Brogna::ANNUAL_ALLOCATION + $bankedBrognas) . "<br/><br/>";
 
   	// Validate that banked brognas are <= max
   	$bankable = true;
-  	if ($currentYearBrognas->getTotalPoints() > Brogna::MAX_BANK) {
-  	  echo "<div class='alert alert-error'><strong>Error:</strong> Cannot bank more than " .
-  	      Brogna::MAX_BANK . " brognas</div>";
+  	if (($bankedBrognas < 0) || ($bankedBrognas > Brogna::MAX_BANK)) {
+  	  echo "<div class='alert alert-error'><strong>Error:</strong> Invalid banking amount
+  	      [$bankedBrognas]; must be between 1 and " . Brogna::MAX_BANK . " brognas</div>";
   	  $bankable = false;
   	}
 
@@ -379,10 +407,11 @@ function removeBall(rowNumber) {
       echo "<div class='alert alert-info'><strong>Once you confirm, this team
           will not be able to make any more keeper selections for " . $currentYear . "!</strong></div>";
       echo "<p><button class='btn btn-primary' name='confirmBank' type='submit'>Confirm</button>
-            &nbsp<button class='btn' name='cancelBank' type='submit'>Cancel</button></p><br/>";
+            &nbsp<a href='manageKeepers.php?team_id=" . $team->getId() . "' class='btn'
+                    name='cancelBank' type='submit'>Cancel</a>
+            </p><br/>";
 
       // show all contracted players to remain on team
-      // TODO show how much money from old contracts will be subtracted
       echo "<div class='row-fluid'>
               <div class='span6'>";
       displayPlayerTable(PlayerDao::getPlayersToBeKeptForKeepers($team, $currentYear),
@@ -396,7 +425,7 @@ function removeBall(rowNumber) {
   	  echo "  </div>
   	        </div>"; // span6, row-fluid
     } else {
-      echo "<h4>Cannot bank money! Please <a href='manageKeepers.php'
+      echo "<h4>Cannot bank money! Please <a href='manageKeepers.php?team_id=" . $team->getId() . "'
             class='btn btn-primary'>try again</a></h4>";
     }
   	echo "<input type='hidden' name='keeper_teamid' value='" . $team->getId() . "'>";
@@ -416,30 +445,44 @@ function removeBall(rowNumber) {
     echo "<div class='span8'>";
   	$currentYear = TimeUtil::getCurrentYear();
   	$nextYear = $currentYear + 1;
+    $timestamp = TimeUtil::getTimestampString();
+
+  	// pay off existing contracts
+  	echo "<h4>Paid Contracts</h4>";
+  	$contractsToPay = ContractDao::getContractsByTeamYear($team->getId(), $currentYear);
+  	foreach ($contractsToPay as $contract) {
+      echo "<strong>Paid: </strong>" . $contract->getDetails() . "<br/>";
+
+  	  // update changelog
+      ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_PAID_TYPE,
+          SessionUtil::getLoggedInUser()->getId(), $timestamp, $contract->getId(),
+          $team->getId(), null));
+  	}
 
   	// Show brognas banked from previous season.
-  	// TODO remove brognas from old contracts
   	$currentYearBrognas = BrognaDao::getBrognasByTeamAndYear($team->getId(), $currentYear);
-  	$bankedPoints = $currentYearBrognas->getTotalPoints();
-  	echo "<br/><strong>" . $currentYear . " Bank:</strong> $" . $bankedPoints .
+  	$totalBrognas = $currentYearBrognas->getTotalPoints();
+  	$underContract = ContractDao::getTotalPriceByTeamYear($team->getId(), $currentYear);
+  	$bankedBrognas = ($currentYearBrognas->getTotalPoints() - $underContract);
+  	echo "<h4>Bank</h4><strong>" . $currentYear . " Bank:</strong> $" . $bankedBrognas .
   	    " for " . $nextYear . " season";
 
   	// Save & display brogna info for next year
-  	$nextYearTotalPoints = $bankedPoints + Brogna::ANNUAL_ALLOCATION;
-  	$nextYearBrognas = new Brogna($team->getId(), $nextYear, $nextYearTotalPoints, $bankedPoints,
-  	    0, 0, Brogna::TRADEABLE + $bankedPoints);
+  	$nextYearTotalPoints = $bankedBrognas + Brogna::ANNUAL_ALLOCATION;
+  	$nextYearBrognas = new Brogna($team->getId(), $nextYear, $nextYearTotalPoints, $bankedBrognas,
+  	    0, 0, Brogna::TRADEABLE + $bankedBrognas);
   	BrognaDao::createBrognas($nextYearBrognas);
   	$team->displayBrognas($nextYear, $nextYear, false, 0, 'center');
 
   	// update changelog
   	ChangelogDao::createChange(new Changelog(-1, Changelog::BANK_TYPE,
-  	    SessionUtil::getLoggedInUser()->getId(), TimeUtil::getTimestampString(), $nextYear,
+  	    SessionUtil::getLoggedInUser()->getId(), $timestamp, $nextYear,
   	    $team->getId(), null));
 
   	echo "</div>"; // span8
     echo "</div>"; // row-fluid
 
-    // show all contracted players remaining on team
+    // show all players remaining on team
     echo "<div class='row-fluid'>
             <div class='span6'>";
     displayPlayerTable(PlayerDao::getPlayersToBeKeptForKeepers($team, $currentYear),
@@ -461,17 +504,19 @@ function removeBall(rowNumber) {
   	// clear out keeper session variables from previous keeper scenarios.
   	SessionUtil::clearSessionVarsWithPrefix("keeper_");
 
-    $teams = TeamDao::getAllTeams();
-    echo "<div class='chooser'><label for='team'>Select Team:</label>&nbsp
-          <select id='team' name='team' class='span6' onchange='showTeam(this.value)'>
-            <option value='0'></option>";
-    foreach ($teams as $team) {
-      echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
-          . " (" . $team->getAbbreviation() . ")</option>";
-    }
-    echo "</select></div>";
+  	// use team chooser with selected team
+  	echo "<br/>";
+  	TeamManager::displayChooser(TeamDao::getTeamById($teamId), true);
 
     echo "<div id='teamDisplay'></div>";
+?>
+
+<script>
+  // initialize teamDisplay with selected team
+  showTeam(document.getElementById("team_id").value);
+</script>
+
+<?php
   }
   echo "</div></div>
         </form>";

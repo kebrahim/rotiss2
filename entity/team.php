@@ -245,13 +245,13 @@ class Team {
   }
 
   /**
-   * Display non-auction contracts for the keeper page, filtered by year.
+   * Display contracts for the keeper page, filtered by year.
    */
   function displayContractsForKeepers($minYear, $maxYear, $readOnly) {
   	echo "<h4>Contracts</h4>";
 
   	$contracts = $this->filterContractsByYear(
-  	    ContractDao::getContractsByTeamId($this->teamId), $minYear, $maxYear, false);
+  	    ContractDao::getContractsByTeamId($this->teamId), $minYear, $maxYear, true);
 
   	echo "<div id='keeperdiv'";
   	if (count($contracts) == 0) {

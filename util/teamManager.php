@@ -12,14 +12,21 @@ class TeamManager {
    * Displays a team selection box inside a single span12 cell with the specified team selected.
    */
   public static function displayTeamChooser($selectedTeam) {
+    TeamManager::displayChooser($selectedTeam, false);
+  }
+
+  public static function displayChooser($selectedTeam, $hasNoTeam) {
   	echo "<div class='row-fluid'>
   	        <div class='span12 center chooser'>";
   	$allTeams = TeamDao::getAllTeams();
   	echo "<label for='team_id'>Choose team:</label>";
   	echo "<select id='team_id' name='team_id' class='span6' onchange='showTeam(this.value)'>";
+    if ($hasNoTeam) {
+      echo "<option value='0'></option>";
+    }
   	foreach ($allTeams as $team) {
   	  echo "<option value='" . $team->getId() . "'";
-  	  if ($team->getId() == $selectedTeam->getId()) {
+  	  if (($selectedTeam != null) && ($team->getId() == $selectedTeam->getId())) {
   	    echo " selected";
   	  }
   	  echo ">" . $team->getName() . " (" . $team->getAbbreviation() . ")</option>";

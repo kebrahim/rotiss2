@@ -103,8 +103,8 @@ class ContractScenario {
     }
 
     // confirm contract with id = 0 wasn't selected and same contract wasn't added twice
-    $contractIds = array();
     if ($this->pickedUpContracts) {
+      $contractIds = array();
       foreach ($this->pickedUpContracts as $contract) {
         if ($contract == null) {
           $this->printError("Invalid contract to be picked up!");
