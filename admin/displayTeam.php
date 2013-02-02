@@ -419,7 +419,7 @@
   	  }
 
   	  // show leftover brognas
-  	  echo "<label>Cash Balance for " . ($brogna->getYear() + 1) . ": </label>" .
+  	  echo "<label>Available Brognas: </label>" .
           ($brogna->getTotalPoints() - $contractTotal) . "<br/><br/>";
       // TODO budget: should bank from previous year be calculated?
 

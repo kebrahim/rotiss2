@@ -170,7 +170,7 @@
   	$isSelected = (!$isNew && ($player->getFantasyTeam() != null) &&
   	    ($team->getId() == $player->getFantasyTeam()->getId()));
   	echo "<option value='" . $team->getId() . "'" . ($isSelected ? " selected" : "") .
-  	">" . $team->getName() . " (" . $team->getAbbreviation() . ")</option>";
+  	">" . $team->getAbbreviation() . " (" . $team->getName() . ")</option>";
   }
   echo "</select></td></tr>";
 

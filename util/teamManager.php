@@ -29,7 +29,7 @@ class TeamManager {
   	  if (($selectedTeam != null) && ($team->getId() == $selectedTeam->getId())) {
   	    echo " selected";
   	  }
-  	  echo ">" . $team->getName() . " (" . $team->getAbbreviation() . ")</option>";
+  	  echo ">" . $team->getAbbreviation() . " (" . $team->getName() . ")</option>";
   	}
   	echo "</select>";
   	echo "</div>"; // span12
@@ -59,7 +59,7 @@ class TeamManager {
       if (($selectedTeam != null) && ($team->getId() == $selectedTeam->getId())) {
         echo " selected";
       }
-      echo ">" . $team->getName() . " (" . $team->getAbbreviation() . ")</option>";
+      echo ">" . $team->getAbbreviation() . " (" . $team->getName() . ")</option>";
     }
     echo "</select>";
     echo "</div>"; // span12

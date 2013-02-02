@@ -159,8 +159,8 @@ function selectTeam(position, teamid) {
                   onchange='selectTeam($teamNum, this.value)'>
             <option value='0'></option>";
     foreach ($teams as $team) {
-      echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
-          . " (" . $team->getAbbreviation() . ")</option>";
+      echo "<option value='" . $team->getId() . "'" . ">" . $team->getAbbreviation()
+          . " (" . $team->getName() . ")</option>";
     }
     echo "</select></div>"; // chooser
     echo "<div id='teamDisplay$teamNum'></div>";

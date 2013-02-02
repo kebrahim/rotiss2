@@ -101,7 +101,9 @@
   if ($fantasyTeam == null) {
   	echo "--";
   } else {
-  	echo $fantasyTeam->getNameLink(true) . "&nbsp&nbsp" . $fantasyTeam->getSportslineImg(32);
+  	echo $fantasyTeam->getIdLink(
+  	    true, $fantasyTeam->getAbbreviation() . " (" . $fantasyTeam->getName() . ")") .
+  	"&nbsp&nbsp" . $fantasyTeam->getSportslineImg(32);
   }
   echo "</td></tr>";
 

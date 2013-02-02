@@ -204,8 +204,8 @@ function showTeam(teamId) {
           <select name='team' class='span8 smallfonttable' onchange='showTeam(this.value)'>
                            <option value='0'></option>";
     foreach ($teams as $team) {
-      echo "<option value='" . $team->getId() . "'" . ">" . $team->getName()
-          . " (" . $team->getAbbreviation() . ")</option>";
+      echo "<option value='" . $team->getId() . "'" . ">" . $team->getAbbreviation()
+          . " (" . $team->getName() . ")</option>";
     }
     echo "</select></div>"; // chooser
     echo "<div id='teamDisplay'></div>";
