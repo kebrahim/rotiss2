@@ -4,9 +4,11 @@ Release Notes
 v2.1.1
 - visible
  - brognas committed to contracts and available for spending shown on team page
+ - all users can see all teams budget on single page, including extra picks
  - admins can pickup, drop contracts
  - all contracts are paid on keeper night, when money is banked
-  
+ - all users can see changelog via 'Hi <User>' dropdown
+ 
 - db
  - updated tables:
    - changelog

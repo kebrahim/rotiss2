@@ -1,27 +1,25 @@
 <?php
-  require_once '../util/sessions.php';
-  require_once '../util/time.php';
+  require_once 'util/sessions.php';
+  require_once 'util/time.php';
 
-  SessionUtil::checkUserIsLoggedInAdmin();
   // if year is not specified, use the year based on keeper night.
-  $redirectUrl = "admin/manageBrognas.php";
+  $redirectUrl = "allBudgetPage.php";
   if (isset($_REQUEST["year"])) {
   	$year = $_REQUEST["year"];
   	$redirectUrl .="?year=$year";
   } else {
-  	$year = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT);
+  	$year = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT) + 1;
   }
   SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
 
 <!DOCTYPE html>
 <html>
-<head>
-<title>St Pete's Rotiss - Manage Brognas</title>
-<link href='../css/bootstrap.css' rel='stylesheet' type='text/css'>
-<link href='../css/stpetes.css' rel='stylesheet' type='text/css'>
-<link rel="shortcut icon" href="../img/background-tiles-01.png" />
-</head>
+
+<?php
+  require_once 'util/layout.php';
+  LayoutUtil::displayHeadTag("All Budgets", true);
+?>
 
 <script>
 // shows the draft page for the specified year
@@ -34,7 +32,7 @@ function showYear(year) {
 
 	// Display team information.
 	getRedirectHTML(document.getElementById("yearDisplay"),
-	    "displayYear.php?type=brognas&year=" + year + "&admin");
+	    "admin/displayYear.php?type=brognas&year=" + year);
 }
 
 // populates the innerHTML of the specified elementId with the HTML returned by the specified
@@ -59,12 +57,11 @@ function getRedirectHTML(element, htmlString) {
 <body>
 
 <?php
-  require_once '../dao/brognaDao.php';
-  require_once '../util/layout.php';
-  require_once '../util/yearManager.php';
+  require_once 'dao/brognaDao.php';
+  require_once 'util/yearManager.php';
 
   // Nav bar
-  LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_BROGNAS_BUTTON);
+  LayoutUtil::displayNavBar(true, LayoutUtil::BUDGET_BUTTON);
 
   // allow user to choose year.
   YearManager::displayYearChooser($year, BrognaDao::getMinimumYear(), BrognaDao::getMaximumYear());
@@ -77,10 +74,9 @@ function getRedirectHTML(element, htmlString) {
 </script>
 
 <?php
-  // TODO should this be editable?
 
   // Footer
-  LayoutUtil::displayAdminFooter();
+  LayoutUtil::displayFooter();
 ?>
 
 </body>

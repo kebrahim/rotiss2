@@ -346,7 +346,9 @@
   	foreach ($brognas as $brogna) {
   	  echo "<a href='#" . $brogna->getYear() . "'>" . $brogna->getYear() . "</a>&nbsp&nbsp";
   	}
-    echo "  </div>
+  	// link to all budget page
+  	echo "<a href='allBudgetPage.php' class='btn btn-primary'>All Budgets</a>";
+  	echo "  </div>
   	      </div>";
   	echo "</div>"; // row-fluid
 

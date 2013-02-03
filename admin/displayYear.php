@@ -210,10 +210,10 @@
   /**
    * Displays the brogna breakdown for all teams in the specified year.
    */
-  function displayBrognaYear($year) {
+  function displayBrognaYear($year, $isAdmin) {
   	echo "<div class='row-fluid'>
    	        <div class='span6 offset3 center'>
-  	          <h3>Manage $year Team Budgets</h3>";
+  	          <h3>" . ($isAdmin ? "Manage " : "") . "$year Team Budgets</h3>";
   	echo "  </div>
   	      </div>
   	      <div class='row-fluid'>
@@ -328,7 +328,12 @@
   } else if ($displayType == "auction") {
   	displayAuctionYear($year, $loggedInTeamId);
   } else if ($displayType == "brognas") {
-  	displayBrognaYear($year);
+    if (isset($_REQUEST["admin"])) {
+  	  $isAdmin = true;
+  	} else {
+  	  $isAdmin = false;
+  	}
+    displayBrognaYear($year, $isAdmin);
   } else if ($displayType == "managedraft") {
   	if (isset($_REQUEST["round"])) {
   	  $round = $_REQUEST["round"];
