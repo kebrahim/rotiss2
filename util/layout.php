@@ -259,7 +259,9 @@ class LayoutUtil {
               <div class=\"row\">
                 <div class=\"span4 center muted credit\"
                      title='Released: " . ConfigUtil::getReleaseDate() . "'>
-                  St. Pete's Rotiss v" . ConfigUtil::getVersion() . "
+                  v" . ConfigUtil::getVersion() .
+                  " (<a href='http://en.wikipedia.org/wiki/" . ConfigUtil::getCodename() . "'
+                        target='_blank'>" . ConfigUtil::getCodename() . "</a>)
                 </div>
                 <div class=\"span4 center\">
                   <img src='" . ($isTopLevel ? "" : "../") . "img/rotiss2.jpg' width='250' />

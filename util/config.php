@@ -12,6 +12,7 @@ class ConfigUtil {
   const ENVIRONMENT = 'environment';
   const RELEASE_DATE = 'release_date';
   const VERSION = 'version';
+  const CODENAME = 'codename';
 
   // features
   const KEEPER_FEATURE = 'keeper_feature';
@@ -21,6 +22,13 @@ class ConfigUtil {
    */
   public static function getVersion() {
     return ConfigUtil::getValueFromVersionFile(ConfigUtil::VERSION);
+  }
+
+  /**
+   * Returns the version codename.
+   */
+  public static function getCodename() {
+    return ConfigUtil::getValueFromVersionFile(ConfigUtil::CODENAME);
   }
 
   /**

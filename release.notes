@@ -1,13 +1,15 @@
 Release Notes
 -------------
 
-v2.1.1
+v2.1.1 (2/3/13)
+codename: cockapoo
 - visible
  - brognas committed to contracts and available for spending shown on team page
  - all users can see all teams budget on single page, including extra picks
  - admins can pickup, drop contracts
  - all contracts are paid on keeper night, when money is banked
  - all users can see changelog via 'Hi <User>' dropdown
+ - owner name appears before team name in team dropdowns
  
 - db
  - updated tables:
@@ -15,6 +17,7 @@ v2.1.1
      - added 'Contract Pickup', 'Contract Drop', 'Contract Paid' change types
 
 v2.1.0 (1/14/13)
+codename: bernese mountain dog
 - visible
  - links to CBS and baseball-reference on player page
  - added admin page to save keeper contracts [including free minor league contract], buy balls,
@@ -38,3 +41,8 @@ v2.1.0 (1/14/13)
  - updated tables:
     - contract
         - more options for contract_type column
+
+ v2.0.0 (1/4/13)
+ codename: alaskan malamute
+ - initial launch
+ 
