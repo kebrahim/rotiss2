@@ -11,20 +11,21 @@ class LayoutUtil {
   const DRAFT_BUTTON = 6;
   const AUCTION_BUTTON = 7;
   const EDIT_PROFILE_BUTTON = 8;
-  const ADMIN_BUTTON = 9;
-  const MANAGE_ROSTERS_BUTTON = 10;
-  const MANAGE_TRADE_BUTTON = 11;
-  const MANAGE_AUCTION_BUTTON = 12;
-  const MANAGE_KEEPERS_BUTTON = 13;
-  const MANAGE_BROGNAS_BUTTON = 14;
-  const MANAGE_TEAM_BUTTON = 15;
-  const MANAGE_DRAFT_BUTTON = 16;
-  const MANAGE_PLACEHOLDERS_BUTTON = 17;
-  const MANAGE_RANKS_BUTTON = 18;
-  const MANAGE_PLAYER_BUTTON = 19;
-  const MANAGE_EVENTS_BUTTON = 20;
-  const MANAGE_CHANGES_BUTTON = 21;
-  const MANAGE_CONTRACTS_BUTTON = 22;
+  const MY_CHANGES_BUTTON = 9;
+  const ADMIN_BUTTON = 10;
+  const MANAGE_ROSTERS_BUTTON = 11;
+  const MANAGE_TRADE_BUTTON = 12;
+  const MANAGE_AUCTION_BUTTON = 13;
+  const MANAGE_KEEPERS_BUTTON = 14;
+  const MANAGE_BROGNAS_BUTTON = 15;
+  const MANAGE_TEAM_BUTTON = 16;
+  const MANAGE_DRAFT_BUTTON = 17;
+  const MANAGE_PLACEHOLDERS_BUTTON = 18;
+  const MANAGE_RANKS_BUTTON = 19;
+  const MANAGE_PLAYER_BUTTON = 20;
+  const MANAGE_EVENTS_BUTTON = 21;
+  const MANAGE_CHANGES_BUTTON = 22;
+  const MANAGE_CONTRACTS_BUTTON = 23;
 
   /**
    * Displays the <head> tag for a page, including the specified title.
@@ -119,7 +120,8 @@ class LayoutUtil {
   }
 
   private static function displayProfileDropdown($isTopLevel, $selectedButton) {
-    $dropdownSelected = ($selectedButton == self::EDIT_PROFILE_BUTTON);
+    $dropdownSelected = ($selectedButton >= self::EDIT_PROFILE_BUTTON) &&
+        ($selectedButton < self::ADMIN_BUTTON);
   	$user = SessionUtil::getLoggedInUser();
   	echo "<ul class='nav pull-right'>
   	        <li class=\"divider-vertical\"></li>
@@ -131,12 +133,18 @@ class LayoutUtil {
   	            Hi " . $user->getFirstName() . "!&nbsp<b class='caret'></b></a>";
   	echo "<ul class='dropdown-menu'>
   	        <li";
-  	if ($dropdownSelected) {
+  	if ($selectedButton == self::EDIT_PROFILE_BUTTON) {
   	  echo " class='active'";
   	}
   	echo "><a href='" . ($isTopLevel ? "" : "../") .
   	            "editProfilePage.php'><i class=\"icon-edit\"></i>&nbsp&nbspEdit profile</a></li>
-  	        <li class=\"divider\"></li>
+  	        <li";
+  	if ($selectedButton == self::MY_CHANGES_BUTTON) {
+  	  echo " class='active'";
+  	}
+  	echo "><a href='" . ($isTopLevel ? "" : "../") .
+  	            "changesPage.php'><i class=\"icon-list-alt\"></i>&nbsp&nbspMy Changes</a></li>
+  	            <li class=\"divider\"></li>
   	        <li><a href='" . ($isTopLevel ? "" : "../") . "logoutPage.php'>
   	            <i class=\"icon-eject\"></i>&nbsp&nbspSign out</a></li>
   	      </ul>
