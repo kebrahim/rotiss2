@@ -131,21 +131,29 @@ class LayoutUtil {
   	}
     echo "'><a href='#' class='dropdown-toggle  profiledropdown' data-toggle='dropdown'>
   	            Hi " . $user->getFirstName() . "!&nbsp<b class='caret'></b></a>";
-  	echo "<ul class='dropdown-menu'>
-  	        <li";
-  	if ($selectedButton == self::EDIT_PROFILE_BUTTON) {
-  	  echo " class='active'";
-  	}
-  	echo "><a href='" . ($isTopLevel ? "" : "../") .
-  	            "editProfilePage.php'><i class=\"icon-edit\"></i>&nbsp&nbspEdit profile</a></li>
-  	        <li";
+  	echo "<ul class='dropdown-menu'>";
+
+  	// Edit profile if not demo account
+  	if (!SessionUtil::getLoggedInUser()->isDemo()) {
+  	  echo "<li";
+  	  if ($selectedButton == self::EDIT_PROFILE_BUTTON) {
+  	    echo " class='active'";
+  	  }
+  	  echo "><a href='" . ($isTopLevel ? "" : "../") .
+  	            "editProfilePage.php'><i class=\"icon-edit\"></i>&nbsp&nbspEdit profile</a></li>";
+    }
+
+    // My changes
+  	echo "<li";
   	if ($selectedButton == self::MY_CHANGES_BUTTON) {
   	  echo " class='active'";
   	}
   	echo "><a href='" . ($isTopLevel ? "" : "../") .
   	            "changesPage.php'><i class=\"icon-list-alt\"></i>&nbsp&nbspMy Changes</a></li>
-  	            <li class=\"divider\"></li>
-  	        <li><a href='" . ($isTopLevel ? "" : "../") . "logoutPage.php'>
+  	            <li class=\"divider\"></li>";
+
+  	// Sign out
+  	echo "<li><a href='" . ($isTopLevel ? "" : "../") . "logoutPage.php'>
   	            <i class=\"icon-eject\"></i>&nbsp&nbspSign out</a></li>
   	      </ul>
   	      </li></ul>";

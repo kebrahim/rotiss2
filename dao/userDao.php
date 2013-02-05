@@ -23,7 +23,8 @@ class UserDao {
     CommonDao::connectToDb();
     $query = "select u.*
     	      from user u
-              where u.team_id = $teamId";
+              where u.team_id = $teamId
+              and u.is_demo = '0'";
     return UserDao::createUsersFromQuery($query);
   }
 
@@ -64,7 +65,7 @@ class UserDao {
     while($userDb = mysql_fetch_assoc($res)) {
       $usersDb[] = new User($userDb["user_id"], $userDb["username"], $userDb["password"],
           $userDb["first_name"], $userDb["last_name"], $userDb["email"], $userDb["team_id"],
-          $userDb["is_admin"], $userDb["is_super_admin"]);
+          $userDb["is_admin"], $userDb["is_super_admin"], $userDb["is_demo"]);
     }
     return $usersDb;
   }

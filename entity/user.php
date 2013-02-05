@@ -18,9 +18,10 @@ class User {
   private $team;
   private $isAdmin;
   private $isSuperAdmin;
+  private $isDemo;
 
   public function __construct($userId, $username, $password, $firstName, $lastName, $email,
-      $teamId, $isAdmin, $isSuperAdmin) {
+      $teamId, $isAdmin, $isSuperAdmin, $isDemo) {
     $this->userId = $userId;
     $this->username = $username;
     $this->password = $password;
@@ -31,6 +32,7 @@ class User {
     $this->teamLoaded = false;
     $this->isAdmin = $isAdmin;
     $this->isSuperAdmin = $isSuperAdmin;
+    $this->isDemo = $isDemo;
   }
 
   public function getId() {
@@ -95,6 +97,10 @@ class User {
 
   public function isSuperAdmin() {
     return $this->isSuperAdmin;
+  }
+
+  public function isDemo() {
+    return $this->isDemo;
   }
 }
 ?>
