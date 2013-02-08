@@ -1,5 +1,6 @@
 <?php
 class CommonDao {
+  // TODO make this class abstract
 
   // TODO remove passwords from file
   static function connectToDb() {
@@ -24,7 +25,11 @@ class CommonDao {
     chdir($now_at_dir);
   }
 
-  static function getCountValue($query) {
+  /**
+   * Returns the integer value [count, min, max] retrieved from the specified query.
+   */
+  static function getIntegerValueFromQuery($query) {
+    CommonDao::connectToDb();
     $res = mysql_query($query);
     $row = mysql_fetch_row($res);
     return $row[0];

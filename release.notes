@@ -8,9 +8,11 @@ codename: dachshund
 - db
  - updated tables
   - changelog
-   - change type 'Contract' -> 'Contract Signed'
+   - change type 'Contract' -> 'Contract Signed' [update rows with 'Contract' type]
   - user
    - added new is_demo column
+  - draft_pick
+   - added new is_seltzer_cutoff column
 
 v2.1.1 (2/3/13)
 codename: cockapoo

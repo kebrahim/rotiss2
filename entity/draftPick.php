@@ -21,13 +21,14 @@ class DraftPick {
   private $playerId;
   private $playerLoaded;
   private $player;
+  private $isSeltzerCutoff;
 
   const EXTRA_PICK_ROUND_CUTOFF = 5;
   const MAX_EXTRA_PICKS = 3;
-  const SELTZER_CUTOFF = 201; // TODO what is this number?
+  const SELTZER_CUTOFF = 200;
 
   public function __construct($draftPickId, $teamId, $year, $round, $pick, $originalTeamId,
-      $playerId) {
+      $playerId, $isSeltzerCutoff) {
     $this->draftPickId = $draftPickId;
     $this->teamId = $teamId;
     $this->year = $year;
@@ -35,6 +36,7 @@ class DraftPick {
     $this->pick = $pick;
     $this->originalTeamId = $originalTeamId;
     $this->playerId = $playerId;
+    $this->isSeltzerCutoff = $isSeltzerCutoff;
   }
 
   public function getId() {
@@ -149,6 +151,10 @@ class DraftPick {
       return "--";
     }
     return $this->getPlayer()->getNameLink(true);
+  }
+
+  public function isSeltzerCutoff() {
+    return $this->isSeltzerCutoff;
   }
 
   public function __toString() {

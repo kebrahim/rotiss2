@@ -148,6 +148,9 @@ table th {background-color: #faaf40; color:white;}
 .table-striped .row_missing td {
     background-color:#F2DEDE !important;
 }
+.table-striped .warning td {
+    background-color:#F2DEDE !important;
+}
 .table-striped td.warning {
     background-color:#F2DEDE !important;
 }

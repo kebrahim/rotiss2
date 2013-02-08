@@ -11,63 +11,64 @@ class DraftPickDao {
    * Returns all of the draft picks belonging to the specified team.
    */
   public static function getDraftPicksByTeamId($team_id) {
-    CommonDao::connectToDb();
-    $query = "select D.draft_pick_id, D.team_id, D.year, D.round, D.pick, D.original_team_id,
-                D.player_id
-              from draft_pick D
-              where D.team_id = $team_id
-              order by D.year, D.round, D.pick";
-    return DraftPickDao::createDraftPicksByQuery($query);
+    return DraftPickDao::createDraftPicksByQuery(
+        "select D.*
+        from draft_pick D
+        where D.team_id = $team_id
+        order by D.year, D.round, D.pick");
   }
 
   /**
    * Returns all of the draft picks in the specified year.
    */
   public static function getDraftPicksByYear($year) {
-    CommonDao::connectToDb();
-    $query = "select D.draft_pick_id, D.team_id, D.year, D.round, D.pick, D.original_team_id,
-                D.player_id
-              from draft_pick D
-              where D.year = $year
-              order by D.round, D.pick";
-    return DraftPickDao::createDraftPicksByQuery($query);
+    return DraftPickDao::createDraftPicksByQuery(
+        "select D.*
+         from draft_pick D
+         where D.year = $year
+         order by D.round, D.pick");
   }
 
   /**
    * Returns all of the draft picks in the specified year and specified round.
    */
   public static function getDraftPicksByYearRound($year, $round) {
-  	CommonDao::connectToDb();
-  	$query = "select D.draft_pick_id, D.team_id, D.year, D.round, D.pick, D.original_team_id,
-  	                 D.player_id
-  	          from draft_pick D
-  	          where D.year = $year and D.round = $round
-  	          order by D.pick";
-  	return DraftPickDao::createDraftPicksByQuery($query);
+  	return DraftPickDao::createDraftPicksByQuery(
+  	    "select D.*
+  	     from draft_pick D
+  	     where D.year = $year and D.round = $round
+  	     order by D.pick");
   }
 
   /**
    * Returns the draft pick identified by the specified id.
    */
   public static function getDraftPickById($draftPickId) {
-    CommonDao::connectToDb();
-    $query = "select D.draft_pick_id, D.team_id, D.year, D.round, D.pick, D.original_team_id,
-                     D.player_id
-              from draft_pick D
-              where D.draft_pick_id = $draftPickId";
-    $draft_picks = DraftPickDao::createDraftPicksByQuery($query);
-    return $draft_picks[0];
+    return DraftPickDao::createDraftPickByQuery(
+        "select D.*
+         from draft_pick D
+         where D.draft_pick_id = $draftPickId");
   }
 
   /**
    * Returns the draft pick of the specified player during the specified year.
    */
   public static function getDraftPickByPlayer($playerId, $year) {
-    CommonDao::connectToDb();
-    $query = "select d.*
-              from draft_pick d
-              where d.player_id = $playerId and d.year = $year";
-    return DraftPickDao::createDraftPickByQuery($query);
+    return DraftPickDao::createDraftPickByQuery(
+        "select d.*
+         from draft_pick d
+         where d.player_id = $playerId and d.year = $year");
+  }
+
+  /**
+   * Returns the seltzer cutoff draft pick for the specified year: this pick and everything after
+   * are eligible for seltzer contracts.
+   */
+  public static function getSeltzerCutoffPick($year) {
+    return DraftPickDao::createDraftPickByQuery(
+        "select d.*
+         from draft_pick d
+         where d.year = $year and d.is_seltzer_cutoff = 1");
   }
 
   private static function createDraftPickByQuery($query) {
@@ -79,58 +80,52 @@ class DraftPickDao {
   }
 
   private static function createDraftPicksByQuery($query) {
-    $draft_picks_db = mysql_query($query);
-
+    CommonDao::connectToDb();
+    $res = mysql_query($query);
     $draft_picks = array();
-    while ($draft_pick_db = mysql_fetch_row ($draft_picks_db)) {
-      $draft_picks[] = new DraftPick($draft_pick_db[0], $draft_pick_db[1], $draft_pick_db[2],
-      $draft_pick_db[3], $draft_pick_db[4], $draft_pick_db[5], $draft_pick_db[6]);
+    while($draftPickDb = mysql_fetch_assoc($res)) {
+      $draft_picks[] = DraftPickDao::populateDraftPick($draftPickDb);
     }
     return $draft_picks;
+  }
+
+  private static function populateDraftPick($draftPickDb) {
+    return new DraftPick($draftPickDb["draft_pick_id"], $draftPickDb["team_id"],
+        $draftPickDb["year"], $draftPickDb["round"], $draftPickDb["pick"],
+        $draftPickDb["original_team_id"], $draftPickDb["player_id"],
+        $draftPickDb["is_seltzer_cutoff"]);
   }
 
   /**
    * Returns the earliest draft year.
    */
   public static function getMinimumDraftYear() {
-    CommonDao::connectToDb();
-    $query = "select min(year) from draft_pick";
-    $res = mysql_query($query);
-    $row = mysql_fetch_row($res);
-    return $row[0];
+    return CommonDao::getIntegerValueFromQuery(
+        "select min(year) from draft_pick");
   }
 
   /**
    * Returns the latest draft year.
    */
   public static function getMaximumDraftYear() {
-    CommonDao::connectToDb();
-    $query = "select max(year) from draft_pick";
-    $res = mysql_query($query);
-    $row = mysql_fetch_row($res);
-    return $row[0];
+    return CommonDao::getIntegerValueFromQuery(
+        "select max(year) from draft_pick");
   }
 
   /**
    * Returns the earliest round in the specified draft year.
    */
   public static function getMinimumRound($year) {
-    CommonDao::connectToDb();
-    $query = "select min(round) from draft_pick where year = $year";
-    $res = mysql_query($query);
-    $row = mysql_fetch_row($res);
-    return $row[0];
+    return CommonDao::getIntegerValueFromQuery(
+        "select min(round) from draft_pick where year = $year");
   }
 
   /**
    * Returns the latest round in the specified draft year.
    */
   public static function getMaximumRound($year) {
-    CommonDao::connectToDb();
-    $query = "select max(round) from draft_pick where year = $year";
-    $res = mysql_query($query);
-    $row = mysql_fetch_row($res);
-    return $row[0];
+    return CommonDao::getIntegerValueFromQuery(
+        "select max(round) from draft_pick where year = $year");
   }
 
   /**
@@ -138,15 +133,12 @@ class DraftPickDao {
    * during the specified round.
    */
   public static function getNumberPicksByTeamByRound($year, $teamId, $round) {
-    CommonDao::connectToDb();
-    $query = "select count(*)
-      	      from draft_pick D
-      	      where D.year = $year
-      	      and D.team_id = $teamId
-      	      and D.round <= $round";
-    $res = mysql_query($query);
-    $row = mysql_fetch_row($res);
-    return $row[0];
+    return CommonDao::getIntegerValueFromQuery(
+        "select count(*)
+      	 from draft_pick D
+      	 where D.year = $year
+      	 and D.team_id = $teamId
+      	 and D.round <= $round");
   }
 
   /**
@@ -154,14 +146,15 @@ class DraftPickDao {
    */
   public static function createDraftPick(DraftPick $draftPick) {
     CommonDao::connectToDb();
-  	$query = "insert into draft_pick(team_id, year, round, pick, original_team_id, player_id)
-  	    values (" .
+  	$query = "insert into draft_pick(team_id, year, round, pick, original_team_id, player_id,
+  	                                 is_seltzer_cutoff) values (" .
   	        $draftPick->getTeamId() . ", " .
   	        $draftPick->getYear() . ", " .
   	        $draftPick->getRound() . ", " .
   	        ($draftPick->getPick() == null ? "null" : $draftPick->getPick()) . ", " .
   	        $draftPick->getOriginalTeamId() . ", " .
-  	        $draftPick->getPlayerId() . ")";
+  	        $draftPick->getPlayerId(). ", " .
+  	        ($draftPick->isSeltzerCutoff() ? "1" : "0") . ")";
   	$result = mysql_query($query);
   	if (!$result) {
   	  echo "Draft pick " . $draftPick->toString() . " already exists in DB. Try again.";
@@ -184,10 +177,12 @@ class DraftPickDao {
     $query = "update draft_pick set team_id = " . $draftPick->getTeam()->getId() . ",
                                     year = " . $draftPick->getYear() . ",
                                     round = " . $draftPick->getRound() . ",
-                                    pick = " . ($draftPick->getPick() == null ?
+                                    pick = " . (($draftPick->getPick() == null) ?
                                     		   "null" : $draftPick->getPick()) . ",
                                     original_team_id = " . $draftPick->getOriginalTeamId() . ",
-                                    player_id = " . $draftPick->getPlayerId() .
+                                    player_id = " . $draftPick->getPlayerId() . ",
+                                    is_seltzer_cutoff = " .
+                                        ($draftPick->isSeltzerCutoff() ? "1" : "0") .
              " where draft_pick_id = " . $draftPick->getId();
     return mysql_query($query);
   }

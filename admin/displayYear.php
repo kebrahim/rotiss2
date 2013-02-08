@@ -48,7 +48,9 @@
   	  $draftPicks = DraftPickDao::getDraftPicksByYear($year);
   	  foreach ($draftPicks as $draftPick) {
   		echo "<tr";
-  		if ($draftPick->getTeam()->getId() == $loggedInTeamId) {
+  		if ($draftPick->isSeltzerCutoff()) {
+  		  echo " class='warning'";
+  		} else if ($draftPick->getTeam()->getId() == $loggedInTeamId) {
   		  echo " class='selected_team_row'";
   	    }
   	    echo "><td>" . $draftPick->getRound() . "</td>
@@ -136,7 +138,11 @@
   	} else {
       $draftPicks = DraftPickDao::getDraftPicksByYearRound($year, $round);
   	  foreach ($draftPicks as $draftPick) {
-  		echo "<tr class='tdselect'>
+  		echo "<tr class='tdselect";
+        if ($draftPick->isSeltzerCutoff()) {
+          echo " warning";
+        }
+  		echo "'>
   		       <td>" . getPickDropdown(
   		           $draftPick->getPick(), $draftPick->getId(), count($draftPicks)) . "</td>
   		       <td>" . $draftPick->getTeam()->getNameLink(false) . "</td>

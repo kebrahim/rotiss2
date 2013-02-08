@@ -287,11 +287,12 @@ class PlayerDao {
   /**
    * Returns true if the specified player was drafted before the seltzer cutoff in the specified
    * year.
+   *
+   * WARNING: This will break if the cutoff pick is in the ping pong round.
    */
   public static function draftedBeforeSeltzerCutoff($playerId, $year) {
-    CommonDao::connectToDb();
     $ppQuery = "select count(*) from ping_pong where year = $year and player_id = $playerId";
-    if (CommonDao::getCountValue($ppQuery) > 0) {
+    if (CommonDao::getIntegerValueFromQuery($ppQuery) > 0) {
       return true;
     }
 
@@ -299,10 +300,15 @@ class PlayerDao {
     if ($draftPick == null) {
       return false;
     } else {
-      // TODO include pingpong balls?
-      $overallPick = (($draftPick->getRound() - 1) * 16) + $draftPick->getPick();
-      return $overallPick < DraftPick::SELTZER_CUTOFF;
+      $cutoffPick = DraftPickDao::getSeltzerCutoffPick($year);
+      if (($cutoffPick == null) ||                                // no cutoff pick
+          ($cutoffPick->getRound() < $draftPick->getRound()) ||   // cutoff in earlier round
+          (($cutoffPick->getRound() == $draftPick->getRound()) && // cutoff same round, earlier pick
+           ($cutoffPick->getPick() <= $draftPick->getPick()))) {
+        return false;
+      }
     }
+    return true;
   }
 
   private static function createPlayerFromQuery($query) {
