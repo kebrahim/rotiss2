@@ -11,26 +11,62 @@ class ContractScenario {
   private $team;
   private $droppedContracts;
   private $pickedUpContracts;
-  private $seltzerContracts;
+  private $seltzerContract;
+
+  public function getTeamId() {
+    if ($this->team != null) {
+      return $this->team->getId();
+    }
+    return 0;
+  }
 
   public function parseContractsFromPost() {
-    $this->team = TeamDao::getTeamById($_POST['contract_teamid']);
-    $this->droppedContracts = $this->parseDroppedContracts($_POST, true);
-    $this->pickedUpContracts = $this->parsePickedUpContracts($_POST, true);
-
-    // TODO parse seltzer contracts
-
-    SessionUtil::updateSession('contract_teamid', $_POST, true);
+    $this->parseContractsFromArray($_POST, true);
   }
 
   public function parseContractsFromSession() {
-    $this->team = TeamDao::getTeamById($_SESSION['contract_teamid']);
-    $this->droppedContracts = $this->parseDroppedContracts($_SESSION, false);
-    $this->pickedUpContracts = $this->parsePickedUpContracts($_SESSION, false);
+    $this->parseContractsFromArray($_SESSION, false);
+  }
 
-    // TODO parse seltzer contracts
+  private function parseContractsFromArray($assocArray, $isPost) {
+    if (array_key_exists("contract_savedcontractcount", $assocArray)) {
+      $this->team = TeamDao::getTeamById($assocArray['contract_teamid']);
+      $this->droppedContracts = $this->parseDroppedContracts($assocArray, $isPost);
+      $this->pickedUpContracts = $this->parsePickedUpContracts($assocArray, $isPost);
+      SessionUtil::updateSession('contract_teamid', $assocArray, $isPost);
+    }
 
-    SessionUtil::updateSession('contract_teamid', $_SESSION, false);
+    if (array_key_exists("seltzer_player", $assocArray)) {
+      $this->team = TeamDao::getTeamById($assocArray['seltzer_teamid']);
+      $this->seltzerContract = $this->parseSeltzerContract($assocArray, $isPost);
+      SessionUtil::updateSession('seltzer_teamid', $assocArray, $isPost);
+    }
+  }
+
+  private function parseSeltzerContract($assocArray, $isPost) {
+    $playerKey = 'seltzer_player';
+    $typeKey = 'seltzer_type';
+    $yearKey = 'seltzer_length';
+    $priceKey = 'seltzer_price';
+
+    $contractType = null;
+    if (intval($assocArray[$typeKey]) == 1) {
+      $contractType = Contract::SELTZER_TYPE;
+    } else if (intval($assocArray[$typeKey]) == 2) {
+      $contractType = Contract::MINOR_SELTZER_TYPE;
+    }
+    $numYears = intval($assocArray[$yearKey]);
+    $startYear = TimeUtil::getCurrentYear() + 1;
+    $seltzerContract = new Contract(-1, $assocArray[$playerKey], $this->team->getId(), $numYears,
+        $assocArray[$priceKey], TimeUtil::getTodayString(), $startYear,
+        ($startYear + $numYears) - 1, false, $contractType);
+
+    SessionUtil::updateSession($playerKey, $assocArray, $isPost);
+    SessionUtil::updateSession($typeKey, $assocArray, $isPost);
+    SessionUtil::updateSession($yearKey, $assocArray, $isPost);
+    SessionUtil::updateSession($priceKey, $assocArray, $isPost);
+
+    return $seltzerContract;
   }
 
   private function parseDroppedContracts($assocArray, $isPost) {
@@ -48,8 +84,16 @@ class ContractScenario {
   private function parsePickedUpContracts($assocArray, $isPost) {
     $savedContractString = 'contract_savedcontractcount';
     $newContractString = 'contract_newcontractcount';
-    $contractSavedCount = $assocArray[$savedContractString];
-    $contractNewCount = $assocArray[$newContractString];
+    if (array_key_exists($savedContractString, $assocArray)) {
+      $contractSavedCount = $assocArray[$savedContractString];
+    } else {
+      $contractSavedCount = 0;
+    }
+    if (array_key_exists($newContractString, $assocArray)) {
+      $contractNewCount = $assocArray[$newContractString];
+    } else {
+      $contractNewCount = 0;
+    }
 
     $pickedUpContracts = array();
     for ($i = ($contractSavedCount + 1); $i <= ($contractSavedCount + $contractNewCount); $i++) {
@@ -89,6 +133,13 @@ class ContractScenario {
         echo $contract->getDetails() . "<br/>";
       }
     }
+
+    // display seltzer contract
+    if ($this->seltzerContract) {
+      echo "<h4>Seltzer Contract:</h4>";
+      echo $this->seltzerContract->getDetails() . "<br/>";
+    }
+
     echo "<input type='hidden' name='team_id' value='" . $this->team->getId() . "'>";
 
     echo "<br/></div>"; // span8
@@ -97,8 +148,8 @@ class ContractScenario {
 
   public function validateContracts() {
     // confirm contracts were selected
-    if (!$this->droppedContracts && !$this->pickedUpContracts) {
-      $this->printError("No contracts selected for pickup/drop!");
+    if (!$this->droppedContracts && !$this->pickedUpContracts && !$this->seltzerContract) {
+      $this->printError("No contracts selected!");
       return false;
     }
 
@@ -119,6 +170,34 @@ class ContractScenario {
         }
       }
     }
+
+    // validate seltzer contract
+    if ($this->seltzerContract) {
+      if ($this->seltzerContract->getPlayer() == null) {
+        $this->printError("Invalid player id for contract: " .
+            $this->seltzerContract->getPlayerId());
+	  	return false;
+      } else if ($this->seltzerContract->getType() == null) {
+        $this->printError("Invalid type of seltzer contract");
+        return false;
+	  } else if (!is_numeric($this->seltzerContract->getTotalYears())
+	      || $this->seltzerContract->getTotalYears() < 1
+	      || $this->seltzerContract->getTotalYears() > 2) {
+        $this->printError("Invalid length of contract: " . $this->seltzerContract->getTotalYears() .
+            " years");
+	  	return false;
+	  } else if (!is_numeric($this->seltzerContract->getPrice()) ||
+	      ($this->seltzerContract->getPrice() < Contract::MINIMUM_CONTRACT &&
+	  	   $this->seltzerContract->getType() == Contract::SELTZER_TYPE) ||
+	  	  ($this->seltzerContract->getPrice() < Contract::MINIMUM_MINOR_CONTRACT &&
+	  	   $this->seltzerContract->getType() == Contract::MINOR_SELTZER_TYPE)) {
+	    $this->printError("Invalid price for " . $this->seltzerContract->getType() .
+	        " contract: $" . $this->seltzerContract->getPrice());
+	  	return false;
+	  }
+	  // TODO properly validate minor contracts
+    }
+
     return true;
   }
 
@@ -168,6 +247,19 @@ class ContractScenario {
             $this->team->getId(), $oldTeam->getId()));
       }
     }
+
+    // sign seltzer contract
+    if ($this->seltzerContract) {
+      if (ContractDao::createContract($this->seltzerContract) != null) {
+        echo "<strong>Signed:</strong> " . $this->seltzerContract->getDetails() . "<br/>";
+
+        // update changelog
+        ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_SIGNED_TYPE,
+            SessionUtil::getLoggedInUser()->getId(), $timestamp, $this->seltzerContract->getId(),
+            $this->team->getId(), null));
+      }
+    }
+
     echo "<input type='hidden' name='team_id' value='" . $this->team->getId() . "'>";
 
     echo "<br/></div>"; // span8

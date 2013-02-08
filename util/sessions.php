@@ -20,8 +20,10 @@ class SessionUtil {
   // TODO determine if assocArray isPost w/out needing extra param
   public static function updateSession($key, $assocArray, $isPost) {
   	if ($isPost) {
-  	  $_SESSION[$key] = $assocArray[$key];
-  	} else {
+  	  if (array_key_exists($key, $assocArray)) {
+        $_SESSION[$key] = $assocArray[$key];
+  	  }
+  	} else if (array_key_exists($key, $_SESSION)) {
   	  unset($_SESSION[$key]);
   	}
   }

@@ -252,7 +252,8 @@ class Keepers {
 		      "Invalid length of contract: " . $contract->getTotalYears() . " years");
 	  	  return false;
 	  	} else if (!is_numeric($contract->getPrice()) ||
-	  	    ($contract->getPrice() < 30 && $contract->getType() == Contract::KEEPER_TYPE) ||
+	  	    ($contract->getPrice() < Contract::MINIMUM_CONTRACT &&
+	  	        $contract->getType() == Contract::KEEPER_TYPE) ||
 	  	    ($contract->getPrice() != 0 && $contract->getType() == Contract::MINOR_KEEPER_TYPE)) {
 	  	  $this->printError("Invalid price for " . $contract->getType() . " contract: $" .
 	  	      $contract->getPrice());
@@ -331,7 +332,7 @@ class Keepers {
      	  echo "<strong>Signed:</strong> " . $contract->getDetails() . "<br/>";
 
   	      // update changelog
-  	      ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_TYPE,
+  	      ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_SIGNED_TYPE,
   	          SessionUtil::getLoggedInUser()->getId(), $timestamp, $contract->getId(),
   	          $this->team->getId(), null));
   	    }

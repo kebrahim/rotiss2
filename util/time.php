@@ -4,7 +4,7 @@ require_once 'commonUtil.php';
 CommonUtil::requireFileIn('/../dao/', 'eventDao.php');
 
 class TimeUtil {
-	
+
   /**
    * Returns the year based on the specified event. If the specified event has not occurred yet,
    * then it is year n; if it has occurred, then it's year n+1.
@@ -12,7 +12,7 @@ class TimeUtil {
   static function getYearByEvent($eventType) {
   	return EventDao::getYearByEventType($eventType);
   }
-  
+
   /**
    * Returns the current year.
    */
@@ -20,7 +20,7 @@ class TimeUtil {
   	date_default_timezone_set('America/New_York');
   	return date("Y");
   }
-  
+
   /**
    * Returns today's date in YYYY-MM-DD format.
    */
@@ -28,13 +28,18 @@ class TimeUtil {
   	date_default_timezone_set('America/New_York');
   	return date("Y-m-d");
   }
-  
+
   /**
    * Returns today's date/time in a YYYY-MM-DD HH:MM:SS format.
    */
   static function getTimestampString() {
   	date_default_timezone_set('America/New_York');
   	return date("Y-m-d H:i:s");
+  }
+
+  static function getCurrentWeekInSeason() {
+    // TODO depends on league schedule
+    return 1;
   }
 }
 ?>

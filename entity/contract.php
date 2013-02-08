@@ -31,6 +31,9 @@ class Contract {
   const MINOR_KEEPER_TYPE = 'Minor Keeper';
   const MINOR_SELTZER_TYPE = 'Minor Seltzer';
 
+  const MINIMUM_CONTRACT = 30;
+  const MINIMUM_MINOR_CONTRACT = 15;
+  const MAJOR_SELTZER_MULTIPLIER = 3;
   const MAX_YEAR = 3000;
 
   public function __construct($contractId, $playerId, $teamId, $totalYears, $price, $signDate,
@@ -63,6 +66,9 @@ class Contract {
 
   public function getYearsLeft() {
   	$currentYear = TimeUtil::getCurrentYear();
+  	if ($currentYear < $this->getStartYear()) {
+  	  $currentYear = $this->getStartYear();
+  	}
   	$yearsLeft = ($this->getEndYear() - $currentYear) + 1;
   	return ($yearsLeft > 0) ? $yearsLeft : 0;
   }

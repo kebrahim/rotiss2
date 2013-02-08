@@ -60,15 +60,22 @@
         }
       }
     }
+
+    /**
+     * Returns the seltzer contract value based on the week number in the season.
+     */
+    public static function getMajorSeltzerContractValue($weekNumber) {
+      return Contract::MINIMUM_CONTRACT + (Contract::MAJOR_SELTZER_MULTIPLIER * $weekNumber);
+    }
+
+    public static function getMinorSeltzerContractValue($numAtBats, $numInningsPitched) {
+      // TODO
+    }
   }
 
+  $displayType = null;
   if (isset($_REQUEST["type"])) {
     $displayType = $_REQUEST["type"];
-  } else {
-    die("<h1>Invalid display type for contracts</h1>");
-  }
-  if (isset($_REQUEST["contract_id"])) {
-    $contract = ContractDao::getContractById($_REQUEST["contract_id"]);
   }
 
   if ($displayType == "dropped") {
@@ -77,6 +84,9 @@
     }
     ContractManager::displayAvailableContracts($rowNumber);
   } else if ($displayType == "attribute") {
+    if (isset($_REQUEST["contract_id"])) {
+      $contract = ContractDao::getContractById($_REQUEST["contract_id"]);
+    }
   	ContractManager::displayAttribute($contract, $_REQUEST["attr"]);
   }
 ?>

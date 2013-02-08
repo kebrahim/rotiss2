@@ -37,7 +37,7 @@ class Changelog {
 
   const AUCTION_TYPE = 'Auction';
   const TRADE_TYPE = 'Trade';
-  const CONTRACT_TYPE = 'Contract';
+  const CONTRACT_SIGNED_TYPE = 'Contract Signed';
   const BUYOUT_CONTRACT_TYPE = 'Buyout Contract';
   const PING_PONG_BALL_TYPE = 'Ping Pong Ball';
   const BANK_TYPE = 'Bank Money';
@@ -100,7 +100,7 @@ class Changelog {
   	      break;
   	    }
   	    case Changelog::BUYOUT_CONTRACT_TYPE:
-  	    case Changelog::CONTRACT_TYPE:
+  	    case Changelog::CONTRACT_SIGNED_TYPE:
   	    case Changelog::CONTRACT_PICKUP_TYPE:
   	    case Changelog::CONTRACT_DROP_TYPE:
   	    case Changelog::CONTRACT_PAID_TYPE: {
@@ -115,8 +115,6 @@ class Changelog {
   	      $this->change = BrognaDao::getBrognasByTeamAndYear($this->teamId, $this->changeId);
   	      break;
   	    }
-
-  	    // TODO add support for other change types
   	    default: {
   	      return null;
   	    }
@@ -175,7 +173,7 @@ class Changelog {
       case Changelog::BUYOUT_CONTRACT_TYPE: {
         return $change->getBuyoutDetails();
       }
-      case Changelog::CONTRACT_TYPE:
+      case Changelog::CONTRACT_SIGNED_TYPE:
       case Changelog::CONTRACT_PICKUP_TYPE:
       case Changelog::CONTRACT_DROP_TYPE:
       case Changelog::CONTRACT_PAID_TYPE: {
@@ -187,7 +185,6 @@ class Changelog {
       case Changelog::BANK_TYPE: {
         return $change->getBankedDetails();
       }
-      // TODO add support for other change types
       default: {
         return null;
       }

@@ -76,6 +76,31 @@
     }
   }
 
+  function displayPlayerForSeltzer(Player $player) {
+    // Display player attributes.
+    echo "<hr class='bothr'/>";
+    $player->displayPlayerInfo();
+    echo "<hr/>";
+
+    // MLB Team
+    echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>";
+    $mlbTeam = $player->getMlbTeam();
+    echo "<tr><td><strong>Team:</strong></td>
+    <td>" . $mlbTeam->getCity() . " " . $mlbTeam->getName() . "</td></tr>";
+
+    // Birth date & age
+    echo "<tr><td><strong>Birth Date:</strong></td>
+    <td>" . $player->getBirthDate() . "</td></tr>";
+    echo "<tr><td><strong>Age:</strong></td>
+    <td>" . $player->getAge() . "</td></tr>";
+
+    // Positions
+    echo "<tr><td><strong>Position(s):</strong></td>
+    <td>" . $player->getPositionString() . "</td></tr>";
+    echo "</table>";
+    echo "<input type='hidden' name='seltzer_playerid' value='" . $player->getId() . "'>";
+  }
+
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
   } else {
@@ -92,5 +117,7 @@
   	displayCumulativeRankForPlayer($player, $contractType);
   } else if ($displayType == "headshot") {
   	displayHeadShotForPlayer($player);
+  } else if ($displayType == "seltzer") {
+    displayPlayerForSeltzer($player);
   }
 ?>
