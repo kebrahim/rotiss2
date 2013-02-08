@@ -24,6 +24,7 @@ class DraftPick {
 
   const EXTRA_PICK_ROUND_CUTOFF = 5;
   const MAX_EXTRA_PICKS = 3;
+  const SELTZER_CUTOFF = 201; // TODO what is this number?
 
   public function __construct($draftPickId, $teamId, $year, $round, $pick, $originalTeamId,
       $playerId) {

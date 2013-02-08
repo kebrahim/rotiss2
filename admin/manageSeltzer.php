@@ -152,10 +152,9 @@ function selectType(type) {
             <div class='span12 center'>";
     echo "<h3>" . $team->getAbbreviation() . ": Offer Seltzer Contract </h3>";
 
-    // TODO show list of players eligible to be offered a seltzer contract
-    // i.e. players on team w/out contracts who weren't drafted in the first 150 picks
-    // [or whatever the cutoff is]
-    $players = PlayerDao::getPlayersByTeam($team);
+    // show list of players eligible to be offered a seltzer contract
+    // i.e. players on team w/out contracts who weren't drafted before the seltzer cutoff
+    $players = PlayerDao::getPlayersForSeltzerContracts($team->getId(), TimeUtil::getCurrentYear());
     echo "<div class='row-fluid'>
             <div class='span6 center'><div class='chooser'>";
     echo "<label for='player'>Select Player:</label>&nbsp

@@ -37,6 +37,24 @@ class TimeUtil {
   	return date("Y-m-d H:i:s");
   }
 
+  /**
+   * Returns true if we're currently in the middle of the regular season.
+   */
+  static function isInSeason() {
+    return TimeUtil::getYearByEvent(Event::SEASON_START) ==
+        TimeUtil::getYearByEvent(Event::OFFSEASON_START);
+  }
+
+  /**
+   * Returns true if we're currently during the offseason.
+   */
+  static function isOffSeason() {
+    return !TimeUtil::isInSeason();
+  }
+
+  /**
+   * Returns the current week during the season.
+   */
   static function getCurrentWeekInSeason() {
     // TODO depends on league schedule
     return 1;

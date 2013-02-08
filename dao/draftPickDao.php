@@ -17,7 +17,7 @@ class DraftPickDao {
               from draft_pick D
               where D.team_id = $team_id
               order by D.year, D.round, D.pick";
-    return DraftPickDao::createDraftPicks($query);
+    return DraftPickDao::createDraftPicksByQuery($query);
   }
 
   /**
@@ -30,7 +30,7 @@ class DraftPickDao {
               from draft_pick D
               where D.year = $year
               order by D.round, D.pick";
-    return DraftPickDao::createDraftPicks($query);
+    return DraftPickDao::createDraftPicksByQuery($query);
   }
 
   /**
@@ -43,7 +43,7 @@ class DraftPickDao {
   	          from draft_pick D
   	          where D.year = $year and D.round = $round
   	          order by D.pick";
-  	return DraftPickDao::createDraftPicks($query);
+  	return DraftPickDao::createDraftPicksByQuery($query);
   }
 
   /**
@@ -55,11 +55,30 @@ class DraftPickDao {
                      D.player_id
               from draft_pick D
               where D.draft_pick_id = $draftPickId";
-    $draft_picks = DraftPickDao::createDraftPicks($query);
+    $draft_picks = DraftPickDao::createDraftPicksByQuery($query);
     return $draft_picks[0];
   }
 
-  private static function createDraftPicks($query) {
+  /**
+   * Returns the draft pick of the specified player during the specified year.
+   */
+  public static function getDraftPickByPlayer($playerId, $year) {
+    CommonDao::connectToDb();
+    $query = "select d.*
+              from draft_pick d
+              where d.player_id = $playerId and d.year = $year";
+    return DraftPickDao::createDraftPickByQuery($query);
+  }
+
+  private static function createDraftPickByQuery($query) {
+    $draftPicks = DraftPickDao::createDraftPicksByQuery($query);
+    if (count($draftPicks) == 1) {
+      return $draftPicks[0];
+    }
+    return null;
+  }
+
+  private static function createDraftPicksByQuery($query) {
     $draft_picks_db = mysql_query($query);
 
     $draft_picks = array();

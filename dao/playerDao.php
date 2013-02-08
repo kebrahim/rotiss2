@@ -63,7 +63,7 @@ class PlayerDao {
   	$query = "SELECT C.*
   	          FROM contract C
   	          WHERE C.player_id = " . $playerId . " AND C.contract_type = 'Auction'
-  	          AND C.start_year = " . $startYear;
+  	          AND C.start_year = " . $startYear . " AND C.is_bought_out = 0";
   	$res = mysql_query($query);
   	return (mysql_num_rows($res) > 0);
   }
@@ -82,6 +82,21 @@ class PlayerDao {
   	          AND c.end_year >= " . $year;
   	$res = mysql_query($query);
   	return (mysql_num_rows($res) > 0);
+  }
+
+  /**
+   * Returns true if the player has any contract that either ended in the specified year or is still
+   * active after the specified year.
+   */
+  public static function hasContract($playerId, $year) {
+    CommonDao::connectToDb();
+    $query = "SELECT c.*
+              FROM contract c
+              WHERE c.player_id = " . $playerId . "
+              AND c.is_bought_out = 0
+              AND c.end_year >= " . $year;
+    $res = mysql_query($query);
+    return (mysql_num_rows($res) > 0);
   }
 
   /**
@@ -155,11 +170,10 @@ class PlayerDao {
   	// first, get all players on specified team
   	$allPlayers = PlayerDao::getPlayersByTeam($team);
 
-  	// filter out players who currently have a contract [auction/seltzer/keeper].
+  	// filter out players who currently have a contract.
   	$playersToBeDropped = array();
   	foreach ($allPlayers as $player) {
-  	  if (!PlayerDao::hasContractForPlaceholders($player->getId(), $year) &&
-  	      !PlayerDao::hasAuctionContract($player->getId(), $year)) {
+  	  if (!PlayerDao::hasContract($player->getId(), $year)) {
   	    $playersToBeDropped[] = $player;
   	  }
   	}
@@ -174,11 +188,10 @@ class PlayerDao {
     // first, get all players on specified team
     $allPlayers = PlayerDao::getPlayersByTeam($team);
 
-    // filter out players who do not have a contract [auction/seltzer/keeper].
+    // filter out players who do not have a contract.
     $playersToBeKept = array();
     foreach ($allPlayers as $player) {
-      if (PlayerDao::hasContractForPlaceholders($player->getId(), $year) ||
-          PlayerDao::hasAuctionContract($player->getId(), $year)) {
+      if (PlayerDao::hasContract($player->getId(), $year)) {
         $playersToBeKept[] = $player;
       }
     }
@@ -245,6 +258,51 @@ class PlayerDao {
   	          or last_name like '%$searchString%'
   	          order by last_name, first_name";
   	return PlayerDao::createPlayersFromQuery($query);
+  }
+
+  /**
+   * Return all players belonging to the specified team without a contract during the specified
+   * year, who were either drafted after the seltzer cutoff or undrafted.
+   */
+  public static function getPlayersForSeltzerContracts($teamId, $year) {
+    CommonDao::connectToDb();
+    $query = "select p.*
+              from player p, team_player tp
+              where tp.player_id = p.player_id
+              and tp.team_id = $teamId";
+    $playersOnTeam = PlayerDao::createPlayersFromQuery($query);
+
+    // Filter out players under contract or those that were drafted before the seltzer cutoff
+    $seltzerPlayers = array();
+    foreach ($playersOnTeam as $player) {
+      if (!PlayerDao::hasContract($player->getId(), $year) &&
+          !PlayerDao::draftedBeforeSeltzerCutoff($player->getId(), $year)) {
+        $seltzerPlayers[] = $player;
+      }
+    }
+
+    return $seltzerPlayers;
+  }
+
+  /**
+   * Returns true if the specified player was drafted before the seltzer cutoff in the specified
+   * year.
+   */
+  public static function draftedBeforeSeltzerCutoff($playerId, $year) {
+    CommonDao::connectToDb();
+    $ppQuery = "select count(*) from ping_pong where year = $year and player_id = $playerId";
+    if (CommonDao::getCountValue($ppQuery) > 0) {
+      return true;
+    }
+
+    $draftPick = DraftPickDao::getDraftPickByPlayer($playerId, $year);
+    if ($draftPick == null) {
+      return false;
+    } else {
+      // TODO include pingpong balls?
+      $overallPick = (($draftPick->getRound() - 1) * 16) + $draftPick->getPick();
+      return $overallPick < DraftPick::SELTZER_CUTOFF;
+    }
   }
 
   private static function createPlayerFromQuery($query) {

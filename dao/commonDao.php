@@ -23,5 +23,11 @@ class CommonDao {
     require_once $file;
     chdir($now_at_dir);
   }
+
+  static function getCountValue($query) {
+    $res = mysql_query($query);
+    $row = mysql_fetch_row($res);
+    return $row[0];
+  }
 }
 ?>
