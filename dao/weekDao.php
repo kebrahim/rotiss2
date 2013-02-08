@@ -23,7 +23,19 @@ class WeekDao {
     return WeekDao::createWeeksFromQuery(
         "select w.*
          from week w
-         where w.year = $year");
+         where w.year = $year
+         order by w.week_number");
+  }
+
+  /**
+   * Returns the current week during the specified year or null if the first week has not begun.
+   */
+  public static function getCurrentWeekInYear($year) {
+    return CommonDao::getIntegerValueFromQuery(
+        "select max(w.week_number)
+         from week w
+         where w.year = $year
+         and w.start_time < NOW()");
   }
 
   private static function createWeekFromQuery($query) {

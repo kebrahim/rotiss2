@@ -2,6 +2,7 @@
 
 require_once 'commonUtil.php';
 CommonUtil::requireFileIn('/../dao/', 'eventDao.php');
+CommonUtil::requireFileIn('/../dao/', 'weekDao.php');
 
 class TimeUtil {
 
@@ -56,8 +57,11 @@ class TimeUtil {
    * Returns the current week during the season.
    */
   static function getCurrentWeekInSeason() {
-    // TODO depends on league schedule
-    return 1;
+    $week = WeekDao::getCurrentWeekInYear(TimeUtil::getCurrentYear());
+    if ($week == null) {
+      return 1;
+    }
+    return $week;
   }
 }
 ?>
