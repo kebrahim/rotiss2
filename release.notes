@@ -6,6 +6,9 @@ codename: dachshund
 - visible
 
 - db
+ - new tables
+  - week
+   - contains start date/time for each week in the season
  - updated tables
   - changelog
    - change type 'Contract' -> 'Contract Signed' [update rows with 'Contract' type]

@@ -26,6 +26,7 @@ class LayoutUtil {
   const MANAGE_EVENTS_BUTTON = 21;
   const MANAGE_CHANGES_BUTTON = 22;
   const MANAGE_CONTRACTS_BUTTON = 23;
+  const MANAGE_WEEKS_BUTTON = 24;
 
   /**
    * Displays the <head> tag for a page, including the specified title.
@@ -228,6 +229,10 @@ class LayoutUtil {
   	  // Events
   	  LayoutUtil::displayListItem("admin/manageEvents.php", "Events", $isTopLevel,
   	  		$selectedButton, self::MANAGE_EVENTS_BUTTON);
+
+  	  // Weeks
+  	  LayoutUtil::displayListItem("admin/manageWeeks.php", "Scoring Weeks", $isTopLevel,
+  	      $selectedButton, self::MANAGE_WEEKS_BUTTON);
   	}
   	echo "</ul></li>";
   }
