@@ -27,7 +27,8 @@
   	// display table of draft picks for selected year, highlighting row for logged-in team
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
   	        <thead><tr>
-  	          <th>Round</th><th>Pick</th><th colspan=2>Team</th><th colspan=2>Player</th>
+  	          <th>Overall</th><th>Round</th><th>Pick</th><th colspan=2>Team</th>
+  	          <th colspan=2>Player</th>
   	          <th colspan=2>Original Team</th>
   	        </tr></thead>";
 
@@ -37,29 +38,31 @@
   	  if ($pingPongBall->getTeam()->getId() == $loggedInTeamId) {
   		echo " class='selected_team_row'";
   	  }
-  	  echo "><td>Ping Pong</td>
+  	  echo "><td>" . $pingPongBall->getOrdinal() . "</td>
+  	         <td>Ping Pong</td>
   	         <td>" . $pingPongBall->getCost() . "</td>" .
   	         TeamManager::getNameAndLogoRow($pingPongBall->getTeam()) .
   		     PlayerManager::getNameAndHeadshotRow($pingPongBall->getPlayer()) .
   		     "<td colspan=2>--</td>" .
   	    "</tr>";
-  	  }
+  	}
 
-  	  $draftPicks = DraftPickDao::getDraftPicksByYear($year);
-  	  foreach ($draftPicks as $draftPick) {
-  		echo "<tr";
-  		if ($draftPick->isSeltzerCutoff()) {
-  		  echo " class='warning'";
-  		} else if ($draftPick->getTeam()->getId() == $loggedInTeamId) {
-  		  echo " class='selected_team_row'";
-  	    }
-  	    echo "><td>" . $draftPick->getRound() . "</td>
-  		       <td>" . $draftPick->getPick() . "</td>" .
-  		       TeamManager::getNameAndLogoRow($draftPick->getTeam()) .
-  		       PlayerManager::getNameAndHeadshotRow($draftPick->getPlayer()) .
-         	   TeamManager::getAbbreviationAndLogoRow($draftPick->getOriginalTeam()) .
-  	        "</tr>";
+  	$draftPicks = DraftPickDao::getDraftPicksByYear($year);
+  	foreach ($draftPicks as $draftPick) {
+  	  echo "<tr";
+  	  if ($draftPick->isSeltzerCutoff()) {
+  	    echo " class='warning'";
+  	  } else if ($draftPick->getTeam()->getId() == $loggedInTeamId) {
+  	    echo " class='selected_team_row'";
   	  }
+  	  echo "><td>" . $draftPick->getOverallPick(count($pingPongBalls)) . "</td>
+  	         <td>" . $draftPick->getRound() . "</td>
+  		     <td>" . $draftPick->getPick() . "</td>" .
+  		     TeamManager::getNameAndLogoRow($draftPick->getTeam()) .
+  		     PlayerManager::getNameAndHeadshotRow($draftPick->getPlayer()) .
+             TeamManager::getAbbreviationAndLogoRow($draftPick->getOriginalTeam()) .
+  	      "</tr>";
+  	}
     echo "</table>";
     echo "</div>"; // span12
     echo "</div>"; // row-fluid
@@ -123,12 +126,13 @@
 
   	// display table of draft picks for selected year, highlighting row for logged-in team
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
-  	      <thead><tr><th>Pick</th><th>Team</th><th>Player</th></tr></thead>";
+  	      <thead><tr><th>Overall</th><th>Pick</th><th>Team</th><th>Player</th></tr></thead>";
 
   	if ($round == 0) {
       $pingPongBalls = BallDao::getPingPongBallsByYear($year);
   	  foreach ($pingPongBalls as $pingPongBall) {
   	    echo "<tr class='tdselect'>
+  	           <td>" . $pingPongBall->getOrdinal() . "</td>
   		       <td>" . $pingPongBall->getCost() . "</td>
   		       <td>" . $pingPongBall->getTeam()->getNameLink(false) . "</td>
   		       <td>" . getPlayerDropdown(
@@ -137,12 +141,14 @@
   	  }
   	} else {
       $draftPicks = DraftPickDao::getDraftPicksByYearRound($year, $round);
+      $numBalls = BallDao::getNumPingPongBallsByYear($year);
   	  foreach ($draftPicks as $draftPick) {
   		echo "<tr class='tdselect";
         if ($draftPick->isSeltzerCutoff()) {
           echo " warning";
         }
   		echo "'>
+  		       <td>" . $draftPick->getOverallPick($numBalls) . "
   		       <td>" . getPickDropdown(
   		           $draftPick->getPick(), $draftPick->getId(), count($draftPicks)) . "</td>
   		       <td>" . $draftPick->getTeam()->getNameLink(false) . "</td>

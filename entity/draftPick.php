@@ -84,6 +84,13 @@ class DraftPick {
   	$this->pick = $pick;
   }
 
+  /**
+   * Returns the overall pick number based on how many ping pong balls exist for that year.
+   */
+  public function getOverallPick($numBalls) {
+    return $this->pick + (16 * ($this->round - 1)) + $numBalls;
+  }
+
   public function getOriginalTeamName() {
     if ($this->originalTeamId == null) {
       return "--";
@@ -158,7 +165,8 @@ class DraftPick {
   }
 
   public function __toString() {
-    return $this->year . ":" . $this->round . ":" . $this->pick;
+    return $this->year . ":" . $this->round . ":" . $this->pick . " (" .
+        $this->getOverallPick(BallDao::getNumPingPongBallsByYear($this->year)) . ")";
   }
 
   public function toString() {

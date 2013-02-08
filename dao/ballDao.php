@@ -12,60 +12,76 @@ class BallDao {
    * Returns all of the ping pong balls belonging to the specified team.
    */
   public static function getPingPongBallsByTeamId($teamId) {
-    CommonDao::connectToDb();
-    $query = "select P.ping_pong_id, P.year, P.cost, P.team_id, P.player_id
-              from ping_pong P
-              where P.team_id = $teamId
-              order by P.year ASC, P.cost DESC";
-    return BallDao::createPingPongBalls($query);
+    return BallDao::createPingPongBallsByQuery(
+        "select P.*
+         from ping_pong P
+         where P.team_id = $teamId
+         order by P.year ASC, P.cost DESC, P.ordinal ASC");
   }
 
   /**
    * Returns all of the ping pong balls in the specified year.
    */
   public static function getPingPongBallsByYear($year) {
-    CommonDao::connectToDb();
-    $query = "select P.ping_pong_id, P.year, P.cost, P.team_id, P.player_id
-              from ping_pong P
-              where P.year = $year
-              order by P.cost DESC";
-    return BallDao::createPingPongBalls($query);
+    return BallDao::createPingPongBallsByQuery(
+        "select P.*
+         from ping_pong P
+         where P.year = $year
+         order by P.cost DESC, P.ordinal ASC");
   }
 
   /**
    * Returns the ping pong ball associated w/ the specified id.
    */
   public static function getPingPongBallById($ballId) {
-    CommonDao::connectToDb();
-    $query = "select P.ping_pong_id, P.year, P.cost, P.team_id, P.player_id
-              from ping_pong P
-              where P.ping_pong_id = $ballId";
-    $balls = BallDao::createPingPongBalls($query);
-    return $balls[0];
+    return BallDao::createPingPongBallByQuery(
+        "select p.*
+         from ping_pong p
+         where p.ping_pong_id = $ballId");
   }
 
   /**
   * Returns the number of ping pong balls belonging to the specified team during the specified year.
   */
   public static function getNumPingPongBallsByTeamYear($year, $teamId) {
-    CommonDao::connectToDb();
-    $query = "select count(*)
-              from ping_pong P
-              where P.team_id = $teamId
-              and P.year = $year";
-    $res = mysql_query($query);
-    $row = mysql_fetch_row($res);
-    return $row[0];
+    return CommonDao::getIntegerValueFromQuery(
+        "select count(*)
+         from ping_pong P
+         where P.team_id = $teamId
+         and P.year = $year");
   }
 
-  private static function createPingPongBalls($query) {
-    $balls_db = mysql_query($query);
+  /**
+   * Returns the number of ping pong balls during the specified year.
+   */
+  public static function getNumPingPongBallsByYear($year) {
+    return CommonDao::getIntegerValueFromQuery(
+        "select count(*)
+        from ping_pong
+        where year = $year");
+  }
 
+  private static function createPingPongBallByQuery($query) {
+    $balls = BallDao::createPingPongBallsByQuery($query);
+    if (count($balls) == 1) {
+      return $balls[0];
+    }
+    return null;
+  }
+
+  private static function createPingPongBallsByQuery($query) {
+    CommonDao::connectToDb();
+    $res = mysql_query($query);
     $balls = array();
-    while ($ball_db = mysql_fetch_row ($balls_db)) {
-      $balls[] = new PingPongBall($ball_db[0], $ball_db[1], $ball_db[2], $ball_db[3], $ball_db[4]);
+    while($ballDb = mysql_fetch_assoc($res)) {
+      $balls[] = BallDao::populatePingPongBall($ballDb);
     }
     return $balls;
+  }
+
+  private static function populatePingPongBall($ballDb) {
+    return new PingPongBall($ballDb["ping_pong_id"], $ballDb["year"], $ballDb["cost"],
+        $ballDb["team_id"], $ballDb["player_id"], $ballDb["ordinal"]);
   }
 
   /**
@@ -98,7 +114,8 @@ class BallDao {
     $query = "update ping_pong set year = " . $pingPongBall->getYear() . ",
                                    cost = " . $pingPongBall->getCost() . ",
                                    team_id = " . $pingPongBall->getTeam()->getId() . ",
-                                   player_id = " . $pingPongBall->getPlayerId() .
+                                   player_id = " . $pingPongBall->getPlayerId() . ",
+                                   ordinal = " . $pingPongBall->getOrdinal() .
                              " where ping_pong_id = " . $pingPongBall->getId();
     return mysql_query($query);
   }
@@ -110,6 +127,14 @@ class BallDao {
   	CommonDao::connectToDb();
   	$query = "delete from ping_pong where ping_pong_id > 0";
   	mysql_query($query);
+  }
+
+  public static function getMinimumYear() {
+    return CommonDao::getIntegerValueFromQuery("select min(year) from ping_pong");
+  }
+
+  public static function getMaximumYear() {
+    return CommonDao::getIntegerValueFromQuery("select max(year) from ping_pong");
   }
 }
 ?>

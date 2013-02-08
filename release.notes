@@ -4,7 +4,16 @@ Release Notes
 v2.1.2 (//13)
 codename: dachshund
 - visible
-
+  - admins can sign seltzer contracts, including major [based on week in season] & minor league
+    [based on whether player has been called up and how many innings pitched or at bats they have]
+  - new demo account
+  - seltzer cutoff pick visible on draft page and manage draft page
+  - overall draft pick number displayed on all draft tables
+  - admins can manage ping pong ball order
+  
+- b.t.s.
+  - manage scoring week page
+  
 - db
  - new tables
   - week
@@ -16,6 +25,8 @@ codename: dachshund
    - added new is_demo column
   - draft_pick
    - added new is_seltzer_cutoff column
+  - ping pong
+   - added ordinal column
 
 v2.1.1 (2/3/13)
 codename: cockapoo

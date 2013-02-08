@@ -423,7 +423,7 @@ class Team {
     if ($isSelectable) {
       echo "<th></th>";
     }
-    echo "<th>Year</th><th>Round</th><th>Pick</th>
+    echo "<th>Year</th><th>Overall</th><th>Round</th><th>Pick</th>
                        <th colspan=2>Player</th><th>Original Team</th></tr></thead>";
     foreach ($this->getPingPongBalls() as $pingPongBall) {
       if (($pingPongBall->getYear() < $minYear) || ($pingPongBall->getYear() > $maxYear)) {
@@ -435,11 +435,15 @@ class Team {
                          value='" . $pingPongBall->getId() . "'>
               </td>";
       }
-      echo "<td>" . $pingPongBall->getYear() . "</td><td>Ping Pong</td>
-                  <td>" . $pingPongBall->getCost() . "</td>" .
-                  PlayerManager::getNameAndHeadshotRow($pingPongBall->getPlayer()) .
-                 "<td>--</td></tr>";
+      echo "<td>" . $pingPongBall->getYear() . "</td>
+            <td>" . $pingPongBall->getOrdinal() . "</td>
+            <td>Ping Pong</td>
+            <td>" . $pingPongBall->getCost() . "</td>" .
+            PlayerManager::getNameAndHeadshotRow($pingPongBall->getPlayer()) .
+           "<td>--</td></tr>";
     }
+
+    $yearToNumBalls = $this->getBallsArray();
     foreach ($this->getDraftPicks() as $draftPick) {
       if (($draftPick->getYear() < $minYear) || ($draftPick->getYear() > $maxYear)) {
         continue;
@@ -450,13 +454,24 @@ class Team {
                          value='" . $draftPick->getId() . "'>
               </td>";
       }
-
-      echo "<td>" . $draftPick->getYear() . "</td><td>" . $draftPick->getRound() . "</td>
-                  <td>" . $draftPick->getPick() . "</td>" .
-                  PlayerManager::getNameAndHeadshotRow($draftPick->getPlayer()) .
-                 "<td>" . $draftPick->getOriginalTeamName() . "</td></tr>";
+      $numBalls = array_key_exists($draftPick->getYear(), $yearToNumBalls) ?
+          $yearToNumBalls[$draftPick->getYear()] : 0;
+      echo "<td>" . $draftPick->getYear() . "</td>
+            <td>" . $draftPick->getOverallPick($numBalls) . "</td>
+            <td>" . $draftPick->getRound() . "</td>
+            <td>" . $draftPick->getPick() . "</td>" .
+            PlayerManager::getNameAndHeadshotRow($draftPick->getPlayer()) .
+           "<td>" . $draftPick->getOriginalTeamName() . "</td></tr>";
     }
     echo "</table>";
+  }
+
+  private function getBallsArray() {
+    $yearToNumBalls = array();
+    for ($bYear = BallDao::getMinimumYear(); $bYear <= BallDao::getMaximumYear(); $bYear++) {
+      $yearToNumBalls[$bYear] = BallDao::getNumPingPongBallsByYear($bYear);
+    }
+    return $yearToNumBalls;
   }
 
   function displayDraftPicksForTrade($minYear, $maxYear) {
@@ -468,7 +483,7 @@ class Team {
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center
   	                    smallfonttable'>
   	      <thead><tr>";
-  	echo "<th class='checkth'></th><th>Year</th><th>Round</th><th>Pick</th>
+  	echo "<th class='checkth'></th><th>Year</th><th>Overall</th><th>Round</th><th>Pick</th>
   	      <th colspan=2>Original Team</th></tr></thead>";
   	foreach ($this->getPingPongBalls() as $pingPongBall) {
   	  // only show ping pong balls which have not been used yet, in the specified range of years
@@ -479,20 +494,27 @@ class Team {
   	  echo "<tr><td><input type=checkbox name='trade_t" . $this->getId() . "dpb[]'
   			               value='" . $pingPongBall->getId() . "'>
   			</td>
-  	        <td>" . $pingPongBall->getYear() . "</td><td>Ping Pong</td>
+  	        <td>" . $pingPongBall->getYear() . "</td>
+  	        <td>" . $pingPongBall->getOrdinal() . "</td>
+  	        <td>PP</td>
   		    <td>" . $pingPongBall->getCost() . "</td>" .
   		   "<td colspan=2>--</td></tr>";
   	}
+  	$yearToNumBalls = $this->getBallsArray();
   	foreach ($this->getDraftPicks() as $draftPick) {
   	  // only show draft picks which have not been used yet, in the specified range of years
   	  if (($draftPick->getYear() < $minYear) || ($draftPick->getYear() > $maxYear) ||
   	      ($draftPick->getPlayer() != null)) {
   	    continue;
   	  }
+      $numBalls = array_key_exists($draftPick->getYear(), $yearToNumBalls) ?
+          $yearToNumBalls[$draftPick->getYear()] : 0;
   	  echo "<tr>
   	          <td><input type=checkbox name='trade_t" . $this->getId() . "dpp[]'
   			               value='" . $draftPick->getId() . "'></td>
-  	          <td>" . $draftPick->getYear() . "</td><td>" . $draftPick->getRound() . "</td>
+  	          <td>" . $draftPick->getYear() . "</td>
+  	          <td>" . $draftPick->getOverallPick($numBalls) . "</td>
+  	          <td>" . $draftPick->getRound() . "</td>
   		      <td>" . $draftPick->getPick() . "</td>" .
   		      TeamManager::getAbbreviationAndLogoRowAtLevel($draftPick->getOriginalTeam(), false) .
   		   "</tr>";

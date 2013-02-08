@@ -18,8 +18,9 @@ class PingPongBall {
   private $team;
   private $playerLoaded;
   private $player;
+  private $ordinal;
 
-  public function __construct($ballId, $year, $cost,  $teamId, $playerId) {
+  public function __construct($ballId, $year, $cost,  $teamId, $playerId, $ordinal) {
     $this->ballId = $ballId;
     $this->year = $year;
     $this->cost = $cost;
@@ -27,6 +28,7 @@ class PingPongBall {
     $this->playerId = $playerId;
     $this->teamLoaded = false;
     $this->playerLoaded = false;
+    $this->ordinal = $ordinal;
   }
 
   public function getId() {
@@ -100,8 +102,12 @@ class PingPongBall {
   	$this->player = null;
   }
 
+  public function getOrdinal() {
+    return $this->ordinal;
+  }
+
   public function __toString() {
-    return $this->year . ": $" . $this->cost;
+    return $this->year . ": $" . $this->cost . " (" . $this->ordinal . ")";
   }
 
   public function toString() {
@@ -110,7 +116,7 @@ class PingPongBall {
 
   public function getDetails() {
     return "<strong>Draft Year: </strong>" . $this->getYear() . ", <strong>Cost: </strong>$" .
-        $this->getCost();
+        $this->getCost() . " (" . $this->ordinal . ")";
   }
 }
 ?>
