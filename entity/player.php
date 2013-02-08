@@ -129,12 +129,24 @@ class Player {
   }
 
   public function playsPosition($position) {
+    return $this->playsPositionById($position->getId());
+  }
+
+  public function playsPositionById($positionId) {
     foreach ($this->getPositions() as $playedPosition) {
-      if ($playedPosition->getId() == $position->getId()) {
+      if ($playedPosition->getId() == $positionId) {
         return true;
       }
     }
     return false;
+  }
+
+  public function getBasePosition() {
+    if ($this->playsPositionById(Position::STARTING_PITCHER) ||
+        $this->playsPositionById(Position::RELIEF_PITCHER)) {
+      return Position::PITCHER;
+    }
+    return Position::BATTER;
   }
 
   public function getSportslineId() {

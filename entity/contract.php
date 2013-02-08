@@ -32,9 +32,14 @@ class Contract {
   const MINOR_SELTZER_TYPE = 'Minor Seltzer';
 
   const MINIMUM_CONTRACT = 30;
-  const MINIMUM_MINOR_CONTRACT = 15;
-  const MAJOR_SELTZER_MULTIPLIER = 3;
   const MAX_YEAR = 3000;
+
+  const MINIMUM_SELTZER_CONTRACT = 33;
+  const MAJOR_SELTZER_MULTIPLIER = 3;
+
+  const UNCALLED_MINOR_CONTRACT = 15;
+  const MINIMUM_MINOR_CONTRACT = 20;
+  const MINOR_SELTZER_MULTIPLIER = 2;
 
   public function __construct($contractId, $playerId, $teamId, $totalYears, $price, $signDate,
       $startYear, $endYear, $isBoughtOut, $contractType) {

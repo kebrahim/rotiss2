@@ -80,6 +80,56 @@ function selectType(type) {
     }
 }
 
+function selectCallup(isCallup) {
+    if (isCallup == 1) {
+        // is callup = false; remove stat row and show uncalled price
+        var minorTable = document.getElementById("minorTable");
+        minorTable.deleteRow(1);
+
+        // update price to default uncalled-up minor league price
+        var currentPrice = document.getElementById("seltzer_minor_price").value;
+        minorTable.rows[1].cells[1].innerHTML = minorTable.rows[1].cells[1].innerHTML.replace(
+                "value=\"" + currentPrice + "\"", "value=\"15\"");
+    } else if (isCallup == 2) {
+        // is callup = true; show row for innings/ABs, which updates price
+        var minorTable = document.getElementById("minorTable");
+        var nextRowNumber = minorTable.rows.length;
+        var posRow = minorTable.insertRow(nextRowNumber - 1);
+
+        var posLabelCell = posRow.insertCell(0);
+        getRedirectHTML(document.getElementById("minorTable").rows[nextRowNumber - 1].cells[0],
+                "../util/playerManager.php?type=attribute&player_id=" +
+                document.getElementById("seltzer_player").value + "&attr=minorseltzerstatlabel");
+
+        var posCell = posRow.insertCell(1);
+        posCell.innerHTML = "<input id='seltzer_stat' type='text' class='input-mini center' " +
+                                   "value='0' onchange='selectStat(this.value)'></input>";
+
+        // update price to default called-up minor league price
+        var currentPrice = document.getElementById("seltzer_minor_price").value;
+        minorTable.rows[2].cells[1].innerHTML = minorTable.rows[2].cells[1].innerHTML.replace(
+                "value=\"" + currentPrice + "\"", "value=\"20\"");
+    }
+}
+
+function selectStat(stat) {
+    var minorTable = document.getElementById("minorTable");
+    var divider = 0;
+    if (minorTable.rows[1].cells[0].innerHTML.indexOf("At Bats") == -1) {
+      // pitcher - divide by 6 IP
+      divider = 6;
+    } else {
+      // batter - divide by 25 AB
+      divider = 25;
+    }
+    var calculatedPrice = 20 + (2 * Math.floor(stat / divider));
+
+    // update price to calculated price
+    var currentPrice = document.getElementById("seltzer_minor_price").value;
+    minorTable.rows[2].cells[1].innerHTML = minorTable.rows[2].cells[1].innerHTML.replace(
+            "value=\"" + currentPrice + "\"", "value=\"" + calculatedPrice + "\"");
+}
+
 </script>
 
 <body>
@@ -157,8 +207,8 @@ function selectType(type) {
     $players = PlayerDao::getPlayersForSeltzerContracts($team->getId(), TimeUtil::getCurrentYear());
     echo "<div class='row-fluid'>
             <div class='span6 center'><div class='chooser'>";
-    echo "<label for='player'>Select Player:</label>&nbsp
-          <select id='player' class='span8 smallfonttable' name='seltzer_player'
+    echo "<label for='seltzer_player'>Select Player:</label>&nbsp
+          <select id='seltzer_player' class='span8 smallfonttable' name='seltzer_player'
                   onchange='showPlayer(this.value)'>
             <option value='0'></option>";
     foreach ($players as $player) {
@@ -176,41 +226,56 @@ function selectType(type) {
 
     echo "<table id='seltzer_table'
                  class='table vertmiddle table-striped table-condensed table-bordered center'>";
-    echo "<tr><td><label for='seltzer_type'>Contract Type:</label></td>
-          <td><select class='input-medium' id='seltzer_type' name='seltzer_type'
-                      onchange='selectType(this.value)'>
-            <option value='0'>-- Select Type --</option>
-            <option value='1'>Major League</option>
-            <option value='2'>Minor League</option>
-          </select></td></tr>";
     echo "<tr><td><label for='seltzer_length'>Contract Length:</label></td>
           <td><select class='input-medium' id='seltzer_length' name='seltzer_length'>
             <option value='0' class='center'>-- Select Length --</option>
             <option value='1'>1-year</option>
             <option value='2'>2-year</option>
-          </select></td></tr></table>";
+          </select></td></tr>";
+    echo "<tr><td><label for='seltzer_type'>Contract Type:</label></td>
+              <td><select class='input-medium' id='seltzer_type' name='seltzer_type'
+                          onchange='selectType(this.value)'>
+                    <option value='0'>-- Select Type --</option>
+                    <option value='1'>Major League</option>
+                    <option value='2'>Minor League</option>
+                  </select></td></tr></table>";
 
     $week = TimeUtil::getCurrentWeekInSeason();
     $contractValue = ContractManager::getMajorSeltzerContractValue($week);
     echo "<div id='major_config' style='display:none'>
             <h5>Major League Seltzer</h5>
             <table class='table vertmiddle table-striped table-condensed table-bordered center'>
-              <tr id='week_row'>
+              <tr>
                 <td><label>Week in Season:</label></td>
                 <td>" . $week . "</td>
               </tr>
-              <tr id='price_row'>
+              <tr>
                 <td><label for='seltzer_price'>Contract Cost:</label></td>
-                <td><input type='text' class='input-mini center' id='seltzer_price'
-                       name='seltzer_price' value='$contractValue' readonly='true'></td>
+                <td><input type='number' class='input-mini center' id='seltzer_price'
+                       name='seltzer_price' value='$contractValue'></td>
               </tr>
             </table>
           </div>";
 
-    // TODO minor seltzering options [based on ABs or innings pitched]
+    // minor seltzering options [based on ABs or innings pitched]
     echo "<div id='minor_config' style='display:none'>
             <h5>Minor League Seltzer</h5>
-            <table class='table vertmiddle table-striped table-condensed table-bordered center'>
+            <table id='minorTable'
+                   class='table vertmiddle table-striped table-condensed table-bordered center'>
+              <tr>
+                <td><label for='seltzer_callup'>Has Been Called Up?</label></td>
+                <td><select class='input-small' id='seltzer_callup' name='seltzer_callup'
+                            onchange='selectCallup(this.value)'>
+                      <option value='1'>No</option>
+                      <option value='2'>Yes</option>
+                    </select></td>
+              </tr>
+              <tr>
+                <td><label for='seltzer_minor_price'>Contract Cost:</label></td>
+                <td><input type='text' class='input-mini center' id='seltzer_minor_price'
+                           name='seltzer_minor_price'
+                           value='" . Contract::UNCALLED_MINOR_CONTRACT . "' readonly='true'></td>
+              </tr>
             </table>
           </div>";
 

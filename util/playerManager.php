@@ -32,6 +32,36 @@ class PlayerManager {
       return "<td colspan=2>--</td>";
     }
   }
+
+  public static function displayAttribute(Player $player, $attribute) {
+    if ($player == null) {
+      return;
+    }
+    switch ($attribute) {
+      case "baseposition": {
+        echo $player->getBasePosition();
+        break;
+      }
+      case "minorseltzerstatlabel": {
+        echo ($player->getBasePosition() == Position::PITCHER) ?
+            "<label for='seltzer_stat'>Innings Pitched</label>" :
+            "<label for='seltzer_stat'>At Bats</label>";
+        break;
+      }
+    }
+  }
+}
+
+$displayType = null;
+if (isset($_REQUEST["type"])) {
+  $displayType = $_REQUEST["type"];
+}
+
+if ($displayType == "attribute") {
+  if (isset($_REQUEST["player_id"])) {
+    $player = PlayerDao::getPlayerById($_REQUEST["player_id"]);
+  }
+  PlayerManager::displayAttribute($player, $_REQUEST["attr"]);
 }
 
 ?>

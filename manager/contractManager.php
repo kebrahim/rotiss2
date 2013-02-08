@@ -65,11 +65,8 @@
      * Returns the seltzer contract value based on the week number in the season.
      */
     public static function getMajorSeltzerContractValue($weekNumber) {
-      return Contract::MINIMUM_CONTRACT + (Contract::MAJOR_SELTZER_MULTIPLIER * $weekNumber);
-    }
-
-    public static function getMinorSeltzerContractValue($numAtBats, $numInningsPitched) {
-      // TODO
+      return Contract::MINIMUM_SELTZER_CONTRACT +
+          (Contract::MAJOR_SELTZER_MULTIPLIER * ($weekNumber - 1));
     }
   }
 

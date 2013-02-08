@@ -48,23 +48,28 @@ class ContractScenario {
     $typeKey = 'seltzer_type';
     $yearKey = 'seltzer_length';
     $priceKey = 'seltzer_price';
+    $minorPriceKey = 'seltzer_minor_price';
 
     $contractType = null;
+    $price = null;
     if (intval($assocArray[$typeKey]) == 1) {
       $contractType = Contract::SELTZER_TYPE;
+      $price = $assocArray[$priceKey];
     } else if (intval($assocArray[$typeKey]) == 2) {
       $contractType = Contract::MINOR_SELTZER_TYPE;
+      $price = $assocArray[$minorPriceKey];
     }
     $numYears = intval($assocArray[$yearKey]);
     $startYear = TimeUtil::getCurrentYear() + 1;
     $seltzerContract = new Contract(-1, $assocArray[$playerKey], $this->team->getId(), $numYears,
-        $assocArray[$priceKey], TimeUtil::getTodayString(), $startYear,
-        ($startYear + $numYears) - 1, false, $contractType);
+        $price, TimeUtil::getTodayString(), $startYear, ($startYear + $numYears) - 1, false,
+        $contractType);
 
     SessionUtil::updateSession($playerKey, $assocArray, $isPost);
     SessionUtil::updateSession($typeKey, $assocArray, $isPost);
     SessionUtil::updateSession($yearKey, $assocArray, $isPost);
     SessionUtil::updateSession($priceKey, $assocArray, $isPost);
+    SessionUtil::updateSession($minorPriceKey, $assocArray, $isPost);
 
     return $seltzerContract;
   }
@@ -187,15 +192,14 @@ class ContractScenario {
             " years");
 	  	return false;
 	  } else if (!is_numeric($this->seltzerContract->getPrice()) ||
-	      ($this->seltzerContract->getPrice() < Contract::MINIMUM_CONTRACT &&
-	  	   $this->seltzerContract->getType() == Contract::SELTZER_TYPE) ||
-	  	  ($this->seltzerContract->getPrice() < Contract::MINIMUM_MINOR_CONTRACT &&
-	  	   $this->seltzerContract->getType() == Contract::MINOR_SELTZER_TYPE)) {
+	      ($this->seltzerContract->getType() == Contract::SELTZER_TYPE &&
+	       $this->seltzerContract->getPrice() < Contract::MINIMUM_SELTZER_CONTRACT) ||
+	  	  ($this->seltzerContract->getType() == Contract::MINOR_SELTZER_TYPE &&
+	  	   $this->seltzerContract->getPrice() < Contract::UNCALLED_MINOR_CONTRACT)) {
 	    $this->printError("Invalid price for " . $this->seltzerContract->getType() .
 	        " contract: $" . $this->seltzerContract->getPrice());
 	  	return false;
 	  }
-	  // TODO properly validate minor contracts
     }
 
     return true;
