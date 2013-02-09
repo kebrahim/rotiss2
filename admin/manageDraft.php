@@ -89,6 +89,7 @@ function getRedirectHTML(element, htmlString) {
   	  foreach ($balls as $ball) {
   	  	$ballUpdated = false;
 
+  	  	// update player
   	  	$playerSelection = "player" . $ball->getId();
   	  	$currentPlayer = $ball->getPlayer();
   	  	$currentPlayerId = ($currentPlayer == null ? 0 : $currentPlayer->getId());
@@ -98,6 +99,14 @@ function getRedirectHTML(element, htmlString) {
   	  	  $ballUpdated = true;
   	  	}
 
+  	  	// update ordinal
+  	  	$ordinalSelection = "ppOrd" . $ball->getId();
+        $currentOrdinal = $ball->getOrdinal();
+        if (intval($_POST[$ordinalSelection]) != $currentOrdinal) {
+          $ball->setOrdinal(intval($_POST[$ordinalSelection]));
+          $ballUpdated = true;
+        }
+
   	  	if ($ballUpdated) {
   	  	  $result = BallDao::updatePingPongBall($ball);
 
@@ -106,9 +115,16 @@ function getRedirectHTML(element, htmlString) {
   	  	  	if ($year == $currentYear) {
   	  	  	  if (($ball->getPlayer() == null) && ($currentPlayer != null)) {
   	  	  	  	// player was removed; remove player from team
-  	  	  	  	TeamDao::assignPlayerToTeam($currentPlayer, 0);
-  	  	  	  } else {
+  	  	  	  	TeamDao::dropPlayer($currentPlayer);
+  	  	  	  } else if (($ball->getPlayer() != null) &&
+  	  	  	      ($ball->getPlayer()->getId() != $currentPlayerId)) {
+  	  	  	    // player has been updated; assign to team
     	        TeamDao::assignPlayerToTeam($ball->getPlayer(), $ball->getTeamId());
+
+    	        // if pick used to have a different player, remove them from team.
+    	        if ($currentPlayerId > 0) {
+    	          TeamDao::dropPlayer($currentPlayer);
+    	        }
   	  	  	  }
   	  	  	}
   	  	  } else {
@@ -149,9 +165,16 @@ function getRedirectHTML(element, htmlString) {
           	if ($year == $currentYear) {
           	  if (($draftPick->getPlayer() == null) && ($currentPlayer != null)) {
           		// player was removed; remove player from team
-          		TeamDao::assignPlayerToTeam($currentPlayer, 0);
-          	  } else if ($draftPick->getPlayer() != null) {
-                TeamDao::assignPlayerToTeam($draftPick->getPlayer(), $draftPick->getTeamId());
+          		TeamDao::dropPlayer($currentPlayer);
+          	  } else if (($draftPick->getPlayer() != null) &&
+           	      ($draftPick->getPlayer()->getId() != $currentPlayerId)) {
+                // player was assigned to team
+          	    TeamDao::assignPlayerToTeam($draftPick->getPlayer(), $draftPick->getTeamId());
+
+          	    // if pick used to have a different player, remove them from team.
+          	    if ($currentPlayerId > 0) {
+          	      TeamDao::dropPlayer($currentPlayer);
+          	    }
           	  }
           	}
           } else {

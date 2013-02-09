@@ -226,7 +226,7 @@ class Team {
   	                    smallfonttable'>
   	        <thead><tr>
   	          <th class='checkth'></th><th colspan='2'>Player</th><th>Years</th><th>Price</th>
-  	          <th>Signed</th><th>Start</th><th>End</th><th>Type</th>
+  	          <th>Start</th><th>End</th><th>Type</th>
   	        </tr></thead>";
   	foreach ($contracts as $contract) {
   		$player = $contract->getPlayer();
@@ -236,7 +236,6 @@ class Team {
   		echo PlayerManager::getNameAndHeadshotRowAtLevel($player, false) . "
   		<td>" . $contract->getTotalYears() . "</td>
   		<td>" . $contract->getPrice() . "</td>
-  		<td>" . $contract->getSignDate() . "</td>
   		<td>" . $contract->getStartYear() . "</td>
   		<td>" . $contract->getEndYear() . "</td>
   		<td>" . $contract->getType() . "</td></tr>";

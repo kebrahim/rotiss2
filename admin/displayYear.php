@@ -121,8 +121,8 @@
   	} else {
       echo "<h4>$year Draft - Round $round</h4>";
   	}
-  	// allow user to select players who have not yet been drafted during the specified year.
-  	$undraftedPlayers = PlayerDao::getUndraftedPlayers($year);
+  	// allow user to select players who are not currently assigned to a team.
+  	$undraftedPlayers = PlayerDao::getUnassignedPlayers();
 
   	// display table of draft picks for selected year, highlighting row for logged-in team
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
@@ -132,7 +132,10 @@
       $pingPongBalls = BallDao::getPingPongBallsByYear($year);
   	  foreach ($pingPongBalls as $pingPongBall) {
   	    echo "<tr class='tdselect'>
-  	           <td>" . $pingPongBall->getOrdinal() . "</td>
+  	           <td><input type='number' class='input-mini center'
+  	                      name='ppOrd" . $pingPongBall->getId() . "'
+  	                      value='" . $pingPongBall->getOrdinal() . "'
+  	                      min='0' max='" . count($pingPongBalls) . "'></td>
   		       <td>" . $pingPongBall->getCost() . "</td>
   		       <td>" . $pingPongBall->getTeam()->getNameLink(false) . "</td>
   		       <td>" . getPlayerDropdown(

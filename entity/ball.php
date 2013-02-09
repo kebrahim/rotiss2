@@ -106,6 +106,10 @@ class PingPongBall {
     return $this->ordinal;
   }
 
+  public function setOrdinal($ordinal) {
+    $this->ordinal = $ordinal;
+  }
+
   public function __toString() {
     return $this->year . ": $" . $this->cost . " (" . $this->ordinal . ")";
   }
