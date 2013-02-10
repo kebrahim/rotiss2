@@ -17,19 +17,21 @@ class Trade {
   private $tradePartner2;
 
   public function parseTradeFromPost() {
-    $this->tradePartner1 = $this->parseTradePartnerFromPost($_POST['trade_team1id']);
-    $this->tradePartner2 = $this->parseTradePartnerFromPost($_POST['trade_team2id']);
-
-    $_SESSION['trade_team1id'] = $_POST['trade_team1id'];
-    $_SESSION['trade_team2id'] = $_POST['trade_team2id'];
+    $this->parseTradeFromArray($_POST, true);
   }
 
   public function parseTradeFromSession() {
-    $this->tradePartner1 = $this->parseTradePartnerFromSession($_SESSION['trade_team1id']);
-    $this->tradePartner2 = $this->parseTradePartnerFromSession($_SESSION['trade_team2id']);
+    $this->parseTradeFromArray($_SESSION, false);
+  }
 
-    unset($_SESSION['trade_team1id']);
-    unset($_SESSION['trade_team2id']);
+  public function parseTradeFromArray($assocArray, $isPost) {
+    $this->tradePartner1 = $this->parseTradePartnerFromArray($assocArray['trade_team1id'],
+        $assocArray, $isPost);
+    $this->tradePartner2 = $this->parseTradePartnerFromArray($assocArray['trade_team2id'],
+        $assocArray, $isPost);
+
+    SessionUtil::updateSession("trade_team1id", $assocArray, $isPost);
+    SessionUtil::updateSession("trade_team2id", $assocArray, $isPost);
   }
 
   public function showTradeSummary() {
@@ -70,29 +72,16 @@ class Trade {
   }
 
   /**
-   * Parses a TradePartner with the specified team ID from the $_POST array.
+   * Parses a TradePartner with the specified team ID from the specified array.
    */
-  private function parseTradePartnerFromPost($teamId) {
+  private function parseTradePartnerFromArray($teamId, $assocArray, $isPost) {
     $tradePartner = new TradePartner($teamId);
 
-    $this->parseContracts($teamId, $_POST, $tradePartner, true);
-    $this->parseBrognas($teamId, $_POST, $tradePartner, true);
-    $this->parseDraftPicks($teamId, $_POST, $tradePartner, true);
-    $this->parsePingPongBalls($teamId, $_POST, $tradePartner, true);
-
-    return $tradePartner;
-  }
-
-  /**
-   * Parses a TradePartner with the specified team ID from the $_SESSION array.
-   */
-  private function parseTradePartnerFromSession($teamId) {
-    $tradePartner = new TradePartner($teamId);
-
-    $this->parseContracts($teamId, $_SESSION, $tradePartner, false);
-    $this->parseBrognas($teamId, $_SESSION, $tradePartner, false);
-    $this->parseDraftPicks($teamId, $_SESSION, $tradePartner, false);
-    $this->parsePingPongBalls($teamId, $_SESSION, $tradePartner, false);
+    $this->parseContracts($teamId, $assocArray, $tradePartner, $isPost);
+    $this->parsePlayers($teamId, $assocArray, $tradePartner, $isPost);
+    $this->parseBrognas($teamId, $assocArray, $tradePartner, $isPost);
+    $this->parseDraftPicks($teamId, $assocArray, $tradePartner, $isPost);
+    $this->parsePingPongBalls($teamId, $assocArray, $tradePartner, $isPost);
 
     return $tradePartner;
   }
@@ -109,11 +98,25 @@ class Trade {
         $contracts[] = ContractDao::getContractById($contractId);
       }
       $tradePartner->setContracts($contracts);
-      if ($isPost) {
-        $_SESSION[$contractStr] = $assocArray[$contractStr];
-      } else {
-        unset($_SESSION[$contractStr]);
+
+      SessionUtil::updateSession($contractStr, $assocArray, $isPost);
+    }
+  }
+
+  /**
+   * Parses player information for the specified team id
+   */
+  private function parsePlayers($teamId, $assocArray, TradePartner $tradePartner, $isPost) {
+    $playerStr = 'trade_t' . $teamId . 'p';
+    if (isset($assocArray[$playerStr]) && is_array($assocArray[$playerStr])) {
+      $players = array();
+      foreach ($assocArray[$playerStr] as $playerId) {
+        // Retrieve player from DB.
+        $players[] = PlayerDao::getPlayerById($playerId);
       }
+      $tradePartner->setPlayers($players);
+
+      SessionUtil::updateSession($playerStr, $assocArray, $isPost);
     }
   }
 
@@ -139,13 +142,9 @@ class Trade {
         $numBrognas = "0";
       }
       $tradePartner->setBrognas($numBrognas);
-      if ($isPost) {
-        $_SESSION[$brognaStr] = $assocArray[$brognaStr];
-        $_SESSION[$numBrognasStr] = $numBrognas;
-      } else {
-        unset($_SESSION[$brognaStr]);
-        unset($_SESSION[$numBrognasStr]);
-      }
+
+      SessionUtil::updateSession($brognaStr, $assocArray, $isPost);
+      SessionUtil::updateSession($numBrognasStr, $assocArray, $isPost);
     }
   }
 
@@ -162,11 +161,8 @@ class Trade {
         $draftPicks[] = DraftPickDao::getDraftPickById($draftPickId);
       }
       $tradePartner->setDraftPicks($draftPicks);
-      if ($isPost) {
-        $_SESSION[$draftPickStr] = $assocArray[$draftPickStr];
-      } else {
-        unset($_SESSION[$draftPickStr]);
-      }
+
+      SessionUtil::updateSession($draftPickStr, $assocArray, $isPost);
     }
   }
 
@@ -183,11 +179,8 @@ class Trade {
         $pingPongBalls[] = BallDao::getPingPongBallById($pingPongBallId);
       }
       $tradePartner->setPingPongBalls($pingPongBalls);
-      if ($isPost) {
-        $_SESSION[$pingPongStr] = $assocArray[$pingPongStr];
-      } else {
-        unset($_SESSION[$pingPongStr]);
-      }
+
+      SessionUtil::updateSession($pingPongStr, $assocArray, $isPost);
     }
   }
 }
@@ -198,6 +191,7 @@ class Trade {
 class TradePartner {
   private $team;
   private $contracts;
+  private $players;
   private $brognas;
   private $draftPicks;
   private $pingPongBalls;
@@ -216,6 +210,14 @@ class TradePartner {
 
   public function setContracts($contracts) {
     $this->contracts = $contracts;
+  }
+
+  public function getPlayers() {
+    return $this->players;
+  }
+
+  public function setPlayers($players) {
+    $this->players = $players;
   }
 
   public function getBrognas() {
@@ -253,6 +255,13 @@ class TradePartner {
       }
     }
 
+    // display players
+    if ($this->players) {
+      foreach ($this->players as $player) {
+        echo "<strong>Non-Contract Player:</strong> " . $player->getAttributes() . "<br/>";
+      }
+    }
+
     // display brognas
     if ($this->brognas != null) {
       echo "<strong>Brognas:</strong> $" . $this->brognas . "<br/>";
@@ -287,6 +296,20 @@ class TradePartner {
           $this->printError($this->team->getName() . " cannot trade contract for " .
                $contract->getPlayer()->getFullName() . "; contract now belongs to " .
                $contractFromDb->getTeam()->getName());
+          return false;
+        }
+      }
+    }
+
+    // validate players
+    if ($this->players) {
+      // do i still own these players?
+      foreach ($this->players as $player) {
+        $playerFromDb = PlayerDao::getPlayerById($player->getId());
+        if (($playerFromDb->getFantasyTeam() != null) &&
+            ($playerFromDb->getFantasyTeam()->getId() != $this->team->getId())) {
+          $this->printError($this->team->getName() . " cannot trade player " .
+              $player->getAttributes());
           return false;
         }
       }
@@ -348,7 +371,6 @@ class TradePartner {
         }
       }
     }
-
     return true;
   }
 
@@ -375,6 +397,21 @@ class TradePartner {
         TradeDao::createTradedAsset($asset);
 
         echo "<strong>Contract: </strong>" . $contract->toString() . "<br>";
+      }
+    }
+
+    // Trade players
+    if ($this->players) {
+      foreach ($this->players as $player) {
+        // move player to new team
+        TeamDao::assignPlayerToTeam($player, $otherTeam->getId());
+
+        // save traded player asset
+        $asset = new TradedAsset(-1, $tradeResult->getId(), $this->team->getId(),
+            TradedAsset::PLAYER, $player->getId());
+        TradeDao::createTradedAsset($asset);
+
+        echo "<strong>Non-Contract Player: </strong>" . $player->getAttributes() . "<br>";
       }
     }
 

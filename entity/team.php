@@ -221,8 +221,13 @@ class Team {
   	  return;
   	}
 
-  	echo "<a id='contracts'></a><h5>Contracts</h5>";
-  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center
+  	echo "<button type='button' class='btn btn-link' data-toggle='collapse'
+  	              data-target='#contract-collapse" . $this->teamId . "'>
+  	        <h5>Contracts</h5>
+  	      </button>";
+
+  	echo "<div id='contract-collapse" . $this->teamId . "' class='collapse out'>
+  	      <table class='table vertmiddle table-striped table-condensed table-bordered center
   	                    smallfonttable'>
   	        <thead><tr>
   	          <th class='checkth'></th><th colspan='2'>Player</th><th>Years</th><th>Price</th>
@@ -240,7 +245,7 @@ class Team {
   		<td>" . $contract->getEndYear() . "</td>
   		<td>" . $contract->getType() . "</td></tr>";
   	}
-  	echo "</table>";
+  	echo "</table></div>";
   }
 
   /**
@@ -478,10 +483,14 @@ class Team {
   	  return;
   	}
 
-  	echo "<a id='draft'></a><h5>Draft Picks</h5>";
-  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center
-  	                    smallfonttable'>
-  	      <thead><tr>";
+  	echo "<button type='button' class='btn btn-link' data-toggle='collapse'
+  	              data-target='#draft-collapse" . $this->teamId . "'>
+  	        <h5>Draft Picks</h5>
+  	      </button>";
+
+  	echo "<div id='draft-collapse" . $this->teamId . "' class='collapse out'>
+  	        <table class='table vertmiddle table-striped table-condensed table-bordered center
+  	                    smallfonttable'><thead><tr>";
   	echo "<th class='checkth'></th><th>Year</th><th>Overall</th><th>Round</th><th>Pick</th>
   	      <th colspan=2>Original Team</th></tr></thead>";
   	foreach ($this->getPingPongBalls() as $pingPongBall) {
@@ -518,7 +527,7 @@ class Team {
   		      TeamManager::getAbbreviationAndLogoRowAtLevel($draftPick->getOriginalTeam(), false) .
   		   "</tr>";
   	}
-  	echo "</table>";
+  	echo "</table></div>";
   }
 
   /**
@@ -645,10 +654,14 @@ class Team {
   	  return;
   	}
 
-  	echo "<a id='brognas'></a><h5>Brognas</h5>";
-  	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center
-  	                    smallfonttable brognatrade'
-  	             id='brognaTable'><thead><tr>";
+  	echo "<button type='button' class='btn btn-link' data-toggle='collapse'
+  	              data-target='#brognas-collapse" . $this->teamId . "'>
+  	        <h5>Brognas</h5>
+   	      </button>";
+
+  	echo "<div id='brognas-collapse" . $this->teamId . "' class='collapse out'>
+  	        <table class='table vertmiddle table-striped table-condensed table-bordered center
+  	                      smallfonttable brognatrade' id='brognaTable'><thead><tr>";
   	echo "<th class='checkth'></th><th>Year</th><th>Total</th><th>Tradeable</th>";
   	echo "<th id='headerbox" . $tradePosition . "' style='display:none'>To Trade</th></tr></thead>";
   	foreach ($this->getBrognas() as $brogna) {
@@ -675,7 +688,7 @@ class Team {
   		    </td>
         </tr>";
     }
-  	echo "</table>";
+  	echo "</table></div>";
   }
 
   function displayBrognasForAuction($year) {
@@ -752,6 +765,40 @@ class Team {
       return "<td>-</td>";
     }
     return "<td>" . $rank->getRank() . ($rank->isPlaceholder() ? " (PH)" : "") . "</td>";
+  }
+
+  public function displayPlayersForTrade($year) {
+    // display players not currently under contract
+    $players = PlayerDao::getPlayersToBeDroppedForKeepers($this, $year);
+    if (count($players) == 0) {
+      return;
+    }
+
+    echo "<button type='button' class='btn btn-link' data-toggle='collapse'
+                  data-target='#players-collapse" . $this->teamId . "'>
+            <h5>Players</h5>
+          </button>";
+    echo "<div id='players-collapse" . $this->teamId . "' class='collapse out'>";
+    echo "<table class='table vertmiddle table-striped table-condensed table-bordered center
+                        smallfonttable'>
+            <thead><tr>
+              <th class='checkth'></th>
+              <th colspan=2>Player</th>
+              <th>Position</th>
+              <th>Team</th>
+              <th>Age</th>
+            </tr></thead>";
+    foreach ($players as $player) {
+      echo "<tr>
+              <td><input type=checkbox name='trade_t" . $this->getId() . "p[]'
+                         value='" . $player->getId() . "'></td>" .
+              PlayerManager::getNameAndHeadshotRowAtLevel($player, false) . "
+              <td>" . $player->getPositionString() . "</td>
+              <td>" . $player->getMlbTeam()->getImageTag(32) . "</td>
+              <td>" . $player->getAge() . "</td>
+            </tr>";
+    }
+    echo "</table></div>";
   }
 }
 ?>

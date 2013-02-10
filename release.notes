@@ -10,6 +10,7 @@ codename: dachshund
   - seltzer cutoff pick visible on draft page and manage draft page
   - overall draft pick number displayed on all draft tables
   - admins can manage ping pong ball order
+  - non-contracted players can be traded during offseason
   
 - b.t.s.
   - manage scoring week page
@@ -27,6 +28,8 @@ codename: dachshund
    - added new is_seltzer_cutoff column
   - ping pong
    - added ordinal column
+  - traded_asset
+   - added 'Player' enum to 'asset_type' column
 
 v2.1.1 (2/3/13)
 codename: cockapoo

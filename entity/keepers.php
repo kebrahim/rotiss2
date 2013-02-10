@@ -19,21 +19,20 @@ class Keepers {
   private $pingPongBalls;
 
   public function parseKeepersFromPost() {
-  	$this->team = TeamDao::getTeamById($_POST['keeper_teamid']);
-  	$this->buyoutContracts = $this->parseBuyoutContracts($_POST, true);
-  	$this->newContracts = $this->parseNewContracts($_POST, true);
-  	$this->pingPongBalls = $this->parsePingPongBalls($_POST, true);
-
-    SessionUtil::updateSession('keeper_teamid', $_POST, true);
+    $this->parseKeepersFromArray($_POST, true);
   }
 
   public function parseKeepersFromSession() {
-    $this->team = TeamDao::getTeamById($_SESSION['keeper_teamid']);
-  	$this->buyoutContracts = $this->parseBuyoutContracts($_SESSION, false);
-  	$this->newContracts = $this->parseNewContracts($_SESSION, false);
-  	$this->pingPongBalls = $this->parsePingPongBalls($_SESSION, false);
+    $this->parseKeepersFromArray($_SESSION, false);
+  }
 
-    SessionUtil::updateSession('keeper_teamid', $_SESSION, false);
+  private function parseKeepersFromArray($assocArray, $isPost) {
+    $this->team = TeamDao::getTeamById($assocArray['keeper_teamid']);
+    $this->buyoutContracts = $this->parseBuyoutContracts($assocArray, $isPost);
+    $this->newContracts = $this->parseNewContracts($assocArray, $isPost);
+    $this->pingPongBalls = $this->parsePingPongBalls($assocArray, $isPost);
+
+    SessionUtil::updateSession('keeper_teamid', $assocArray, $isPost);
   }
 
   private function parsePingPongBalls($assocArray, $isPost) {

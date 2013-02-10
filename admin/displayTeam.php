@@ -32,6 +32,11 @@
     $contractSeason = TimeUtil::getYearByEvent(Event::AUCTION);
     $team->displayContractsForTrade($contractSeason, 3000);
 
+    // If during offseason, display players for trade
+    if (TimeUtil::isOffSeason()) {
+      $team->displayPlayersForTrade($contractSeason);
+    }
+
     // Brognas
     $keeperSeason = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT);
     $team->displayBrognasForTrade($keeperSeason + 1, $keeperSeason + 1, $position);

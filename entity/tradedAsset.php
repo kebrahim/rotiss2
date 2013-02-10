@@ -28,6 +28,7 @@ class TradedAsset {
   const CONTRACT = 'Contract';
   const DRAFT_PICK = 'Draft Pick';
   const PING_PONG_BALL = 'Ping Pong Ball';
+  const PLAYER = 'Player';
 
   public function __construct($tradedAssetId, $tradeId, $tradingTeamId, $assetType, $assetId) {
     $this->tradedAssetId = $tradedAssetId;
@@ -89,6 +90,9 @@ class TradedAsset {
           $this->asset = BallDao::getPingPongBallById($this->assetId);
           break;
         }
+        case TradedAsset::PLAYER: {
+          $this->asset = PlayerDao::getPlayerById($this->assetId);
+        }
         default: {
           return null;
         }
@@ -105,13 +109,17 @@ class TradedAsset {
         return $this->asset . " " . TradedAsset::BROGNAS;
       }
       case TradedAsset::CONTRACT: {
-        return $this->asset->getPlayer()->getNameLink(false);
+        return $this->asset->getPlayer()->getNameLink(false) . " (" . $this->asset->getTotalYears()
+            . "-yr @ $" . $this->asset->getPrice() . ")";
       }
       case TradedAsset::DRAFT_PICK: {
         return TradedAsset::DRAFT_PICK . " " . $this->asset;
       }
       case TradedAsset::PING_PONG_BALL: {
         return TradedAsset::PING_PONG_BALL . " " . $this->asset;
+      }
+      case TradedAsset::PLAYER: {
+        return $this->asset->getNameLink(false);
       }
       default: {
         return null;
