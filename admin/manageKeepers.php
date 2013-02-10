@@ -33,12 +33,14 @@ function showTeam(teamId) {
     // If teamid is blank, then clear the team div.
 	if (teamId=="" || teamId=="0") {
 		document.getElementById("teamDisplay").innerHTML="";
+		setDisplay("cutoffButton", "block");
 		return;
 	}
 
-	// Display team information.
+	// Display team information and hide cutoff button.
 	getRedirectHTML(document.getElementById("teamDisplay"),
 	    "displayTeam.php?type=keepers&team_id="+teamId);
+	setDisplay("cutoffButton", "none");
 }
 
 // populates the innerHTML of the specified elementId with the HTML returned by the specified
@@ -509,6 +511,11 @@ function removeBall(rowNumber) {
   	TeamManager::displayChooser(TeamDao::getTeamById($teamId), true);
 
     echo "<div id='teamDisplay'></div>";
+
+    // button to calculate seltzer cutoff
+    echo "<div id='cutoffButton'>
+            <a href='manageSeltzerCutoff.php' class='btn btn-inverse'>Calculate Seltzer Cutoff</a>
+          </div><br/>";
 ?>
 
 <script>

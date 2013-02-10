@@ -25,7 +25,7 @@ class DraftPick {
 
   const EXTRA_PICK_ROUND_CUTOFF = 5;
   const MAX_EXTRA_PICKS = 3;
-  const SELTZER_CUTOFF = 200;
+  const SELTZER_CUTOFF = 201;
 
   public function __construct($draftPickId, $teamId, $year, $round, $pick, $originalTeamId,
       $playerId, $isSeltzerCutoff) {
@@ -162,6 +162,10 @@ class DraftPick {
 
   public function isSeltzerCutoff() {
     return $this->isSeltzerCutoff;
+  }
+
+  public function setSeltzerCutoff($isSeltzerCutoff) {
+    $this->isSeltzerCutoff = $isSeltzerCutoff;
   }
 
   public function __toString() {

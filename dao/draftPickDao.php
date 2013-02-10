@@ -71,6 +71,16 @@ class DraftPickDao {
          where d.year = $year and d.is_seltzer_cutoff = 1");
   }
 
+  /**
+   * Returns the draft pick during the specified year in the specified round at the specified pick.
+   */
+  public static function getDraftPickByYearRoundPick($year, $round, $pick) {
+    return DraftPickDao::createDraftPickByQuery(
+        "select d.*
+         from draft_pick d
+         where d.year = $year and d.round = $round and d.pick = $pick");
+  }
+
   private static function createDraftPickByQuery($query) {
     $draftPicks = DraftPickDao::createDraftPicksByQuery($query);
     if (count($draftPicks) == 1) {

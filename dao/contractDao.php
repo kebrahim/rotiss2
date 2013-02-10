@@ -10,36 +10,33 @@ class ContractDao {
    * Returns the contract by the specified id.
    */
   public static function getContractById($contractId) {
-    CommonDao::connectToDb();
-    $query = "select * from contract
-              where contract_id = " . $contractId;
-    return ContractDao::createContractFromQuery($query);
+    return ContractDao::createContractFromQuery(
+        "select * from contract
+         where contract_id = " . $contractId);
   }
 
   /**
    * Returns all of the non-bought-out contracts for the specified team ID.
    */
   public static function getContractsByTeamId($teamId) {
-    CommonDao::connectToDb();
-    $query = "select * from contract
-              where team_id = " . $teamId . " and is_bought_out = 0" .
-              " order by end_year, start_year, price DESC";
-    return ContractDao::createContractsFromQuery($query);
+    return ContractDao::createContractsFromQuery(
+        "select * from contract
+         where team_id = " . $teamId . " and is_bought_out = 0" .
+       " order by end_year, start_year, price DESC");
   }
 
   /**
    * Returns all of the non-bought-out contracts for the specified team in the specified year.
    */
   public static function getContractsByTeamYear($teamId, $year) {
-    CommonDao::connectToDb();
-    $query = "select *
-              from contract
-              where team_id = " . $teamId . "
-              and is_bought_out = 0
-              and start_year <= $year
-              and end_year >= $year
-              order by end_year, start_year, price DESC";
-    return ContractDao::createContractsFromQuery($query);
+    return ContractDao::createContractsFromQuery(
+        "select *
+         from contract
+         where team_id = " . $teamId . "
+         and is_bought_out = 0
+         and start_year <= $year
+         and end_year >= $year
+         order by end_year, start_year, price DESC");
   }
 
   /**
@@ -47,17 +44,41 @@ class ContractDao {
    * year.
    */
   public static function getTotalPriceByTeamYear($teamId, $year) {
-    CommonDao::connectToDb();
-    $query = "select sum(price)
+    return CommonDao::getIntegerValueFromQuery(
+             "select sum(price)
               from contract
               where team_id = " . $teamId . "
               and is_bought_out = 0
               and start_year <= $year
               and end_year >= $year
-              order by end_year, start_year, price DESC";
-    $res = mysql_query($query);
-    $row = mysql_fetch_row($res);
-    return $row[0];
+              order by end_year, start_year, price DESC");
+  }
+
+  /**
+   * Returns the number of non-zero contracts for the specified year.
+   */
+  public static function getNumberNonZeroContracts($year) {
+    return CommonDao::getIntegerValueFromQuery(
+        "select count(*)
+         from contract
+         where is_bought_out = 0
+         and price > 0
+         and start_year <= $year
+         and end_year >= $year");
+  }
+
+  /**
+   * Returns the number of non-zero contracts for the specified team, during the specified year.
+   */
+  public static function getNumberNonZeroContractsByTeam($year, $teamId) {
+    return CommonDao::getIntegerValueFromQuery(
+        "select count(*)
+        from contract
+        where is_bought_out = 0
+        and price > 0
+        and start_year <= $year
+        and end_year >= $year
+        and team_id = $teamId");
   }
 
   /**
@@ -91,6 +112,7 @@ class ContractDao {
   }
 
   private static function createContractsFromQuery($query) {
+    CommonDao::connectToDb();
   	$res = mysql_query($query);
     $contracts = array();
     while ($contractDb = mysql_fetch_assoc($res)) {
