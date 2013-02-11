@@ -1,7 +1,7 @@
 Release Notes
 -------------
 
-v2.1.2 (//13)
+v2.1.2 (2/11/13)
 codename: dachshund
 - visible
   - admins can sign seltzer contracts, including major [based on week in season] & minor league
@@ -11,6 +11,7 @@ codename: dachshund
   - overall draft pick number displayed on all draft tables
   - admins can manage ping pong ball order
   - non-contracted players can be traded during offseason
+  - seltzer cutoff pick automatically calculated based on number of contracts and ping pong balls
   
 - b.t.s.
   - manage scoring week page

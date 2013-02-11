@@ -93,14 +93,14 @@
   // show calculation
   echo "<div class='row-fluid'><div class='span12 center'>";
   echo "<br/>
-        <div class='alert alert-success'>
+        <div class='alert alert-info'>
           Seltzer Cutoff (" . DraftPick::SELTZER_CUTOFF. ") - Total Contracts (" . $numContracts .
           ") - Total Ping Pong Balls (" . $numBalls . ") = <strong>Draft Pick #" .
           $calculatedOverallPick . "</strong><br/>
           Draft Pick #" . $calculatedOverallPick . " + Total Ping Pong Balls (" . $numBalls .
           ") = <strong>Overall Pick #" . ($calculatedOverallPick + $numBalls) . "</strong>
         </div>";
-  echo "<h4>Teams</h4>
+  echo "<h4>Team Breakdown</h4>
         <table class='table vertmiddle table-striped table-condensed table-bordered center'>
           <thead><tr>
             <th colspan=2>Team</th>
