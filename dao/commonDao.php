@@ -31,6 +31,9 @@ class CommonDao {
   static function getIntegerValueFromQuery($query) {
     CommonDao::connectToDb();
     $res = mysql_query($query);
+    if ($res == false) {
+      return 0;
+    }
     $row = mysql_fetch_row($res);
     return $row[0];
   }

@@ -116,7 +116,7 @@
     $teamContracts = ContractDao::getNumberNonZeroContractsByTeam($year, $team->getId());
     $teamBalls = BallDao::getNumPingPongBallsByTeamYear($year, $team->getId());
     echo "<tr>" .
-            TeamManager::getNameAndLogoRowWithSize($team, 32) . "
+            TeamManager::getAbbreviationAndLogoRowAtLevel($team, false) . "
             <td>" . $teamContracts . "</td>
             <td>" . $teamBalls . "</td>
           </tr>";
