@@ -4,6 +4,7 @@ require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'mlbTeamDao.php');
 CommonEntity::requireFileIn('/../dao/', 'positionDao.php');
 CommonEntity::requireFileIn('/../dao/', 'teamDao.php');
+CommonEntity::requireFileIn('/../util/', 'sessions.php');
 
 /**
  * Represents a player in the MLB.
@@ -59,6 +60,15 @@ class Player {
 
   public function getFullName() {
     return $this->firstName . " " . $this->lastName;
+  }
+
+  public function getAbsoluteNameLink($isNewTab) {
+    return $this->getAbsoluteLink($this->getFullName(), $isNewTab);
+  }
+
+  public function getAbsoluteLink($linkText, $isNewTab) {
+    return "<a href='" . SessionUtil::getHomePage() . "playerPage.php?player_id=" .
+        $this->playerId . "'" . ($isNewTab ? " target='_blank'" : "") . ">" . $linkText . "</a>";
   }
 
   public function getNameLink($isTopLevel) {

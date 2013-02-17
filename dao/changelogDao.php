@@ -9,26 +9,34 @@ CommonDao::requireFileIn('/../entity/', 'changelog.php');
 class ChangelogDao {
 
   /**
+   * Returns the change with the specified id.
+   */
+  public static function getChangeById($changeId) {
+    return ChangelogDao::createChangeFromQuery(
+        "select c.*
+         from changelog c
+         where c.changelog_id = $changeId");
+  }
+
+  /**
    * Returns all of the changes.
    */
   public static function getAllChanges() {
-    CommonDao::connectToDb();
-    $query = "select c.*
-    	      from changelog c
-              order by c.timestamp desc";
-    return ChangelogDao::createChangesFromQuery($query);
+    return ChangelogDao::createChangesFromQuery(
+        "select c.*
+    	 from changelog c
+         order by c.timestamp desc");
   }
 
   /**
    * Returns all of the changes for the specified team.
    */
   public static function getChangesByTeam($teamId) {
-  	CommonDao::connectToDb();
-  	$query = "select c.*
-  	          from changelog c
-  	          where c.team_id = $teamId or c.secondary_team_id = $teamId
-  	          order by c.timestamp desc";
-  	return ChangelogDao::createChangesFromQuery($query);
+    return ChangelogDao::createChangesFromQuery(
+        "select c.*
+  	     from changelog c
+  	     where c.team_id = $teamId or c.secondary_team_id = $teamId
+  	     order by c.timestamp desc");
   }
 
   private static function createChangeFromQuery($query) {
@@ -40,14 +48,19 @@ class ChangelogDao {
   }
 
   private static function createChangesFromQuery($query) {
+    CommonDao::connectToDb();
 	$res = mysql_query($query);
     $changesDb = array();
 	while($changeDb = mysql_fetch_assoc($res)) {
-	  $changesDb[] = new Changelog($changeDb["changelog_id"], $changeDb["change_type"],
-	      $changeDb["user_id"], $changeDb["timestamp"], $changeDb["change_id"],
-	  	  $changeDb["team_id"], $changeDb["secondary_team_id"]);
+	  $changesDb[] = ChangelogDao::populateChangelog($changeDb);
 	}
 	return $changesDb;
+  }
+
+  private static function populateChangelog($changeDb) {
+    return new Changelog($changeDb["changelog_id"], $changeDb["change_type"], $changeDb["user_id"],
+        $changeDb["timestamp"], $changeDb["change_id"], $changeDb["team_id"],
+        $changeDb["secondary_team_id"]);
   }
 
   /**

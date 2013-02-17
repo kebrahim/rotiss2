@@ -2,11 +2,11 @@
 
 require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'auctionDao.php');
-CommonEntity::requireFileIn('/../dao/', 'brognaDao.php');
 CommonEntity::requireFileIn('/../dao/', 'changelogDao.php');
 CommonEntity::requireFileIn('/../dao/', 'contractDao.php');
 CommonEntity::requireFileIn('/../entity/', 'auctionResult.php');
 CommonEntity::requireFileIn('/../entity/', 'contract.php');
+CommonEntity::requireFileIn('/../util/', 'mail.php');
 CommonEntity::requireFileIn('/../util/', 'time.php');
 
 /**
@@ -88,15 +88,15 @@ class Auction {
 
   	$auction = $this->saveAuctionResult();
   	$this->saveAuctionContract();
-  	$this->updateBrognas();
 
   	echo "<br/></div>
   	      </div>";
 
-  	// Update changelog
+  	// Update changelog and send email
   	$change = new Changelog(-1, Changelog::AUCTION_TYPE, SessionUtil::getLoggedInUser()->getId(),
         TimeUtil::getTimestampString(), $auction->getId(), $this->team->getId(), null);
-  	ChangelogDao::createChange($change);
+  	$change = ChangelogDao::createChange($change);
+  	MailUtil::sendChangeEmail($change);
   }
 
   /**
@@ -128,21 +128,6 @@ class Auction {
 
 	// Assign player to team.
 	TeamDao::assignPlayerToTeam($this->player, $this->team->getId());
-  }
-
-  /**
-   * Deduct amount from team's brognas for current year in db
-   */
-  private function updateBrognas() {
-  	$currentYear = TimeUtil::getCurrentYear();
-  	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
-
-	// subtract amount from total points and save brognas
-	$originalTotalPoints = $brognas->getTotalPoints();
-  	$brognas->setTotalPoints($originalTotalPoints - intval($this->amount));
-  	BrognaDao::updateBrognas($brognas);
-	echo "<strong>" . $currentYear . " Brognas:</strong> reduced by " . $this->amount . ", from " .
-		$originalTotalPoints . " to " . $brognas->getTotalPoints() . "<br>";
   }
 
   private function printError($errorMsg) {

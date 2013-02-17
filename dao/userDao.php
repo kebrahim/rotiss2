@@ -9,46 +9,62 @@ class UserDao {
    * Returns the user with the specified id
    */
   public static function getUserById($userId) {
-    CommonDao::connectToDb();
-    $query = "select u.*
-              from user u
-              where u.user_id = " . $userId;
-    return UserDao::createUserFromQuery($query);
+    return UserDao::createUserFromQuery(
+        "select u.*
+         from user u
+         where u.user_id = " . $userId);
   }
 
   /**
-   * Returns all of the owners for the specified team ID.
+   * Returns all of the users for the specified team ID.
    */
   public static function getUsersByTeamId($teamId) {
-    CommonDao::connectToDb();
-    $query = "select u.*
-    	      from user u
-              where u.team_id = $teamId
-              and u.is_demo = '0'";
-    return UserDao::createUsersFromQuery($query);
+    return UserDao::createUsersFromQuery(
+        "select u.*
+    	 from user u
+         where u.team_id = $teamId
+         and u.is_demo = '0'");
   }
 
   /**
    * Returns the user with the specified username and password.
    */
   public static function getUserByUsernamePassword($username, $password) {
-    CommonDao::connectToDb();
-    $query = "select u.*
-    	      from user u
-              where u.username = '" . $username . "'
-              and u.password = '" . $password . "'";
-    return UserDao::createUserFromQuery($query);
+    return UserDao::createUserFromQuery(
+        "select u.*
+    	 from user u
+         where u.username = '" . $username . "'
+         and u.password = '" . $password . "'");
   }
 
   /**
    * Returns the user with the specified email address.
    */
   public static function getUserByEmailAddress($email) {
-    CommonDao::connectToDb();
-    $query = "select u.*
-    	      from user u
-              where u.email = '" . $email . "'";
-    return UserDao::createUserFromQuery($query);
+    return UserDao::createUserFromQuery(
+        "select u.*
+    	 from user u
+         where u.email = '" . $email . "'");
+  }
+
+  /**
+   * Returns all of the non-demo users.
+   */
+  public static function getAllUsers() {
+    return UserDao::createUsersFromQuery(
+        "select u.*
+        from user u
+        where u.is_demo = '0'");
+  }
+
+  /**
+   * Returns all of the admin users.
+   */
+  public static function getAdminUsers() {
+    return UserDao::createUsersFromQuery(
+        "select u.*
+        from user u
+        where u.is_admin = '1'");
   }
 
   private static function createUserFromQuery($query) {
@@ -60,14 +76,19 @@ class UserDao {
   }
 
   private static function createUsersFromQuery($query) {
+    CommonDao::connectToDb();
     $res = mysql_query($query);
     $usersDb = array();
     while($userDb = mysql_fetch_assoc($res)) {
-      $usersDb[] = new User($userDb["user_id"], $userDb["username"], $userDb["password"],
-          $userDb["first_name"], $userDb["last_name"], $userDb["email"], $userDb["team_id"],
-          $userDb["is_admin"], $userDb["is_super_admin"], $userDb["is_demo"]);
+      $usersDb[] = UserDao::populateUser($userDb);
     }
     return $usersDb;
+  }
+
+  private static function populateUser($userDb) {
+    return new User($userDb["user_id"], $userDb["username"], $userDb["password"],
+        $userDb["first_name"], $userDb["last_name"], $userDb["email"], $userDb["team_id"],
+        $userDb["is_admin"], $userDb["is_super_admin"], $userDb["is_demo"]);
   }
 
   /**

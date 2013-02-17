@@ -179,12 +179,19 @@ class SessionUtil {
    * Redirects to home page and adds redirect URL to query string if specified.
    */
   public static function redirectHome($continueUrl) {
-  	$homePage = (ConfigUtil::isProduction() ?
-  	    "http://stpetes.rotiss.com/" : "http://localhost/rotiss2/");
+  	$homePage = SessionUtil::getHomePage();
   	if ($continueUrl != null) {
   	  $homePage .= "?continue=$continueUrl";
   	}
     SessionUtil::redirectToUrl($homePage);
+  }
+
+  /**
+   * Returns the home page based on the environment type.
+   */
+  public static function getHomePage() {
+    return (ConfigUtil::isProduction() ?
+  	    "http://stpetes.rotiss.com/" : "http://localhost/rotiss2/");
   }
 
   /**

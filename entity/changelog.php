@@ -191,6 +191,53 @@ class Changelog {
     }
   }
 
+  public function getEmailDetails() {
+    $change = $this->getChange();
+    switch($this->changeType) {
+      case Changelog::AUCTION_TYPE: {
+        return $change->getPlayer()->getAbsoluteNameLink(true) . " - $" . $change->getCost();
+      }
+      case Changelog::TRADE_TYPE: {
+        // TODO
+        $assets = TradeDao::getTradedAssetsByTradeAndTeam($change->getId(), $this->teamId);
+        $tradeDetails = "<strong>Trades: </strong>";
+        $firstAsset = true;
+        foreach ($assets as $asset) {
+          if ($firstAsset) {
+            $firstAsset = false;
+          } else {
+            $tradeDetails .= ", ";
+          }
+          $tradeDetails .= $asset;
+        }
+        return $tradeDetails;
+      }
+      case Changelog::BUYOUT_CONTRACT_TYPE: {
+        return $change->getPlayer()->getAbsoluteNameLink(true) . ": " . $change->getYearsLeft() .
+            " year(s) remaining @ $" . $change->getPrice() . " - Buyout price: $" .
+            $change->getBuyoutPrice();
+      }
+      case Changelog::CONTRACT_SIGNED_TYPE:
+      case Changelog::CONTRACT_PICKUP_TYPE:
+      case Changelog::CONTRACT_DROP_TYPE:
+      case Changelog::CONTRACT_PAID_TYPE: {
+        return "<strong>" . $change->getType() . ": </strong>" .
+            $change->getPlayer()->getAbsoluteNameLink(true) .
+            " - " . $change->getYearsLeft() . " year(s) @ $" . $change->getPrice() . " [" .
+            $change->getStartYear() . " - " . $change->getEndYear() . "]";
+      }
+      case Changelog::PING_PONG_BALL_TYPE: {
+        return $change->getDetails();
+      }
+      case Changelog::BANK_TYPE: {
+        return $change->getBankedDetails();
+      }
+      default: {
+        return null;
+      }
+    }
+  }
+
   public function toString() {
   	return $this->changeType . " by " . $this->getUser()->getUsername() . " at " .
   	    $this->timestamp . " - " . $this->getChange()->toString();
