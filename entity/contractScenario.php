@@ -3,6 +3,7 @@
 require_once 'commonEntity.php';
 CommonEntity::requireFileIn('/../dao/', 'changelogDao.php');
 CommonEntity::requireFileIn('/../dao/', 'teamDao.php');
+CommonEntity::requireFileIn('/../util/', 'mail.php');
 
 /**
  * Represents a contract transaction [pickup, drop, seltzer].
@@ -218,6 +219,7 @@ class ContractScenario {
     echo "  <div class='span8 center'>
                <h4>Summary</h4>";
     $timestamp = TimeUtil::getTimestampString();
+    $changes = array();
 
     // drop contracts
     if ($this->droppedContracts) {
@@ -227,7 +229,7 @@ class ContractScenario {
         echo "<strong>Dropped:</strong> " . $contract->getDetails() . "<br/>";
 
         // update changelog
-        ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_DROP_TYPE,
+        $changes[] = ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_DROP_TYPE,
             SessionUtil::getLoggedInUser()->getId(), $timestamp, $contract->getId(),
             $this->team->getId(), null));
       }
@@ -246,7 +248,7 @@ class ContractScenario {
         echo "<strong>Picked up:</strong> " . $contract->getDetails() . "<br/>";
 
         // update changelog
-        ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_PICKUP_TYPE,
+        $changes[] = ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_PICKUP_TYPE,
             SessionUtil::getLoggedInUser()->getId(), $timestamp, $contract->getId(),
             $this->team->getId(), $oldTeam->getId()));
       }
@@ -258,11 +260,14 @@ class ContractScenario {
         echo "<strong>Signed:</strong> " . $this->seltzerContract->getDetails() . "<br/>";
 
         // update changelog
-        ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_SIGNED_TYPE,
+        $changes[] = ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_SIGNED_TYPE,
             SessionUtil::getLoggedInUser()->getId(), $timestamp, $this->seltzerContract->getId(),
             $this->team->getId(), null));
       }
     }
+
+    // send email with all changes
+    MailUtil::sendChangesEmailToTeam($changes, $this->team);
 
     echo "<input type='hidden' name='team_id' value='" . $this->team->getId() . "'>";
 

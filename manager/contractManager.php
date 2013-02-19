@@ -81,6 +81,7 @@
     }
     ContractManager::displayAvailableContracts($rowNumber);
   } else if ($displayType == "attribute") {
+    $contract = null;
     if (isset($_REQUEST["contract_id"])) {
       $contract = ContractDao::getContractById($_REQUEST["contract_id"]);
     }

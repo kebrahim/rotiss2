@@ -2,6 +2,7 @@
 
 require_once 'commonUtil.php';
 CommonUtil::requireFileIn('/../dao/', 'changelogDao.php');
+CommonUtil::requireFileIn('/../dao/', 'teamDao.php');
 CommonUtil::requireFileIn('/../dao/', 'userDao.php');
 
 /**
@@ -13,33 +14,55 @@ class MailUtil {
    * Sends an email to the users of the team(s) affected by the specified change, and cc's the
    * admin users.
    */
-  // TODO new functions to handle an array of changes for one team and for multiple teams
   public static function sendChangeEmail(Changelog $change) {
-    $subject = "St. Pete's Rotiss Transaction - " . $change->getType() . " for " .
+    $subject = "St. Pete's Rotiss Transaction Report - " . $change->getType() . " for " .
         $change->getTeam()->getName();
 
     // Format change into email message
-    $message = "<table border>
-                  <thead><tr>
-                    <th>Date/Time</th>
-                    <th>User</th>
-                    <th>Type</th>
-                    <th>Team</th>
-                    <th>Details</th>
-                  </tr></thead>
-                  <tr>
-                    <td>" . $change->getTimestamp() . "</td>
-                    <td>" . $change->getUser()->getFullName() . "</td>
-                    <td>" . $change->getType() . "</td>
-                    <td>" . $change->getTeam()->getAbbreviation() . "</td>
-                    <td>" . $change->getEmailDetails() . "</td>
-                  </tr>
-                </table>";
+    $message = "<table border>" .
+               MailUtil::getTableHeader() .
+               MailUtil::getTableRow($change) .
+               "</table>";
 
     // TODO send mail to secondary user [if exists]
 
     MailUtil::sendMailToUsers($subject, $message, UserDao::getUsersByTeamId($change->getTeamId()),
         UserDao::getAdminUsers());
+  }
+
+  /**
+   * Sends an email to the users of the specified team, including details of all of the specified
+   * changes, and cc's the admin users.
+   */
+  public static function sendChangesEmailToTeam($changes, Team $team) {
+    $subject = "St. Pete's Rotiss Transaction Report - Contracts for " . $team->getName();
+    $message = "<table border>" . MailUtil::getTableHeader();
+    foreach ($changes as $change) {
+      $message .= MailUtil::getTableRow($change);
+    }
+    $message .= "</table>";
+    MailUtil::sendMailToUsers($subject, $message, UserDao::getUsersByTeamId($team->getId()),
+        UserDao::getAdminUsers());
+  }
+
+  private static function getTableHeader() {
+    return "<thead><tr>
+              <th>Date/Time</th>
+              <th>User</th>
+              <th>Type</th>
+              <th>Team</th>
+              <th>Details</th>
+            </tr></thead>";
+  }
+
+  private static function getTableRow($change) {
+    return "<tr>
+              <td>" . $change->getTimestamp() . "</td>
+              <td>" . $change->getUser()->getFullName() . "</td>
+              <td>" . $change->getType() . "</td>
+              <td>" . $change->getTeam()->getAbbreviation() . "</td>
+              <td>" . $change->getEmailDetails() . "</td>
+            </tr>";
   }
 
   /**
@@ -64,7 +87,8 @@ class MailUtil {
   	  $headers .= "CC: " . MailUtil::getEmailAddresses($ccUsers) . "\r\n";
   	}
 
-  	MailUtil::displayMail($to, $subject, $message, $headers);
+  	// TODO remove this
+  	// MailUtil::displayMail($to, $subject, $message, $headers);
   	mail($to, $subject, $message, $headers);
   }
 
@@ -100,9 +124,12 @@ class MailUtil {
   }
 }
 
-// Utility method
+// Utility methods
 if (array_key_exists("changeid", $_REQUEST)) {
   MailUtil::sendChangeEmail(ChangelogDao::getChangeById($_REQUEST["changeid"]));
+} else if (array_key_exists("teamid", $_REQUEST)) {
+  MailUtil::sendChangesEmailToTeam(ChangelogDao::getChangesByTeam($_REQUEST["teamid"]),
+      TeamDao::getTeamById($_REQUEST["teamid"]));
 }
 
 ?>

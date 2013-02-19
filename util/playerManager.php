@@ -33,7 +33,7 @@ class PlayerManager {
     }
   }
 
-  public static function displayAttribute(Player $player, $attribute) {
+  public static function displayAttribute($player, $attribute) {
     if ($player == null) {
       return;
     }
@@ -58,6 +58,7 @@ if (isset($_REQUEST["type"])) {
 }
 
 if ($displayType == "attribute") {
+  $player = null;
   if (isset($_REQUEST["player_id"])) {
     $player = PlayerDao::getPlayerById($_REQUEST["player_id"]);
   }
