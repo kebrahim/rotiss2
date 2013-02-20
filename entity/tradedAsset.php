@@ -102,6 +102,31 @@ class TradedAsset {
     return $this->asset;
   }
 
+  public function toStringForEmail() {
+    $asset = $this->getAsset();
+    switch($this->assetType) {
+      case TradedAsset::BROGNAS: {
+        return $this->asset . " " . TradedAsset::BROGNAS;
+      }
+      case TradedAsset::CONTRACT: {
+        return $this->asset->getPlayer()->getAbsoluteNameLink(true) . " (" .
+            $this->asset->getTotalYears() . "-yr @ $" . $this->asset->getPrice() . ")";
+      }
+      case TradedAsset::DRAFT_PICK: {
+        return TradedAsset::DRAFT_PICK . " " . $this->asset;
+      }
+      case TradedAsset::PING_PONG_BALL: {
+        return TradedAsset::PING_PONG_BALL . " " . $this->asset;
+      }
+      case TradedAsset::PLAYER: {
+        return $this->asset->getAbsoluteNameLink(true);
+      }
+      default: {
+        return null;
+      }
+    }
+  }
+
   public function __toString() {
     $asset = $this->getAsset();
     switch($this->assetType) {

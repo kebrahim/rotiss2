@@ -11,11 +11,11 @@ class ChangelogDao {
   /**
    * Returns the change with the specified id.
    */
-  public static function getChangeById($changeId) {
+  public static function getChangeById($changelogId) {
     return ChangelogDao::createChangeFromQuery(
         "select c.*
          from changelog c
-         where c.changelog_id = $changeId");
+         where c.changelog_id = $changelogId");
   }
 
   /**
@@ -37,6 +37,16 @@ class ChangelogDao {
   	     from changelog c
   	     where c.team_id = $teamId or c.secondary_team_id = $teamId
   	     order by c.timestamp desc");
+  }
+
+  /**
+   * Returns all of the changes that are associated with the specified change ID.
+   */
+  public static function getChangesByChangeId($changeId) {
+    return ChangelogDao::createChangesFromQuery(
+        "select c.*
+        from changelog c
+        where c.change_id = $changeId");
   }
 
   private static function createChangeFromQuery($query) {

@@ -198,7 +198,6 @@ class Changelog {
         return $change->getPlayer()->getAbsoluteNameLink(true) . " - $" . $change->getCost();
       }
       case Changelog::TRADE_TYPE: {
-        // TODO
         $assets = TradeDao::getTradedAssetsByTradeAndTeam($change->getId(), $this->teamId);
         $tradeDetails = "<strong>Trades: </strong>";
         $firstAsset = true;
@@ -208,7 +207,7 @@ class Changelog {
           } else {
             $tradeDetails .= ", ";
           }
-          $tradeDetails .= $asset;
+          $tradeDetails .= $asset->toStringForEmail();
         }
         return $tradeDetails;
       }

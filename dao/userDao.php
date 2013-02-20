@@ -27,6 +27,26 @@ class UserDao {
   }
 
   /**
+   * Returns all of the users associated with any of the specified team IDs.
+   */
+  public static function getUsersByTeamIds($teamIds) {
+    $query = "select u.*
+      	      from user u
+              where u.team_id in (";
+    $first = true;
+    foreach ($teamIds as $teamId) {
+      if ($first) {
+        $first = false;
+      } else {
+        $query .= ",";
+      }
+      $query .= $teamId;
+    }
+    $query .= ") and u.is_demo = '0'";
+    return UserDao::createUsersFromQuery($query);
+  }
+
+  /**
    * Returns the user with the specified username and password.
    */
   public static function getUserByUsernamePassword($username, $password) {

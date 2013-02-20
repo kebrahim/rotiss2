@@ -16,15 +16,13 @@ class MailUtil {
    */
   public static function sendChangeEmail(Changelog $change) {
     $subject = "St. Pete's Rotiss Transaction Report - " . $change->getType() . " for " .
-        $change->getTeam()->getName();
+        $change->getTeam()->getAbbreviation();
 
     // Format change into email message
     $message = "<table border>" .
                MailUtil::getTableHeader() .
                MailUtil::getTableRow($change) .
                "</table>";
-
-    // TODO send mail to secondary user [if exists]
 
     MailUtil::sendMailToUsers($subject, $message, UserDao::getUsersByTeamId($change->getTeamId()),
         UserDao::getAdminUsers());
@@ -35,13 +33,41 @@ class MailUtil {
    * changes, and cc's the admin users.
    */
   public static function sendChangesEmailToTeam($changes, Team $team) {
-    $subject = "St. Pete's Rotiss Transaction Report - Contracts for " . $team->getName();
+    $subject = "St. Pete's Rotiss Transaction Report - Contracts for " . $team->getAbbreviation();
     $message = "<table border>" . MailUtil::getTableHeader();
+
+    $teamIds = array();
+    $teamIds[] = $team->getId();
     foreach ($changes as $change) {
       $message .= MailUtil::getTableRow($change);
+
+      // if secondary team is populated, also email them
+      if ($change->getSecondaryTeam() != null) {
+        $teamIds[] = $change->getSecondaryTeamId();
+      }
     }
     $message .= "</table>";
-    MailUtil::sendMailToUsers($subject, $message, UserDao::getUsersByTeamId($team->getId()),
+    MailUtil::sendMailToUsers($subject, $message,
+        UserDao::getUsersByTeamIds(array_unique($teamIds)), UserDao::getAdminUsers());
+  }
+
+  /**
+   * Sends an email to the users of the specified teams, including details of the trade that
+   * occurred between the two teams.
+   */
+  public static function sendTradeEmail($changes, Team $team1, Team $team2) {
+    $subject = "St. Pete's Rotiss Transaction Report - Trade between " . $team1->getAbbreviation() .
+        " and " . $team2->getAbbreviation();
+
+    $message = "<table border>" .
+        MailUtil::getTableHeader() .
+        MailUtil::getTableRowForTrade($changes[0], true, false) .   // change1
+        MailUtil::getTableRowForTrade($changes[1], false, true) .   // change2
+        "</table>";
+
+    MailUtil::sendMailToUsers($subject, $message,
+        array_merge(UserDao::getUsersByTeamId($team1->getId()),
+            UserDao::getUsersByTeamId($team2->getId())),
         UserDao::getAdminUsers());
   }
 
@@ -56,13 +82,22 @@ class MailUtil {
   }
 
   private static function getTableRow($change) {
-    return "<tr>
-              <td>" . $change->getTimestamp() . "</td>
-              <td>" . $change->getUser()->getFullName() . "</td>
-              <td>" . $change->getType() . "</td>
-              <td>" . $change->getTeam()->getAbbreviation() . "</td>
-              <td>" . $change->getEmailDetails() . "</td>
-            </tr>";
+    return MailUtil::getTableRowForTrade($change, false, false);
+  }
+
+  private static function getTableRowForTrade($change, $isFirstTrade, $isSecondTrade) {
+    $message =  "<tr>";
+    if (!$isSecondTrade) {
+      $message .=
+          "<td rowspan=" . ($isFirstTrade ? "2" : "1") . ">" . $change->getTimestamp() . "</td>
+           <td rowspan=" . ($isFirstTrade ? "2" : "1") . ">" . $change->getUser()->getFullName() .
+           "</td>
+           <td rowspan=" . ($isFirstTrade ? "2" : "1") . ">" . $change->getType() . "</td>";
+    }
+    $message .= "<td>" . $change->getTeam()->getAbbreviation() . "</td>
+                 <td>" . $change->getEmailDetails() . "</td>
+                 </tr>";
+    return $message;
   }
 
   /**
@@ -130,6 +165,9 @@ if (array_key_exists("changeid", $_REQUEST)) {
 } else if (array_key_exists("teamid", $_REQUEST)) {
   MailUtil::sendChangesEmailToTeam(ChangelogDao::getChangesByTeam($_REQUEST["teamid"]),
       TeamDao::getTeamById($_REQUEST["teamid"]));
+} else if (array_key_exists("tradeid", $_REQUEST)) {
+  $changes = ChangelogDao::getChangesByChangeId($_REQUEST["tradeid"]);
+  MailUtil::sendTradeEmail($changes, $changes[0]->getTeam(), $changes[0]->getSecondaryTeam());
 }
 
 ?>

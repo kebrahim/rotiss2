@@ -7,6 +7,7 @@ CommonEntity::requireFileIn('/../dao/', 'changelogDao.php');
 CommonEntity::requireFileIn('/../dao/', 'contractDao.php');
 CommonEntity::requireFileIn('/../dao/', 'draftPickDao.php');
 CommonEntity::requireFileIn('/../dao/', 'tradeDao.php');
+CommonEntity::requireFileIn('/../util/', 'mail.php');
 CommonEntity::requireFileIn('/../util/', 'time.php');
 
 /**
@@ -63,12 +64,17 @@ class Trade {
     $tradeResult = TradeDao::createTradeResult($tradeResult);
 
     // initiate trade between each team.
-    $this->tradePartner1->trade($this->tradePartner2->getTeam(), $tradeResult);
+    $tradeChanges = array();
+    $tradeChanges[] = $this->tradePartner1->trade($this->tradePartner2->getTeam(), $tradeResult);
     echo "  </div>
           <div class='span6 center'>";
-    $this->tradePartner2->trade($this->tradePartner1->getTeam(), $tradeResult);
+    $tradeChanges[] = $this->tradePartner2->trade($this->tradePartner1->getTeam(), $tradeResult);
     echo "  </div>
           </div>";
+
+    // send mail with trade information.
+    MailUtil::sendTradeEmail($tradeChanges, $this->tradePartner1->getTeam(),
+        $this->tradePartner2->getTeam());
   }
 
   /**
@@ -375,7 +381,7 @@ class TradePartner {
   }
 
   /**
-   * Executes trade with specified team.
+   * Executes trade with specified team and returns changelog of trade.
    */
   public function trade(Team $otherTeam, TradeResult $tradeResult) {
     $this->team->displayTeamInfo();
@@ -479,7 +485,7 @@ class TradePartner {
     echo "<br/>";
 
     // update changelog
-    ChangelogDao::createChange(new Changelog(-1, Changelog::TRADE_TYPE,
+    return ChangelogDao::createChange(new Changelog(-1, Changelog::TRADE_TYPE,
         SessionUtil::getLoggedInUser()->getId(), $tradeResult->getTimestamp(),
         $tradeResult->getId(), $this->team->getId(), $otherTeam->getId()));
   }
