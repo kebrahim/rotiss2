@@ -124,6 +124,11 @@ class Contract {
   	return $this->contractType;
   }
 
+  public function isKeeper() {
+    return ($this->contractType == Contract::KEEPER_TYPE) ||
+        ($this->contractType == Contract::MINOR_KEEPER_TYPE);
+  }
+
   /**
    * Returns the cost for buying out this contract.
    */

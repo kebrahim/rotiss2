@@ -40,6 +40,24 @@ class ChangelogDao {
   }
 
   /**
+   * Returns all of the changes made on keeper night for the specified team, during the specified
+   * year.
+   */
+  public static function getKeeperChangesByTeam($teamId, $year) {
+    return ChangelogDao::createChangesFromQuery(
+        "select c.*
+        from changelog c
+        where c.team_id = $teamId
+        and c.timestamp like '" . $year . "-%'
+        and c.change_type in ('" . Changelog::CONTRACT_SIGNED_TYPE . "',
+            '" . Changelog::BUYOUT_CONTRACT_TYPE . "',
+            '" . Changelog::PING_PONG_BALL_TYPE . "',
+            '" . Changelog::BANK_TYPE . "',
+            '" . Changelog::CONTRACT_PAID_TYPE . "')
+        order by c.change_type");
+  }
+
+  /**
    * Returns all of the changes that are associated with the specified change ID.
    */
   public static function getChangesByChangeId($changeId) {
@@ -47,6 +65,19 @@ class ChangelogDao {
         "select c.*
         from changelog c
         where c.change_id = $changeId");
+  }
+
+  /**
+   * Returns all of the teams that have not banked in the specified year.
+   */
+  public static function getUnbankedTeams($year) {
+    return TeamDao::createTeamsFromQuery(
+        "select t.*
+        from team t where t.team_id not in (
+            select c.team_id
+            from changelog c
+            where c.change_type = '" . Changelog::BANK_TYPE . "'
+            and c.timestamp like '" . $year . "-%')");
   }
 
   private static function createChangeFromQuery($query) {

@@ -287,6 +287,7 @@ function removeBall(rowNumber) {
   require_once '../dao/contractDao.php';
   require_once '../dao/teamDao.php';
   require_once '../entity/keepers.php';
+  require_once '../manager/changelogManager.php';
   require_once '../util/teamManager.php';
 
   // Display nav bar.
@@ -501,21 +502,29 @@ function removeBall(rowNumber) {
     echo "  </div>
           </div>"; // span6, row-fluid
 
-    echo "<a href='manageKeepers.php' class='btn btn-primary'>Let's do it again!</a><br/><br/>";
+    echo "<a href='manageKeepers.php' class='btn btn-primary'>Return to Keepers</a><br/><br/>";
   } else {
   	// clear out keeper session variables from previous keeper scenarios.
   	SessionUtil::clearSessionVarsWithPrefix("keeper_");
 
-  	// use team chooser with selected team
-  	echo "<br/>";
-  	TeamManager::displayChooser(TeamDao::getTeamById($teamId), true);
+  	$currentYear = TimeUtil::getCurrentYear();
 
-    echo "<div id='teamDisplay'></div>";
+  	$unbankedTeams = ChangelogDao::getUnbankedTeams($currentYear);
 
-    // button to calculate seltzer cutoff
-    echo "<div id='cutoffButton'>
-            <a href='manageSeltzerCutoff.php' class='btn btn-inverse'>Calculate Seltzer Cutoff</a>
-          </div><br/>";
+    if (count($unbankedTeams) > 0) {
+  	  // use team chooser with selected team, only showing teams which have not banked
+      echo "<h4>New Keeper</h4>";
+      TeamManager::displayDropdown($unbankedTeams, TeamDao::getTeamById($teamId), true);
+      echo "<div id='teamDisplay'></div>";
+    } else {
+      // button to calculate seltzer cutoff, only if all teams have banked
+      echo "<h4>Keepers are done!</h4>";
+      echo "<div id='cutoffButton'>
+              <a href='manageSeltzerCutoff.php'
+                 class='btn btn-inverse'>Calculate Seltzer Cutoff</a>
+            </div><br/>";
+      // TODO also show button to send email to all teams w/ summary
+    }
 ?>
 
 <script>
@@ -524,9 +533,17 @@ function removeBall(rowNumber) {
 </script>
 
 <?php
+    echo "</div></div>";
+    echo "<div class='row-fluid'>
+            <div class='span12 center'>";
+
+    // show keeper summary
+    ChangelogManager::displayKeeperSummary($currentYear);
   }
-  echo "</div></div>
-        </form>";
+
+  echo "</div>"; // span12
+  echo "</div>"; // row-fluid
+  echo "</form>";
 
   // Footer
   LayoutUtil::displayAdminFooter();

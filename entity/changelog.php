@@ -237,6 +237,29 @@ class Changelog {
     }
   }
 
+  public function getKeeperDetails() {
+    $change = $this->getChange();
+    switch($this->changeType) {
+      case Changelog::BUYOUT_CONTRACT_TYPE: {
+        return $change->getPlayer()->getAbsoluteNameLink(true) . " - $" . $change->getBuyoutPrice();
+      }
+      case Changelog::CONTRACT_SIGNED_TYPE:
+      case Changelog::CONTRACT_PAID_TYPE: {
+        return $change->getPlayer()->getAbsoluteNameLink(true) .
+            " - " . $change->getYearsLeft() . "yr/$" . $change->getPrice();
+      }
+      case Changelog::PING_PONG_BALL_TYPE: {
+        return "$" . $change->getCost();
+      }
+      case Changelog::BANK_TYPE: {
+        return "$" . $change->getBankedPoints();
+      }
+      default: {
+        return null;
+      }
+    }
+  }
+
   public function toString() {
   	return $this->changeType . " by " . $this->getUser()->getUsername() . " at " .
   	    $this->timestamp . " - " . $this->getChange()->toString();

@@ -57,16 +57,20 @@ class TeamDao {
   	return null;
   }
 
-  private static function createTeamsFromQuery($query) {
+  public static function createTeamsFromQuery($query) {
     $res = mysql_query($query);
     $teamsDb = array();
     if (mysql_num_rows($res) > 0) {
       while($teamDb = mysql_fetch_assoc($res)) {
-        $teamsDb[] = new Team($teamDb["team_id"], $teamDb["team_name"], $teamDb["league"],
-            $teamDb["division"], $teamDb["abbreviation"], $teamDb["sportsline_image"]);
+        $teamsDb[] = TeamDao::populateTeam($teamDb);
       }
     }
     return $teamsDb;
+  }
+
+  public static function populateTeam($teamDb) {
+    return new Team($teamDb["team_id"], $teamDb["team_name"], $teamDb["league"],
+        $teamDb["division"], $teamDb["abbreviation"], $teamDb["sportsline_image"]);
   }
 
  /**

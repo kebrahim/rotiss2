@@ -46,7 +46,7 @@ class Keepers {
   	for ($i = ($ppSavedCount + 1); $i <= ($ppSavedCount + $ppNewCount); $i++) {
   	  $ppKey = 'keeper_pp' . $i;
   	  $pingPongBalls[] = new PingPongBall(
-  	      -1, $currentYear, $assocArray[$ppKey], $this->team->getId(), null);
+  	      -1, $currentYear, $assocArray[$ppKey], $this->team->getId(), null, 0);
       SessionUtil::updateSession($ppKey, $assocArray, $isPost);
   	}
 
