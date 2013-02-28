@@ -132,6 +132,26 @@ class ChangelogDao {
   	$change->setId($row["changelog_id"]);
   	return $change;
   }
+
+  /**
+   * Returns the year of the most recent changelog.
+   */
+  public static function getMaximumYear() {
+    return CommonDao::getIntegerValueFromQuery(
+        "select max(d.year) from (
+             select substring(timestamp,1,4) as year
+             from changelog c) d");
+  }
+
+  /**
+   * Returns the year of the oldest changelog.
+   */
+  public static function getMinimumYear() {
+    return CommonDao::getIntegerValueFromQuery(
+        "select min(d.year) from (
+        select substring(timestamp,1,4) as year
+        from changelog c) d");
+  }
 }
 
 ?>

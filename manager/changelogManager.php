@@ -11,7 +11,7 @@
      * Displays a table describing all of the keeper results for the specified year.
      */
     public static function displayKeeperSummary($year) {
-  	  echo "<h4>Keeper Results</h4>
+  	  echo "<h4>Keeper Results $year</h4>
   	        <table class='table vertmiddle table-striped table-condensed table-bordered center
                           smallfonttable'>
               <thead><tr>
@@ -43,6 +43,17 @@
         }
       }
       echo "</table>";
+    }
+
+    /**
+     * Display keepers table in a cell.
+     */
+    public static function displayKeepers($year) {
+      echo "<div class='row-fluid'>
+              <div class='span12 center'>";
+      ChangelogManager::displayKeeperSummary($year);
+      echo "  </div>
+            </div>";
     }
 
     /**
@@ -81,5 +92,18 @@
       }
       return $changeMsg;
     }
+  }
+
+  $displayType = null;
+  if (isset($_REQUEST["type"])) {
+    $displayType = $_REQUEST["type"];
+  }
+
+  if ($displayType == "display") {
+    $year = null;
+    if (isset($_REQUEST["year"])) {
+      $year = $_REQUEST["year"];
+    }
+    ChangelogManager::displayKeepers($year);
   }
 ?>

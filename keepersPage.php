@@ -3,12 +3,12 @@
   require_once 'util/time.php';
 
   // if year is not specified, use the current year.
-  $redirectUrl = "auctionPage.php";
+  $redirectUrl = "keepersPage.php";
   if (isset($_REQUEST["year"])) {
   	$year = $_REQUEST["year"];
   	$redirectUrl .="?year=$year";
   } else {
-  	$year = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
+  	$year = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT);
   }
   SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
@@ -22,7 +22,7 @@
 ?>
 
 <script>
-// shows the auction page for the specified year
+// shows the keeper page for the specified year
 function showYear(year) {
     // If year is blank, then clear the yearDisplay div.
 	if (year=="" || year=="0") {
@@ -32,7 +32,7 @@ function showYear(year) {
 
 	// Display team information.
 	getRedirectHTML(document.getElementById("yearDisplay"),
-	    "admin/displayYear.php?type=auction&year=" + year);
+	    "manager/changelogManager.php?type=display&year=" + year);
 }
 
 // populates the innerHTML of the specified elementId with the HTML returned by the specified
@@ -56,19 +56,16 @@ function getRedirectHTML(element, htmlString) {
 
 <body>
 <?php
-  require_once 'dao/auctionDao.php';
+  require_once 'dao/changelogDao.php';
+  require_once 'manager/changelogManager.php';
   require_once 'util/yearManager.php';
 
   // Nav bar
-  LayoutUtil::displayNavBar(true, LayoutUtil::AUCTION_BUTTON);
+  LayoutUtil::displayNavBar(true, LayoutUtil::KEEPERS_BUTTON);
 
-  // allow user to choose year; include current year (based on end of season) even if auction hasn't
-  // taken place yet.
-  $maxYear = AuctionResultDao::getMaximumAuctionYear();
-  if ($maxYear < TimeUtil::getYearByEvent(Event::OFFSEASON_START)) {
-    $maxYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
-  }
-  YearManager::displayYearChooser($year, AuctionResultDao::getMinimumAuctionYear(), $maxYear);
+  // allow user to choose year
+  YearManager::displayYearChooser(
+      $year, ChangelogDao::getMinimumYear(), ChangelogDao::getMaximumYear());
 
   echo "<div id='yearDisplay'></div><br/>";
 ?>

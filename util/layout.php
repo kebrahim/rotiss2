@@ -2,31 +2,39 @@
 require_once "config.php";
 require_once "sessions.php";
 
+/**
+ * Handles all of the layout-related methods, including the navigation bar and common headers.
+ */
 class LayoutUtil {
   const TEAM_SUMMARY_BUTTON = 1;
   const BUDGET_BUTTON = 2;
   const PLAYERS_BUTTON = 3;
-  const MY_RANKS_BUTTON = 4;
-  const ALL_RANKS_BUTTON = 5;
-  const DRAFT_BUTTON = 6;
+
+  const OFFSEASON_BUTTON = 4;
+  const MY_RANKS_BUTTON = 5;
+  const ALL_RANKS_BUTTON = 6;
   const AUCTION_BUTTON = 7;
-  const EDIT_PROFILE_BUTTON = 8;
-  const MY_CHANGES_BUTTON = 9;
-  const ADMIN_BUTTON = 10;
-  const MANAGE_ROSTERS_BUTTON = 11;
-  const MANAGE_TRADE_BUTTON = 12;
-  const MANAGE_AUCTION_BUTTON = 13;
-  const MANAGE_KEEPERS_BUTTON = 14;
-  const MANAGE_BROGNAS_BUTTON = 15;
-  const MANAGE_TEAM_BUTTON = 16;
-  const MANAGE_DRAFT_BUTTON = 17;
-  const MANAGE_PLACEHOLDERS_BUTTON = 18;
-  const MANAGE_RANKS_BUTTON = 19;
-  const MANAGE_PLAYER_BUTTON = 20;
-  const MANAGE_EVENTS_BUTTON = 21;
-  const MANAGE_CHANGES_BUTTON = 22;
-  const MANAGE_CONTRACTS_BUTTON = 23;
-  const MANAGE_WEEKS_BUTTON = 24;
+  const KEEPERS_BUTTON = 8;
+  const DRAFT_BUTTON = 9;
+
+  const EDIT_PROFILE_BUTTON = 10;
+  const MY_CHANGES_BUTTON = 11;
+
+  const ADMIN_BUTTON = 12;
+  const MANAGE_ROSTERS_BUTTON = 13;
+  const MANAGE_TRADE_BUTTON = 14;
+  const MANAGE_AUCTION_BUTTON = 15;
+  const MANAGE_KEEPERS_BUTTON = 16;
+  const MANAGE_BROGNAS_BUTTON = 17;
+  const MANAGE_TEAM_BUTTON = 18;
+  const MANAGE_DRAFT_BUTTON = 19;
+  const MANAGE_PLACEHOLDERS_BUTTON = 20;
+  const MANAGE_RANKS_BUTTON = 21;
+  const MANAGE_PLAYER_BUTTON = 22;
+  const MANAGE_EVENTS_BUTTON = 23;
+  const MANAGE_CHANGES_BUTTON = 24;
+  const MANAGE_CONTRACTS_BUTTON = 25;
+  const MANAGE_WEEKS_BUTTON = 26;
 
   /**
    * Displays the <head> tag for a page, including the specified title.
@@ -77,17 +85,8 @@ class LayoutUtil {
     LayoutUtil::displayListItem("playersPage.php", "Players", $isTopLevel, $selectedButton,
         self::PLAYERS_BUTTON);
 
-    // Ranking page
-    // TODO only show ranking page after placeholders have been set - after ranking period begins?
-    LayoutUtil::displayRankingDropdown($isTopLevel, $selectedButton);
-
-    // Draft page
-    LayoutUtil::displayListItem("draftPage.php", "Draft", $isTopLevel, $selectedButton,
-        self::DRAFT_BUTTON);
-
-    // Auction page
-    LayoutUtil::displayListItem("auctionPage.php", "Auction", $isTopLevel, $selectedButton,
-        self::AUCTION_BUTTON);
+    // Offseason dropdown
+    LayoutUtil::displayOffseasonDropdown($isTopLevel, $selectedButton);
 
     // if admin user, show admin button/menu
     if (SessionUtil::isLoggedInAdmin()) {
@@ -103,21 +102,39 @@ class LayoutUtil {
     echo "</div>"; // navbar
   }
 
-  private static function displayRankingDropdown($isTopLevel, $selectedButton) {
-  	$dropdownSelected = ($selectedButton == LayoutUtil::MY_RANKS_BUTTON) ||
-  	    ($selectedButton == LayoutUtil::ALL_RANKS_BUTTON);
-  	echo "<li class='dropdown";
-  	if ($dropdownSelected) {
-  	  echo " active";
-  	}
-  	echo "'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>
-  	            Ranking&nbsp<b class='caret'></b></a>";
-  	echo "<ul class='dropdown-menu'>";
-  	LayoutUtil::displayListItem("rankPage.php", "My Ranks", $isTopLevel, $selectedButton,
-  	    LayoutUtil::MY_RANKS_BUTTON);
-  	LayoutUtil::displayListItem("allRanksPage.php", "All Ranks", $isTopLevel, $selectedButton,
-  	    LayoutUtil::ALL_RANKS_BUTTON);
-  	echo "</ul></li>";
+  private static function displayOffseasonDropdown($isTopLevel, $selectedButton) {
+    $dropdownSelected = ($selectedButton >= self::OFFSEASON_BUTTON) &&
+        ($selectedButton < self::EDIT_PROFILE_BUTTON);
+
+    echo "<li class='dropdown";
+    if ($dropdownSelected) {
+      echo " active";
+    }
+    echo "'><a href='#' class='dropdown-toggle' data-toggle='dropdown'>
+          Offseason&nbsp<b class='caret'></b></a>";
+    echo "<ul class='dropdown-menu'>";
+
+    // Ranking page
+    // TODO only show ranking page after placeholders have been set - after ranking period begins?
+    LayoutUtil::displayListItem("rankPage.php", "My Ranks", $isTopLevel, $selectedButton,
+        LayoutUtil::MY_RANKS_BUTTON);
+    LayoutUtil::displayListItem("allRanksPage.php", "All Ranks", $isTopLevel, $selectedButton,
+        LayoutUtil::ALL_RANKS_BUTTON);
+    echo "<li class=\"divider\"></li>";
+
+    // Auction page
+    LayoutUtil::displayListItem("auctionPage.php", "Auction", $isTopLevel, $selectedButton,
+        self::AUCTION_BUTTON);
+
+    // Keepers page
+    LayoutUtil::displayListItem("keepersPage.php", "Keepers", $isTopLevel, $selectedButton,
+        self::AUCTION_BUTTON);
+
+    // Draft page
+    LayoutUtil::displayListItem("draftPage.php", "Draft", $isTopLevel, $selectedButton,
+        self::DRAFT_BUTTON);
+
+    echo "</ul></li>";
   }
 
   private static function displayProfileDropdown($isTopLevel, $selectedButton) {
