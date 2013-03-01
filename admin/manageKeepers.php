@@ -280,6 +280,13 @@ function removeBall(rowNumber) {
     }
 }
 
+function sendEmail(year) {
+  setDisplay("emailMessageDiv", "block");
+  setDisplay("emailButton", "none");
+  getRedirectHTML(document.getElementById("emailButton"),
+		  "../manager/changelogManager.php?type=email&year=" + year);
+}
+
 </script>
 <body>
 
@@ -519,11 +526,20 @@ function removeBall(rowNumber) {
     } else {
       // button to calculate seltzer cutoff, only if all teams have banked
       echo "<h4>Keepers are done!</h4>";
+
+      echo "<div id='emailMessageDiv' class='alert alert-success center' style='display:none;'>
+              <button type='button' class='close' data-dismiss='alert'>&times;</button>
+              <strong>Email sent!</strong>
+            </div>";
+
       echo "<div id='cutoffButton'>
               <a href='manageSeltzerCutoff.php'
-                 class='btn btn-inverse'>Calculate Seltzer Cutoff</a>
-            </div><br/>";
-      // TODO also show button to send email to all teams w/ summary
+                 class='btn btn-inverse'>Calculate Seltzer Cutoff</a>&nbsp&nbsp";
+
+      // also show button to send email to all teams w/ summary
+      echo "<a id='emailButton' href='#emailModal' class='btn btn-inverse'
+               data-toggle='modal'>Send Results Email</a>";
+      echo "</div><br/>";
     }
 ?>
 
@@ -547,6 +563,25 @@ function removeBall(rowNumber) {
 
   // Footer
   LayoutUtil::displayAdminFooter();
+
+  // show email modal at bottom of page.
+  echo "<div id='emailModal' class='modal hide fade' tabindex='-1' role='dialog'
+                 aria-labelledby='myModalLabel' aria-hidden='false' style='display:none;'>
+              <div class='modal-header'>
+                <button type='button' class='close' data-dismiss='modal'
+                        aria-hidden='true'>&times;</button>
+                <h3 id='myModalLabel' class='center'>Send Keeper Results Email</h3>
+              </div>
+              <div class='modal-body'>
+                <p>Please confirm that you'd like to send the keeper results to everyone in the
+                   league.</p>
+              </div>
+              <div class='modal-footer'>
+                <button class='btn' data-dismiss='modal' aria-hidden='true'>Cancel</button>
+                <a href='#' class='btn btn-primary' data-dismiss='modal'
+                   onclick='sendEmail (" . TimeUtil::getCurrentYear() . ");'>Send Email</a>
+              </div>
+            </div>";
 ?>
 
 </body>

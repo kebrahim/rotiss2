@@ -1,6 +1,7 @@
 <?php
   require_once 'commonManager.php';
   CommonManager::requireFileIn('/../dao/', 'changelogDao.php');
+  CommonManager::requireFileIn('/../util/', 'mail.php');
 
   /**
    * Handles changelog-related methods
@@ -11,9 +12,13 @@
      * Displays a table describing all of the keeper results for the specified year.
      */
     public static function displayKeeperSummary($year) {
-  	  echo "<h4>Keeper Results $year</h4>
-  	        <table class='table vertmiddle table-striped table-condensed table-bordered center
-                          smallfonttable'>
+  	  echo ChangelogManager::getKeeperTable($year);
+    }
+
+    private static function getKeeperTable($year) {
+      $message = "<h4>Keeper Results $year</h4>
+              <table class='table vertmiddle table-striped table-condensed table-bordered center
+                            smallfonttable'>
               <thead><tr>
                 <th colspan=2>Team</th>
                 <th>New Contracts</th>
@@ -27,7 +32,7 @@
       foreach ($teams as $team) {
         $keeperChanges = ChangelogDao::getKeeperChangesByTeam($team->getId(), $year);
         if (ChangelogManager::hasKeepers($keeperChanges)) {
-          echo "<tr>" .
+          $message .= "<tr>" .
                   TeamManager::getAbbreviationAndLogoRowAtLevel($team, false) .
                  "<td>" . ChangelogManager::displayChanges(
                       $keeperChanges, Changelog::CONTRACT_SIGNED_TYPE) . "</td>
@@ -42,7 +47,8 @@
                 </tr>";
         }
       }
-      echo "</table>";
+      $message .= "</table>";
+      return $message;
     }
 
     /**
@@ -54,6 +60,13 @@
       ChangelogManager::displayKeeperSummary($year);
       echo "  </div>
             </div>";
+    }
+
+    /**
+     * Sends an email to all users including the keeper results for the specified year.
+     */
+    public static function sendKeeperEmail($year) {
+      MailUtil::sendKeepersEmail(ChangelogManager::getKeeperTable($year), $year);
     }
 
     /**
@@ -105,5 +118,11 @@
       $year = $_REQUEST["year"];
     }
     ChangelogManager::displayKeepers($year);
+  } else if ($displayType == "email") {
+    $year = null;
+    if (isset($_REQUEST["year"])) {
+      $year = $_REQUEST["year"];
+    }
+    ChangelogManager::sendKeeperEmail($year);
   }
 ?>

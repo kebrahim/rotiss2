@@ -101,6 +101,13 @@ class MailUtil {
   }
 
   /**
+   * Sends an email to all users with the specified keeper results for the specified year.
+   */
+  public static function sendKeepersEmail($keeperMsg, $year) {
+    MailUtil::sendMailToAllUsers("Keeper Results $year", $keeperMsg);
+  }
+
+  /**
    * Sends the specified message w/ the specified subject to all of the users.
    */
   private static function sendMailToAllUsers($subject, $message) {

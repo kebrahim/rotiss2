@@ -128,7 +128,7 @@ class LayoutUtil {
 
     // Keepers page
     LayoutUtil::displayListItem("keepersPage.php", "Keepers", $isTopLevel, $selectedButton,
-        self::AUCTION_BUTTON);
+        self::KEEPERS_BUTTON);
 
     // Draft page
     LayoutUtil::displayListItem("draftPage.php", "Draft", $isTopLevel, $selectedButton,
