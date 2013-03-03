@@ -22,7 +22,7 @@
 ?>
 
 <script>
-//shows the team with the specified id
+// shows the team with the specified id
 function showTeam(teamId) {
     // If teamid is blank, then clear the team div.
 	if (teamId=="" || teamId=="0") {
@@ -35,8 +35,21 @@ function showTeam(teamId) {
 	    "admin/displayTeam.php?type=display&team_id="+teamId);
 }
 
-//populates the innerHTML of the specified elementId with the HTML returned by the specified
-//htmlString
+// shows the draft year for the specified team
+function showDraftYear(teamId, year) {
+    // If year is blank, then clear the draftDisplay div.
+	if (year=="" || year=="0") {
+		document.getElementById("draftDisplay").innerHTML="";
+		return;
+	}
+
+	// Display team information.
+	getRedirectHTML(document.getElementById("draftDisplay"),
+	    "util/draftManager.php?type=teamdisplay&year=" + year + "&team_id=" + teamId);
+}
+
+// populates the innerHTML of the specified elementId with the HTML returned by the specified
+// htmlString
 function getRedirectHTML(element, htmlString) {
 	var xmlhttp;
 	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari

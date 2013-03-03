@@ -8,7 +8,7 @@ class TimeUtil {
 
   /**
    * Returns the year based on the specified event. If the specified event has not occurred yet,
-   * then it is year n; if it has occurred, then it's year n+1.
+   * then it is year n-1; if it has occurred, then it's year n.
    */
   static function getYearByEvent($eventType) {
   	return EventDao::getYearByEventType($eventType);

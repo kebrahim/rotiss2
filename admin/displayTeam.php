@@ -2,6 +2,7 @@
   require_once '../dao/changelogDao.php';
   require_once '../dao/teamDao.php';
   require_once '../util/sessions.php';
+  require_once '../util/draftManager.php';
   require_once '../util/teamManager.php';
   require_once '../util/time.php';
 
@@ -245,8 +246,14 @@
         </div>";
     }
 
-    // TODO show draft picks from this year; allow user to select year
-    $team->displayAllDraftPicks();
+    // show draft picks from this year; allow user to filter by year
+    echo "<div class='pull-right'>";
+    DraftManager::displayYearFilter($upcomingDraftYear);
+    echo "</div>
+          <div id='draftDisplay'>";
+    $team->displayDraftPicks($upcomingDraftYear, $upcomingDraftYear, false);
+    echo "</div>";
+
     echo "</div>"; // span12
     echo "</div>"; // row-fluid
 

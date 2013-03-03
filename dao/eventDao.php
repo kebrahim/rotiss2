@@ -7,10 +7,10 @@ CommonDao::requireFileIn('/../entity/', 'event.php');
  * Handles the events that occur during the rotiss fantasy season.
  */
 class EventDao {
-  
+
   /**
    * Returns the year associated with the specified event type; if the event has not occurred yet,
-   * it is year n, if the event has occurred, it is year n+1. 
+   * it is year n-1, if the event has occurred, it is year n.
    */
   public static function getYearByEventType($eventType) {
   	CommonDao::connectToDb();
@@ -22,7 +22,7 @@ class EventDao {
   	$row = mysql_fetch_row($res);
   	return $row[0];
   }
-  
+
   /**
    * Returns all of the events during the specified year.
    */
@@ -32,9 +32,9 @@ class EventDao {
   	          from event e
   	          where e.year = $year
   	          order by e.event_type_id";
-	return EventDao::createEventsFromQuery($query);  	 
+	return EventDao::createEventsFromQuery($query);
   }
-  
+
   private static function createEventFromQuery($query) {
   	$eventArray = EventDao::createEventsFromQuery($query);
   	if (count($eventArray) == 1) {
@@ -42,7 +42,7 @@ class EventDao {
   	}
   	return null;
   }
-  
+
   private static function createEventsFromQuery($query) {
   	$res = mysql_query($query);
   	$eventsDb = array();
@@ -52,7 +52,7 @@ class EventDao {
   	}
   	return $eventsDb;
   }
-  
+
   /**
    * Creates a new event in the 'event' table.
    */
@@ -68,7 +68,7 @@ class EventDao {
   	  echo "Event " . $event->toString() . " already exists in DB. Try again.";
       return null;
   	}
-  	
+
   	$idQuery = "select event_id from event where year = " . $event->getYear() .
   	    " and event_type_id = " . $event->getEventType();
   	$result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
@@ -76,7 +76,7 @@ class EventDao {
   	$event->setId($row["event_id"]);
   	return $event;
   }
-  
+
   /**
    * Updates the specified event in the 'event' table.
    */
@@ -88,7 +88,7 @@ class EventDao {
     	                   where event_id = " . $event->getId();
   	$result = mysql_query($query) or die('Invalid query: ' . mysql_error());
   }
-  
+
   /**
    * Returns the earliest event year.
    */
@@ -99,7 +99,7 @@ class EventDao {
   	$row = mysql_fetch_row($res);
   	return $row[0];
   }
-  
+
   /**
    * Returns the latest event year.
    */
