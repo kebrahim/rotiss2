@@ -230,8 +230,9 @@ class Keepers {
 	// validate buyout contracts
   	if ($this->buyoutContracts) {
 	  foreach ($this->buyoutContracts as $contract) {
-	  	if (($contract->getType() == Contract::AUCTION_TYPE) || $contract->isBoughtOut()) {
-		  $this->printError("Cannot buy out contract: " . $contract->getBuyoutDetails());
+	  	if ($contract->isBoughtOut()) {
+		  $this->printError("Cannot buy out already bought-out contract: " .
+		      $contract->getBuyoutDetails());
 	  	  return false;
 	  	}
 	  	$totalBrognasSpent += $contract->getBuyoutPrice();
