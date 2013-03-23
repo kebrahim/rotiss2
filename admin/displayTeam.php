@@ -520,8 +520,8 @@
     echo "<p><button class=\"btn btn-primary\" name='update'
                      type=\"submit\">Update Contracts</button>";
 
-    // Only show seltzer contract button during season
-    if (TimeUtil::isInSeason()) {
+    // Only show seltzer contract button after keeper night
+    if (TimeUtil::isAfterEvent(Event::KEEPER_NIGHT)) {
       echo "&nbsp&nbsp
             <a href='manageSeltzer.php?team_id=" . $team->getId() . "' class='btn btn-inverse'>
               Offer Seltzer Contract</a>";

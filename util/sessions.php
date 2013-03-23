@@ -12,6 +12,7 @@ class SessionUtil {
   const SUPERADMIN_KEY = "stpetesloggedinsuperadmin";
   const START_KEY = "stpetesstart";
   const LOGGED_IN_PAGE = "teamPage.php";
+  const SESSION_TIMEOUT = 60;
 
   /**
    * Updates the _SESSION array with the value of the specified key within the
@@ -195,14 +196,15 @@ class SessionUtil {
   }
 
   /**
-   * Returns true if the logged-in user has not generated any activity in the past 20 minutes.
+   * Returns true if the logged-in user has not generated any activity in the past SESSION_TIMEOUT
+   * minutes.
    */
   private static function hasUserTimedOut() {
-    session_cache_expire(20);
+    session_cache_expire(SESSION_TIMEOUT);
     if (!isset($_SESSION)) {
       session_start();
     }
-    $inactive = 1200;
+    $inactive = SESSION_TIMEOUT * 60;
     if (isset($_SESSION[SessionUtil::START_KEY]) ) {
       $session_life = time() - $_SESSION[SessionUtil::START_KEY];
       if ($session_life > $inactive) {

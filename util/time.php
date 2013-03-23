@@ -54,6 +54,15 @@ class TimeUtil {
   }
 
   /**
+   * Returns true if the specified event has occurred during the year defined by the start of the
+   * offseason.
+   */
+  static function isAfterEvent($eventType) {
+    return TimeUtil::getYearByEvent($eventType) ==
+        TimeUtil::getYearByEvent(Event::OFFSEASON_START);
+  }
+
+  /**
    * Returns the current week during the season.
    */
   static function getCurrentWeekInSeason() {

@@ -203,7 +203,7 @@ function selectStat(stat) {
     echo "<h3>" . $team->getAbbreviation() . ": Offer Seltzer Contract </h3>";
 
     // show list of players eligible to be offered a seltzer contract
-    // i.e. players on team w/out contracts who weren't drafted before the seltzer cutoff
+    // i.e. players on team w/out non-zero contracts who weren't drafted before the seltzer cutoff
     $players = PlayerDao::getPlayersForSeltzerContracts($team->getId(), TimeUtil::getCurrentYear());
     echo "<div class='row-fluid'>
             <div class='span6 center'><div class='chooser'>";

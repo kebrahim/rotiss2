@@ -100,6 +100,20 @@ class PlayerDao {
   }
 
   /**
+   * Returns true if the player has any non-zero contract that either ended in the specified year
+   * or is still active after the specified year.
+   */
+  public static function hasNonZeroContract($playerId, $year) {
+    return CommonDao::hasAnyRowsMatchingQuery(
+             "SELECT c.*
+              FROM contract c
+              WHERE c.player_id = " . $playerId . "
+              AND c.is_bought_out = 0
+              AND c.price > 0
+              AND c.end_year >= " . $year);
+  }
+
+  /**
    * Return all players eligible to be ranked by the specified team sorted by fantasy points in the
    * specified year.
    */
@@ -275,7 +289,7 @@ class PlayerDao {
     // Filter out players under contract or those that were drafted before the seltzer cutoff
     $seltzerPlayers = array();
     foreach ($playersOnTeam as $player) {
-      if (!PlayerDao::hasContract($player->getId(), $year) &&
+      if (!PlayerDao::hasNonZeroContract($player->getId(), $year) &&
           !PlayerDao::draftedBeforeSeltzerCutoff($player->getId(), $year)) {
         $seltzerPlayers[] = $player;
       }
@@ -288,7 +302,8 @@ class PlayerDao {
    * Returns true if the specified player was drafted before the seltzer cutoff in the specified
    * year.
    *
-   * WARNING: This will break if the cutoff pick is in the ping pong round.
+   * WARNING: This will break if the cutoff pick is in the ping pong round, but it's doubtful that
+   * it ever will be.
    */
   public static function draftedBeforeSeltzerCutoff($playerId, $year) {
     $ppQuery = "select count(*) from ping_pong where year = $year and player_id = $playerId";

@@ -37,5 +37,14 @@ class CommonDao {
     $row = mysql_fetch_row($res);
     return $row[0];
   }
+
+  /**
+   * Returns true if the specified query returns at least one row.
+   */
+  static function hasAnyRowsMatchingQuery($query) {
+    CommonDao::connectToDb();
+    $res = mysql_query($query);
+    return (mysql_num_rows($res) > 0);
+  }
 }
 ?>
