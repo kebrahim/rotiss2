@@ -200,11 +200,11 @@ class SessionUtil {
    * minutes.
    */
   private static function hasUserTimedOut() {
-    session_cache_expire(SESSION_TIMEOUT);
+    session_cache_expire(SessionUtil::SESSION_TIMEOUT);
     if (!isset($_SESSION)) {
       session_start();
     }
-    $inactive = SESSION_TIMEOUT * 60;
+    $inactive = SessionUtil::SESSION_TIMEOUT * 60;
     if (isset($_SESSION[SessionUtil::START_KEY]) ) {
       $session_life = time() - $_SESSION[SessionUtil::START_KEY];
       if ($session_life > $inactive) {
