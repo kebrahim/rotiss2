@@ -3,7 +3,7 @@
 
   SessionUtil::checkUserIsLoggedInAdmin();
 
-  // Get team from REQUEST; otherwise, use logged-in user's team.
+  // Get team from REQUEST.
   $redirectUrl = "admin/manageSeltzer.php";
   if (isset($_REQUEST["team_id"])) {
   	$teamId = $_REQUEST["team_id"];

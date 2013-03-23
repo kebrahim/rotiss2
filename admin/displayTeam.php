@@ -1,6 +1,7 @@
 <?php
   require_once '../dao/changelogDao.php';
   require_once '../dao/teamDao.php';
+  require_once '../manager/contractManager.php';
   require_once '../util/sessions.php';
   require_once '../util/draftManager.php';
   require_once '../util/teamManager.php';
@@ -353,13 +354,22 @@
   	// team name w/ bookmarks for each year
   	echo "<div class='span10 center'>
   	        <h3>Budget: " . $team->getName() . "</h3>
-  	        <div class='bookmarks'>";
+  	        <div class='bookmarks'><label>Jump to:</label>";
   	$brognas = BrognaDao::getBrognasByTeamId($team->getId());
+  	$firstBrogna = true;
   	foreach ($brognas as $brogna) {
-  	  echo "<a href='#" . $brogna->getYear() . "'>" . $brogna->getYear() . "</a>&nbsp&nbsp";
+  	  if ($firstBrogna) {
+  	    $firstBrogna = false;
+  	  } else {
+  	    echo "&nbsp&nbsp";
+  	  }
+  	  echo "<a href='#" . $brogna->getYear() . "'>" . $brogna->getYear() . "</a>";
   	}
   	// link to all budget page
-  	echo "<a href='allBudgetPage.php' class='btn btn-primary'>All Budgets</a>";
+  	echo "<br/><br/>
+  	        <a href='allBudgetPage.php' class='btn btn-primary'>All Teams Budgets</a>&nbsp&nbsp
+  	        <a href='seltzerPage.php?team_id=" . $team->getId() . "' class='btn btn-inverse'>
+  	          Seltzer Simulator</a>";
   	echo "  </div>
   	      </div>";
   	echo "</div>"; // row-fluid
@@ -534,6 +544,95 @@
     echo "</div>";   // row-fluid
   }
 
+  function displayTeamForSeltzer(Team $team) {
+    echo "<div class='row-fluid'>
+    <div class='span12 center'>";
+    echo "<h3>" . $team->getAbbreviation() . ": Seltzer Contract Simulator</h3>";
+
+    // show list of players eligible to be offered a seltzer contract
+    // i.e. players on team w/out non-zero contracts who weren't drafted before the seltzer cutoff
+    $players = PlayerDao::getPlayersForSeltzerContracts($team->getId(), TimeUtil::getCurrentYear());
+    echo "<div class='row-fluid'>
+    <div class='span6 center'><div class='chooser'>";
+    echo "<label for='seltzer_player'>Select Player:</label>&nbsp
+    <select id='seltzer_player' class='span8 smallfonttable' name='seltzer_player'
+    onchange='showPlayer(this.value)'>
+    <option value='0'></option>";
+    foreach ($players as $player) {
+      echo "<option value='" . $player->getId() . "'" . ">" . $player->getFullName()
+      . ", " . $player->getPositionString() . " ("
+      . $player->getMlbTeam()->getAbbreviation() . ")</option>";
+    }
+    echo "</select></div>"; // chooser
+    echo "<div id='playerDisplay'></div>";
+    echo "</div>"; // span6
+
+    // once player is selected show seltzer contract information based on type of contract
+    echo "<div class='span6' id='seltzerConfig' style='display:none'>";
+    echo "<h4>Seltzer contract configuration</h4><hr class='bothr'/>";
+
+    echo "<table id='seltzer_table'
+    class='table vertmiddle table-striped table-condensed table-bordered center'>";
+    echo "<tr><td><label for='seltzer_length'>Contract Length:</label></td>
+    <td><select class='input-medium' id='seltzer_length' name='seltzer_length'>
+    <option value='0' class='center'>-- Select Length --</option>
+    <option value='1'>1-year</option>
+    <option value='2'>2-year</option>
+    </select></td></tr>";
+    echo "<tr><td><label for='seltzer_type'>Contract Type:</label></td>
+    <td><select class='input-medium' id='seltzer_type' name='seltzer_type'
+    onchange='selectType(this.value)'>
+    <option value='0'>-- Select Type --</option>
+    <option value='1'>Major League</option>
+    <option value='2'>Minor League</option>
+    </select></td></tr></table>";
+
+    $week = TimeUtil::getCurrentWeekInSeason();
+    $contractValue = ContractManager::getMajorSeltzerContractValue($week);
+    echo "<div id='major_config' style='display:none'>
+    <h5>Major League Seltzer</h5>
+    <table class='table vertmiddle table-striped table-condensed table-bordered center'>
+    <tr>
+    <td><label>Week in Season:</label></td>
+    <td>" . $week . "</td>
+    </tr>
+    <tr>
+    <td><label for='seltzer_price'>Contract Cost:</label></td>
+    <td><input type='text' class='input-mini center' id='seltzer_price'
+    name='seltzer_price' readonly='true' value='$contractValue'></td>
+    </tr>
+    </table>
+    </div>";
+
+    // minor seltzering options [based on ABs or innings pitched]
+    echo "<div id='minor_config' style='display:none'>
+    <h5>Minor League Seltzer</h5>
+    <table id='minorTable'
+    class='table vertmiddle table-striped table-condensed table-bordered center'>
+    <tr>
+    <td><label for='seltzer_callup'>Has Been Called Up?</label></td>
+    <td><select class='input-small' id='seltzer_callup' name='seltzer_callup'
+    onchange='selectCallup(this.value)'>
+    <option value='1'>No</option>
+    <option value='2'>Yes</option>
+    </select></td>
+    </tr>
+    <tr>
+    <td><label for='seltzer_minor_price'>Contract Cost:</label></td>
+    <td><input type='text' class='input-mini center' id='seltzer_minor_price'
+    name='seltzer_minor_price'
+    value='" . Contract::UNCALLED_MINOR_CONTRACT . "' readonly='true'></td>
+    </tr>
+    </table>
+    </div>";
+
+    echo "</div>"; // span6
+    echo "</div>"; // row-fluid
+
+    echo "  </div>
+    </div>"; // span12, row-fluid
+  }
+
   // direct to corresponding function, depending on type of display
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
@@ -566,5 +665,7 @@
     displayTeamForChanges($team);
   } else if ($displayType == "contracts") {
     displayTeamForContracts($team);
+  } else if ($displayType == "seltzer") {
+    displayTeamForSeltzer($team);
   }
 ?>
