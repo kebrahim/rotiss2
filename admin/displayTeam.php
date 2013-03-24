@@ -367,7 +367,7 @@
   	}
   	// link to all budget page
   	echo "<br/><br/>
-  	        <a href='allBudgetPage.php' class='btn btn-primary'>All Teams Budgets</a>&nbsp&nbsp
+  	        <a href='allBudgetPage.php' class='btn btn-primary'>League Budgets</a>&nbsp&nbsp
   	        <a href='seltzerPage.php?team_id=" . $team->getId() . "' class='btn btn-inverse'>
   	          Seltzer Simulator</a>";
   	echo "  </div>
