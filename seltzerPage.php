@@ -1,11 +1,13 @@
 <?php
   require_once 'util/sessions.php';
 
-  // Get team from REQUEST.
+  // Get team from REQUEST; if not present, use logged-in team ID.
   $redirectUrl = "seltzerPage.php";
   if (isset($_REQUEST["team_id"])) {
     $teamId = $_REQUEST["team_id"];
     $redirectUrl .= "?team_id=$teamId";
+  } else if (SessionUtil::isLoggedIn()) {
+  	$teamId = SessionUtil::getLoggedInTeam()->getId();
   }
 
   SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);

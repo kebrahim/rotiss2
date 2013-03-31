@@ -249,10 +249,11 @@
 
     // show draft picks from this year; allow user to filter by year
     echo "<div class='pull-right'>";
-    DraftManager::displayYearFilter($upcomingDraftYear);
+    $seasonYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
+    DraftManager::displayYearFilter($seasonYear);
     echo "</div>
           <div id='draftDisplay'>";
-    $team->displayDraftPicks($upcomingDraftYear, $upcomingDraftYear, false);
+    $team->displayDraftPicks($seasonYear, $seasonYear, false);
     echo "</div>";
 
     echo "</div>"; // span12
