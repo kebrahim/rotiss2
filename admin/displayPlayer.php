@@ -97,6 +97,13 @@
     // Positions
     echo "<tr><td><strong>Position(s):</strong></td>
     <td>" . $player->getPositionString() . "</td></tr>";
+
+    // Other site links
+    echo "<tr><td><strong>Other Sites:</strong></td>
+              <td><a href='" . $player->getStPetesUrl() . "' target='_blank'>CBS</a>&nbsp&nbsp
+                  <a href='" . $player->getBaseballReferenceUrl() . "' target='_blank'>BBRef</a>
+              </td></tr>";
+
     echo "</table>";
     echo "<input type='hidden' name='seltzer_playerid' value='" . $player->getId() . "'>";
   }
