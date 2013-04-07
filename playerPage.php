@@ -24,6 +24,10 @@
 
 <?php
   require_once 'dao/cumulativeRankDao.php';
+  require_once 'dao/auctionDao.php';
+  require_once 'dao/ballDao.php';
+  require_once 'dao/contractDao.php';
+  require_once 'dao/draftPickDao.php';
   require_once 'dao/playerDao.php';
   require_once 'dao/rankDao.php';
   require_once 'util/layout.php';
@@ -72,6 +76,7 @@
   echo "<div class='span7 center'>
             <h3>" . $player->getFullName() . "</h3>
           </div>";
+  // TODO add bookmarks to name heading
 
   // links to external sites
   echo "<div class='span3 center headshotimg nexttoh1'>
@@ -189,6 +194,26 @@
     echo "</table>";
   }
 
+  // show auction history
+  $auctions = AuctionResultDao::getAuctionResultsByPlayerId($player->getId());
+  if (count($auctions) > 0) {
+    echo "<h4>Auction History</h4>";
+    echo "<table class='table center vertmiddle table-striped table-condensed table-bordered'>
+            <thead><tr>
+              <th>Year</th><th colspan=2>Team</th><th>Cost</th>
+            </tr></thead>";
+    foreach ($auctions as $auction) {
+      echo "<tr>
+              <td>" . $auction->getYear() . "</td>" .
+              TeamManager::getAbbreviationAndLogoRow($auction->getTeam()) .
+             "<td>" . $auction->getCost() . "</td>
+            </tr>";
+    }
+    echo "</table>";
+  }
+
+  // TODO show trade history
+
   // show ranks if cumulative rank is saved
   // TODO show all years of ranks
   $rankYear = TimeUtil::getYearByEvent(Event::RANKINGS_OPEN);
@@ -224,8 +249,6 @@
                 "'>Manage player</a>
           </div>";
   }
-
-  // TODO displayPlayer: show auction history
 
   echo "</div></div>"; // span12, row-fluid
 

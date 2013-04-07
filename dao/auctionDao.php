@@ -12,32 +12,39 @@ class AuctionResultDao {
    * Returns the auction result associated with the specified id.
    */
   public static function getAuctionResultById($auctionId) {
-  	CommonDao::connectToDb();
-  	$query = "select * from auction
-  	          where auction_id = $auctionId";
-  	return AuctionResultDao::createAuctionResultFromQuery($query);
+  	return AuctionResultDao::createAuctionResultFromQuery(
+  	    "select * from auction
+  	     where auction_id = $auctionId");
   }
 
   /**
    * Returns all of the auction results belonging to the specified team.
    */
   public static function getAuctionResultsByTeamId($team_id) {
-    CommonDao::connectToDb();
-    $query = "select * from auction
-              where team_id = $team_id
-              order by year, cost DESC";
-    return AuctionResultDao::createAuctionResultsFromQuery($query);
+    return AuctionResultDao::createAuctionResultsFromQuery(
+        "select * from auction
+         where team_id = $team_id
+         order by year, cost DESC");
   }
 
   /**
    * Returns all of the auction results in the specified year.
    */
   public static function getAuctionResultsByYear($year) {
-    CommonDao::connectToDb();
-    $query = "select * from auction
-              where year = $year
-              order by auction_id";
-    return AuctionResultDao::createAuctionResultsFromQuery($query);
+    return AuctionResultDao::createAuctionResultsFromQuery(
+        "select * from auction
+         where year = $year
+         order by auction_id");
+  }
+
+  /**
+   * Returns all of the auction results where the specified player was auctioned.
+   */
+  public static function getAuctionResultsByPlayerId($player_id) {
+    return AuctionResultDao::createAuctionResultsFromQuery(
+        "select * from auction
+        where player_id = $player_id
+        order by year DESC");
   }
 
   private static function createAuctionResultFromQuery($query) {
@@ -49,36 +56,34 @@ class AuctionResultDao {
   }
 
   private static function createAuctionResultsFromQuery($query) {
+    CommonDao::connectToDb();
     $res = mysql_query($query);
-
     $auctionResults = array();
     while ($auctionDb = mysql_fetch_assoc($res)) {
-      $auctionResults[] = new AuctionResult($auctionDb["auction_id"], $auctionDb["year"],
-          $auctionDb["team_id"], $auctionDb["player_id"], $auctionDb["cost"]);
+      $auctionResults[] = AuctionResultDao::populateAuction($auctionDb);
     }
     return $auctionResults;
+  }
+
+  private static function populateAuction($auctionDb) {
+    return new AuctionResult($auctionDb["auction_id"], $auctionDb["year"], $auctionDb["team_id"],
+        $auctionDb["player_id"], $auctionDb["cost"]);
   }
 
   /**
    * Returns the earliest auction year.
    */
   public static function getMinimumAuctionYear() {
-    CommonDao::connectToDb();
-    $query = "select min(year) from auction";
-    $res = mysql_query($query);
-    $row = mysql_fetch_row($res);
-    return $row[0];
+    return CommonDao::getIntegerValueFromQuery(
+        "select min(year) from auction");
   }
 
   /**
    * Returns the latest auction year.
    */
   public static function getMaximumAuctionYear() {
-    CommonDao::connectToDb();
-    $query = "select max(year) from auction";
-    $res = mysql_query($query);
-    $row = mysql_fetch_row($res);
-    return $row[0];
+    return CommonDao::getIntegerValueFromQuery(
+        "select max(year) from auction");
   }
 
   /**
