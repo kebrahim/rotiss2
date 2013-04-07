@@ -1,6 +1,16 @@
 Release Notes
 -------------
 
+v2.1.5 (4/7/13)
+codename: golden retriever
+- visible
+  - draft picks on team page default to current season
+  - seltzer simulator defaults to logged-in team
+  - added cbs/bbref player links to seltzer simulator/contract page
+  - added contract history to player page
+  - added draft history to player page
+  - added auction history to player page
+    
 v2.1.4 (3/24/13)
 codename: fox terrier
 - visible
