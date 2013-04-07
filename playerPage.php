@@ -28,6 +28,24 @@
   require_once 'dao/rankDao.php';
   require_once 'util/layout.php';
 
+  function getDraftPick($draftPicks, $year) {
+    foreach ($draftPicks as $draftPick) {
+      if ($draftPick->getYear() == $year) {
+        return $draftPick;
+      }
+    }
+    return null;
+  }
+
+  function getBall($balls, $year) {
+    foreach ($balls as $ball) {
+      if ($ball->getYear() == $year) {
+        return $ball;
+      }
+    }
+    return null;
+  }
+
   // Display header.
   LayoutUtil::displayNavBar(TRUE, LayoutUtil::PLAYERS_BUTTON);
 
@@ -112,7 +130,7 @@
   // show contract history
   $contracts = ContractDao::getContractsByPlayerId($player->getId());
   if (count($contracts) > 0) {
-    echo "<h4>Contracts</h4>";
+    echo "<h4>Contract History</h4>";
     echo "<table class='table center vertmiddle table-striped table-condensed table-bordered'>
             <thead><tr>
               <th colspan=2>Team</th><th>Sign Date</th><th>Years</th><th>Price</th><th>Start Year</th>
@@ -132,6 +150,41 @@
               <td>" . $contract->getEndYear() . "</td>
               <td>" . $type . "</td>
             </tr>";
+    }
+    echo "</table>";
+  }
+
+  // show draft/pingpong history
+  $draftPicks = DraftPickDao::getDraftPicksByPlayerId($player->getId());
+  $balls = BallDao::getPingPongBallsByPlayerId($player->getId());
+  if ((count($draftPicks) + count($balls)) > 0) {
+    echo "<h4>Draft History</h4>";
+    echo "<table class='table center vertmiddle table-striped table-condensed table-bordered'>
+            <thead><tr>
+              <th>Year</th><th colspan=2>Team</th><th>Round</th><th>Pick</th><th>Original Team</th>
+            </tr></thead>";
+    $minYear = min(DraftPickDao::getMinimumDraftYear(), BallDao::getMinimumYear());
+    $maxYear = max(DraftPickDao::getMaximumDraftYear(), BallDao::getMaximumYear());
+    for($year = $maxYear; $year >= $minYear; $year--) {
+      $draftPick = getDraftPick($draftPicks, $year);
+      $ball = getBall($balls, $year);
+      if ($draftPick != null) {
+        echo "<tr>
+                <td>$year</td>" .
+                TeamManager::getAbbreviationAndLogoRow($draftPick->getTeam()) .
+               "<td>" . $draftPick->getRound() . "</td>
+                <td>" . $draftPick->getPick() . "</td>
+                <td>" . $draftPick->getOriginalTeamName() . "</td>
+              </tr>";
+      } else if ($ball != null) {
+        echo "<tr>
+                <td>$year</td>" .
+                TeamManager::getAbbreviationAndLogoRow($ball->getTeam()) .
+               "<td>PP</td>
+                <td>" . $ball->getOrdinal() . " ($" . $ball->getCost() . ")</td>
+                <td>--</td>
+              </tr>";
+      }
     }
     echo "</table>";
   }
@@ -172,7 +225,6 @@
           </div>";
   }
 
-  // TODO displayPlayer: show draft/pingpong history
   // TODO displayPlayer: show auction history
 
   echo "</div></div>"; // span12, row-fluid

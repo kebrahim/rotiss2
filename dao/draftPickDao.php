@@ -51,6 +51,17 @@ class DraftPickDao {
   }
 
   /**
+   * Returns all of the draft picks of the specified player.
+   */
+  public static function getDraftPicksByPlayerId($playerId) {
+    return DraftPickDao::createDraftPicksByQuery(
+        "select d.*
+        from draft_pick d
+        where d.player_id = $playerId
+        order by year DESC");
+  }
+
+  /**
    * Returns the draft pick of the specified player during the specified year.
    */
   public static function getDraftPickByPlayer($playerId, $year) {

@@ -41,8 +41,20 @@ class BallDao {
   }
 
   /**
-  * Returns the number of ping pong balls belonging to the specified team during the specified year.
-  */
+   * Returns all of the ping pong balls where the specified player was selected.
+   */
+  public static function getPingPongBallsByPlayerId($playerId) {
+    return BallDao::createPingPongBallsByQuery(
+        "select P.*
+         from ping_pong P
+         where P.player_id = $playerId
+         order by P.year DESC");
+  }
+
+  /**
+   * Returns the number of ping pong balls belonging to the specified team during the specified
+   * year.
+   */
   public static function getNumPingPongBallsByTeamYear($year, $teamId) {
     return CommonDao::getIntegerValueFromQuery(
         "select count(*)
