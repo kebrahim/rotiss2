@@ -103,6 +103,16 @@ class ContractDao {
     return $contractsDb;
   }
 
+  /**
+   * Returns all of the contracts for the specified player ID.
+   */
+  public static function getContractsByPlayerId($playerId) {
+    return ContractDao::createContractsFromQuery(
+        "select * from contract
+        where player_id = " . $playerId .
+        " order by sign_date DESC, num_years DESC, price DESC");
+  }
+
   private static function createContractFromQuery($query) {
     $contracts = ContractDao::createContractsFromQuery($query);
     if (count($contracts) == 1) {

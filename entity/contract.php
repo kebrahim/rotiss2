@@ -86,6 +86,14 @@ class Contract {
     return $this->signDate;
   }
 
+  public function getFormattedSignDate() {
+    if ($this->signDate != null) {
+      list($year,$month,$day) = explode("-",$this->signDate);
+      return $month . "/" . $day . "/" . $year;
+    }
+    return null;
+  }
+
   public function getPlayerId() {
     return $this->playerId;
   }

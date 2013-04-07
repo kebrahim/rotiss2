@@ -109,11 +109,38 @@
 
   echo "</table>";
 
+  // show contract history
+  $contracts = ContractDao::getContractsByPlayerId($player->getId());
+  if (count($contracts) > 0) {
+    echo "<h4>Contracts</h4>";
+    echo "<table class='table center vertmiddle table-striped table-condensed table-bordered'>
+            <thead><tr>
+              <th colspan=2>Team</th><th>Sign Date</th><th>Years</th><th>Price</th><th>Start Year</th>
+              <th>End Year</th><th>Type</th>
+            </tr></thead>";
+    foreach ($contracts as $contract) {
+      $type = $contract->getType();
+      if ($contract->isBoughtOut()) {
+        $type .= " (Bought out)";
+      }
+      echo "<tr>" .
+              TeamManager::getAbbreviationAndLogoRow($contract->getTeam()) .
+             "<td>" . $contract->getFormattedSignDate() . "</td>
+              <td>" . $contract->getTotalYears() . "</td>
+              <td>" . $contract->getPrice() . "</td>
+              <td>" . $contract->getStartYear() . "</td>
+              <td>" . $contract->getEndYear() . "</td>
+              <td>" . $type . "</td>
+            </tr>";
+    }
+    echo "</table>";
+  }
+
   // show ranks if cumulative rank is saved
   // TODO show all years of ranks
   $rankYear = TimeUtil::getYearByEvent(Event::RANKINGS_OPEN);
   if (CumulativeRankDao::hasCumulativeRank($player->getId(), $rankYear)) {
-    echo "<h4>Ranks</h4>";
+    echo "<h4>Offseason Ranks</h4>";
     $ranks = RankDao::getRanksByPlayerYear($player->getId(), $rankYear);
     echo "<table class='table center vertmiddle table-striped table-condensed table-bordered'>
             <thead><tr><th>Year</th><th colspan=15>Team Ranks</th><th>Actual Rank</th></tr></thead>
@@ -145,7 +172,6 @@
           </div>";
   }
 
-  // TODO displayPlayer: show contract history
   // TODO displayPlayer: show draft/pingpong history
   // TODO displayPlayer: show auction history
 

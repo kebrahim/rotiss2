@@ -206,7 +206,7 @@ class Team {
                   <td>" . $player->getAge() . "</td>
                   <td>" . $contract->getTotalYears() . "</td>
                   <td>" . $contract->getPrice() . "</td>
-                  <td>" . $contract->getSignDate() . "</td>
+                  <td>" . $contract->getFormattedSignDate() . "</td>
                   <td>" . $contract->getStartYear() . "</td>
                   <td>" . $contract->getEndYear() . "</td>
                   <td>" . $contract->getType() . "</td></tr>";
