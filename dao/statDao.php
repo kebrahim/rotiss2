@@ -30,6 +30,18 @@ class StatDao {
   	          where s.player_id = " . $playerId . " and s.year = " . $year;
   	return StatDao::createStatFromQuery($query);
   }
+
+  /**
+   * Returns stats for the specified player.
+   */
+  public static function getStatsByPlayer($playerId) {
+    CommonDao::connectToDb();
+    $query = "select s.*
+              from stat s
+              where s.player_id = " . $playerId .
+            " order by year";
+    return StatDao::createStatsFromQuery($query);
+  }
   
   private static function createStatFromQuery($query) {
   	$statArray = StatDao::createStatsFromQuery($query);

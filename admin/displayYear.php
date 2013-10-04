@@ -238,14 +238,15 @@
                        <th colspan=7>Brognas</th><th colspan=3>Draft Picks</th></tr>
                    <tr><th>Total</th><th>Contracts</th><th>Available</th><th>Banked</th>
                    <th>Traded In</th><th>Traded Out</th><th>Tradeable</th>
-                   <th><abbr title='In first 5 rounds'>Extra Draft Picks</abbr></th>
+                   <th><abbr title='In first ". DraftPick::EXTRA_PICK_ROUND_CUTOFF ." rounds'>
+                       Extra Draft Picks</abbr></th>
                    <th>Ping Pong Balls</th>
                    <th><abbr title='Cannot be more than 3'>Extra Picks</abbr></th>
             </tr></thead>";
 
     $brognas = BrognaDao::getBrognasByYear($year, $year);
     foreach ($brognas as $brogna) {
-      // display number of extra draft picks in the first 5 rounds, and ping pong balls; show
+      // display number of extra draft picks before the extra pick cutoff, and ping pong balls; show
       // warning if team has more than 3 extra picks.
       $extraDraftPicks = DraftPickDao::getNumberPicksByTeamByRound(
               $brogna->getYear(), $brogna->getTeam()->getId(), DraftPick::EXTRA_PICK_ROUND_CUTOFF)

@@ -20,6 +20,8 @@ class PingPongBall {
   private $player;
   private $ordinal;
 
+  const MIN_COST = 125;
+
   public function __construct($ballId, $year, $cost,  $teamId, $playerId, $ordinal) {
     $this->ballId = $ballId;
     $this->year = $year;

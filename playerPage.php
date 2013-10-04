@@ -138,8 +138,8 @@
     echo "<h4>Contract History</h4>";
     echo "<table class='table center vertmiddle table-striped table-condensed table-bordered'>
             <thead><tr>
-              <th colspan=2>Team</th><th>Sign Date</th><th>Years</th><th>Price</th><th>Start Year</th>
-              <th>End Year</th><th>Type</th>
+              <th colspan=2>Team</th><th>Sign Date</th><th>Years</th><th>Price</th>
+              <th>Start Year</th><th>End Year</th><th>Type</th>
             </tr></thead>";
     foreach ($contracts as $contract) {
       $type = $contract->getType();
@@ -214,32 +214,51 @@
 
   // TODO show trade history
 
-  // show ranks if cumulative rank is saved
-  // TODO show all years of ranks
-  $rankYear = TimeUtil::getYearByEvent(Event::RANKINGS_OPEN);
-  if (CumulativeRankDao::hasCumulativeRank($player->getId(), $rankYear)) {
-    echo "<h4>Offseason Ranks</h4>";
-    $ranks = RankDao::getRanksByPlayerYear($player->getId(), $rankYear);
-    echo "<table class='table center vertmiddle table-striped table-condensed table-bordered'>
-            <thead><tr><th>Year</th><th colspan=15>Team Ranks</th><th>Actual Rank</th></tr></thead>
-                   <tr><td><strong>$rankYear</strong></td>";
-    foreach ($ranks as $rank) {
-      echo "<td>" . $rank->getRank() . "</td>";
-    }
-    // show 0s
-    if (count($ranks) < 15) {
-      for ($i = count($ranks); $i < 15; $i++) {
-        echo "<td>0</td>";
+  // show ranks of all years where player was ranked
+  $stats = StatDao::getStatsByPlayer($player->getId());
+  if (count($stats) > 0) {
+    echo "<h4>Offseason Ranks</h4>
+          <table class='table center vertmiddle table-striped table-condensed table-bordered'>
+            <thead><tr>
+              <th>Year</th><th>Fantasy Points</th><th colspan=15>Team Ranks</th>
+              <th>Offseason Rank</th>
+            </tr></thead>";
+    foreach ($stats as $stat) {
+      $rankYear = $stat->getYear() + 1;
+      echo "<tr><td><strong>" . $stat->getYear() . "</strong></td>
+                <td>". $stat->getStatLine()->getFantasyPoints() ."</td>";
+
+      # show ranks if cumulative rank has been saved
+      $cumulativeRank =
+          CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
+      if ($cumulativeRank) {
+        $ranks = RankDao::getRanksByPlayerYear($player->getId(), $rankYear);
+        foreach ($ranks as $rank) {
+          echo "<td>" . $rank->getRank() . "</td>";
+        }
+        // show 0s
+        if (count($ranks) < 15) {
+          for ($i = count($ranks); $i < 15; $i++) {
+            echo "<td>0</td>";
+          }
+        }
+      } else {
+        echo "<td colspan=15></td>";
       }
+
+      // show cumulative rank
+      echo "<td><strong>";
+      if ($cumulativeRank) {
+        echo $cumulativeRank->getRank();
+        if ($cumulativeRank->isPlaceholder()) {
+          echo " (PH)";
+        }
+      } else {
+        echo "--";
+      }
+      echo "</strong></td></tr>";
     }
-    // show actual rank
-    $cumulativeRank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
-    echo "<td><strong>" . $cumulativeRank->getRank();
-    if ($cumulativeRank->isPlaceholder()) {
-      echo " (PH)";
-    }
-    echo "</strong></td>";
-    echo "</tr></table>";
+    echo "</table>";
   }
 
   // if admin user, show edit link

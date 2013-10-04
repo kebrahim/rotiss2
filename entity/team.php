@@ -738,15 +738,19 @@ class Team {
     echo "<a id='roster'></a><h4>Roster</h4>";
     echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
             <thead><tr>";
-    echo "<th colspan=2>Player</th>
+    echo "<th></th>
+          <th colspan=2>Player</th>
           <th>Position</th>
-    	  <th>Team</th>
+    	    <th>Team</th>
           <th>Age</th>
           <th>$prevYear Fantasy Pts</th>
           <th>$rankYear Rank</th></tr></thead>";
+    $playerCount = 0;
     foreach ($players as $player) {
       $rank = CumulativeRankDao::getCumulativeRankByPlayerYear($player->getId(), $rankYear);
-      echo "<tr>" . PlayerManager::getNameAndHeadshotRow($player) .
+      echo "<tr>
+              <td>" . ++$playerCount . "</td>" .
+               PlayerManager::getNameAndHeadshotRow($player) .
                "<td>" . $player->getPositionString() . "</td>
                 <td>" . $player->getMlbTeam()->getImageTag(32) . "</td>
                 <td>" . $player->getAge() . "</td>

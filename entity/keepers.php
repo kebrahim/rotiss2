@@ -42,7 +42,7 @@ class Keepers {
   	$ppNewCount = $assocArray[$newppString];
 
   	$pingPongBalls = array();
-  	$currentYear = TimeUtil::getCurrentYear();
+  	$currentYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   	for ($i = ($ppSavedCount + 1); $i <= ($ppSavedCount + $ppNewCount); $i++) {
   	  $ppKey = 'keeper_pp' . $i;
   	  $pingPongBalls[] = new PingPongBall(
@@ -74,7 +74,7 @@ class Keepers {
     $keeperNewCount = $assocArray[$newKeeperString];
 
     $newContracts = array();
-    $currentYear = TimeUtil::getCurrentYear();
+    $currentYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
     for ($i = ($keeperSavedCount + 1); $i <= ($keeperSavedCount + $keeperNewCount); $i++) {
       $playerKey = 'keeper_player' . $i;
       $yearKey = 'keeper_year' . $i;
@@ -150,7 +150,7 @@ class Keepers {
     // display summary
     echo "<div class='row-fluid'>
             <div class='span12 center'>";
-    $currentYear = TimeUtil::getCurrentYear();
+    $currentYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
     $brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
     echo "<h4>Brognas Breakdown</h4>";
     echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
@@ -273,7 +273,7 @@ class Keepers {
   	if ($this->pingPongBalls && (count($this->pingPongBalls) > 0)) {
   	  foreach ($this->pingPongBalls as $pingPongBall) {
   	  	$cost = $pingPongBall->getCost();
-  	  	if (!is_numeric($cost) || $cost < 100) {
+  	  	if (!is_numeric($cost) || $cost < PingPongBall::MIN_COST) {
     	  $this->printError("Cannot spend an invalid number of brognas on a ball: " .
     	      $cost);
   	  	  return false;
@@ -284,7 +284,7 @@ class Keepers {
 
   	// confirm team has enough money to spend on buyout contracts & balls; new contracts do not
   	// get paid until banking.
-  	$currentYear = TimeUtil::getCurrentYear();
+  	$currentYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
   	if ($brognas->getTotalPoints() < $totalBrognasSpent) {
   	  $this->printError($this->team->getName() . " cannot spend " . $totalBrognasSpent .
@@ -354,7 +354,7 @@ class Keepers {
     }
 
     // update brognas
-  	$currentYear = TimeUtil::getCurrentYear();
+  	$currentYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   	$brognas = BrognaDao::getBrognasByTeamAndYear($this->team->getId(), $currentYear);
 	$originalTotalPoints = $brognas->getTotalPoints();
   	$brognas->setTotalPoints($originalTotalPoints - $totalBrognasSpent);

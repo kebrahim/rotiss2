@@ -226,7 +226,7 @@ function addBall() {
     numCell.innerHTML = nextRowNumber;
     var costCell = newRow.insertCell(1);
     costCell.innerHTML = "<input type='number' class='input-small' name='keeper_pp" + nextRowNumber
-        + "' style='text-align:center' placeholder='>= 100'/>";
+        + "' style='text-align:center' placeholder='>= 125'/>";
     var removeCell = newRow.insertCell(2);
     removeCell.innerHTML = "<button type='button' name='removeBallButton' "
         + " onclick='removeBall(" + nextRowNumber + ")' class='btn'><i class='icon-remove'></i>"
@@ -299,7 +299,7 @@ function sendEmail(year) {
 
   // Display nav bar.
   LayoutUtil::displayNavBar(false, LayoutUtil::MANAGE_KEEPERS_BUTTON);
-  $currentYear = TimeUtil::getCurrentYear();
+  $currentYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
 
   echo "<div class='row-fluid'>
           <div class='span8 center offset2'>
@@ -513,8 +513,6 @@ function sendEmail(year) {
   } else {
   	// clear out keeper session variables from previous keeper scenarios.
   	SessionUtil::clearSessionVarsWithPrefix("keeper_");
-
-  	$currentYear = TimeUtil::getCurrentYear();
 
   	$unbankedTeams = ChangelogDao::getUnbankedTeams($currentYear);
 

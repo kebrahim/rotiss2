@@ -23,7 +23,7 @@ class DraftPick {
   private $player;
   private $isSeltzerCutoff;
 
-  const EXTRA_PICK_ROUND_CUTOFF = 5;
+  const EXTRA_PICK_ROUND_CUTOFF = 3;
   const MAX_EXTRA_PICKS = 3;
   const SELTZER_CUTOFF = 201;
 

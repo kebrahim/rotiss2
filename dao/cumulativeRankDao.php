@@ -34,6 +34,18 @@ class CumulativeRankDao {
     return CumulativeRankDao::createCumulativeRanksByQuery($query);
   }
 
+  /**
+   * Return the cumulative ranks for the specified player.
+   */
+  public static function getCumulativeRankByPlayer($playerId) {
+    CommonDao::connectToDb();
+    $query = "select cr.*
+              from cumulative_rank cr
+              where cr.player_id = " . $playerId .
+            " order by year";
+    return CumulativeRankDao::createCumulativeRanksByQuery($query);
+  }
+
   private static function createCumulativeRankByQuery($query) {
   	$ranksDb = CumulativeRankDao::createCumulativeRanksByQuery($query);
   	if (count($ranksDb) == 1) {
@@ -78,6 +90,22 @@ class CumulativeRankDao {
       	      where cr.year = " . $year;
     $res = mysql_query($query);
     return (mysql_num_rows($res) > 0);
+  }
+
+  /**
+   * Returns the earliest rank year.
+   */
+  public static function getMinimumCumulativeRankYear() {
+    return CommonDao::getIntegerValueFromQuery(
+        "select min(year) from cumulative_rank");
+  }
+
+  /**
+   * Returns the latest rank year.
+   */
+  public static function getMaximumCumulativeRankYear() {
+    return CommonDao::getIntegerValueFromQuery(
+        "select max(year) from cumulative_rank");
   }
 
   /**

@@ -84,7 +84,7 @@
 
     // Brognas - keepers always happen in march, so current year is sufficient.
     echo "  <div class='span8'>";
-    $currentYear = TimeUtil::getCurrentYear();
+    $currentYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
     $team->displayBrognas($currentYear, $currentYear + 1, false, 0, 'center smallfonttable');
     echo "  </div>"; // span8
     echo "</div>";   // row-fluid
@@ -358,7 +358,12 @@
   	        <div class='bookmarks'><label>Jump to:</label>";
   	$brognas = BrognaDao::getBrognasByTeamId($team->getId());
   	$firstBrogna = true;
+    $currentYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   	foreach ($brognas as $brogna) {
+      if ($brogna->getYear() < $currentYear) {
+        continue;
+      }
+
   	  if ($firstBrogna) {
   	    $firstBrogna = false;
   	  } else {
@@ -388,7 +393,7 @@
   	$contracts = ContractDao::getContractsByTeamId($teamId);
 
   	// for ever brogna record,
-  	$currentYear = TimeUtil::getYearByEvent(Event::KEEPER_NIGHT);
+  	$currentYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   	foreach ($brognas as $brogna) {
   	  if ($brogna->getYear() < $currentYear) {
   	    continue;

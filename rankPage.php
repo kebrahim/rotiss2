@@ -118,12 +118,13 @@
   // Get selected team from logged-in user.
   $teamId = SessionUtil::getLoggedInTeam()->getId();
 
-  echo "<div class='row-fluid'>
-          <div class='span12 center'>";
-  echo "<h3>My Ranks</h3>";
-  echo "<FORM ACTION='rankPage.php' METHOD=POST>";
   $rankYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
   $lastYear = $rankYear - 1;
+
+  echo "<div class='row-fluid'>
+          <div class='span12 center'>";
+  echo "<h3>My Ranks $rankYear</h3>";
+  echo "<FORM ACTION='rankPage.php' METHOD=POST>";
 
   if (isset($_POST['save'])) {
     // for every unranked player, check if a player was ranked.
@@ -156,10 +157,11 @@
     }
   }
   
-  // if any cumulative ranks exist for the rank year or the ranking period is over, then display
-  // page in read-only mode.
+  // if any cumulative ranks exist for the rank year, the ranking period has not yet started, or the
+  // ranking period is over, then display page in read-only mode.
   $isReadOnly = CumulativeRankDao::hasCumulativeRanks($rankYear) ||
-      (TimeUtil::getCurrentYear() == TimeUtil::getYearByEvent(Event::RANKINGS_CLOSE));
+      ($rankYear > TimeUtil::getYearByEvent(Event::RANKINGS_OPEN)) ||
+      ($rankYear == TimeUtil::getYearByEvent(Event::RANKINGS_CLOSE));
   
   // navigation links
   echo "<a href='rankPage.php'>My Ranks</a>&nbsp

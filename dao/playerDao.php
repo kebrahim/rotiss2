@@ -213,22 +213,24 @@ class PlayerDao {
   }
 
   /**
-   * Returns an array of players belonging to the specified fantasy team.
+   * Returns an array of players belonging to the specified fantasy team, including fantasy points
+   * from the previous year, if they exist.
    */
   public static function getPlayersByTeam(Team $team) {
     CommonDao::connectToDb();
+    $lastYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START) - 1;
     $query = "select p.*, s.fantasy_pts
-        	  from player p
-        	  left outer join stat s on s.player_id = p.player_id
-        	  inner join team_player tp on p.player_id = tp.player_id
-        	  where tp.team_id = " . $team->getId() .
-        	" order by p.last_name, p.first_name";
+          	  from player p
+          	  left outer join (select * from stat where year = $lastYear) s
+                  on s.player_id = p.player_id
+          	  inner join team_player tp on p.player_id = tp.player_id
+          	  where tp.team_id = " . $team->getId() .
+          	" order by p.last_name, p.first_name";
     $res = mysql_query($query);
     $playersDb = array();
     while($playerDb = mysql_fetch_assoc($res)) {
     	$player = PlayerDao::populatePlayer($playerDb);
-    	$player->setStatLine(TimeUtil::getYearByEvent(Event::OFFSEASON_START) - 1,
-    	    StatDao::populateStatLine($playerDb));
+    	$player->setStatLine($lastYear, StatDao::populateStatLine($playerDb));
     	$playersDb[] = $player;
     }
     return $playersDb;
@@ -272,6 +274,18 @@ class PlayerDao {
   	          or last_name like '%$searchString%'
   	          order by last_name, first_name";
   	return PlayerDao::createPlayersFromQuery($query);
+  }
+
+  /**
+   * Returns an array of players whose first and last names match the specified strings.
+   */
+  public static function getPlayersByFullName($firstName, $lastName) {
+    CommonDao::connectToDb();
+    $query = "select * from player
+              where first_name = \"$firstName\"
+              and last_name = \"$lastName\"
+              order by last_name, first_name";
+    return PlayerDao::createPlayersFromQuery($query);
   }
 
   /**
