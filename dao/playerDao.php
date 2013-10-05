@@ -117,27 +117,29 @@ class PlayerDao {
    * Return all players eligible to be ranked by the specified team sorted by fantasy points in the
    * specified year.
    */
-  public static function getPlayersForRanking($teamId, $year) {
+  public static function getPlayersForRanking($teamId, $statYear) {
   	CommonDao::connectToDb();
 
   	// get all players in team_player who aren't assigned to specified team & haven't been ranked
   	// by specified team
+    $rankYear = $statYear + 1;
   	$query = "select p.*, s.*
               from player p, team_player tp, stat s
               where p.player_id = tp.player_id
               and p.player_id = s.player_id
-              and s.year = " . $year .
+              and s.year = " . $statYear .
             " and tp.team_id <> " . $teamId .
               " and p.player_id not in (
                   select player_id
                   from rank
-                  where team_id = " . $teamId . ")
+                  where team_id = " . $teamId . "
+                  and year = ". $rankYear .")
   	          order by s.fantasy_pts DESC";
   	$res = mysql_query($query);
   	$playersDb = array();
   	while($playerDb = mysql_fetch_assoc($res)) {
   	  $player = PlayerDao::populatePlayer($playerDb);
-  	  $player->setStatLine($year, StatDao::populateStatLine($playerDb));
+  	  $player->setStatLine($statYear, StatDao::populateStatLine($playerDb));
   	  $playersDb[] = $player;
   	}
   	return $playersDb;
