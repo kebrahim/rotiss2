@@ -43,6 +43,17 @@ class StatDao {
     return StatDao::createStatsFromQuery($query);
   }
   
+  /**
+   * Returns all stats.
+   */
+  public static function getAllStats() {
+    CommonDao::connectToDb();
+    $query = "select s.*
+              from stat s
+              order by year";
+    return StatDao::createStatsFromQuery($query);
+  }
+
   private static function createStatFromQuery($query) {
   	$statArray = StatDao::createStatsFromQuery($query);
   	if (count($statArray) == 1) {

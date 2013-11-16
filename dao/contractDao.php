@@ -16,6 +16,15 @@ class ContractDao {
   }
 
   /**
+   * Returns all contracts.
+   */
+  public static function getAllContracts() {
+    return ContractDao::createContractsFromQuery(
+        "select * from contract
+         order by end_year, start_year, price DESC");
+  }
+
+  /**
    * Returns all of the non-bought-out contracts for the specified team ID.
    */
   public static function getContractsByTeamId($teamId) {
@@ -111,6 +120,17 @@ class ContractDao {
         "select * from contract
         where player_id = " . $playerId .
         " order by sign_date DESC, num_years DESC, price DESC");
+  }
+
+  /**
+   * Returns all of the contracts for the specified player during the specified year.
+   */
+  public static function getContractsByPlayerYear($playerId, $year) {
+    return ContractDao::createContractsFromQuery(
+        "select * from contract
+        where player_id = " . $playerId .
+        " and start_year <= $year
+         and end_year >= $year");
   }
 
   private static function createContractFromQuery($query) {
