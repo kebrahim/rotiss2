@@ -256,7 +256,7 @@
       $extraPicks = ($extraDraftPicks + $numBalls);
 
       echo "<tr>" .
-                TeamManager::getAbbreviationAndLogoRowAtLevel($brogna->getTeam(), false) .
+                TeamManager::getAbbreviationAndLogoRowAtLevel($brogna->getTeam(), true) .
                 "<td";
       if ($brogna->getTotalPoints() < 0) {
         echo " class ='warning'";

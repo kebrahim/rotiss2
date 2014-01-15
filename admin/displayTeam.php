@@ -443,14 +443,17 @@
       }
 
   	  if ($hasContracts == true) {
-        echo "<tr><td colspan='6'></td>
+        echo "<tr><td colspan='6'><strong>Contracts Total</strong></td>
   			      <td><strong>" . $contractTotal . "</strong></td></tr>";
   		echo "</table>";
   	  }
 
   	  // show leftover brognas
-  	  echo "<label>Available Brognas: </label>" .
-          ($brogna->getTotalPoints() - $contractTotal) . "<br/><br/>";
+  	  echo "<div class='pull-right budgetBrognas'>
+              <h4>Available Brognas:&nbsp" . ($brogna->getTotalPoints() - $contractTotal) . "</h4>
+           </div>
+           <br/><br/><br/>";
+
       // TODO budget: should bank from previous year be calculated?
 
   	  echo "</div>"; // span 12
