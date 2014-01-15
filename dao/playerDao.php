@@ -34,12 +34,14 @@ class PlayerDao {
   public static function getPlayersForAuction($year) {
   	CommonDao::connectToDb();
 
-  	// get all players whose contract ended last year.
+  	// get all players whose non-bought-out, non-auction or minor-keeper contract ended last year.
   	$lastYear = $year - 1;
   	$query = "SELECT P.*
   	          FROM player P, contract C
   	          WHERE P.player_id = C.player_id
   	            AND C.contract_type != 'Auction'
+                AND C.contract_type != 'Minor Keeper'
+                AND C.is_bought_out != 1
   	            AND C.end_year = " . $lastYear
   	      . " ORDER BY P.last_name, P.first_name";
   	$eligiblePlayers = PlayerDao::createPlayersFromQuery($query);
