@@ -1,6 +1,13 @@
 Release Notes
 -------------
 
+v2.2.1 (1/15/14)
+codename: irish wolfhound
+- visible
+  - players eligible for auction filters out players whose contracts were bought out or who had a
+    minor keeper contract
+  - budget & all budget page cleanup
+
 v2.2.0 (10/5/13)
 codename: hokkaido
 - visible
