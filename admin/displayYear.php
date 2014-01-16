@@ -180,20 +180,22 @@
   	          <h4>To Be Auctioned</h4>";
   	echo "<table class='table vertmiddle table-striped table-condensed table-bordered center'>
   	        <thead><tr>
-  	          <th colspan=4>Player</th><th colspan=2>Fantasy Team</th>
+  	          <th></th><th colspan=4>Player</th><th colspan=2>Fantasy Team</th>
   	        </tr></thead>";
   	$players = PlayerDao::getPlayersForAuction($year);
+    $playerCount = 1;
     foreach ($players as $player) {
       $team = $player->getFantasyTeam();
       echo "<tr";
   	  if ($team != null && $team->getId() == $loggedinTeamId) {
   	    echo " class='selected_team_row'";
   	  }
-      echo   ">" . PlayerManager::getNameAndHeadshotRow($player) .
-                   "<td>" . $player->getMlbTeam()->getImageTag(32) . "</td>
-                   <td>" . $player->getPositionString() . "</td>" .
-                   TeamManager::getAbbreviationAndLogoRow($team) .
-             "</tr>";
+      echo "><td>" . $playerCount++ . "</td>" 
+           . PlayerManager::getNameAndHeadshotRow($player) .
+            "<td>" . $player->getMlbTeam()->getImageTag(32) . "</td>
+             <td>" . $player->getPositionString() . "</td>" .
+             TeamManager::getAbbreviationAndLogoRow($team) .
+          "</tr>";
     }
   	echo "    </table>
   	        </div>";
