@@ -169,12 +169,12 @@ class Contract {
   public function getDetails() {
     return "<strong>" . $this->getType() . ": </strong>" .
         $this->getPlayer()->getNameNewTabLink(false) .
-        " - " . $this->getYearsLeft() . " year(s) @ $" . $this->getPrice() . " [" .
+        " - " . $this->getTotalYears() . " year(s) @ $" . $this->getPrice() . " [" .
         $this->getStartYear() . " - " . $this->getEndYear() . "]";
   }
 
   public function __toString() {
-    return $this->getPlayer()->getFullName() . ": " . $this->getYearsLeft() .
+    return $this->getPlayer()->getFullName() . ": " . $this->getTotalYears() .
         " year(s) at $" . $this->getPrice() . " [" . $this->getStartYear() . " - " .
         $this->getEndYear() . "]";
   }

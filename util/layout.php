@@ -78,7 +78,7 @@ class LayoutUtil {
         self::TEAM_SUMMARY_BUTTON);
 
     // Budget page
-    LayoutUtil::displayListItem("budgetPage.php", "Budget", $isTopLevel, $selectedButton,
+    LayoutUtil::displayListItem("budgetPage.php", "Bodget", $isTopLevel, $selectedButton,
         self::BUDGET_BUTTON);
 
     // Players page
@@ -188,7 +188,7 @@ class LayoutUtil {
   	echo "<ul class='dropdown-menu'>";
 
   	// Brognas
-  	LayoutUtil::displayListItem("admin/manageBrognas.php", "Team Budgets", $isTopLevel,
+  	LayoutUtil::displayListItem("admin/manageBrognas.php", "Team Bodgets", $isTopLevel,
   	    $selectedButton, self::MANAGE_BROGNAS_BUTTON);
 
   	// Manage individual team

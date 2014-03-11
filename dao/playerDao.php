@@ -71,8 +71,8 @@ class PlayerDao {
   }
 
   /**
-   * Returns true if the player w/ the specified id has a non-auction contract that either ended in
-   * the specified year or is still active after the specified year.
+   * Returns true if the player w/ the specified id has a non-auction or non-minor-keeper contract
+   * that either ended in the specified year or is still active after the specified year.
    */
   public static function hasContractForPlaceholders($playerId, $year) {
   	CommonDao::connectToDb();
@@ -81,6 +81,7 @@ class PlayerDao {
   	          WHERE c.player_id = " . $playerId . "
   	          AND c.is_bought_out = 0
   	          AND c.contract_type != 'Auction'
+              AND c.price > 0
   	          AND c.end_year >= " . $year;
   	$res = mysql_query($query);
   	return (mysql_num_rows($res) > 0);

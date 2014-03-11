@@ -18,7 +18,7 @@
 
 <?php
   require_once 'util/layout.php';
-  LayoutUtil::displayHeadTag("All Budgets", true);
+  LayoutUtil::displayHeadTag("All Bodgets", true);
 ?>
 
 <script>

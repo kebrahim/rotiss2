@@ -59,7 +59,7 @@ class NavigationUtil {
           self::TEAM_SUMMARY_BUTTON);
 
       // Budget page
-      NavigationUtil::printListItem("budgetPage.php", "Budget", $isTopLevel, $selectedButton,
+      NavigationUtil::printListItem("budgetPage.php", "Bodget", $isTopLevel, $selectedButton,
           self::BUDGET_BUTTON);
 
       // Players page

@@ -18,7 +18,7 @@
 
 <?php
   require_once 'util/layout.php';
-  LayoutUtil::displayHeadTag("Budget", true);
+  LayoutUtil::displayHeadTag("Bodget", true);
 ?>
 
 <script>
