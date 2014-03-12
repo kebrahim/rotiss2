@@ -230,7 +230,7 @@
   function displayBrognaYear($year, $isAdmin) {
   	echo "<div class='row-fluid'>
    	        <div class='span6 offset3 center'>
-  	          <h3>" . ($isAdmin ? "Manage " : "") . "$year Team Budgets</h3>";
+  	          <h3>" . ($isAdmin ? "Manage " : "") . "$year Team Bodgets</h3>";
   	echo "  </div>
   	      </div>
   	      <div class='row-fluid'>

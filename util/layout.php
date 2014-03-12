@@ -302,7 +302,7 @@ class LayoutUtil {
               </div>
             </div>
           </div>
-          <script src=\"http://code.jquery.com/jquery-latest.js\"></script>
+          <script src=\"" . ($isTopLevel ? "" : "../") . "js/jquery-2.0.3.min.js\"></script>
           <script src=\"" . ($isTopLevel ? "" : "../") . "js/bootstrap.js\"></script>";
   }
 }

@@ -246,7 +246,7 @@ class Changelog {
       case Changelog::CONTRACT_SIGNED_TYPE:
       case Changelog::CONTRACT_PAID_TYPE: {
         return $change->getPlayer()->getAbsoluteNameLink(true) .
-            " - " . $change->getYearsLeft() . "yr/$" . $change->getPrice();
+            " - " . $change->getTotalYears() . "yr/$" . $change->getPrice();
       }
       case Changelog::PING_PONG_BALL_TYPE: {
         return "$" . $change->getCost();

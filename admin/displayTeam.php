@@ -208,7 +208,7 @@
       if (($brogna->getYear() == (TimeUtil::getYearByEvent(Event::KEEPER_NIGHT) + 1))
           && ($brogna->getTotalPoints() < 0)) {
         echo "<br/><div class='alert alert-error'>
-                <strong>Warning!</strong> Over-budget for the upcoming year!
+                <strong>Warning!</strong> Over-bodget for the upcoming year!
               </div>";
       }
     }
@@ -354,7 +354,7 @@
 
   	// team name w/ bookmarks for each year
   	echo "<div class='span10 center'>
-  	        <h3>Budget: " . $team->getName() . "</h3>
+  	        <h3>Bodget: " . $team->getName() . "</h3>
   	        <div class='bookmarks'><label>Jump to:</label>";
   	$brognas = BrognaDao::getBrognasByTeamId($team->getId());
   	$firstBrogna = true;
@@ -373,7 +373,9 @@
   	}
   	// link to all budget page
   	echo "<br/><br/>
-  	        <a href='allBudgetPage.php' class='btn btn-primary'>League Budgets</a>&nbsp&nbsp
+  	        <a href='allBudgetPage.php' class='btn btn-primary'>League Bodgets</a>&nbsp&nbsp
+            <a href='keeperSimulator.php?team_id=" . $team->getId() . "' class='btn'>
+              Keeper Simulator</a>&nbsp&nbsp
   	        <a href='seltzerPage.php?team_id=" . $team->getId() . "' class='btn btn-inverse'>
   	          Seltzer Simulator</a>";
   	echo "  </div>
@@ -642,6 +644,72 @@
     </div>"; // span12, row-fluid
   }
 
+  /**
+   * displays keeper information, in simulation mode only.
+   */
+  function displayTeamForKeeperSimulation(Team $team) {
+    echo "<div class='row-fluid'><div class='span12 center'>";
+    echo "<h3>Keeper Simulator</h3>";
+
+    // Team info
+    echo "<form action='keeperSimulator.php' method='post'>";
+    echo "<div class='row-fluid'>
+            <div class='span4'>";
+    echo "<br/>" . $team->getSportslineImg(72);
+    echo "<br/><p class='ptop'>" . $team->getOwnersString() . "</p>";
+    echo "  </div>"; // span4
+
+    // Brognas
+    echo "  <div class='span8'>";
+    $currentYear = TimeUtil::getYearByEvent(Event::OFFSEASON_START);
+    $team->displayBrognas($currentYear, $currentYear + 1, false, 0, 'center smallfonttable');
+    echo "  </div>"; // span8
+    echo "</div>";   // row-fluid
+
+    // Provide ability to add contracts and balls if brognas exist and have not been banked for the
+    // current year.
+    $readOnly = count(BrognaDao::getBrognasByTeamFilteredByYears(
+        $team->getId(), $currentYear, $currentYear + 1)) != 1;
+
+    // Contracts (with ability to add a keeper & buy out a contract)
+    // TODO show old contracts and new contracts
+    echo "<div class='row-fluid'>
+            <div class='span9 center'>";
+    $team->displayContractsForKeepers($currentYear, $currentYear, $readOnly);
+    if (!$readOnly) {
+      echo "<p><button id='addContractButton' class='btn' name='addcontract'
+                       type='button' onclick='addContract(". $team->getId() . ")'>
+                 Add Keeper Contract
+               </button></p>";
+    }
+    echo "  </div>"; // span9
+
+    // Ping pong balls (with ability to add more)
+    echo "  <div class='span3 center'>";
+    $team->displayPingPongBalls($currentYear, $currentYear);
+    if (!$readOnly) {
+      echo "<p><button id='addpp' class='btn' name='addpp'
+                       type='button' onclick='addBall()'>
+                 Add Ball
+               </button></p>";
+    }
+    echo "  </div>"; // span3
+    echo "</div>"; // row-fluid
+
+    if ($readOnly) {
+      echo "<div id='bankMessageDiv' class='alert alert-error'>
+              <strong>Cannot add keepers as this team has already banked!</strong>
+            </div>";
+    } else {
+      echo "<p>
+              <button class='btn btn-primary' name='save' type='submit'>Simulate</button>&nbsp
+              <a href='keeperSimulator.php' class='btn' name='cancel'>Cancel</a>
+            </p>";
+    }
+    echo "<input type='hidden' name='keeper_teamid' value='" . $team->getId() . "'>";
+    echo "</div></div></form>";
+  }
+
   // direct to corresponding function, depending on type of display
   if (isset($_REQUEST["type"])) {
   	$displayType = $_REQUEST["type"];
@@ -676,5 +744,7 @@
     displayTeamForContracts($team);
   } else if ($displayType == "seltzer") {
     displayTeamForSeltzer($team);
+  } else if ($displayType == "keepersim") {
+    displayTeamForKeeperSimulation($team);
   }
 ?>

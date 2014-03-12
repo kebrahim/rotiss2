@@ -283,6 +283,11 @@ label {
 	margin-right: 35px;
 }
 
+#simulatorModal {
+	width: 860px;
+	margin-left: -440px;
+}
+
 .img_24_32 {
 	width: 24px;
 	height: 32px;

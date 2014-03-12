@@ -397,7 +397,7 @@ function sendEmail(year) {
     $bankedBrognas = ($currentYearBrognas->getTotalPoints() - $underContract);
   	echo "<strong>" . $currentYear . " Bank:</strong> $" . $bankedBrognas .
     	" for " . $nextYear . " season<br/>";
-  	echo "<strong>Allocate " . $nextYear . " budget:</strong> $" . Brogna::ANNUAL_ALLOCATION .
+  	echo "<strong>Allocate " . $nextYear . " bodget:</strong> $" . Brogna::ANNUAL_ALLOCATION .
   	   	" + $" . $bankedBrognas . " = $" .
   	    (Brogna::ANNUAL_ALLOCATION + $bankedBrognas) . "<br/><br/>";
 
