@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <?php
   require_once 'util/sessions.php';
 
@@ -12,7 +12,8 @@
   }
   SessionUtil::logoutUserIfNotLoggedIn($redirectUrl);
 ?>
-
+<!DOCTYPE html>
+<html>
 <script>
   //shows the team with the specified id
   function showTeam(teamId) {
@@ -265,8 +266,6 @@ function removeBall(rowNumber) {
 }
 
 </script>
-
-<html>
 
 <?php
   require_once 'util/layout.php';
