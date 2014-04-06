@@ -127,11 +127,11 @@ function selectStat(stat) {
     var minorTable = document.getElementById("minorTable");
     var divider = 0;
     if (minorTable.rows[1].cells[0].innerHTML.indexOf("At Bats") == -1) {
-      // pitcher - divide by 6 IP
-      divider = 6;
+      // pitcher - divide by 10 IP
+      divider = 10;
     } else {
-      // batter - divide by 25 AB
-      divider = 25;
+      // batter - divide by 26 AB
+      divider = 26;
     }
     var calculatedPrice = 20 + (2 * Math.floor(stat / divider));
 
