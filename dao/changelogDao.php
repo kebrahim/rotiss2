@@ -134,6 +134,15 @@ class ChangelogDao {
   }
 
   /**
+   * Deletes the specified changelog.
+   */
+  public static function deleteChange(Changelog $changelog) {
+    CommonDao::connectToDb();
+    $query = "delete from changelog where changelog_id = " . $changelog->getId();
+    mysql_query($query);
+  }
+
+  /**
    * Returns the year of the most recent changelog.
    */
   public static function getMaximumYear() {

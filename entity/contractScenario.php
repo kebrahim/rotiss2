@@ -142,7 +142,15 @@ class ContractScenario {
 
     // display seltzer contract
     if ($this->seltzerContract) {
-      echo "<h4>Seltzer Contract:</h4>";
+      // if player has a minor keeper contract for current year, show that it will be converted into
+      // a seltzer contract.
+      $minorKeeperContract = $this->getMinorKeeperContract($this->seltzerContract);
+      if ($minorKeeperContract != null) {
+        echo "<h4>Delete Minor Keeper Contract:</h4>";
+        echo $minorKeeperContract->getDetails() . "<br/>";
+      }
+
+      echo "<h4>Sign Seltzer Contract:</h4>";
       echo $this->seltzerContract->getDetails() . "<br/>";
     }
 
@@ -256,14 +264,29 @@ class ContractScenario {
 
     // sign seltzer contract
     if ($this->seltzerContract) {
-      if (ContractDao::createContract($this->seltzerContract) != null) {
-        echo "<strong>Signed:</strong> " . $this->seltzerContract->getDetails() . "<br/>";
+      // if player has a minor keeper contract for current year, update it to be a seltzer contract;
+      // otherwise, create a new seltzer contract
+      $minorKeeperContract = $this->getMinorKeeperContract($this->seltzerContract);
+      if ($minorKeeperContract != null) {
+        // delete any changelog events which refer to the minor keeper contract
+        $minorKeeperChanges = ChangelogDao::getChangesByChangeId($minorKeeperContract->getId());
+        foreach ($minorKeeperChanges as $minorKeeperChange) {
+          ChangelogDao::deleteChange($minorKeeperChange);
+        }
 
-        // update changelog
-        $changes[] = ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_SIGNED_TYPE,
-            SessionUtil::getLoggedInUser()->getId(), $timestamp, $this->seltzerContract->getId(),
-            $this->team->getId(), null));
+        // update contract to refer to seltzer details instead of minor keeper details
+        $this->seltzerContract->setId($minorKeeperContract->getId());
+        ContractDao::updateContract($this->seltzerContract);
+        echo "<strong>Deleted:</strong> " . $minorKeeperContract->getDetails() . "<br/>";
+      } else {
+        ContractDao::createContract($this->seltzerContract);
       }
+      echo "<strong>Signed:</strong> " . $this->seltzerContract->getDetails() . "<br/>";
+
+      // create changelog
+      $changes[] = ChangelogDao::createChange(new Changelog(-1, Changelog::CONTRACT_SIGNED_TYPE,
+          SessionUtil::getLoggedInUser()->getId(), $timestamp, $this->seltzerContract->getId(),
+          $this->team->getId(), null));
     }
 
     // send email with all changes
@@ -273,6 +296,21 @@ class ContractScenario {
 
     echo "<br/></div>"; // span8
     echo "</div>"; // row-fluid
+  }
+
+  /**
+   * Returns the minor keeper contract during the previous year of the start year of the specified
+   * seltzer contract for the same player, if one exists.
+   */
+  private function getMinorKeeperContract($seltzerContract) {
+    $playerContracts = ContractDao::getContractsByPlayerYear(
+        $seltzerContract->getPlayerId(), ($seltzerContract->getStartYear() - 1));
+    foreach ($playerContracts as $playerContract) {
+      if ($playerContract->getType() == Contract::MINOR_KEEPER_TYPE) {
+        return $playerContract;
+      }
+    }
+    return null;
   }
 
   private function printError($errorMsg) {
