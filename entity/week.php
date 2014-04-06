@@ -20,6 +20,10 @@ class Week {
     return $this->weekId;
   }
 
+  public function setId($weekId) {
+    $this->weekId = $weekId;
+  }
+
   public function getYear() {
     return $this->year;
   }

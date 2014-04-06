@@ -70,6 +70,30 @@ class WeekDao {
   }
 
   /**
+   * Creates a new scoring week in the 'week' table.
+   */
+  public static function createWeek(Week $week) {
+    CommonDao::connectToDb();
+    $query = "insert into week(year, week_number, start_time)
+              values (" .
+        $week->getYear() . ", " .
+        $week->getWeekNumber() . ", '" .
+        $week->getStartTime() . "')";
+    $result = mysql_query($query);
+    if (!$result) {
+      echo "Week " . $week->toString() . " already exists in DB. Try again.";
+      return null;
+    }
+
+    $idQuery = "select week_id from week where year = " . $week->getYear() .
+        " and week_number = " . $week->getWeekNumber();
+    $result = mysql_query($idQuery) or die('Invalid query: ' . mysql_error());
+    $row = mysql_fetch_assoc($result);
+    $week->setId($row["week_id"]);
+    return $week;
+  }
+
+  /**
    * Updates the specified week in the 'week' table.
    */
   public static function updateWeek(Week $week) {
