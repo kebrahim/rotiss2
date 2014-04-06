@@ -1,6 +1,17 @@
 Release Notes
 -------------
 
+v2.2.2 (4/06/14)
+codename: jack russell terrier
+- visible
+ - signing a player with a minor keeper contract to a seltzer contract replaces the keeper contract
+ - new keeper simulator page to simulate keeper scenarios
+ - players with minor keeper contracts are able to be kept the following year
+ - players on auction page are enumerated
+
+- b.t.s.
+ - script to insert scoring weeks for a specific year
+
 v2.2.1 (1/15/14)
 codename: irish wolfhound
 - visible
