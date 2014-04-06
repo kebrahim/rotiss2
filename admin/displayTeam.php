@@ -492,13 +492,13 @@
         echo "<tr><td rowspan=2>" . $change->getTimestamp() . "</td>
                   <td rowspan=2>" . $change->getUser()->getFullName() . "</td>
                   <td rowspan=2>" . $change->getType() . "</td>" .
-                  TeamManager::getAbbreviationAndLogoRowAtLevel($change->getTeam(), false) .
+                  TeamManager::getAbbreviationAndLogoRowAtLevel($change->getTeam(), true) .
                  "<td>" . $change->getDetails() . "</td>
               </tr>";
         $tradeSecond = true;
       } else if ($tradeSecond) {
         echo "<tr>" .
-                  TeamManager::getAbbreviationAndLogoRowAtLevel($change->getTeam(), false) .
+                  TeamManager::getAbbreviationAndLogoRowAtLevel($change->getTeam(), true) .
                  "<td>" . $change->getDetails() . "</td>
               </tr>";
         $tradeSecond = false;
@@ -506,7 +506,7 @@
         echo "<tr><td>" . $change->getTimestamp() . "</td>
                   <td>" . $change->getUser()->getFullName() . "</td>
                   <td>" . $change->getType() . "</td>" .
-                  TeamManager::getAbbreviationAndLogoRowAtLevel($change->getTeam(), false) .
+                  TeamManager::getAbbreviationAndLogoRowAtLevel($change->getTeam(), true) .
                  "<td>" . $change->getDetails() . "</td>
               </tr>";
       }
