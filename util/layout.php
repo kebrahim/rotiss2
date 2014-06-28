@@ -16,25 +16,27 @@ class LayoutUtil {
   const AUCTION_BUTTON = 7;
   const KEEPERS_BUTTON = 8;
   const DRAFT_BUTTON = 9;
+  const CONSTITUTION_BUTTON = 10;
+  const HISTORY_BUTTON = 11;
 
-  const EDIT_PROFILE_BUTTON = 10;
-  const MY_CHANGES_BUTTON = 11;
+  const EDIT_PROFILE_BUTTON = 12;
+  const MY_CHANGES_BUTTON = 13;
 
-  const ADMIN_BUTTON = 12;
-  const MANAGE_ROSTERS_BUTTON = 13;
-  const MANAGE_TRADE_BUTTON = 14;
-  const MANAGE_AUCTION_BUTTON = 15;
-  const MANAGE_KEEPERS_BUTTON = 16;
-  const MANAGE_BROGNAS_BUTTON = 17;
-  const MANAGE_TEAM_BUTTON = 18;
-  const MANAGE_DRAFT_BUTTON = 19;
-  const MANAGE_PLACEHOLDERS_BUTTON = 20;
-  const MANAGE_RANKS_BUTTON = 21;
-  const MANAGE_PLAYER_BUTTON = 22;
-  const MANAGE_EVENTS_BUTTON = 23;
-  const MANAGE_CHANGES_BUTTON = 24;
-  const MANAGE_CONTRACTS_BUTTON = 25;
-  const MANAGE_WEEKS_BUTTON = 26;
+  const ADMIN_BUTTON = 100;
+  const MANAGE_ROSTERS_BUTTON = 101;
+  const MANAGE_TRADE_BUTTON = 102;
+  const MANAGE_AUCTION_BUTTON = 103;
+  const MANAGE_KEEPERS_BUTTON = 104;
+  const MANAGE_BROGNAS_BUTTON = 105;
+  const MANAGE_TEAM_BUTTON = 106;
+  const MANAGE_DRAFT_BUTTON = 107;
+  const MANAGE_PLACEHOLDERS_BUTTON = 108;
+  const MANAGE_RANKS_BUTTON = 109;
+  const MANAGE_PLAYER_BUTTON = 110;
+  const MANAGE_EVENTS_BUTTON = 111;
+  const MANAGE_CHANGES_BUTTON = 112;
+  const MANAGE_CONTRACTS_BUTTON = 113;
+  const MANAGE_WEEKS_BUTTON = 114;
 
   /**
    * Displays the <head> tag for a page, including the specified title.
@@ -120,6 +122,7 @@ class LayoutUtil {
         LayoutUtil::MY_RANKS_BUTTON);
     LayoutUtil::displayListItem("allRanksPage.php", "All Ranks", $isTopLevel, $selectedButton,
         LayoutUtil::ALL_RANKS_BUTTON);
+
     echo "<li class=\"divider\"></li>";
 
     // Auction page
@@ -133,6 +136,16 @@ class LayoutUtil {
     // Draft page
     LayoutUtil::displayListItem("draftPage.php", "Draft", $isTopLevel, $selectedButton,
         self::DRAFT_BUTTON);
+
+    echo "<li class=\"divider\"></li>";
+
+    // Constitution page
+    LayoutUtil::displayListItem("constitution.php", "Constitution", $isTopLevel, $selectedButton,
+        self::CONSTITUTION_BUTTON);
+
+    // History page
+    LayoutUtil::displayListItem("history.php", "History", $isTopLevel, $selectedButton,
+        self::HISTORY_BUTTON);
 
     echo "</ul></li>";
   }
