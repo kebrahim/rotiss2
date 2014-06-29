@@ -15,9 +15,6 @@
 <body>
 
 <?php
-  require_once 'dao/draftPickDao.php';
-  require_once 'util/yearManager.php';
-
   // Nav bar
   LayoutUtil::displayNavBar(true, LayoutUtil::CONSTITUTION_BUTTON);
 ?>
