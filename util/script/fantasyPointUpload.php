@@ -8,7 +8,8 @@
   $lastYear = $rankYear - 1;
 
   // open players file & display stats
-  $fh = fopen("2013_players.csv", 'r');
+  $filename = $lastYear . "_players.csv";
+  $fh = fopen($filename, 'r');
   $header = fgetcsv($fh);
 
   $data = array();
@@ -57,7 +58,7 @@
 	        <td>" . $player->getId() . "</td>";
     
       // get 2013 stat from db
-	  $stat = StatDao::getStatByPlayerYear($player->getId(), 2013);
+	  $stat = StatDao::getStatByPlayerYear($player->getId(), $lastYear);
 	  if ($stat != null) {
 	  	$numStats++;
         echo "<td>" . $stat->getStatLine()->getFantasyPoints() . "</td>";
