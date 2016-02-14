@@ -171,14 +171,31 @@ class PlayerDao {
     // first, get all players on specified team
     $allPlayers = PlayerDao::getPlayersByTeam($team);
 
-    // filter out players who currently have a contract or a contract ended for them last year.
+    // also, get all the players eligible for auction this year
+    $auctionablePlayers = PlayerDao::getPlayersForAuction($year);
+
+    // filter out players who currently have a contract or a contract ended for them last year,
+    // unless they were eligible to be auctioned and were not auctioned.
     $eligibleKeepers = array();
     foreach ($allPlayers as $player) {
-      if (!PlayerDao::hasContractForPlaceholders($player->getId(), $year - 1)) {
+      if ((!PlayerDao::hasContractForPlaceholders($player->getId(), $year - 1)) ||
+          (PlayerDao::containsPlayer($auctionablePlayers, $player))) {
         $eligibleKeepers[] = $player;
       }
     }
     return $eligibleKeepers;
+  }
+
+  /**
+   * Returns true if the specified array of players contains the specified player.
+   */
+  private static function containsPlayer($playerArray, Player $playerToFind) {
+    foreach ($playerArray as $player) {
+      if ($player->getId() == $playerToFind->getId()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
